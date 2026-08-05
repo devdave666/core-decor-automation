@@ -1,0 +1,44 @@
+name: Daily Reel
+
+on:
+  schedule:
+    # 14:00 UTC daily — adjust to whatever posting time actually performs best once
+    # there's enough data to know; this is a placeholder, not a researched choice.
+    - cron: "0 14 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  daily-reel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install librosa moviepy requests numpy
+
+      - name: Configure git for automated commits
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run daily pipeline
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          SWATCH_ASSETS_DIR: ${{ github.workspace }}/assets/swatches
+          APPLICATION_ASSETS_DIR: ${{ github.workspace }}/assets/application
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python core_decor_reel_pipeline.py

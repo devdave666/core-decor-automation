@@ -1,9 +1,14 @@
 """
 Core Decor Reel Pipeline
 ========================
-Ingests a source clip, masters its audio, detects beat timing, composites a 9:16 Reel
-from swatch + application image assets synced to those beats, and publishes to
-Instagram and Facebook via the Meta Graph API.
+Each run: pulls the next reel from a rotating pool of human-made template reels in
+Google Drive, extracts and masters its audio, copies its exact cut-timing pattern
+(not algorithmic beat detection — see the cut-timing section further down for why),
+composites a 9:16 Reel using the next block of the 50 swatch+application concept
+pairs, and publishes to Instagram and Facebook. State (which template is next, which
+concept block is next, which caption is next) persists as small text files committed
+to this repo, the same pattern as day_counter.txt in the millionchallenge repo — no
+database, no external state store.
 
 STAGE 1 NOTE — read before changing the audio chain:
 The original spec for this stage called for a sub-semitone pitch shift decoupled from
@@ -21,11 +26,15 @@ Requires: ffmpeg binary on PATH, Python packages: librosa, moviepy, requests, nu
 Environment variables (already configured as GitHub Actions secrets in this project —
 see SECRETS_SETUP.md):
     META_SYSTEM_USER_TOKEN       Meta system user access token
+    META_APP_ID                  Meta app ID (needed for the Resumable Upload API)
     META_IG_BUSINESS_ACCOUNT_ID  Instagram professional account ID
     META_PAGE_ID                 Facebook Page ID
-    GDRIVE_INPUT_PATH            Local mount/sync path to watch for source clips
-    SWATCH_ASSETS_DIR            Folder of swatch images
-    APPLICATION_ASSETS_DIR       Folder of application-photo images
+    GOOGLE_OAUTH_CLIENT_ID       For pulling templates from the Drive Template Reels
+    GOOGLE_OAUTH_CLIENT_SECRET   folder — same OAuth app already used for hosting
+    GOOGLE_OAUTH_REFRESH_TOKEN   uploads, read from env instead of a local file so
+                                  this works unattended in GitHub Actions
+    SWATCH_ASSETS_DIR            Folder of the 50 swatch images (committed to this repo)
+    APPLICATION_ASSETS_DIR       Folder of the 50 application images (committed too)
     OUTPUT_DIR                   Where processed_audio.wav / final_output_reel.mp4 land
 
     No hosting/storage secret is needed: finished reels are committed straight into
@@ -377,15 +386,28 @@ def _pair_swatches_with_applications(swatch_dir, application_dir):
     return pairs
 
 
-def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, output_path):
+def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, output_path,
+                audio_wav_path, concept_start_offset=0):
     """
     Builds a 1080x1920 clip, alternating swatch/application images at each beat
     boundary, muxed with the mastered audio. Total duration matches audio_duration —
     the last segment is stretched to the end rather than left short or truncating audio.
+
+    Always ends on an application shot, never a swatch — a firm requirement, not a
+    preference. The swatch/application alternation starts with swatch at segment 0, so
+    it naturally ends on application only when the total segment count is EVEN; an odd
+    count would leave a bare swatch as the very last thing shown. Rather than special-
+    case the final segment (which could land two application shots back to back), the
+    fix is applied once, up front: if the segment count is odd, the first internal cut
+    is dropped, giving the opening swatch a slightly longer hold and making the total
+    count even — the carefully-timed ENDING is left untouched either way.
+
+    concept_start_offset lets a daily rotation begin partway through the 50 concept
+    pairs instead of always starting at c01, so consecutive days don't all open on the
+    same handful of concepts. Returns (output_path, concepts_used_count) so the caller
+    can advance the rotation state by however many concepts this particular reel
+    actually consumed.
     """
-    # MoviePy 2.x: no `.editor` submodule; .resize/.crop/.set_duration/.set_audio were
-    # renamed to .resized/.cropped/.with_duration/.with_audio. Verified against the
-    # actually-installed version rather than assumed.
     from moviepy import AudioFileClip, ImageClip, concatenate_videoclips
 
     W, H = 1080, 1920
@@ -396,11 +418,17 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
     if boundaries[-1] < audio_duration:
         boundaries.append(audio_duration)
 
-    # Concept pairs, cycled one pair per two segments: segment i uses the pair's swatch,
-    # segment i+1 uses that SAME pair's application shot, then advance to the next
-    # concept. This guarantees swatch and application always belong together.
-    pairs = itertools.cycle(_pair_swatches_with_applications(swatch_dir, application_dir))
+    n_segments = len(boundaries) - 1
+    if n_segments % 2 != 0 and n_segments > 1:
+        del boundaries[1]  # merge segment 0 and 1 into one longer opening swatch hold
+        n_segments -= 1
+
+    all_pairs = _pair_swatches_with_applications(swatch_dir, application_dir)
+    rotated_pairs = all_pairs[concept_start_offset % len(all_pairs):] + \
+                     all_pairs[:concept_start_offset % len(all_pairs)]
+    pairs = itertools.cycle(rotated_pairs)
     current_pair = next(pairs)
+    concepts_used = 1
 
     clips = []
     for i in range(len(boundaries) - 1):
@@ -411,7 +439,9 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
             image_path = current_pair[0]  # this pair's swatch
         else:
             image_path = current_pair[1]  # the SAME pair's application shot
-            current_pair = next(pairs)     # advance only after the pair is complete
+            if i < len(boundaries) - 2:    # don't advance past the final application
+                current_pair = next(pairs)
+                concepts_used += 1
 
         # Center-crop-to-fill at 1080x1920 without stretching: scale so the shorter
         # dimension covers the target, then crop the overflow evenly from both sides.
@@ -424,7 +454,7 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
         clips.append(img_clip)
 
     video = concatenate_videoclips(clips, method="compose")
-    audio = AudioFileClip(str(Path(output_path).parent / "processed_audio.wav"))
+    audio = AudioFileClip(str(audio_wav_path))
     video = video.with_audio(audio).with_duration(audio_duration)
 
     output_path = Path(output_path)
@@ -439,8 +469,9 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
         ffmpeg_params=["-movflags", "+faststart"],
         logger=None,
     )
-    log.info("Reel written to %s (%.1fs)", output_path, audio_duration)
-    return output_path
+    log.info("Reel written to %s (%.1fs, %d concepts, starting offset %d)",
+              output_path, audio_duration, concepts_used, concept_start_offset)
+    return output_path, concepts_used
 
 
 def validate_reel_for_meta(video_path, duration_seconds):
@@ -608,7 +639,7 @@ def extract_template_cut_timestamps(template_video_path, scene_threshold=0.3):
 
 
 def build_reel_from_template_timing(template_cut_timestamps, audio_wav_path, swatch_dir,
-                                     application_dir, output_path):
+                                     application_dir, output_path, concept_start_offset=0):
     """
     Builds a new reel using an EXISTING reel's exact cut-timing pattern applied to
     fresh audio and our own swatch/application pairs, instead of deriving cut points
@@ -620,7 +651,9 @@ def build_reel_from_template_timing(template_cut_timestamps, audio_wav_path, swa
     segment extends to cover it.
     """
     audio_duration = get_audio_duration_seconds(audio_wav_path)
-    return build_reel(template_cut_timestamps, audio_duration, swatch_dir, application_dir, output_path)
+    return build_reel(template_cut_timestamps, audio_duration, swatch_dir, application_dir,
+                       output_path, audio_wav_path=audio_wav_path,
+                       concept_start_offset=concept_start_offset)
 
 
 
@@ -808,54 +841,100 @@ def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolera
 # Orchestration
 # ---------------------------------------------------------------------------
 
+TEMPLATE_INDEX_FILE = "template_index.txt"
+CONCEPT_OFFSET_FILE = "concept_offset.txt"
+N_CONCEPTS = 50
+
+
+def _read_counter(repo_root, filename, default=0):
+    p = Path(repo_root) / filename
+    return int(p.read_text().strip()) if p.exists() else default
+
+
+def _write_and_commit_counter(repo_root, filename, value, message):
+    p = Path(repo_root) / filename
+    p.write_text(str(value))
+    subprocess.run(["git", "-C", str(repo_root), "add", filename], check=True)
+    subprocess.run(["git", "-C", str(repo_root), "commit", "-m", message], check=True)
+    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+
+
+def fetch_next_template(repo_root, output_dir):
+    """
+    Pulls the next template reel from the Drive Template Reels folder, rotating
+    through whatever's there (grows automatically as more templates get added — the
+    rotation just wraps at however many currently exist, not a fixed count of 4).
+    """
+    from drive_upload import TEMPLATE_REELS_FOLDER_ID, download_file, list_files_in_folder
+
+    templates = list_files_in_folder(TEMPLATE_REELS_FOLDER_ID)
+    if not templates:
+        raise PipelineError("No template reels found in the Drive Template Reels folder")
+
+    idx = _read_counter(repo_root, TEMPLATE_INDEX_FILE, default=0) % len(templates)
+    template = templates[idx]
+    log.info("Using template %d/%d: %s", idx + 1, len(templates), template["name"])
+
+    dest = Path(output_dir) / "template.mp4"
+    download_file(template["id"], dest)
+    return dest, idx, len(templates)
+
+
 def run_pipeline():
-    gdrive_input = os.environ["GDRIVE_INPUT_PATH"]
     swatch_dir = os.environ["SWATCH_ASSETS_DIR"]
     application_dir = os.environ["APPLICATION_ASSETS_DIR"]
     # In GitHub Actions this is set automatically; locally it's wherever you cloned
     # this repo. Either way it must be the root of the git working directory that
-    # gets pushed to for hosting + the caption counter.
+    # gets pushed to for hosting + all rotation-state counters.
     repo_root = os.environ.get("GITHUB_WORKSPACE") or os.environ.get("REPO_ROOT", ".")
     output_dir = Path(os.environ.get("OUTPUT_DIR", "./output"))
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    clips = find_new_clips(gdrive_input)
-    if not clips:
-        log.info("No new clips to process. Exiting.")
-        return
+    try:
+        template_path, template_idx, n_templates = fetch_next_template(repo_root, output_dir)
 
-    for clip in clips:
-        log.info("=== Processing %s ===", clip.name)
-        try:
-            wav_path = extract_and_master_audio(clip, output_dir / "processed_audio.wav")
-            duration = get_audio_duration_seconds(wav_path)
-            bpm, beats = extract_beat_timestamps(wav_path)
+        wav_path = extract_and_master_audio(template_path, output_dir / "processed_audio.wav")
+        cuts = extract_template_cut_timestamps(template_path)
 
-            reel_path = build_reel(beats, duration, swatch_dir, application_dir,
-                                    output_dir / "final_output_reel.mp4")
-            validate_reel_for_meta(reel_path, duration)
+        concept_offset = _read_counter(repo_root, CONCEPT_OFFSET_FILE, default=0) % N_CONCEPTS
+        reel_path, concepts_used = build_reel_from_template_timing(
+            cuts, wav_path, swatch_dir, application_dir,
+            output_dir / "final_output_reel.mp4", concept_start_offset=concept_offset,
+        )
+        duration = get_audio_duration_seconds(wav_path)
+        validate_reel_for_meta(reel_path, duration)
 
-            public_url = upload_video_to_public_host(reel_path, repo_root)
-            caption, caption_idx = get_next_caption_and_index(repo_root)
+        public_url = upload_video_to_public_host(reel_path, repo_root)
+        caption, caption_idx = get_next_caption_and_index(repo_root)
 
-            ig_id = publish_to_instagram(public_url, caption)
-            fb_id = publish_to_facebook(reel_path, caption, app_id=os.environ["META_APP_ID"],
-                                         expected_duration_s=duration)
-            advance_caption_index(repo_root, caption_idx)  # only after both succeed
-            log.info("Done. Instagram media_id=%s Facebook video_id=%s caption_index=%s",
-                      ig_id, fb_id, caption_idx)
+        ig_id = publish_to_instagram(public_url, caption)
+        fb_id = publish_to_facebook(reel_path, caption, app_id=os.environ["META_APP_ID"],
+                                     expected_duration_s=duration)
 
-        except PipelineError as e:
-            log.error("Pipeline stopped for %s: %s", clip.name, e)
-            continue  # move on to next clip rather than aborting the whole batch
-        except Exception as e:
-            log.exception("Unexpected error processing %s", clip.name)
-            continue
+        # Advance all rotation state ONLY after both platforms confirm — a failed run
+        # shouldn't skip a template, a block of concepts, or a caption slot.
+        advance_caption_index(repo_root, caption_idx)
+        _write_and_commit_counter(repo_root, TEMPLATE_INDEX_FILE, (template_idx + 1) % n_templates,
+                                    f"Advance template index to {(template_idx + 1) % n_templates}")
+        _write_and_commit_counter(repo_root, CONCEPT_OFFSET_FILE,
+                                    (concept_offset + concepts_used) % N_CONCEPTS,
+                                    f"Advance concept offset to {(concept_offset + concepts_used) % N_CONCEPTS}")
+
+        log.info("Done. Instagram media_id=%s Facebook video_id=%s template=%d/%d concepts_used=%d",
+                  ig_id, fb_id, template_idx + 1, n_templates, concepts_used)
+
+    except PipelineError as e:
+        log.error("Pipeline stopped: %s", e)
+        raise
+    except Exception:
+        log.exception("Unexpected error in pipeline run")
+        raise
 
 
 if __name__ == "__main__":
-    required = ["META_SYSTEM_USER_TOKEN", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
-                "GDRIVE_INPUT_PATH", "SWATCH_ASSETS_DIR", "APPLICATION_ASSETS_DIR"]
+    required = ["META_SYSTEM_USER_TOKEN", "META_APP_ID", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
+                "SWATCH_ASSETS_DIR", "APPLICATION_ASSETS_DIR",
+                "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REFRESH_TOKEN"]
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
         log.error("Missing required environment variables: %s", ", ".join(missing))
