@@ -44,4 +44,7 @@ jobs:
           SWATCH_ASSETS_DIR: ${{ github.workspace }}/assets/swatches
           APPLICATION_ASSETS_DIR: ${{ github.workspace }}/assets/application
           GITHUB_WORKSPACE: ${{ github.workspace }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
         run: python core_decor_reel_pipeline.py
