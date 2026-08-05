@@ -1,0 +1,32 @@
+name: Test Facebook Publish
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test-facebook-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Facebook publish test
+        env:
+          # Deliberately using the short-lived, personally-derived Page token here,
+          # not META_SYSTEM_USER_TOKEN — the system user token is what actually
+          # failed the permission check earlier (Ready for testing access only
+          # exempts people with a role on the app). This test is scoped to answering
+          # "does the upload/resume logic work on real infra", not re-testing the
+          # already-diagnosed permission gap. NOT a long-term credential — expires
+          # within the hour. See llms.txt for the still-open long-lived-token problem.
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_PAGE_TOKEN_TEMP_TEST }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+        run: python test_facebook_publish.py
