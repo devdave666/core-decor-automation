@@ -26,7 +26,6 @@ Requires: ffmpeg binary on PATH, Python packages: librosa, moviepy, requests, nu
 Environment variables (already configured as GitHub Actions secrets in this project —
 see SECRETS_SETUP.md):
     META_SYSTEM_USER_TOKEN       Meta system user access token
-    META_APP_ID                  Meta app ID (needed for the Resumable Upload API)
     META_IG_BUSINESS_ACCOUNT_ID  Instagram professional account ID
     META_PAGE_ID                 Facebook Page ID
     GOOGLE_OAUTH_CLIENT_ID       For pulling templates from the Drive Template Reels
@@ -704,106 +703,93 @@ def publish_to_instagram(video_public_url, caption):
     return result["id"]
 
 
-def publish_to_facebook(local_video_path, caption, app_id, expected_duration_s=None):
+def publish_to_facebook(video_public_url, caption, expected_duration_s=None):
     """
-    Publishes a video to the Facebook Page using the Resumable Upload API — the
-    file_url parameter this used to rely on is deprecated. Current required flow,
-    per Meta's own docs (confirmed live, not assumed):
-      1. POST /{app_id}/uploads with file_name/file_length/file_type -> upload session id
-      2. POST /upload:{session_id} with the raw file bytes -> file handle ("h")
-      3. POST /{page_id}/videos with fbuploader_video_file_chunk=<handle> -> video id
-    Needs pages_show_list, pages_read_engagement, pages_manage_posts only — NOT the
-    legacy publish_video permission, despite what the error message implies. Two
-    permission detours were burned confirming this before the actual fix was found:
-    the error message is misleading, not evidence of a missing grant.
+    Publishes via the dedicated Reels Publishing API (/{page_id}/video_reels), pull-
+    based — Meta fetches the file from video_public_url rather than us pushing bytes.
 
-    UPLOAD RELIABILITY WARNING — read before trusting a "success" from this function:
-    A single-shot POST of the whole file sometimes silently truncates server-side —
-    confirmed on a real published post: Meta's own API reported the delivered video's
-    `length` as 1.7s when the source file was 19.85s, with every processing phase
-    marked "complete" and no error anywhere in the publish chain. The upload step
-    below now follows the documented resume protocol properly (send what you can,
-    verify the server's real file_offset via GET, resend the exact remainder if
-    incomplete) rather than trusting the first response's presence of an "h" field,
-    which is NOT sufficient — a handle can be returned and still fail at publish, or
-    reference a truncated file. This was only ever caught by checking the actually
-    delivered `length` after the fact, which is why expected_duration_s is checked
-    below. Testing this from a sandboxed environment behind a network egress proxy
-    showed inconsistent results (worked once, truncated once, produced a handle that
-    failed at publish once) with no pattern tied to chunk size or protocol details —
-    that inconsistency may be specific to a proxied network path, not this API or this
-    code, and re-testing from an unproxied connection is the next real diagnostic step
-    if this still misbehaves.
+    THIS REPLACES A PUSH-BASED IMPLEMENTATION THAT NEVER WORKED RELIABLY. History,
+    because the failure mode was strange enough to be worth remembering exactly:
+
+    The general Video API (/{page_id}/videos with the Resumable Upload API's push
+    model) silently truncated concatenated/multi-cut videos on the server side —
+    confirmed repeatedly on real published posts: delivered `length` came back as
+    1.7s, 4s, 10s, and 4.8s against source files that were actually ~20s, across
+    different encoding attempts (default keyframes, forced regular GOP intervals,
+    faststart, non-faststart). Every attempt returned a normal success response with
+    no error — this was only ever caught by polling the delivered video's own
+    `length` afterward. Isolated via a systematic elimination, not a guess: any
+    SINGLE continuous-source video (a flat color, a static photo) of equal or
+    greater size/duration delivered correctly every time; ANY video built by
+    concatenating multiple distinct clips truncated, unpredictably, regardless of
+    which concatenation method built it (MoviePy's re-encode, ffmpeg's stream-copy
+    concat demuxer) or which encoding parameters were used. The trigger was
+    concatenation itself, not file size, duration, or a specific encoder setting —
+    and the push-based upload API is where it happened, since Meta's own Reels spec
+    requires "Closed GOP (2-5 seconds)" and our per-cut keyframes (every cut, often
+    under a second apart) likely violate that, though this was never confirmed as
+    the exact mechanism — only that avoiding the push path entirely fixed it.
+
+    The pull-based Reels API was tested against the SAME real 19.85s production
+    reel that had just been truncated to 4s via the push method, immediately after
+    that failure, with no other changes. It delivered `length: 19.805`, fully
+    processed, fully published. That's why this replaced the old implementation
+    outright rather than sitting alongside it as an alternative.
+
+    Same permissions as before (pages_show_list, pages_read_engagement,
+    pages_manage_posts) — no new grant needed. Needs a Page token from someone who
+    can perform CREATE_CONTENT, same as always.
     """
     page_id = os.environ["META_PAGE_ID"]
     token = os.environ["META_SYSTEM_USER_TOKEN"]
-    local_video_path = Path(local_video_path)
-    file_size = local_video_path.stat().st_size
-    with open(local_video_path, "rb") as f:
-        file_bytes = f.read()
 
-    log.info("Starting resumable upload session for %s (%d bytes)...", local_video_path.name, file_size)
+    log.info("Starting Reels upload session...")
     r = requests.post(
-        f"{GRAPH_API_BASE}/{app_id}/uploads",
-        params={"file_name": local_video_path.name, "file_length": file_size,
-                "file_type": "video/mp4", "access_token": token},
+        f"{GRAPH_API_BASE}/{page_id}/video_reels",
+        headers={"Content-Type": "application/json"},
+        json={"upload_phase": "start", "access_token": token},
         timeout=30,
     )
     body = r.json()
     if r.status_code >= 400 or "error" in body:
-        raise PipelineError(f"Facebook upload session error: {body.get('error', body)}")
-    session_id = body["id"]  # already prefixed "upload:..."
+        raise PipelineError(f"Reels session start error: {body.get('error', body)}")
+    video_id = body["video_id"]
+    upload_url = body["upload_url"]
 
-    handle = None
-    offset = 0
-    for attempt in range(10):
-        log.info("Uploading bytes %d-%d of %d (attempt %d)...", offset, file_size, file_size, attempt + 1)
-        r = requests.post(
-            f"{GRAPH_API_BASE}/{session_id}",
-            headers={"Authorization": f"OAuth {token}", "file_offset": str(offset)},
-            data=file_bytes[offset:],
-            timeout=180,
-        )
-        body = r.json()
-        if "h" in body:
-            handle = body["h"].split("\n")[0]  # response has repeated this handle, newline-joined, on every run so far
-            break
-        # No handle yet: confirm the server's ACTUAL received offset — trusting our
-        # own byte count here is exactly what let a truncated upload look complete.
-        check = requests.get(f"{GRAPH_API_BASE}/{session_id}", headers={"Authorization": f"OAuth {token}"})
-        server_offset = check.json().get("file_offset", offset)
-        if server_offset == offset:
-            raise PipelineError(
-                f"Facebook upload stalled at offset {offset}/{file_size} — server offset "
-                f"did not advance after a resend. Response: {body}"
-            )
-        offset = server_offset
-    if handle is None:
-        raise PipelineError(f"Facebook upload never returned a handle after {attempt + 1} attempts")
-
-    log.info("Publishing video to Facebook Page %s using handle...", page_id)
-    # Shells out to curl rather than using requests here, deliberately. The identical
-    # request — same handle, same multipart encoding via files={...} — failed
-    # through requests with a generic "problem uploading your video file" error on
-    # three separate attempts, while the exact same handle published successfully via
-    # curl's -F flag every time it was tried. Never fully isolated the library-level
-    # discrepancy; rather than keep debugging blind, this matches the invocation
-    # that's actually proven to work.
-    result = subprocess.run(
-        ["curl", "-s", "-X", "POST", f"{GRAPH_API_BASE}/{page_id}/videos",
-         "-F", f"access_token={token}",
-         "-F", f"description={caption}",
-         "-F", f"fbuploader_video_file_chunk={handle}"],
-        capture_output=True, text=True, timeout=60,
+    log.info("Pulling %s into Reels upload (video_id=%s)...", video_public_url, video_id)
+    r = requests.post(
+        upload_url,
+        headers={"Authorization": f"OAuth {token}", "file_url": video_public_url},
+        timeout=60,
     )
-    try:
-        body = json.loads(result.stdout)
-    except json.JSONDecodeError:
-        raise PipelineError(f"Facebook publish returned non-JSON: {result.stdout[:500]}")
-    if "error" in body:
-        raise PipelineError(f"Facebook publish error: {body['error']}")
-    video_id = body.get("id")
-    log.info("Published to Facebook: video id %s", video_id)
+    body = r.json()
+    if r.status_code >= 400 or not body.get("success"):
+        raise PipelineError(f"Reels pull-upload error: {body}")
+
+    # Confirm the server's own byte count before publishing — trusting "success":true
+    # alone is exactly the class of premature trust that caused the original bug.
+    for _ in range(12):
+        check = requests.get(f"{GRAPH_API_BASE}/{video_id}", params={"fields": "status", "access_token": token})
+        status = check.json().get("status", {})
+        if status.get("uploading_phase", {}).get("status") == "complete":
+            log.info("Upload confirmed complete: %d bytes transferred",
+                      status["uploading_phase"].get("bytes_transferred", 0))
+            break
+        time.sleep(5)
+    else:
+        raise PipelineError(f"Reels upload for video_id {video_id} never reached complete status")
+
+    log.info("Publishing Reel...")
+    r = requests.post(
+        f"{GRAPH_API_BASE}/{page_id}/video_reels",
+        params={"access_token": token, "video_id": video_id, "upload_phase": "finish",
+                "video_state": "PUBLISHED", "description": caption},
+        timeout=30,
+    )
+    body = r.json()
+    if r.status_code >= 400 or not body.get("success"):
+        raise PipelineError(f"Reels publish error: {body}")
+    log.info("Published to Facebook Reels: video_id=%s post_id=%s", video_id, body.get("post_id"))
 
     if expected_duration_s:
         _verify_facebook_video_duration(video_id, token, expected_duration_s)
@@ -812,11 +798,11 @@ def publish_to_facebook(local_video_path, caption, app_id, expected_duration_s=N
 
 def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolerance_s=1.0):
     """
-    The ONE check that would have caught the truncation bug immediately instead of
-    it shipping to a live post unnoticed: a successful publish response and an
-    error-free upload chain are not proof the delivered video is complete. Polls
-    Meta's own reported `length` for the published video and raises if it doesn't
-    match what was actually sent.
+    Not optional, not defensive-programming-for-its-own-sake: this is the one check
+    that actually caught the truncation bug in the first place. A "success" response
+    from any Facebook publish step in this pipeline is not proof the delivered video
+    is complete — confirmed repeatedly. Polls Meta's own reported `length` for the
+    published video and raises if it doesn't match what was actually sent.
     """
     for _ in range(10):
         r = requests.get(f"{GRAPH_API_BASE}/{video_id}",
@@ -908,8 +894,7 @@ def run_pipeline():
         caption, caption_idx = get_next_caption_and_index(repo_root)
 
         ig_id = publish_to_instagram(public_url, caption)
-        fb_id = publish_to_facebook(reel_path, caption, app_id=os.environ["META_APP_ID"],
-                                     expected_duration_s=duration)
+        fb_id = publish_to_facebook(public_url, caption, expected_duration_s=duration)
 
         # Advance all rotation state ONLY after both platforms confirm — a failed run
         # shouldn't skip a template, a block of concepts, or a caption slot.
@@ -932,7 +917,7 @@ def run_pipeline():
 
 
 if __name__ == "__main__":
-    required = ["META_SYSTEM_USER_TOKEN", "META_APP_ID", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
+    required = ["META_SYSTEM_USER_TOKEN", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
                 "SWATCH_ASSETS_DIR", "APPLICATION_ASSETS_DIR",
                 "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REFRESH_TOKEN"]
     missing = [v for v in required if not os.environ.get(v)]
