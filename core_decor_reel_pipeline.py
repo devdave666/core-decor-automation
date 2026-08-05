@@ -674,6 +674,64 @@ def _graph_get(path, **params):
     return body
 
 
+def publish_to_buffer(video_public_url, caption, channel_id, platform, youtube_title=None):
+    """
+    Publishes to TikTok or YouTube via Buffer's GraphQL API — the direct-API route
+    for these two platforms is high-friction enough (TikTok's own app review,
+    YouTube's OAuth verification) that Buffer's free tier is used as a pragmatic
+    shortcut instead, same as the video_public_url already hosted for Instagram/
+    Facebook. Verified against real posts on both platforms before this was written,
+    not assumed from docs alone.
+
+    YouTube requires platform-specific metadata (title, categoryId) that TikTok
+    doesn't — passing youtube_title is required when platform == "youtube", ignored
+    otherwise. Category 26 (Howto & Style) is hardcoded as a reasonable fit for
+    interior design content; revisit if that stops being accurate.
+    """
+    token = os.environ["BUFFER_API_KEY"]
+    mutation = """
+    mutation CreatePost($input: CreatePostInput!) {
+      createPost(input: $input) {
+        __typename
+        ... on PostActionSuccess { post { id status } }
+        ... on InvalidInputError { message }
+        ... on LimitReachedError { message }
+        ... on UnauthorizedError { message }
+        ... on UnexpectedError { message }
+        ... on RestProxyError { message }
+        ... on NotFoundError { message }
+      }
+    }
+    """
+    post_input = {
+        "channelId": channel_id,
+        "mode": "shareNow",
+        "schedulingType": "automatic",
+        "needsApproval": False,
+        "text": caption,
+        "assets": [{"video": {"url": video_public_url}}],
+    }
+    if platform == "youtube":
+        if not youtube_title:
+            raise PipelineError("youtube_title is required when publishing to YouTube via Buffer")
+        post_input["assets"][0]["video"]["metadata"] = {"title": youtube_title}
+        post_input["metadata"] = {"youtube": {"title": youtube_title, "categoryId": "26", "privacy": "public"}}
+
+    r = requests.post(
+        "https://api.buffer.com/graphql",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        json={"query": mutation, "variables": {"input": post_input}},
+        timeout=60,
+    )
+    body = r.json()
+    result = body.get("data", {}).get("createPost", {})
+    if result.get("__typename") != "PostActionSuccess":
+        raise PipelineError(f"Buffer publish to {platform} failed: {result.get('message', body)}")
+    post_id = result["post"]["id"]
+    log.info("Published to %s via Buffer: post id %s", platform, post_id)
+    return post_id
+
+
 def publish_to_instagram(video_public_url, caption):
     ig_user_id = os.environ["META_IG_BUSINESS_ACCOUNT_ID"]
 
@@ -895,6 +953,9 @@ def run_pipeline():
 
         ig_id = publish_to_instagram(public_url, caption)
         fb_id = publish_to_facebook(public_url, caption, expected_duration_s=duration)
+        tiktok_id = publish_to_buffer(public_url, caption, os.environ["BUFFER_TIKTOK_CHANNEL_ID"], "tiktok")
+        yt_id = publish_to_buffer(public_url, caption, os.environ["BUFFER_YOUTUBE_CHANNEL_ID"], "youtube",
+                                    youtube_title=caption.split("\n")[0][:100])
 
         # Advance all rotation state ONLY after both platforms confirm — a failed run
         # shouldn't skip a template, a block of concepts, or a caption slot.
@@ -905,8 +966,9 @@ def run_pipeline():
                                     (concept_offset + concepts_used) % N_CONCEPTS,
                                     f"Advance concept offset to {(concept_offset + concepts_used) % N_CONCEPTS}")
 
-        log.info("Done. Instagram media_id=%s Facebook video_id=%s template=%d/%d concepts_used=%d",
-                  ig_id, fb_id, template_idx + 1, n_templates, concepts_used)
+        log.info("Done. Instagram media_id=%s Facebook video_id=%s TikTok post_id=%s YouTube post_id=%s "
+                  "template=%d/%d concepts_used=%d",
+                  ig_id, fb_id, tiktok_id, yt_id, template_idx + 1, n_templates, concepts_used)
 
     except PipelineError as e:
         log.error("Pipeline stopped: %s", e)
@@ -919,7 +981,8 @@ def run_pipeline():
 if __name__ == "__main__":
     required = ["META_SYSTEM_USER_TOKEN", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
                 "SWATCH_ASSETS_DIR", "APPLICATION_ASSETS_DIR",
-                "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REFRESH_TOKEN"]
+                "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REFRESH_TOKEN",
+                "BUFFER_API_KEY", "BUFFER_TIKTOK_CHANNEL_ID", "BUFFER_YOUTUBE_CHANNEL_ID"]
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
         log.error("Missing required environment variables: %s", ", ".join(missing))
