@@ -103,67 +103,90 @@ any swatch land next to any unrelated concept's application shot — `_pair_swat
 with_applications()` fixed this. Any new compositing function must preserve
 same-concept pairing; this was a real, verified-on-video bug, not a style preference.
 
-## Facebook video publishing — five wrong turns before the real bug, read this first
+## Facebook video publishing — RESOLVED. Read this before touching publish_to_facebook again.
 
-`publish_to_facebook()` has a long, non-obvious failure history. In order:
+`publish_to_facebook()` now uses the dedicated **Reels Publishing API**
+(`/{page_id}/video_reels`, pull-based via a `file_url` header on rupload.facebook.com)
+— NOT the general Video API's push-based Resumable Upload, which this project used
+for a long time and which never worked reliably for this content. If you're tempted
+to "simplify" this back to the general `/videos` endpoint with a push upload: don't,
+without rereading this whole section and re-running the elimination tests below.
 
-1. **`file_url` parameter** — deprecated by Meta; doesn't work at all anymore. Replaced
-   with the three-step Resumable Upload API (session → upload → publish with handle).
-2. **"(#100) No permission to publish the video"** — looked like a missing grant.
-   Two separate system-user permission fixes were tried and burned real time; neither
-   was the cause. `pages_manage_posts` was correctly granted the whole time.
-3. **Development Mode theory** — also wrong. This app is a Business-type app, which
-   has no Development/Live mode concept at all (access levels instead). Don't send
-   anyone looking for a mode toggle on a Business-type app; it doesn't exist.
-4. **Permission access-level theory** — closer, and real (`pages_manage_posts` showed
-   "Ready for testing," not Advanced Access), but still not sufficient on its own.
-5. **The actual fix for error #100**: publish using a Page access token derived from
-   a PERSONAL user token (someone with an actual role — Admin/Developer/Tester — on
-   the app), not a system-user token. `Ready for testing` access only works for
-   people with a role on the app itself; a system user apparently doesn't count as
-   having a role in the way an app Admin's own token does. Derive it via
-   `GET /me/accounts?fields=access_token,tasks` using the personal user token, and
-   confirm `CREATE_CONTENT` appears in that Page's `tasks` list before trusting it.
+### The actual root cause, isolated by systematic elimination, not a guess
 
-Once #100 was gone, TWO MORE independent bugs remained, both silent — the API kept
-returning success:
+The general Video API's push-based upload silently truncated CONCATENATED video
+content server-side, while reporting complete success. Confirmed on real published
+posts, delivered `length` came back as 1.7s, then 1.7s again, then 4s, then 10s, then
+4.8s — against source files that were actually ~20s — across a dozen combinations of
+encoding parameters, upload chunking strategies, and even different HTTP client
+implementations (`requests` vs raw `curl`). Every single attempt returned a normal
+success response with no error anywhere in the chain; the only thing that ever caught
+it was polling the delivered video's own reported `length` afterward.
 
-6. **The upload response's `"h"` handle field came back as several duplicate handles
-   concatenated with literal `\n` characters, every single time.** Passing that whole
-   string as the handle causes a generic, misleading "problem uploading your video
-   file" error at publish time (code 6000 / subcode 1363019) with no hint the actual
-   issue is the handle string itself. Fix: `handle = body["h"].split("\n")[0]`.
-7. **A single massive POST of the whole file can silently truncate server-side.**
-   Confirmed on a real published post: source file was 19.85s, Meta's own reported
-   `length` for the delivered video was 1.7s — with `video_status: "ready"` and every
-   processing phase marked `"complete"`. No error anywhere in the chain. A returned
-   handle and a successful publish response are NOT proof the video is complete.
-   Fix: follow the documented resume protocol properly — send what you can, `GET` the
-   session to check the server's actual `file_offset` (never trust your own byte
-   count), resend the exact remainder if it's short, repeat until confirmed complete.
-   Then — this is the part that actually matters — verify the DELIVERED result by
-   polling `GET /{video_id}?fields=length,status` and comparing against the expected
-   duration before calling the publish successful. `_verify_facebook_video_duration()`
-   does this. Do not remove it to save API calls; it is the only thing that would have
-   caught #7 before it shipped to a live post.
+Isolating the actual variable took building a deliberate ladder of test videos and
+testing each one for real against the live API:
+- A single continuous-source video (flat color, or one static photo held for the
+  full duration) — ANY size, ANY duration — delivered correctly, every time, no
+  exceptions, across half a dozen tests.
+- A video built by CONCATENATING multiple distinct clips — even just 4 short clips,
+  even at under 2MB total, far smaller than anything that had failed before —
+  truncated unpredictably, regardless of which tool built the concatenation
+  (MoviePy's re-encode `concatenate_videoclips`, or ffmpeg's raw stream-copy concat
+  demuxer) and regardless of keyframe strategy (default scene-triggered keyframes,
+  or forced regular GOP intervals via `-x264-params scenecut=0:keyint=60` — tested
+  explicitly to rule out a keyframe-density theory, which turned out to be wrong).
 
-**The final publish call (`/{page_id}/videos` with `fbuploader_video_file_chunk`) uses
-`subprocess` + `curl`, not `requests`.** The identical request — same handle, same
-multipart encoding via `requests`' `files={...}` — failed three separate times with the
-same misleading error, while curl's `-F` flag succeeded every time with that exact
-handle. The library-level discrepancy was never fully isolated. If revisiting this,
-that's a real unanswered question, not a settled one — don't assume `requests` is
-safe to swap back in without testing as rigorously as the curl path was tested.
+Conclusion: it's concatenation itself hitting some defect in the general Video API's
+push-upload handling — not file size, not duration, not a specific encoder setting.
+Meta's own Reels spec requires "Closed GOP (2-5 seconds)"; a reel with a cut (and
+therefore a fresh keyframe) every 0.3-5 seconds likely violates that, though the
+EXACT mechanism inside Meta's infrastructure was never confirmed — only that
+avoiding the push-upload path entirely made the problem disappear completely.
 
-**Open, unverified as of this writing**: all of the above was tested from a sandboxed
-environment whose outbound network traffic runs through a proxy. Results were
-inconsistent in a way not tied to chunk size or protocol details (worked once,
-truncated once, produced a handle that failed at publish once) — that inconsistency
-may be an artifact of the proxy, not of Meta's API or this code. GitHub Actions
-runners typically have direct outbound access with no such proxy, so this may simply
-work reliably there — but that has not been confirmed by an actual run. If a GitHub
-Actions run truncates the same way, the proxy theory is wrong and the resume-loop
-needs more work; if it doesn't, the theory holds and this section can be trimmed.
+### The fix
+
+Switched to the Reels-specific pull-based flow: start a session
+(`POST /{page_id}/video_reels`, `upload_phase: start`), have Meta PULL the file from
+a URL we already host (`POST` to the returned `upload_url` on `rupload.facebook.com`
+with a `file_url` header — no bytes pushed at all), confirm the server's own
+`bytes_transferred` matches the real file size, then finish
+(`POST /{page_id}/video_reels`, `upload_phase: finish`, `video_state: PUBLISHED`).
+Tested against the exact same real 19.85s production reel that had just been
+truncated to 4s via the push method, with no other change — it delivered
+`length: 19.805`, fully processed, fully published, verified via
+`_verify_facebook_video_duration()`. That's why the old implementation was replaced
+outright, not kept as a fallback.
+
+Same permissions as before — `pages_show_list`, `pages_read_engagement`,
+`pages_manage_posts` — no new grant needed for this switch.
+
+### The separate, real permission problem this also depended on solving
+
+Error `(#100) No permission to publish the video` was a genuinely different, earlier
+problem, now also resolved. It looked like a missing grant, and burned real time on
+two wrong turns (a Business-type app has no Development/Live mode concept at all —
+don't send anyone looking for that toggle) before landing on the actual cause:
+`pages_manage_posts` sat at "Ready for testing" access, which only works for people
+with an actual role (Admin/Developer/Tester) on the app itself — a system-user token
+doesn't count as having a role the way a personal admin's token does, even though
+Business Settings showed it with "Full Access" to the Page.
+
+**The permanent fix**: derive a long-lived Page token from a PERSONAL user login,
+not the system user. `GET /me/accounts?fields=access_token,tasks` using a long-lived
+user token (itself obtained via the standard `fb_exchange_token` grant) returns a
+Page access token with `expires_at: 0` — genuinely permanent, not the ~1-hour token
+Graph API Explorer hands out directly. Confirm `CREATE_CONTENT` appears in that
+Page's `tasks` list before trusting it. This is what's stored in the
+`META_SYSTEM_USER_TOKEN` secret now — the name is a historical artifact (it started
+as an actual system-user token before this fix); it now holds this personally-derived
+Page token instead. Don't be misled by the variable name into regenerating a fresh
+system-user token and reintroducing the permission problem.
+
+This token relies on the underlying Facebook account's login staying valid — it has
+no fixed expiry, but changing that account's password would invalidate it. Business
+Verification (real business name/address/documents, reviewed by Meta) is the more
+"proper" alternative if that becomes a problem, deliberately avoided here per an
+explicit preference to keep personal/business information exposure minimal.
 
 ## Hosting
 
@@ -175,16 +198,28 @@ recent reels each run. No paid storage, no new secret required in GitHub Actions
 
 ## Secrets (names only — see SECRETS_SETUP.md, never put values in any file)
 
-`META_SYSTEM_USER_TOKEN`, `META_APP_ID`, `META_IG_BUSINESS_ACCOUNT_ID`, `META_PAGE_ID`,
-`GDRIVE_INPUT_PATH`, `SWATCH_ASSETS_DIR`, `APPLICATION_ASSETS_DIR`.
+`META_SYSTEM_USER_TOKEN` (actually a personally-derived long-lived Page token as of
+the Facebook publishing fix above — see that section before regenerating this),
+`META_IG_BUSINESS_ACCOUNT_ID`, `META_PAGE_ID`, `GOOGLE_OAUTH_CLIENT_ID`,
+`GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REFRESH_TOKEN` (for pulling templates
+from Drive — read from env by drive_upload.py, not a local file, so this works
+unattended in Actions). `SWATCH_ASSETS_DIR`/`APPLICATION_ASSETS_DIR` are workflow-set
+paths into this repo's own assets/ folder, not secrets. `META_APP_ID` and
+`GDRIVE_INPUT_PATH` are no longer used — the Reels API doesn't need an app ID, and
+input now comes from the Drive Template Reels rotation, not a watched local folder.
 
 ## Open / unresolved as of this writing
 
-- `GDRIVE_INPUT_PATH` currently assumes a local filesystem path (works running
-  locally, or with Google Drive Desktop syncing a folder). It does **not** work
-  unmodified inside a GitHub Actions cloud runner, which has no access to anyone's
-  personal Drive filesystem — that needs an actual Drive API download step added to
-  Stage 1 before this can run as an unattended cloud cron job.
-- Template reels are meant to be dropped in a dedicated "Template Reels" Drive
-  folder; the pipeline doesn't yet auto-pull from Drive by itself (same local-path
-  limitation as above applies).
+- The long-lived Page token backing `META_SYSTEM_USER_TOKEN` depends on the
+  underlying personal Facebook account's login staying valid — no fixed expiry, but
+  a password change would invalidate it. If that becomes a real problem, Business
+  Verification is the alternative (see the Facebook publishing section above for why
+  it was skipped initially).
+- The exact mechanism behind the concatenation-triggers-truncation bug on the
+  general Video API (documented in detail above) was never confirmed at the Meta-
+  infrastructure level — only that switching to the Reels API entirely avoids it.
+  If a future change ever needs the general `/videos` endpoint again for non-Reels
+  content, do not assume this is fixed there; re-test.
+- Posting time (currently 14:00 UTC, in the workflow's cron schedule) is a
+  placeholder, not a researched choice — worth revisiting once there's enough
+  engagement data to know what actually performs better.
