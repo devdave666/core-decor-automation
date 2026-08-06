@@ -1,0 +1,42 @@
+name: Missed Post Check
+
+# Safety net for exactly today's failure mode: the 14:00 UTC daily-reel run got
+# silently cancelled by a GitHub Actions infra hiccup (empty step log, no error
+# trace, run-level conclusion vs job-level conclusion disagreed) — not a code bug,
+# but with zero automatic recovery, it required Dev to notice no post went out and
+# ask about it manually. This runs later in the day, checks whether today already
+# has a successful daily-reel run, and triggers one itself if not. Mirrors the
+# missed-post-check.yml pattern already proven out on the_higher_being pipeline.
+
+on:
+  schedule:
+    # 20:00 UTC — 6 hours after the 14:00 primary schedule, enough margin to not
+    # false-positive on a run that's just running long, not actually missing.
+    - cron: "0 20 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  check-and-recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for a successful run today, trigger one if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          RUNS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/daily-reel.yml/runs?created=$TODAY&status=success")
+          COUNT=$(echo "$RUNS" | python3 -c "import json,sys; print(json.load(sys.stdin).get('total_count', 0))")
+          echo "Successful daily-reel runs today ($TODAY): $COUNT"
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No successful run today — triggering recovery run."
+            curl -s -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/daily-reel.yml/dispatches" \
+              -d '{"ref":"main"}'
+          else
+            echo "Today's post already went out — nothing to do."
+          fi
