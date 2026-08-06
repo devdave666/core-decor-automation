@@ -4,23 +4,47 @@ This file exists so any AI assistant picking up this repo — a fresh Claude ses
 another tool, whatever — has the context that took real trial-and-error to establish,
 without re-deriving it from scratch or repeating mistakes already caught once.
 
+## Starting a new chat? Paste this to the new AI first
+
+Copy-paste this whole block as your first message in a new conversation, with any
+AI assistant, to pick up exactly where things left off:
+
+> I'm continuing work on an automated social media pipeline for my business Core
+> Decor. The repo is https://github.com/devdave666/core-decor-automation (public).
+> Read `llms.txt` at the repo root first, in full — it has the architecture, every
+> bug that's already been found and fixed (don't re-diagnose these), current status,
+> and exactly what access you need from me to actually work on this (see the "Giving
+> a new AI agent access" section in that same file). Once you've read it, tell me
+> what you understand the current state to be, then I'll tell you what I need today.
+
+That's it — everything else the new AI needs is in this file, not in your head.
+
 ## What this project does
 
-Builds Instagram/Facebook Reels for @CORE_DECR from an audio track plus a library of
-50 AI-generated "swatch" (material flat-lay) and "application" (finished room) image
-pairs, then publishes them via the Meta Graph API. Core files:
+Builds Reels for Core Decor from an audio track plus a library of 50 AI-generated
+"swatch" (material flat-lay) and "application" (finished room) image pairs, then
+publishes the same finished video to **four platforms**: Instagram and Facebook via
+the direct Meta Graph API, TikTok and YouTube via Buffer (direct-API integration for
+those two was judged too high-friction — TikTok's app review, YouTube's OAuth
+verification — so Buffer's free tier is used as a pragmatic shortcut instead). Runs
+unattended daily via GitHub Actions, no human step required in the normal case. Core
+files:
 
 - `core_decor_reel_pipeline.py` — the whole pipeline: audio mastering, cut-timing
-  extraction, video compositing, Meta publishing.
+  extraction, video compositing, publishing to all four platforms.
 - `caption_bank.py` — modular hook/CTA/hashtag pools combined deterministically for
   hundreds of unique captions, cycled via `caption_index.txt` (committed to the repo,
   same pattern as `day_counter.txt` in the `millionchallenge` repo). No LLM call, no
   runtime cost.
 - `media/reels/` — finished reels land here and are served via
-  `raw.githubusercontent.com` for Meta to fetch. **This repo must stay public** for
-  that URL to work (raw content links don't serve private repos). Nothing secret is
-  ever in repo *content* — secrets only ever live in GitHub Actions' encrypted
-  secrets store, which is unaffected by repo visibility.
+  `raw.githubusercontent.com` for Meta and Buffer to both fetch from. **This repo
+  must stay public** for that URL to work (raw content links don't serve private
+  repos). Nothing secret is ever in repo *content* — secrets only ever live in
+  GitHub Actions' encrypted secrets store, which is unaffected by repo visibility.
+- `.github/workflows/daily-reel.yml` — the primary schedule, 14:00 UTC daily.
+- `.github/workflows/missed-post-check.yml` — safety net, 20:00 UTC daily; checks
+  whether today's primary run actually succeeded and auto-triggers a recovery run
+  if not. See "Missed-run recovery" below for why this exists.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -196,6 +220,89 @@ Reels are committed straight into this repo's own `media/reels/` and served via
 recent reels each run. No paid storage, no new secret required in GitHub Actions
 (the checkout step already leaves the workflow authenticated to push).
 
+## TikTok and YouTube publishing via Buffer
+
+`publish_to_buffer()` handles both. Direct-API integration for TikTok (app review)
+and YouTube (OAuth verification for unverified apps) was judged too high-friction
+for what this needs, so Buffer's GraphQL API (`api.buffer.com/graphql`) is used
+instead, on a personal API key (Free plan) — not the old OAuth-app path, which is
+closed to new developers and isn't what this uses.
+
+This lives on a **separate, dedicated Buffer account**
+(`devkumardave26@gmail.com`), deliberately not the account `the_higher_being`'s
+pipeline uses. That account is already at 4 channels (Threads/Pinterest/X, paid
+plan) — over the Free tier's hard 3-channel cap. Mixing Core Decor in there would
+mean paying for capacity Core Decor doesn't need. This account has exactly 2 of 3
+free channel slots used (TikTok `abz_dev`, YouTube "Core Decor") — one spare.
+
+Mechanically: `createPost` mutation, video as `{"video": {"url": ...}}` pointing at
+the same `raw.githubusercontent.com` URL already used for Meta, `mode: shareNow`,
+`schedulingType: automatic`. YouTube additionally requires `title` (in both the
+asset's own `metadata` AND the top-level `metadata.youtube` block — both are
+needed, confirmed by testing, not assumed) and `categoryId` (hardcoded to `"26"`,
+Howto & Style — revisit if that stops fitting the content) — TikTok needs neither.
+Enum values are lowercase (`public`, not `PUBLIC` — this rejected on the first real
+test, GraphQL's own error names the correct value).
+
+Tested against real posts on both platforms — actual `sent` status confirmed via a
+follow-up query, not just trusting the mutation's immediate response — before this
+was wired into the daily pipeline.
+
+**Known tradeoff, not a bug**: identical content goes to all four platforms. Fast
+to stand up, not platform-native — TikTok and YouTube Shorts each have their own
+conventions (trending sounds, punchier titles) that this doesn't yet account for.
+
+## Odd-segment merge — read this if a post looks like it's missing a beat
+
+`build_reel_from_template_timing()` needs an even number of segments (so the reel
+always ends on an application shot, never a swatch). When the source template's
+raw cut count is odd, one internal boundary gets dropped to force it even.
+
+**An earlier version always dropped the very first internal boundary** — simple,
+but it meant always sacrificing the opening beat. Confirmed on a real published
+post (`Dbqgm1IjR4c`): a template with raw cuts at
+`[1.73, 4.0, 5.73, 7.73, 9.73, 11.97, 13.8, 15.77]` (9 segments, odd) had its 1.73s
+opening beat silently merged into what should have followed it, producing one flat
+4.0s opening hold instead of a quick 1.73s beat — exactly the "first frame holds
+too long, missing a beat" a human caught by eye, not something a test would have
+flagged, since the code was doing exactly what it was told to do.
+
+**Current fix**: instead of always dropping the first boundary, drop whichever
+internal boundary produces the SMALLEST resulting merged segment — minimizing
+disruption wherever it happens to land, rather than always at the start. On the
+same real template above, this lands the merge in the middle (segments 3&4) and
+preserves the original 1.73s opening exactly. Verified against these exact numbers
+before shipping, not just reasoned about.
+
+If a future post still looks like it's missing a beat or holding oddly, check
+`build_reel_from_template_timing()`'s boundary list against the source template's
+own raw ffmpeg scene-detection output first — this exact class of issue is
+detectable by eye on the delivered video (extract a frame from the midpoint of
+each detected segment, look for one that's roughly double the others).
+
+## Missed-run recovery
+
+The 14:00 UTC daily-reel run can fail silently in ways that aren't a code bug at
+all — confirmed once: a run's job-level conclusion came back "cancelled" with an
+empty step log and no retrievable log blob, while the run-level conclusion said
+"failure" — a GitHub Actions infrastructure hiccup, not anything in this pipeline.
+With no automatic recovery, that meant a full day with no post and nobody finding
+out until asked about it directly.
+
+`missed-post-check.yml` runs at 20:00 UTC (6 hours of margin — enough that a run
+which is just taking a while doesn't get mistaken for one that failed), queries the
+Actions API for whether daily-reel.yml has a successful run today, and triggers one
+itself via `workflow_dispatch` if not. Mirrors the same pattern already proven out
+on the `millionchallenge`/`the_higher_being` pipelines (`token-expiry-check.yml`,
+`missed-post-check.yml` there) — this wasn't invented fresh, it's applying a
+pattern that already works elsewhere in Dev's other projects.
+
+This covers *silent scheduling/infra failures specifically*. It does not mean every
+possible failure mode is now unattended-proof — a genuine code regression (like the
+Facebook truncation bug once was) still needs a real fix, not just a retry; retrying
+a broken pipeline just fails again. Check *why* a recovery run was needed before
+assuming a retry alone was the right answer.
+
 ## Secrets (names only — see SECRETS_SETUP.md, never put values in any file)
 
 `META_SYSTEM_USER_TOKEN` (actually a personally-derived long-lived Page token as of
@@ -203,10 +310,56 @@ the Facebook publishing fix above — see that section before regenerating this)
 `META_IG_BUSINESS_ACCOUNT_ID`, `META_PAGE_ID`, `GOOGLE_OAUTH_CLIENT_ID`,
 `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REFRESH_TOKEN` (for pulling templates
 from Drive — read from env by drive_upload.py, not a local file, so this works
-unattended in Actions). `SWATCH_ASSETS_DIR`/`APPLICATION_ASSETS_DIR` are workflow-set
-paths into this repo's own assets/ folder, not secrets. `META_APP_ID` and
-`GDRIVE_INPUT_PATH` are no longer used — the Reels API doesn't need an app ID, and
-input now comes from the Drive Template Reels rotation, not a watched local folder.
+unattended in Actions), `BUFFER_API_KEY` (personal key on the dedicated Core Decor
+Buffer account, see the Buffer section above — NOT the_higher_being's account),
+`BUFFER_TIKTOK_CHANNEL_ID`, `BUFFER_YOUTUBE_CHANNEL_ID`. `SWATCH_ASSETS_DIR`/
+`APPLICATION_ASSETS_DIR` are workflow-set paths into this repo's own assets/
+folder, not secrets. `META_APP_ID` and `GDRIVE_INPUT_PATH` are no longer used — the
+Reels API doesn't need an app ID, and input now comes from the Drive Template Reels
+rotation, not a watched local folder.
+
+## Giving a new AI agent access to this repo
+
+A new AI session needs different things depending on what it's being asked to do.
+Work out which of these applies before asking Dev for anything.
+
+**Just reading/understanding the project** — needs nothing. This repo is public;
+any AI with a `git clone`, a `web_fetch`-style tool, or GitHub's own web UI can read
+everything including this file without any credential at all.
+
+**Editing code and pushing commits, or managing GitHub Actions secrets** — needs a
+GitHub Personal Access Token, created fresh for the session, not reused across
+sessions:
+- Dev generates one at https://github.com/settings/personal-access-tokens/new
+- Fine-grained, scoped to **only this repo** (`devdave666/core-decor-automation`),
+  not all repos
+- Permissions needed: **Contents** (Read and write), **Actions** (Read and write —
+  needed both for triggering `workflow_dispatch` runs and for managing the
+  encrypted secrets store)
+- This is deliberately session-only — ask Dev for a fresh one rather than assuming
+  a token from a prior conversation still works; there's no reason to keep a
+  long-lived PAT sitting around for a repo this size.
+- To actually SET secret values (not just know their names), the encryption step
+  needs `PyNaCl` — GitHub's secrets API requires the value be sealed with the
+  repo's own public key first, plain PUT requests with a raw value will fail.
+
+**Testing/debugging against the real live platforms directly (not through GitHub
+Actions)** — e.g. running `publish_to_facebook()` or `publish_to_buffer()` by hand
+to isolate a bug, the way most of the debugging in this project actually happened —
+needs the actual secret VALUES, not just names. GitHub's secrets API is write-only;
+a token can set a secret but can never read one back. So for this, Dev needs to
+paste the actual current value of whatever secret is relevant (Meta Page token,
+Buffer API key, etc.) directly into the conversation. Verify any pasted credential
+actually works (a cheap read-only API call, like `debug_token` for Meta or an
+`account { id }` query for Buffer) before trusting it or using it for anything
+real — this project's history is full of credentials that looked right and weren't.
+
+**Publishing an actual real post** as part of debugging (not just checking status)
+means real, live content going out on real accounts — treat this the same caution
+as a production deploy, not a throwaway test. Mark test posts as such in the
+caption so they're identifiable for cleanup, and don't delete live posts across any
+of these platforms without Dev doing it himself — that boundary held throughout
+this project's history and should keep holding for future sessions too.
 
 ## Open / unresolved as of this writing
 
@@ -223,3 +376,12 @@ input now comes from the Drive Template Reels rotation, not a watched local fold
 - Posting time (currently 14:00 UTC, in the workflow's cron schedule) is a
   placeholder, not a researched choice — worth revisiting once there's enough
   engagement data to know what actually performs better.
+- Content is identical across all four platforms — not yet platform-native (see
+  the Buffer section above for the specific tradeoff).
+- The TikTok handle connected (`abz_dev`) was flagged once as possibly not the
+  intended dedicated Core Decor account, worth Dev double-checking if that hasn't
+  happened yet.
+- `missed-post-check.yml` is new and has not yet actually had to recover a real
+  missed run since being added — the query logic was verified against real
+  historical data before shipping, but its first live trigger (if/when one happens)
+  is still worth confirming actually worked end-to-end.
