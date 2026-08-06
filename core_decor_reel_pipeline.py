@@ -419,7 +419,19 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
 
     n_segments = len(boundaries) - 1
     if n_segments % 2 != 0 and n_segments > 1:
-        del boundaries[1]  # merge segment 0 and 1 into one longer opening swatch hold
+        # Which internal boundary to drop matters — always dropping the FIRST one
+        # (as an earlier version did) means always sacrificing the opening beat,
+        # confirmed on a real published post to double the opening hold and eat a
+        # beat the source template clearly intended as quick (1.73s merged into a
+        # 4.0s hold). Instead, drop whichever internal boundary creates the SMALLEST
+        # resulting merged segment — minimizing disruption wherever it happens to
+        # land, rather than always at the start.
+        merge_costs = [
+            (boundaries[i + 1] - boundaries[i - 1], i)
+            for i in range(1, len(boundaries) - 1)
+        ]
+        _, drop_index = min(merge_costs)
+        del boundaries[drop_index]
         n_segments -= 1
 
     all_pairs = _pair_swatches_with_applications(swatch_dir, application_dir)
