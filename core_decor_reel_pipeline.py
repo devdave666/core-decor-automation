@@ -410,8 +410,22 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
     from moviepy import AudioFileClip, ImageClip, concatenate_videoclips
 
     W, H = 1080, 1920
+    FPS = 30
 
-    boundaries = sorted(set(t for t in beat_timestamps if 0 <= t <= audio_duration))
+    def snap_to_frame(t):
+        # Every boundary quantized to an exact frame multiple BEFORE any duration
+        # is computed, not after — computing durations from unsnapped boundaries
+        # and rounding each clip's frame count independently lets sub-frame error
+        # compound across the sequence. Confirmed on a real rebuild: the first five
+        # cuts of an eight-cut template landed frame-exact, but the sixth and
+        # seventh had each drifted a full frame (+0.033s) from the source template
+        # — small individually, cumulative in effect, and avoidable entirely by
+        # snapping boundaries themselves rather than letting per-clip durations
+        # each round independently. Same fix already applied in the algorithmic
+        # beat-sync function elsewhere in this file; this path never had it.
+        return round(t * FPS) / FPS
+
+    boundaries = sorted(set(snap_to_frame(t) for t in beat_timestamps if 0 <= t <= audio_duration))
     if not boundaries or boundaries[0] > 0:
         boundaries = [0.0] + boundaries
     if boundaries[-1] < audio_duration:
@@ -437,7 +451,7 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
         # past the last detected cut), preserving every other original beat exactly.
         longest_idx = max(range(len(segments)), key=lambda i: segments[i][1] - segments[i][0])
         start, end, src = segments[longest_idx]
-        mid = round((start + end) / 2, 3)
+        mid = snap_to_frame((start + end) / 2)
         segments[longest_idx:longest_idx + 1] = [(start, mid, src), (mid, end, src)]
         n_segments += 1
 
