@@ -252,33 +252,80 @@ was wired into the daily pipeline.
 to stand up, not platform-native — TikTok and YouTube Shorts each have their own
 conventions (trending sounds, punchier titles) that this doesn't yet account for.
 
-## Odd-segment merge — read this if a post looks like it's missing a beat
+## Odd-segment fix history — three versions, read this before touching it again
 
-`build_reel_from_template_timing()` needs an even number of segments (so the reel
-always ends on an application shot, never a swatch). When the source template's
-raw cut count is odd, one internal boundary gets dropped to force it even.
+`build_reel()` needs an even number of segments (so the reel always ends on an
+application shot, never a swatch). When a template's raw cut count is odd, one
+extra thing has to happen to force it even. This has been through three real
+versions — know why the first two weren't good enough before "simplifying" back
+to either of them.
 
-**An earlier version always dropped the very first internal boundary** — simple,
-but it meant always sacrificing the opening beat. Confirmed on a real published
-post (`Dbqgm1IjR4c`): a template with raw cuts at
-`[1.73, 4.0, 5.73, 7.73, 9.73, 11.97, 13.8, 15.77]` (9 segments, odd) had its 1.73s
-opening beat silently merged into what should have followed it, producing one flat
-4.0s opening hold instead of a quick 1.73s beat — exactly the "first frame holds
-too long, missing a beat" a human caught by eye, not something a test would have
-flagged, since the code was doing exactly what it was told to do.
+**v1 — always drop the first internal boundary.** Simple, but meant always
+sacrificing the opening beat. Confirmed on a real published post (`Dbqgm1IjR4c`):
+a template with cuts at `[1.73, 4.0, 5.73, 7.73, 9.73, 11.97, 13.8, 15.77]` (9
+segments, odd) had its 1.73s opening beat silently merged into a flat 4.0s
+opening hold — "first frame holds too long, missing a beat," caught by eye, not
+by any test, since the code was doing exactly what it was told to do.
 
-**Current fix**: instead of always dropping the first boundary, drop whichever
-internal boundary produces the SMALLEST resulting merged segment — minimizing
-disruption wherever it happens to land, rather than always at the start. On the
-same real template above, this lands the merge in the middle (segments 3&4) and
-preserves the original 1.73s opening exactly. Verified against these exact numbers
-before shipping, not just reasoned about.
+**v2 — drop whichever boundary produces the smallest merged segment**, instead of
+always the first. Fixed the opening-beat problem on that specific template (the
+merge moved to the middle instead). But confirmed broken again on a DIFFERENT real
+post, a different template (`Reel_template_3.mp4`, cuts at `[2,4,6,8,10,12]`,
+14.09s duration) — every segment there is close to uniform length, so "smallest
+merge" has no better option to pick; it's forced to double whichever pair it
+lands on regardless. Merging two similar-sized things always produces something
+roughly twice as big — that's the actual structural limit of merging at all, not
+a bug in the "which one to merge" heuristic.
 
-If a future post still looks like it's missing a beat or holding oddly, check
-`build_reel_from_template_timing()`'s boundary list against the source template's
-own raw ffmpeg scene-detection output first — this exact class of issue is
-detectable by eye on the delivered video (extract a frame from the midpoint of
-each detected segment, look for one that's roughly double the others).
+**v3 — current — split instead of merge.** Never drop a boundary; instead pick
+the LONGEST existing segment and cut it into two equal halves that both show the
+SAME image (a genuine cut event, content doesn't change, but going from odd to
+even by ADDING a boundary rather than removing one). This means every original
+template timestamp survives untouched, always — verified by rebuilding both real
+templates that broke v1 and v2 and confirming, via direct ffmpeg scene-detection
+on the actual output file, that 100% of original cuts are present in both cases.
+
+**Known, accepted side effect of v3, not a bug**: the split itself is often
+visually and algorithmically invisible — cutting from a static image to an
+identical copy of itself produces zero pixel change, so scene detection (and a
+human eye) won't register it as a cut at all. This is fine: the split always
+lands on the segment with the most slack (typically a template's own deliberate
+slow ending, or trailing leftover duration past the last real cut) — exactly the
+place where an invisible extra cut costs nothing, because there was no tight beat
+being protected there in the first place. The alternative (v1/v2's merge) always
+had a VISIBLE cost wherever it landed; v3's cost is real but consistently
+imperceptible. That tradeoff is why v3 replaced v2 outright rather than sitting
+alongside it as an option.
+
+**Implementation detail that matters if touching this again**: `segments` is a
+list of `(start, end, source_index)`, not just `(start, end)`. The split
+duplicates one `source_index` across two segments — pair-advancement logic must
+check `src != prev_src` (not list position) before advancing, or a split would
+wrongly advance the pair between two segments that should show the same image.
+It must also compare against `last_original_src` by identity, not against "last
+position in the list" — if the split happens to land on the segment that was
+originally last, position-based checks break (the true final application no
+longer occupies "the last position" alone; both its halves need to NOT trigger a
+pair advance between them, checking by src makes this correct in either case).
+
+If a future post still looks like it's missing a beat or out of sync with its
+source template, the diagnostic process that found both prior bugs generalizes:
+run ffmpeg scene-detection on both the source template and the actual delivered
+output, list both sets of cut timestamps, and diff them directly. Don't reason
+about it in the abstract — the exact numbers are what caught both real bugs.
+
+**A fourth, smaller issue found the same way**: comparing full-precision (not
+rounded-for-display) timestamps between a source template and a rebuild showed 6
+of 8 cuts landing frame-exact, but the 6th and 7th each drifted by exactly one
+frame (+0.033s) — not random noise, and never a whole second, but a consistent
+one-frame overshoot appearing only on later cuts. Cause: durations were computed
+from unsnapped boundaries, and each clip's frame count got rounded independently
+when rendered — tiny sub-frame error compounding across the sequence until it
+tipped over a full frame several cuts in. Fixed by snapping every boundary to an
+exact frame multiple (`round(t * FPS) / FPS`) BEFORE computing any duration, not
+after — the same technique already used in the separate algorithmic beat-sync
+function elsewhere in this file, which just never got applied to this path.
+Verified frame-exact (zero drift on all 8 cuts, not just most) after the fix.
 
 ## Missed-run recovery
 
