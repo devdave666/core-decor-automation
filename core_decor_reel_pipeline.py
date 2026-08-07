@@ -432,27 +432,40 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
         boundaries.append(audio_duration)
 
     n_segments = len(boundaries) - 1
-    segments = [(boundaries[i], boundaries[i + 1], i) for i in range(n_segments)]
-    last_original_src = n_segments - 1
-
     if n_segments % 2 != 0 and n_segments > 1:
-        # An earlier version forced an even count by MERGING two adjacent segments
-        # (dropping one of the template's original cut points) — confirmed on two
-        # real published posts to double whatever hold it landed on, unavoidably so
-        # when the template's segments are close to uniform length, since merging
-        # two similar-sized segments always produces something roughly twice as
-        # big. Splitting instead of merging never has that problem: pick the
-        # LONGEST existing segment and cut it into two equal halves, both showing
-        # the SAME image (a genuine cut event — content doesn't change, but the
-        # beat does) rather than deleting one of the template's original
-        # timestamps. Verified on both real templates that previously broke: the
-        # split naturally lands on whichever segment already had the most slack
-        # (a template's own deliberate slow ending, or trailing leftover duration
-        # past the last detected cut), preserving every other original beat exactly.
-        longest_idx = max(range(len(segments)), key=lambda i: segments[i][1] - segments[i][0])
-        start, end, src = segments[longest_idx]
-        mid = snap_to_frame((start + end) / 2)
-        segments[longest_idx:longest_idx + 1] = [(start, mid, src), (mid, end, src)]
+        # PRIOR VERSION WAS MATHEMATICALLY BROKEN — confirmed on a real published
+        # post that still ended on a swatch despite this exact fix supposedly being
+        # in place. It split the longest segment into two halves showing the SAME
+        # duplicated image, reasoning that adding a boundary (rather than merging
+        # two into one) would avoid ever sacrificing an original beat. True, but
+        # irrelevant to the actual requirement: whether the reel ends on swatch or
+        # application is determined by the PARITY OF HOW MANY TIMES THE IMAGE
+        # ACTUALLY CHANGES (flips), not by the total segment count. A duplicated-
+        # image split is a "stay the same" step, not a "flip" — it changes segment
+        # count from odd to even but changes the flip count NOT AT ALL, so the
+        # ending was never actually fixed. This was missed because verification
+        # only checked that cut TIMESTAMPS matched the source template — which they
+        # did — never that the delivered video's final image was actually an
+        # application. Both real templates fixed by the previous version were
+        # re-checked after finding this and BOTH were still silently ending on a
+        # swatch the whole time.
+        #
+        # Correct fix: split the longest segment's TIME range into two (preserving
+        # every original template cut, same as before), but let the two halves take
+        # DIFFERENT, normally-sequential content — not a repeat — by falling
+        # straight back to simple position-based alternation (i % 2) for every
+        # segment once the boundary list is finalized. An inserted boundary with
+        # ordinary alternating content on both sides is a genuine flip, which is
+        # what actually fixes the parity: for any even final segment count with
+        # strict position-based alternation starting on swatch, the last segment
+        # is mathematically guaranteed to be i % 2 == 1 — application. No src
+        # tracking, no duplicate-detection edge cases; this is deliberately the
+        # simplest version that's actually correct, not a more-clever one that
+        # merely looks correct on the cases already tested.
+        durations = [boundaries[i + 1] - boundaries[i] for i in range(n_segments)]
+        longest_idx = max(range(n_segments), key=lambda i: durations[i])
+        mid = snap_to_frame((boundaries[longest_idx] + boundaries[longest_idx + 1]) / 2)
+        boundaries.insert(longest_idx + 1, mid)
         n_segments += 1
 
     all_pairs = _pair_swatches_with_applications(swatch_dir, application_dir)
@@ -463,26 +476,17 @@ def build_reel(beat_timestamps, audio_duration, swatch_dir, application_dir, out
     concepts_used = 1
 
     clips = []
-    prev_src = None
-    for seg_i, (start, end, src) in enumerate(segments):
+    for i in range(n_segments):
+        start, end = boundaries[i], boundaries[i + 1]
         duration = max(end - start, 1 / 24)  # never emit a zero/negative-length clip
 
-        if src % 2 == 0:
+        if i % 2 == 0:
             image_path = current_pair[0]  # this pair's swatch
         else:
             image_path = current_pair[1]  # the SAME pair's application shot
-            # Advance once per distinct source index, not once per final segment —
-            # a split duplicates one src across two segments, and without this
-            # check the pair would wrongly advance between the two identical
-            # halves. Comparing against last_original_src (not list position)
-            # matters too: if the split happens to land on the true final
-            # application, position-based checks would have failed to catch it —
-            # its two halves are no longer both "last" by position, but they are
-            # both still "src == last_original_src".
-            if src != prev_src and src != last_original_src:
+            if i < n_segments - 1:         # don't advance past the final application
                 current_pair = next(pairs)
                 concepts_used += 1
-        prev_src = src
 
         # Center-crop-to-fill at 1080x1920 without stretching: scale so the shorter
         # dimension covers the target, then crop the overflow evenly from both sides.
