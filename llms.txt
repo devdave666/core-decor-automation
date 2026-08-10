@@ -295,6 +295,57 @@ the punchline-revealed frame), and all four Hot-Takes-specific counters
 confirmed to advance correctly while the main pipeline's own counters were
 confirmed unchanged by the same run.
 
+### Four real refinements made after the first version shipped
+
+The first version worked but wasn't good enough — real, substantive feedback,
+not cosmetic nitpicks. All four fixed and re-verified against a real live post
+before considering this done again:
+
+1. **Opinion bank referenced specific colors/materials** ("Beige is boring",
+   "That's a lot of brass for one room") — but the pipeline has zero attribute
+   awareness; it cycles through application photos with no idea what's actually
+   IN each one. A line calling out a color that isn't in the shown room reads as
+   a visible mistake, not a stylistic choice. Rewrote every entry in
+   `opinion_bank.py` to be attitude/philosophy-level instead ("It is never just
+   a house") — generic enough to hold up over any of the 50 application photos.
+   Apply the same test to any new entries: does this line still make sense over
+   literally any of them, not just the one you had in mind while writing it?
+
+2. **Duration was capped** at an arbitrary 12s. Now uses the FULL length of the
+   template's audio — an early cutoff mid-track reads as an unfinished edit, not
+   a stylistic choice. `compute_segment_boundaries`'s sliver-avoidance logic
+   (see above) still applies, just against the real end of the track now
+   instead of an artificial one.
+
+3. **Font was DejaVu Sans Bold** — a system fallback, not a considered choice.
+   Replaced with Playfair Display (Bold variation of the bundled variable font,
+   `hot_takes/fonts/PlayfairDisplay-Bold.ttf` — bundled directly rather than
+   relying on it being installed on the GitHub Actions runner, which it isn't
+   by default). Matches the editorial/luxury register of Core Decor's own
+   swatch-card typography elsewhere in this pipeline, rather than introducing
+   an unrelated visual language. PIL's variable-font API needs
+   `font.set_variation_by_name("Bold")` explicitly — the file has a weight axis
+   from 400-900 and defaults to 400 (regular) if you don't set it.
+
+4. **The boxed backdrop "felt cheap."** Removed entirely. In its place,
+   `render_gradient()` in `text_overlay.py` — a soft top-down darkening across
+   roughly the top 60% of the frame, fading from ~65% opacity at the very top
+   edge to fully transparent, not a banner hugging the text. This is the same
+   technique used in high-end real estate and fashion video for exactly this
+   legibility problem. Combined with the existing white-fill/black-stroke text
+   styling, this held up fine on a real live post against both a bright
+   floor-to-ceiling-window kitchen and a warm wood-toned bedroom — two very
+   different background tones, same legibility either way.
+
+A note on pacing: a real live run hit a source template with 26 detected cuts
+in just 8.1 seconds — averaging roughly 0.3s per segment, much faster than the
+first test template's pacing. That's not a bug; different templates genuinely
+have different editing rhythms, and this format is deliberately beat-matched to
+whatever the day's template actually provides, same philosophy as the main
+swatch+application pipeline. Worth knowing about, not necessarily worth
+"fixing" unless it turns out to look chaotic rather than energetic in practice —
+that's a creative call to revisit with real engagement data, not a code defect.
+
 ## Hosting
 
 Reels are committed straight into this repo's own `media/reels/` and served via
