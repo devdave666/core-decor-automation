@@ -45,6 +45,11 @@ files:
 - `.github/workflows/missed-post-check.yml` — safety net, 20:00 UTC daily; checks
   whether today's primary run actually succeeded and auto-triggers a recovery run
   if not. See "Missed-run recovery" below for why this exists.
+- `hot_takes/` — a SECOND, entirely separate content type (opinion/meme-text over
+  a single application photo, no swatch, no reveal). Own schedule, own state,
+  reuses this pipeline's publishing/hosting code without modifying any of it.
+  See "Hot Takes" below — don't assume the swatch+application description above
+  applies to it, it deliberately doesn't.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -211,6 +216,84 @@ no fixed expiry, but changing that account's password would invalidate it. Busin
 Verification (real business name/address/documents, reviewed by Meta) is the more
 "proper" alternative if that becomes a problem, deliberately avoided here per an
 explicit preference to keep personal/business information exposure minimal.
+
+## Hot Takes — second content type, fully separate from everything above
+
+Everything above this section describes the ORIGINAL content type: swatch, then
+its own application shot, cycling through image pairs with cut-timing copied from
+a template. Hot Takes is a second, deliberately different format added later,
+living entirely in `hot_takes/` — nothing above this section changed to
+accommodate it, verified via `git diff core_decor_reel_pipeline.py` before and
+after adding it.
+
+**Why it exists**: real view-count data showed a separate, hand-made batch of
+meme-style content ("They: Let's just paint the walls." / "Me: No…" text over a
+single room photo) dramatically outperforming the swatch+application format —
+200-580 views vs. single digits on the same account, same window. That gap is
+almost certainly about hook/format, not about API-vs-manual publishing — the
+swatch+application format has no mechanism for a punchy opinion-driven hook at
+all, so of course a format built around one performs differently. Hot Takes
+brings that hook-driven approach into the automated pipeline rather than
+requiring it to stay manual forever.
+
+**What it actually is**: ONE application photo (no swatch, no multi-image
+reveal, no cut-timing extraction from a template) held for a short duration
+(≤7s — meme pacing is short and punchy, not a slow reveal arc), with a two-line
+"setup / punchline" text overlay that appears in sequence — the setup line alone
+first, the punchline 1.6s later. Rendered via PIL onto transparent PNGs (white
+text, black stroke, the standard meme-text convention) and composited with
+MoviePy — deliberately not MoviePy's own TextClip, which depends on ImageMagick
+being correctly configured; PIL has no such dependency.
+
+**Files**: `hot_takes/hot_takes_pipeline.py` (build + publish), `opinion_bank.py`
+(the setup/punchline content pool, same fixed-pool-cycled-deterministically
+philosophy as caption_bank.py one level up — no LLM call), `text_overlay.py`
+(the PIL rendering). State: `application_index.txt`, `opinion_index.txt`,
+`caption_index.txt`, `template_index.txt` — all four living inside `hot_takes/`,
+not at the repo root, and this is load-bearing, not cosmetic: `core.
+get_next_caption_and_index`/`advance_caption_index` and `core.fetch_next_template`
+hardcode the MAIN pipeline's own root-level counter files internally. Calling
+them directly from Hot Takes would have both pipelines racing on the same
+shared pointer whenever they happen to run close together. Hot Takes has its
+own small equivalents (`_get_next_caption`, `_fetch_template_for_audio`) that
+reuse the underlying content (caption_bank's pool, the same Drive Template Reels
+folder) but track position independently. If extending Hot Takes, or adding a
+third content type, check for this pattern before reusing any counter-adjacent
+helper from the main pipeline — reusing the CONTENT is fine and encouraged;
+reusing the COUNTER FILE silently is the actual danger.
+
+**A real bug worth knowing about if touching the image-compositing code again**:
+the background image render came out completely black on the first real test.
+Cause: `bg = bg.resized(scale).cropped(x_center=bg.w/2, ...)` written as one
+chained expression — `bg.w` inside that expression evaluates against the OLD
+un-resized clip, not the resized one, because Python evaluates the entire
+right-hand side before the reassignment happens. Fixed by splitting into two
+statements (`bg = bg.resized(scale)` then `bg = bg.cropped(x_center=bg.w/2,
+...)` on its own line) — matching how the main pipeline's own image-compositing
+code already does it correctly, elsewhere in this file. Caught by inspecting
+the actual composite frame's pixel data directly rather than assuming a visually
+"reasonable-looking" code change worked.
+
+**Publishing**: reuses `publish_to_instagram`, `publish_to_facebook`,
+`publish_to_buffer`, `upload_video_to_public_host`, and the generic
+`_read_counter`/`_write_and_commit_counter` helpers directly from
+`core_decor_reel_pipeline.py` via import — genuinely shared, no reimplementation.
+Hosted at `media/hot_takes/` (a different subdirectory than the main pipeline's
+`media/reels/`, passed via `upload_video_to_public_host`'s existing
+`media_subdir` parameter — already fully parameterized, no changes needed there).
+
+**Schedule**: `.github/workflows/hot-takes-reel.yml`, every 2 days at 18:00 UTC —
+independent of the main pipeline's 14:00 UTC daily schedule, so the two formats
+don't both land the same day by default. Both the cadence and the time are
+placeholders, same as the main schedule's own 14:00 UTC choice — revisit once
+there's engagement data.
+
+**Verified end-to-end on a real live run** (not just built and assumed working):
+real post IDs confirmed on all four platforms, the actual delivered video
+downloaded and visually checked frame-by-frame (both the setup-alone frame and
+the punchline-revealed frame), and all four Hot-Takes-specific counters
+confirmed to advance correctly while the main pipeline's own counters were
+confirmed unchanged by the same run.
 
 ## Hosting
 
