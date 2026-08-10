@@ -5,37 +5,43 @@ Same philosophy as caption_bank.py one level up: a fixed, hand-written pool cycl
 deterministically via a committed index file, not generated per-run. No LLM call,
 no runtime cost, no risk of a model quietly drifting off-brand over time.
 
-Each entry is a (setup, punchline) pair rendered as two lines of on-screen text —
-"They:" / "Me:" by default, matching the reference format this was built from, but
-the pipeline treats these as plain text rather than hardcoding the labels, so a
-future entry can break that pattern on purpose (e.g. a single bold statement with
-no "they/me" framing at all) without needing a code change.
+DELIBERATELY GENERIC, not specific — read this before adding entries. An earlier
+version referenced specific colors and materials ("Beige is boring", "That's a lot
+of brass for one room"). The pipeline cycles through application photos with no
+attribute awareness at all — it doesn't know or check what's actually IN a given
+photo, so a line calling out "beige" can land on a moody dark room with no beige
+anywhere in it, which reads as a visible mistake, not a stylistic choice. Every
+entry here is an attitude or philosophy about design/home life in general, not a
+claim about a specific color, material, or object — so it stays compatible with
+whatever photo the rotation happens to land on. If adding new entries, apply the
+same test: would this line still make sense over ANY of the 50 application photos,
+not just the one you're picturing while writing it?
 """
 
 OPINIONS = [
-    ("They: Let's just paint the walls.", "Me: No…"),
-    ("They: Beige is boring.", "Me: Beige is a personality."),
-    ("They: Open shelving is impractical.", "Me: I said what I said."),
-    ("They: You don't need a coffee table book.", "Me: We are not the same."),
-    ("They: Matching furniture sets are classic.", "Me: Matching is for socks."),
-    ("They: One accent wall is enough.", "Me: There is no such thing as enough."),
-    ("They: Recessed lighting is fine.", "Me: Recessed lighting is a crime."),
-    ("They: A rug should match the sofa.", "Me: A rug should have opinions."),
-    ("They: You're overthinking a doorknob.", "Me: There are no small decisions."),
-    ("They: Wallpaper is outdated.", "Me: You are outdated."),
-    ("They: Just get the beige sectional.", "Me: Absolutely not."),
-    ("They: Nobody notices cabinet hardware.", "Me: I notice everything."),
-    ("They: Symmetry is overrated.", "Me: Get out of my house."),
-    ("They: It's just a hallway.", "Me: There are no 'just' hallways."),
-    ("They: Candles are a waste of money.", "Me: Ambiance is not a waste."),
-    ("They: All-white kitchens are timeless.", "Me: So is being wrong."),
-    ("They: You don't need that many pillows.", "Me: I need exactly that many pillows."),
-    ("They: Marble is impractical for a kitchen.", "Me: I did not ask."),
-    ("They: A bathroom is just a bathroom.", "Me: A bathroom is a mood."),
-    ("They: Warm lighting is dramatic.", "Me: Correct."),
+    ("They: It's just a house.", "Me: It is never just a house."),
+    ("They: You're overthinking this room.", "Me: There is no such thing as overthinking a room."),
+    ("They: A house is done when it's done.", "Me: A house is never done."),
+    ("They: Nobody notices the details.", "Me: I notice everything."),
     ("They: You've redone this room three times.", "Me: And I'll do it again."),
-    ("They: That's a lot of brass for one room.", "Me: There is no such thing."),
-    ("They: Textured walls are a phase.", "Me: I am never leaving this phase."),
-    ("They: Nobody cares about grout color.", "Me: I care. Deeply."),
-    ("They: It's just a plant.", "Me: It is never just a plant."),
+    ("They: It's just a corner of a room.", "Me: There are no small corners."),
+    ("They: That took way too long to get right.", "Me: Correct amount of time."),
+    ("They: You could have just left it alone.", "Me: I could have. I didn't."),
+    ("They: Most people wouldn't spend this much time on a room.", "Me: I am not most people."),
+    ("They: It looked fine before.", "Me: Fine is not the goal."),
+    ("They: You're never satisfied.", "Me: Correct."),
+    ("They: This is a lot of effort for one room.", "Me: This is the appropriate amount of effort."),
+    ("They: Just buy whatever's on sale.", "Me: Absolutely not."),
+    ("They: A space is just a space.", "Me: A space is a mood."),
+    ("They: You should be done decorating by now.", "Me: I will never be done."),
+    ("They: Nobody else will notice this changed.", "Me: I will notice."),
+    ("They: This room already looks good.", "Me: Good is not the same as right."),
+    ("They: You spend too much time on this.", "Me: I spend exactly enough time on this."),
+    ("They: It's just decor.", "Me: It is never just decor."),
+    ("They: You can't tell the difference.", "Me: I can always tell the difference."),
+    ("They: This is excessive.", "Me: This is thorough."),
+    ("They: Just live with it as it is.", "Me: I will not."),
+    ("They: A room doesn't need a personality.", "Me: Every room needs a personality."),
+    ("They: You'll change your mind about this in a year.", "Me: Probably. I'll deal with it then."),
+    ("They: This wasn't necessary.", "Me: It was necessary to me."),
 ]

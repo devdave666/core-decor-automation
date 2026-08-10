@@ -31,7 +31,7 @@ import core_decor_reel_pipeline as core  # noqa: E402  (path insert must come fi
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from opinion_bank import OPINIONS  # noqa: E402
-from text_overlay import render_text_block, W, H  # noqa: E402
+from text_overlay import render_text_block, render_gradient, W, H  # noqa: E402
 
 log = logging.getLogger("hot_takes")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -44,7 +44,6 @@ CAPTION_INDEX_FILE = "hot_takes/caption_index.txt"
 TEMPLATE_INDEX_FILE = "hot_takes/template_index.txt"
 
 REVEAL_DELAY_S = 1.6    # how long the setup line sits alone before the punchline appears
-MAX_DURATION_S = 12.0   # generous enough for several real cuts, still short-form pacing
 FPS = 30
 
 
@@ -75,14 +74,13 @@ def build_hot_take(application_images, opinion_pair, audio_wav_path, boundaries,
     to application photos only with no swatch/reveal pairing logic needed (no
     alternation, no parity requirement, so none of that complexity carries over).
 
-    The two-line meme text sits on top of the ENTIRE sequence, completely static —
-    it doesn't move, scale, or slide; only WHEN each line is visible changes. The
-    backdrop band behind it is sized once for both lines together and never
-    resizes, so nothing about the text itself competes with the cuts happening
-    underneath it. `application_images` must already contain exactly len(boundaries)-1
-    images — the caller selects those from the rotating pool before calling this,
-    since it needs to know the segment count (from compute_segment_boundaries)
-    before it knows how many images to slice.
+    The two-line text sits on top of the ENTIRE sequence, completely static — it
+    doesn't move, scale, or slide; only WHEN each line is visible changes. A soft
+    cinematic gradient sits behind it, also static for the full duration —
+    legibility without a boxed banner. `application_images` must already contain
+    exactly len(boundaries)-1 images — the caller selects those from the rotating
+    pool before calling this, since it needs to know the segment count (from
+    compute_segment_boundaries) before it knows how many images to slice.
     """
     from moviepy import ImageClip, AudioFileClip, CompositeVideoClip
 
@@ -108,22 +106,24 @@ def build_hot_take(application_images, opinion_pair, audio_wav_path, boundaries,
 
     setup, punchline = opinion_pair
     with tempfile.TemporaryDirectory() as tmp:
-        setup_path, punch_path, backdrop_path = render_text_block(setup, punchline, tmp)
+        setup_path, punch_path = render_text_block(setup, punchline, tmp)
+        gradient_path = render_gradient(tmp)
 
-        backdrop_clip = ImageClip(str(backdrop_path)).with_duration(duration).with_start(0)
+        gradient_clip = ImageClip(str(gradient_path)).with_duration(duration).with_start(0)
         setup_clip = ImageClip(str(setup_path)).with_duration(duration).with_start(0)
         punch_clip = (ImageClip(str(punch_path))
                        .with_duration(max(duration - REVEAL_DELAY_S, 0.1))
                        .with_start(min(REVEAL_DELAY_S, duration)))
 
         final = CompositeVideoClip(
-            bg_clips + [backdrop_clip, setup_clip, punch_clip], size=(W, H)
+            bg_clips + [gradient_clip, setup_clip, punch_clip], size=(W, H)
         ).with_audio(audio)
         final.write_videofile(
             str(output_path), fps=FPS, codec="libx264", audio_codec="aac",
             pixel_format="yuv420p", ffmpeg_params=["-movflags", "+faststart"], logger=None,
         )
     return output_path, duration, n_segments
+
 
 
 def _fetch_template_for_audio(repo_root, output_dir):
@@ -187,7 +187,10 @@ def run_pipeline():
         wav_path = tmp / "audio.wav"
         core.extract_and_master_audio(template_path, wav_path)
         full_duration = core.get_audio_duration_seconds(wav_path)
-        duration = min(full_duration, MAX_DURATION_S)
+        duration = full_duration  # full length of the template's audio — no arbitrary
+                                    # cutoff. An earlier version capped this, and an
+                                    # early cutoff mid-track reads as an unfinished
+                                    # cut, not a stylistic choice.
 
         cut_timestamps = core.extract_template_cut_timestamps(template_path)
         boundaries = compute_segment_boundaries(cut_timestamps, duration)
