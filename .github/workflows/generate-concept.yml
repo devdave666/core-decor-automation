@@ -16,6 +16,15 @@ on:
         description: "Concept id to generate (see CONCEPTS in concept_tools/generate_concept.py)"
         required: true
         default: "d01"
+      parts:
+        description: "Which halves to generate — the two get approved separately"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - bands
+          - room
 
 permissions:
   contents: write
@@ -40,14 +49,20 @@ jobs:
       - name: Generate concept
         env:
           BFL_API_KEY: ${{ secrets.BFL_API_KEY }}
-        run: python concept_tools/generate_concept.py "${{ inputs.concept }}" "concept_review/${{ inputs.concept }}"
+        run: python concept_tools/generate_concept.py "${{ inputs.concept }}" "concept_review/${{ inputs.concept }}" "${{ inputs.parts }}"
 
-      # When the no-text check fails a concept, the samples that tripped it are
-      # the only evidence of WHETHER IT SHOULD HAVE — and they die with the
-      # runner otherwise. The first d01 run failed on one borderline hit and
-      # left nothing behind to judge it by; that is what this prevents.
+      # When the no-text check trips, the samples that tripped it are the only
+      # evidence of WHETHER IT SHOULD HAVE — and they die with the runner
+      # otherwise. The first d01 run failed on one borderline hit and left
+      # nothing behind to judge it by; that is what this prevents.
+      #
+      # `always()`, not `failure()`: run 2 SUCCEEDED and still discarded four
+      # rejected samples, because retries that eventually pass leave a green run
+      # with its evidence deleted. Every hit so far has been low-confidence noise
+      # ('fo,', 'Vik', 'Gar', 'SSS', 'EERE', 'Yen.') on macro texture, and
+      # deciding whether the threshold is miscalibrated needs those images.
       - name: Upload rejected samples for review
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: rejected-${{ inputs.concept }}

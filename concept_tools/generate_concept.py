@@ -47,10 +47,42 @@ NO_TEXT = (
     "no watermarks, no logos, no signage, no numbers anywhere in the image."
 )
 
-QUALITY = (
+# Two separate camera/finish directions, deliberately NOT one shared string.
+# The band textures want maximum micro-contrast to make grain, veining and pile
+# legible at macro distance. A room wants the opposite: the same phrasing on a
+# room shot is what produced d01's blown-out interior (see ROOM_LIGHT below).
+QUALITY_TEXTURE = (
     " Shot on Hasselblad H6D-100c, f/8, ISO 50, maximum depth of field, tack-sharp "
     "focus across the entire frame, high micro-contrast, crisp surface detail, no "
     "lens noise, no motion blur, no CGI smoothness."
+)
+
+QUALITY_ROOM = (
+    " Shot on Hasselblad H6D-100c, 50mm lens, f/5.6, tripod-mounted long exposure, "
+    "photorealistic, fine natural film grain, no lens flare, no motion blur, no CGI "
+    "smoothness."
+)
+
+# THE LIGHTING DIRECTION IS THE WHOLE POINT OF THIS CONSTANT — read before editing.
+# d01's first room shot was rejected as "too bright for the mood." The cause was
+# in the prompt, not in post: it asked for "high-contrast directional natural
+# daylight through large windows" plus "crisp specular highlights," which is a
+# recipe for exactly the hard diagonal sun shaft and blown highlights it produced.
+#
+# The reference reel Dev supplied contains no direct sunlight in any of its six
+# room shots — every one is soft, diffuse and low-key, with warm lamplight as the
+# only visible source. This constant encodes that. Do not reintroduce directional
+# daylight, sun shafts, or specular language here to make a room "pop"; that is
+# the exact change that was already rejected once.
+ROOM_LIGHT = (
+    " Lighting is soft, heavily diffused, overcast — no direct sunlight, no sun "
+    "shafts, no light beams, no hard-edged shadows, no blown-out highlights "
+    "anywhere in the frame. Warm 2700K lamplight from table lamps and wall sconces "
+    "provides the only visible light sources, glowing gently rather than flaring. "
+    "Deliberately low-key and underexposed, roughly one and a half stops down, with "
+    "deep soft shadows falling away gently into darkness. Low overall contrast, "
+    "muted and slightly desaturated colour grade with warm undertones. Quiet, calm, "
+    "intimate late-evening mood."
 )
 
 
@@ -158,47 +190,66 @@ def _generate_clean(prompt, width, height, label, path, max_attempts=MAX_TEXT_RE
     )
 
 
-def build_concept(concept, out_dir):
+def build_concept(concept, out_dir, parts="all"):
+    """
+    `parts` selects which halves of a concept to generate:
+        "all"   — three band textures, the composed swatch card, and the room shot
+        "bands" — bands and the swatch card only
+        "room"  — the room shot only
+
+    "room" exists because the two halves get approved separately in practice.
+    d01's swatch was approved on the first pass while its room shot was rejected
+    for being too brightly lit; regenerating the whole concept to fix the room
+    would have meant paying for — and risking a re-roll of — three band textures
+    that were already signed off. The swatch card is already committed, so
+    nothing needs the band textures to rebuild only the room.
+    """
+    if parts not in ("all", "bands", "room"):
+        raise SystemExit(f"unknown parts {parts!r}; expected all, bands or room")
+
     stem = concept["stem"]
     out_dir = Path(out_dir)
-    tmp = out_dir / "_textures"
-    tmp.mkdir(parents=True, exist_ok=True)
-
-    band_paths = []
-    for i, band in enumerate(concept["bands"], start=1):
-        label = f"{stem} band{i}"
-        prompt = (
-            f"Extreme close-up flat straight-on macro photograph of {band['texture']}. "
-            "The material fills the entire frame edge to edge as one flat even surface, "
-            "perfectly parallel to the camera, zero perspective, zero objects or props, "
-            "no visible edges, borders, corners or background. Even studio illumination "
-            "with subtle low-angle raking light revealing the surface relief. "
-            "Deep, rich, saturated, moody dark colour grade." + QUALITY + NO_TEXT
-        )
-        p = _generate_clean(prompt, BAND_W, BAND_H, label, tmp / f"{stem}_band{i}.png")
-        band_paths.append(p)
-
     swatch_path = out_dir / f"{stem}_swatch.png"
-    compose_band_swatch(band_paths, [b["label"] for b in concept["bands"]], swatch_path)
-    _fit_final(swatch_path)
-    print(f"[{stem}] band swatch composed -> {swatch_path}", flush=True)
+    app_path = out_dir / f"{stem}_app.png"
 
-    room_label = f"{stem} room"
-    room_prompt = (
-        f"Straight-on eye-level architectural interior photograph of {concept['room']}. "
-        "Perfectly vertical architectural grid alignment, zero wide-angle lens distortion. "
-        f"The space applies exactly these materials: {concept['materials_sentence']} "
-        "Dual-source lighting: high-contrast directional natural daylight through large "
-        "windows combined with warm 2700K ambient glow from wall sconces and concealed "
-        "LED cove strips. Deep moody shadow depth with crisp specular highlights on stone "
-        "edges, glass and metal. Bespoke millwork, integrated ceiling coves, shadow-line "
-        "baseboards, photorealistic spatial depth. Rich, dark, saturated luxury colour "
-        "grade." + QUALITY + NO_TEXT
-    )
-    app_path = _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label,
-                                out_dir / f"{stem}_app.png")
-    _fit_final(app_path)
-    print(f"[{stem}] room shot -> {app_path}", flush=True)
+    if parts in ("all", "bands"):
+        tmp = out_dir / "_textures"
+        tmp.mkdir(parents=True, exist_ok=True)
+
+        band_paths = []
+        for i, band in enumerate(concept["bands"], start=1):
+            label = f"{stem} band{i}"
+            prompt = (
+                f"Extreme close-up flat straight-on macro photograph of {band['texture']}. "
+                "The material fills the entire frame edge to edge as one flat even surface, "
+                "perfectly parallel to the camera, zero perspective, zero objects or props, "
+                "no visible edges, borders, corners or background. Even studio illumination "
+                "with subtle low-angle raking light revealing the surface relief. "
+                "Deep, rich, saturated, moody dark colour grade."
+                + QUALITY_TEXTURE + NO_TEXT
+            )
+            p = _generate_clean(prompt, BAND_W, BAND_H, label, tmp / f"{stem}_band{i}.png")
+            band_paths.append(p)
+
+        compose_band_swatch(band_paths, [b["label"] for b in concept["bands"]], swatch_path)
+        _fit_final(swatch_path)
+        print(f"[{stem}] band swatch composed -> {swatch_path}", flush=True)
+
+    if parts in ("all", "room"):
+        out_dir.mkdir(parents=True, exist_ok=True)
+        room_label = f"{stem} room"
+        room_prompt = (
+            f"Straight-on eye-level architectural interior photograph of {concept['room']}. "
+            "Perfectly vertical architectural grid alignment, zero wide-angle lens distortion. "
+            f"The space applies exactly these materials: {concept['materials_sentence']} "
+            "Bespoke millwork, integrated ceiling coves, shadow-line baseboards, "
+            "photorealistic spatial depth."
+            + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
+        )
+        _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label, app_path)
+        _fit_final(app_path)
+        print(f"[{stem}] room shot -> {app_path}", flush=True)
+
     return swatch_path, app_path
 
 
@@ -229,6 +280,7 @@ CONCEPTS = {
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "d01"
     out = sys.argv[2] if len(sys.argv) > 2 else f"concept_review/{which}"
+    parts = sys.argv[3] if len(sys.argv) > 3 else "all"
     if which not in CONCEPTS:
         raise SystemExit(f"unknown concept {which}; known: {list(CONCEPTS)}")
-    build_concept(CONCEPTS[which], out)
+    build_concept(CONCEPTS[which], out, parts)
