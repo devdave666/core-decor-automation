@@ -69,20 +69,55 @@ QUALITY_ROOM = (
 # daylight through large windows" plus "crisp specular highlights," which is a
 # recipe for exactly the hard diagonal sun shaft and blown highlights it produced.
 #
-# The reference reel Dev supplied contains no direct sunlight in any of its six
-# room shots — every one is soft, diffuse and low-key, with warm lamplight as the
-# only visible source. This constant encodes that. Do not reintroduce directional
-# daylight, sun shafts, or specular language here to make a room "pop"; that is
-# the exact change that was already rejected once.
+# The second attempt removed direct sun entirely and asked for a stop and a half
+# of underexposure. That killed the shaft (blown pixels 0.24% -> 0.05%) but
+# crushed 34.1% of the frame to near-black, against 15-26% in the reference —
+# the sofa and floor lost all detail. Dawn/dusk light plus brighter practicals is
+# the correction: keep the sun soft and low, let the interior fixtures carry the
+# exposure, and state explicitly that shadows keep their detail.
+#
+# Do not reintroduce hard directional daylight, sun shafts, or specular language
+# to make a room "pop" — that exact change was rejected once already.
 ROOM_LIGHT = (
-    " Lighting is soft, heavily diffused, overcast — no direct sunlight, no sun "
-    "shafts, no light beams, no hard-edged shadows, no blown-out highlights "
-    "anywhere in the frame. Warm 2700K lamplight from table lamps and wall sconces "
-    "provides the only visible light sources, glowing gently rather than flaring. "
-    "Deliberately low-key and underexposed, roughly one and a half stops down, with "
-    "deep soft shadows falling away gently into darkness. Low overall contrast, "
-    "muted and slightly desaturated colour grade with warm undertones. Quiet, calm, "
-    "intimate late-evening mood."
+    " Lit by soft low-angle dawn light through large windows — warm, gentle and "
+    "heavily diffused, with no hard-edged sun shafts, no light beams and no "
+    "blown-out highlights anywhere in the frame. The interior mood lighting is "
+    "turned well up and does most of the work: table lamps under cream shades, "
+    "brass wall sconces, picture lights above the artwork and concealed cove "
+    "lighting, all glowing warmly at 2700K, each throwing its own soft pool of "
+    "light. Shadows stay open and keep their detail rather than crushing to black. "
+    "Warm, muted, gently desaturated colour grade. Calm, intimate, richly "
+    "atmospheric."
+)
+
+# WHY THIS EXISTS: the room prompt previously listed only architecture — millwork,
+# ceiling coves, shadow-line baseboards — and nothing else, so the model returned
+# a beautifully built but completely empty showroom. Dev's note was "no photos, no
+# furniture, no decorations." Every room in the reference reel is densely styled,
+# and that styling is most of what makes those frames read as interesting rather
+# than as architectural documentation. Naming the objects explicitly is what gets
+# them into the frame; the model will not infer them from "luxury interior."
+STYLING = (
+    " Fully styled and lived-in, never empty or showroom-bare: a large framed "
+    "landscape painting on the wall, a mature potted olive tree in a wide stoneware "
+    "planter, dried branches and foliage in ceramic vases, stacked hardback books, "
+    "a turned wooden bowl and a tray, pillar candles, layered cushions in mixed "
+    "velvet, linen and boucle, a draped throw blanket, a textured jute rug, "
+    "floor-length sheer linen curtains, and small bronze and ceramic objects "
+    "arranged along the shelves. Styled for an architectural magazine shoot — "
+    "generous, considered and warm, never sparse."
+)
+
+# Composed in depth rather than as a flat elevation. The reference reel's rooms
+# are three-quarter views with objects in the near field, which is a large part of
+# why they feel inhabited; d01's dead-centre symmetrical framing read as a
+# catalogue elevation by comparison. Vertical lines stay true — that part of the
+# original direction was right and is kept.
+COMPOSITION = (
+    " Eye-level three-quarter interior view composed in layers for depth: styled "
+    "objects and a piece of furniture in the near foreground, the main furniture "
+    "grouping in the middle ground, and the architecture behind it. Natural true "
+    "vertical lines, no wide-angle lens distortion, no fisheye."
 )
 
 
@@ -239,12 +274,11 @@ def build_concept(concept, out_dir, parts="all"):
         out_dir.mkdir(parents=True, exist_ok=True)
         room_label = f"{stem} room"
         room_prompt = (
-            f"Straight-on eye-level architectural interior photograph of {concept['room']}. "
-            "Perfectly vertical architectural grid alignment, zero wide-angle lens distortion. "
-            f"The space applies exactly these materials: {concept['materials_sentence']} "
-            "Bespoke millwork, integrated ceiling coves, shadow-line baseboards, "
-            "photorealistic spatial depth."
-            + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
+            f"Interior photograph of {concept['room']}."
+            + COMPOSITION
+            + f" The space applies exactly these materials: {concept['materials_sentence']}"
+            " Bespoke millwork, integrated ceiling coves, shadow-line baseboards."
+            + STYLING + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
         )
         _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label, app_path)
         _fit_final(app_path)
