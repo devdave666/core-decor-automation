@@ -42,12 +42,28 @@ jobs:
           BFL_API_KEY: ${{ secrets.BFL_API_KEY }}
         run: python concept_tools/generate_concept.py "${{ inputs.concept }}" "concept_review/${{ inputs.concept }}"
 
+      # When the no-text check fails a concept, the samples that tripped it are
+      # the only evidence of WHETHER IT SHOULD HAVE — and they die with the
+      # runner otherwise. The first d01 run failed on one borderline hit and
+      # left nothing behind to judge it by; that is what this prevents.
+      - name: Upload rejected samples for review
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rejected-${{ inputs.concept }}
+          path: concept_review/${{ inputs.concept }}/**/*.rejected-*.png
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Commit generated assets for review
         run: |
           git config user.name "Core Decor Automation"
           git config user.email "automation@coredecor.local"
           # Intermediate band textures are working files, not deliverables.
           rm -rf "concept_review/${{ inputs.concept }}/_textures"
+          # Re-rolled samples that tripped the no-text check: kept for the
+          # failure artifact above, never committed as if they were output.
+          rm -f "concept_review/${{ inputs.concept }}"/*.rejected-*.png
           git add "concept_review/${{ inputs.concept }}"
           if git diff --staged --quiet; then
             echo "No new assets to commit"

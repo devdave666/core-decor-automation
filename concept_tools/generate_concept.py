@@ -38,6 +38,10 @@ FINAL_W, FINAL_H = 1080, 1920
 BAND_W, BAND_H = 1024, 608      # ~1080x640 band aspect, multiples of 32
 ROOM_W, ROOM_H = 1088, 1920     # ~9:16, multiples of 32
 
+# How many times one image may be re-rolled when the no-text check trips before
+# the whole concept is failed. Per-image, not per-concept — see _generate_clean.
+MAX_TEXT_RETRIES = 3
+
 NO_TEXT = (
     " Absolutely no text, no labels, no lettering, no words, no writing, no captions, "
     "no watermarks, no logos, no signage, no numbers anywhere in the image."
@@ -109,14 +113,49 @@ def _fit_final(path):
     return path
 
 
-def _assert_clean(path, label):
-    hits = find_text(path)
-    if hits:
-        raise SystemExit(
-            f"[{label}] OCR found model-rendered text {hits} in {path}. "
-            f"Regenerate — do not label over it."
-        )
-    print(f"[{label}] OCR clean", flush=True)
+def _generate_clean(prompt, width, height, label, path, max_attempts=MAX_TEXT_RETRIES):
+    """
+    Generate, then verify the result carries no model-rendered text — re-rolling
+    the SAME prompt on a hit instead of failing the whole concept.
+
+    Generation is stochastic and the prompt already excludes text explicitly, so
+    a hit is usually about this particular sample rather than this prompt. The
+    first real d01 run died on band 3 of 3 (a single hit, `('Yen.', 72.0)`, on an
+    oxblood velvet macro) AFTER bands 1 and 2 had already passed — and threw both
+    of them away, having paid for them, without ever reaching the room shot.
+    Re-rolling one band is far cheaper than restarting a concept.
+
+    The confidence threshold in ocr_verify.py is deliberately strict and is NOT
+    relaxed here — see that module for why it earned its strictness. A prompt
+    that genuinely produces text still fails; it just takes max_attempts samples
+    to say so instead of one.
+
+    Every rejected sample is kept next to `path` as `<path>.rejected-<n>.png`,
+    and the workflow uploads those as an artifact when the run fails. Without
+    that, a tripped guard reports only THAT it fired, never whether it should
+    have — the runner's working files vanish with the container, which is
+    exactly what happened on the first run.
+    """
+    last_hits = None
+    for attempt in range(1, max_attempts + 1):
+        _save(_generate(prompt, width, height, label), path)
+        hits = find_text(path)
+        if not hits:
+            print(f"[{label}] OCR clean", flush=True)
+            return path
+        last_hits = hits
+        rejected = Path(f"{path}.rejected-{attempt}.png")
+        Path(path).replace(rejected)
+        tail = "regenerating" if attempt < max_attempts else "no attempts left"
+        print(f"[{label}] attempt {attempt}/{max_attempts}: OCR found "
+              f"model-rendered text {hits} — sample kept at {rejected}, "
+              f"{tail}", flush=True)
+    raise SystemExit(
+        f"[{label}] still tripping the no-text check after {max_attempts} "
+        f"attempts (last hits: {last_hits}). The rejected samples are kept "
+        f"beside {path} and uploaded as a workflow artifact — look at them "
+        f"before assuming either the guard or the prompt is at fault."
+    )
 
 
 def build_concept(concept, out_dir):
@@ -136,8 +175,7 @@ def build_concept(concept, out_dir):
             "with subtle low-angle raking light revealing the surface relief. "
             "Deep, rich, saturated, moody dark colour grade." + QUALITY + NO_TEXT
         )
-        p = _save(_generate(prompt, BAND_W, BAND_H, label), tmp / f"{stem}_band{i}.png")
-        _assert_clean(p, label)
+        p = _generate_clean(prompt, BAND_W, BAND_H, label, tmp / f"{stem}_band{i}.png")
         band_paths.append(p)
 
     swatch_path = out_dir / f"{stem}_swatch.png"
@@ -157,9 +195,8 @@ def build_concept(concept, out_dir):
         "baseboards, photorealistic spatial depth. Rich, dark, saturated luxury colour "
         "grade." + QUALITY + NO_TEXT
     )
-    app_path = _save(_generate(room_prompt, ROOM_W, ROOM_H, room_label),
-                      out_dir / f"{stem}_app.png")
-    _assert_clean(app_path, room_label)
+    app_path = _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label,
+                                out_dir / f"{stem}_app.png")
     _fit_final(app_path)
     print(f"[{stem}] room shot -> {app_path}", flush=True)
     return swatch_path, app_path
