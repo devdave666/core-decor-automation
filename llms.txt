@@ -448,12 +448,35 @@ c-series look.
 - `concept_tools/generate_concept.py` — BFL FLUX generation of one full concept
   (3 band textures + 1 room shot), OCR-verifying every generated image is
   text-free before any label is composited. Concepts live in a `CONCEPTS` dict in
-  this file; only `d01` (library / Nero Marquina marble / fumed oak / oxblood
-  velvet / brass) is defined so far. Invoked as
-  `python concept_tools/generate_concept.py d01 concept_review/d01`.
+  this file. Invoked as
+  `python concept_tools/generate_concept.py <concept> <out_dir> [all|bands|room]`.
 - `.github/workflows/generate-concept.yml` — `workflow_dispatch` ONLY, no
-  schedule, taking a `concept` input matching a `CONCEPTS` key. Generation costs
-  real money per image; it must never fire on a timer.
+  schedule, taking a `concept` input matching a `CONCEPTS` key and a `parts`
+  input. Generation costs real money per image; it must never fire on a timer.
+
+**`parts` (all / bands / room) exists for a real reason** — the two halves of a
+concept get approved separately in practice. d01's swatch was approved on its
+first pass while its room shot was rejected three times over; regenerating the
+whole concept each time would have meant paying for, and risking a re-roll of,
+three already-signed-off band textures. The composed swatch card is committed, so
+nothing needs the intermediate band textures to rebuild only the room. Reach for
+`parts=room` whenever only the room is in question — it is one image instead of
+four, and it leaves the approved swatch byte-identical (verified via `git diff`,
+not assumed).
+
+### Concept definition shape
+
+Each entry in `CONCEPTS` carries `stem`, `room`, `style`, `styling`, `bands` (3 ×
+`{label, texture}`) and `materials_sentence`. Two conventions matter:
+
+1. **`style` and `styling` are per-concept, deliberately not global.** They were
+   briefly one shared constant, which would have put the same olive tree and
+   landscape painting into every room in the series. Dev asked to keep switching
+   decor styles between concepts, and a global object list silently defeats that.
+   Only *density* is global (`STYLING_RULE`).
+2. **Vary the decor register.** d01 traditional English panelled, d02 warm
+   organic modern Mediterranean, d03 restrained Art Deco. Don't let a new concept
+   default to the register of the one before it.
 
 ### Why generation runs inside GitHub Actions, not locally
 
@@ -519,6 +542,97 @@ A prompt that genuinely produces text still fails the concept — it just takes
 three samples to establish that instead of one, and now leaves the images behind
 to prove it. If a future d-series concept fails here repeatedly, look at the
 artifact before touching either the threshold or the prompt.
+
+**The artifact upload is `if: always()`, not `if: failure()`** — and that
+distinction was itself a bug found in practice. A run that retries and then
+*succeeds* is green, and under `failure()` its rejected samples were deleted
+anyway. The very first successful d01 run discarded four of them that way, which
+is exactly the evidence-destruction the artifact step existed to prevent, in the
+one case nobody had thought to cover.
+
+**Accumulated evidence says the guard fires on texture noise, and that is still
+unresolved.** Every hit observed so far is a low-confidence garbage string on
+macro texture: `('Yen.', 72.0)`, `('fo,', 63.0)`, `('Vik', 61.0)`, `('Gar', 68.0)`,
+`('SSS', 57.0)`, `('EERE', 67.0)`, `('His', 55.0)`, `('ty:', 55.0)`. All sit in a
+55-72 band; genuine composited labels scored 91-96 when the module was validated.
+One d01 run generated 8 images to deliver 4. The threshold was tuned against a
+labelled card and a text-free *room* photo — never against extreme macro texture,
+which is the case that misbehaves. **This has been raised with Dev and he has not
+ruled on it; do not quietly raise `MIN_CONFIDENCE`.** Note the cost impact and let
+him decide.
+
+Separately, room shots routinely contain gibberish lettering on book spines that
+OCR passes as clean. Flagged, undecided, arguably fine for a library.
+
+### Room shot lighting — three rejected versions, don't re-litigate
+
+The room half of a d-series concept took four attempts to land. The failures were
+all in the PROMPT, never in post-processing, and each one is a trap worth not
+re-entering.
+
+- **v1 — "high-contrast directional natural daylight through large windows" plus
+  "crisp specular highlights on stone edges, glass and metal."** Produced a hard
+  diagonal sun shaft across the panelling and blown highlights. Rejected by Dev as
+  "too bright for the mood."
+- **v2 — direct sun removed entirely, plus "underexposed roughly one and a half
+  stops."** Killed the shaft, but crushed 34.1% of the frame to near-black against
+  15-26% in the reference; the sofa and floor lost all detail. Rejected as too
+  dark. **Global underexposure is not the lever** — it was never an exposure
+  problem.
+- **v3 — soft low-angle dawn light, interior practicals turned well up and
+  carrying the exposure, shadows explicitly required to hold detail, plus real
+  styling.** APPROVED.
+
+There is a measured trap here worth internalising: **v1 was the darkest image of
+the entire set by average luminance (57.8) and was still rejected for being too
+bright.** The hard shaft read as bright while the frame average was low. Judge
+these by the three numbers below, not by impression — eyeballing was wrong twice
+in one session, once claiming a velvet colour mismatch that measured as
+essentially identical (distance 3.3).
+
+**Measure with mean luminance, blown % (>=250) and crushed % (<=20).** Reference
+reel moody rooms sit at mean L 63-71, blown 0.00-0.16%, crushed 15-26%. Approved
+d01 landed at 84.5 / 0.06 / 16.8.
+
+Do not reintroduce hard directional daylight, sun shafts, or specular language to
+make a room "pop". That exact change has already been rejected once.
+
+### Styling and composition
+
+Before v3 the room prompt described only architecture — millwork, ceiling coves,
+shadow-line baseboards — so the model returned immaculate, completely empty
+showrooms. Dev's note was "no photos, no furniture, no decorations." **The model
+will not infer furnishing from "luxury interior"; the objects have to be named.**
+
+`STYLING_RULE` governs density only, and is tuned to Dev's words: "not too cramped
+and not too empty" — fewer, larger, well-spaced pieces with real breathing room.
+Approved d01 sits slightly on the busy side of that target; d02 is closer to it.
+
+`COMPOSITION` uses an eye-level three-quarter view layered front-to-back, replacing
+the original dead-centre symmetrical elevation, which read as catalogue
+documentation. The reference reel's rooms nearly all place objects in the near
+field, and that depth is much of why they look inhabited. True verticals are kept
+from the original direction.
+
+### Room exposure depends on the concept's own palette
+
+An open finding, not yet acted on. d01 and d02 use an identical lighting prompt
+and landed 27 points apart — d01 at mean L 84.5, d02 at 111.6 with crushed shadows
+collapsing to 2.6%. The cause is the palette's own reflectance: d01's near-black
+marble and fumed oak absorb light where d02's travertine floor and cream plaster
+bounce it. So a fixed lighting instruction yields systematically brighter rooms
+for lighter concepts. If the series ever needs consistent mood across concepts,
+the lighting spec has to become palette-aware rather than fixed. Dev approved d02
+as generated with this known.
+
+Related, also raised and consciously left alone: d02's band textures carry heavy
+baked-in lighting gradients (the walnut is nearly black at its edges, the
+travertine has a hot stripe through the middle), which loosens the swatch-to-room
+material match — walnut and travertine drifted 71 and 79 in RGB distance against
+olive limewash's 14. The band prompt still asks for "subtle low-angle raking
+light" and a "moody dark colour grade", which fights the flat, evenly-lit look the
+reference cards actually have. Fixable via `parts=bands` without touching an
+approved room shot.
 
 ## Hosting
 
@@ -751,6 +865,18 @@ this project's history and should keep holding for future sessions too.
   pivot to "images first, video later" happened, and was never settled. Don't
   default to either answer when video stitching for this series actually starts —
   raise it with Dev.
-- The d-series is images-only and unapproved so far: only `d01` is defined in
-  `CONCEPTS`, and it must be approved by Dev before the remaining concepts are
-  generated. Nothing about this series is connected to publishing yet.
+- **The d-series remains images-only.** Nothing about it is connected to
+  publishing, and no video stitching exists for it. Concept status: `d01`
+  (library, Art-Deco-free traditional) APPROVED both halves, `d02` (Mediterranean
+  dining) APPROVED, `d03` (Art Deco suite) generated and awaiting review. Dev
+  reviews each concept by eye before the next is generated — generate one at a
+  time, not a batch.
+- The OCR no-text guard's `MIN_CONFIDENCE` is very likely miscalibrated for macro
+  texture (see the d-series section for the accumulated hit data). Raised with
+  Dev, not yet ruled on, deliberately unchanged.
+- Room exposure varies with each concept's own palette reflectance under an
+  identical lighting prompt — 84.5 vs 111.6 mean luminance between d01 and d02.
+  Only matters if consistent mood across the series becomes a requirement.
+- d-series band textures carry baked-in lighting gradients that loosen the
+  swatch-to-room material match. Raised against d02, approved as-is, fixable via
+  `parts=bands` if it ever matters.
