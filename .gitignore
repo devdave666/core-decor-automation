@@ -1,2 +1,13 @@
 *.pyc
 __pycache__/
+
+# Local credential files. THIS REPO IS PUBLIC — media/reels/ is served over
+# raw.githubusercontent.com, which does not work on private repos, so it can
+# never be flipped to private to contain a mistake here.
+#
+# env.template is listed alongside .env deliberately: it is the file Dev
+# actually fills in on his own machine, so despite the "template" name it holds
+# real values, including a GitHub PAT. It was previously untracked but not
+# ignored, which meant a single `git add -A` would have published a live token.
+.env
+env.template
