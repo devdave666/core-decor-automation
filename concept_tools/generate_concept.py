@@ -369,6 +369,37 @@ CONCEPTS = {
             "on the floor and window sill, and aged bronze hardware and lighting."
         ),
     },
+    "d03": {
+        "stem": "d03_suite_plum",
+        "room": "a primary bedroom suite",
+        "style": "restrained Art Deco interior, fluted and stepped geometric "
+                  "detailing, lacquered surfaces and symmetry, glamorous but not "
+                  "ornate",
+        "styling": (
+            "a low bed with a tall fluted upholstered headboard and crisp silk "
+            "bedding, a pair of alabaster table lamps on slim lacquered "
+            "nightstands, one large geometric artwork above the bed, a single "
+            "sculptural vase holding two stems, a deep-pile geometric rug, and "
+            "full-height silk curtains at a tall window."
+        ),
+        "bands": [
+            {"label": "Aubergine Lacquer",
+             "texture": "deep aubergine purple high-gloss lacquered plaster with a "
+                         "smooth mirror-flat surface, soft depth and gentle sheen"},
+            {"label": "Antique Brass",
+             "texture": "aged antique brass metal sheet with fine directional "
+                         "brushed grain, warm golden patina and soft tarnish "
+                         "mottling"},
+            {"label": "Alabaster",
+             "texture": "backlit translucent white alabaster stone with soft "
+                         "cloudy internal veining and a honed matte surface"},
+        ],
+        "materials_sentence": (
+            "deep aubergine lacquered plaster on the walls, antique brushed brass on "
+            "the fluted detailing, lamp bases and hardware, honed white alabaster on "
+            "the nightstand tops and sill, and deep aubergine silk on the bedding."
+        ),
+    },
 }
 
 if __name__ == "__main__":
