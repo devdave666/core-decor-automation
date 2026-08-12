@@ -346,6 +346,60 @@ swatch+application pipeline. Worth knowing about, not necessarily worth
 "fixing" unless it turns out to look chaotic rather than energetic in practice —
 that's a creative call to revisit with real engagement data, not a code defect.
 
+## Concept asset naming — how a swatch finds its application
+
+`_pair_swatches_with_applications()` matches a swatch to its application shot by
+FILENAME PREFIX — everything before the `_swatch` / `_app` suffix must match
+exactly. This is the whole pairing mechanism; get the prefix wrong and a pair
+silently mismatches (a real bug that already happened once, see "Image pairing").
+
+Convention, four underscore-delimited parts:
+
+```
+d01_lib_nerocognac_swatch.png   <->   d01_lib_nerocognac_app.png
+ |    |      |
+ |    |      +-- palette/material tag, for humans skimming the folder
+ |    +--------- room type: kit, bath, dine, foyer, lib, suite
+ +-------------- series letter + zero-padded concept number
+```
+
+**Series letter is the load-bearing part for future work.** `c01`-`c50` are the
+original set (lighter, warmer neutrals). `d__` is the darker/richer series added
+later. Keeping series in separate letter ranges means a new set can never collide
+with an existing prefix, and makes it trivial to later have one content type draw
+from only one series (e.g. Hot Takes weighted toward the dark set) by filtering on
+the first character alone. Room type and palette tag are for legibility only — the
+pipeline ignores them.
+
+## Concept asset prep tooling (`concept_tools/`)
+
+Not part of either runtime pipeline. Run by hand when building new concept pairs.
+
+- `ocr_verify.py` — confirms a freshly generated texture has NO model-rendered
+  text before labels are composited. **Uses `--psm 11` and that is load-bearing**:
+  tesseract's default PSM 3 returned zero hits on a real swatch card whose three
+  material names were plainly legible, a silent false negative that made the check
+  worthless. PSM 11 ("sparse text", built for a little text over a busy
+  photographic background) caught every word at 91-96% confidence on the same
+  image. Validated in BOTH directions — fails a labelled swatch, passes a
+  text-free room photo. If this ever reports everything clean, suspect the config
+  before believing it.
+- `label_swatch.py` — composites the material names using Fry's Baskerville
+  (bundled at `concept_tools/fonts/FrysBaskerville.ttf`, sourced as `.woff2` from
+  the onlinewebfonts CDN and converted with fontTools+brotli; authenticity
+  verified via the embedded name table — Family "Fry's Baskerville", PostScript
+  `FrysBaskervilleBT-Roman`, v003.001 — because a filename proves nothing).
+  Wide tracking, all caps, NO scrim or background panel (a solid panel reads
+  cheap), adaptive ink sampled per line from the actual background luminance
+  behind that line, plus one subtle offset shadow. Per-line sampling, not
+  per-block: a line straddling mixed light/dark ground can still land marginal,
+  which is fine on a uniform card surface but worth knowing.
+
+**Never let the image model render the type.** Flux and similar produce unreliable
+spelling and kerning; generate the texture with text explicitly excluded from the
+prompt, verify OCR-clean, then label programmatically. This is a standing rule
+established after real misrendered output, not a stylistic preference.
+
 ## Hosting
 
 Reels are committed straight into this repo's own `media/reels/` and served via
