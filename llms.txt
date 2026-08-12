@@ -360,9 +360,9 @@ silently mismatches (a real bug that already happened once, see "Image pairing")
 Convention, four underscore-delimited parts:
 
 ```
-d01_lib_nerocognac_swatch.png   <->   d01_lib_nerocognac_app.png
- |    |      |
- |    |      +-- palette/material tag, for humans skimming the folder
+d01_lib_oxblood_swatch.png   <->   d01_lib_oxblood_app.png
+ |    |     |
+ |    |     +--- palette/material tag, for humans skimming the folder
  |    +--------- room type: kit, bath, dine, foyer, lib, suite
  +-------------- series letter + zero-padded concept number
 ```
