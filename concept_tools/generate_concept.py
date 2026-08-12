@@ -400,6 +400,40 @@ CONCEPTS = {
             "the nightstand tops and sill, and deep aubergine silk on the bedding."
         ),
     },
+    "d04": {
+        "stem": "d04_kit_indigo",
+        "room": "a residential kitchen",
+        "style": "Belgian minimalist wabi-sabi interior, hand-finished imperfect "
+                  "surfaces, honest materials, quiet and unfussy with no ornament",
+        "styling": (
+            "a substantial stone island with two simple wooden stools, a single "
+            "large earthenware bowl of lemons, one linen tea towel over the "
+            "counter edge, a short row of pewter and stoneware vessels on an open "
+            "shelf, a hand-thrown vase holding bare branches, and a tall window "
+            "with an unlined linen curtain drawn back."
+        ),
+        "bands": [
+            # Dev's steer for this direction: bluer tones, textured paint. The
+            # texture description leans hard on trowel and brush relief because
+            # that is the requested characteristic, not incidental surface detail.
+            {"label": "Indigo Limewash",
+             "texture": "deep indigo slate-blue limewash paint with heavy trowel "
+                         "relief, visible brush drag and layered cloudy tonal "
+                         "mottling, thick chalky matte surface"},
+            {"label": "Aged Elm",
+             "texture": "aged reclaimed elm timber in soft greyed honey brown with "
+                         "raised weathered grain, fine surface checking and a dry "
+                         "unfinished matte texture"},
+            {"label": "Chalk Limestone",
+             "texture": "pale chalk white limestone with a soft powdery matte "
+                         "surface, faint fossil flecking and gentle tonal cloudiness"},
+        ],
+        "materials_sentence": (
+            "deep indigo slate-blue textured limewash on the walls and cabinetry, "
+            "aged reclaimed elm on the open shelving and stools, pale chalk white "
+            "limestone on the island, counters and floor, and aged pewter hardware."
+        ),
+    },
 }
 
 if __name__ == "__main__":
