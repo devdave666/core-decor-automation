@@ -50,6 +50,10 @@ files:
   reuses this pipeline's publishing/hosting code without modifying any of it.
   See "Hot Takes" below — don't assume the swatch+application description above
   applies to it, it deliberately doesn't.
+- `concept_tools/` — asset PREP, not runtime: builds the image pairs the
+  pipelines later consume. Includes the in-progress **d-series** three-band
+  concept format, which is currently IMAGE GENERATION ONLY and deliberately not
+  connected to any publishing. See "The d-series" below before touching it.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -373,7 +377,12 @@ pipeline ignores them.
 
 ## Concept asset prep tooling (`concept_tools/`)
 
-Not part of either runtime pipeline. Run by hand when building new concept pairs.
+Not part of either runtime pipeline — this is asset PREP, run deliberately when
+building new concept pairs, never on a schedule. The two helpers below are shared
+by both series. `band_swatch.py` and `generate_concept.py` also live in this
+folder but belong specifically to the d-series three-band format — see "The
+d-series" section below, and note that `generate_concept.py` runs inside GitHub
+Actions rather than by hand, for a specific reason documented there.
 
 - `ocr_verify.py` — confirms a freshly generated texture has NO model-rendered
   text before labels are composited. **Uses `--psm 11` and that is load-bearing**:
@@ -399,6 +408,117 @@ Not part of either runtime pipeline. Run by hand when building new concept pairs
 spelling and kerning; generate the texture with text explicitly excluded from the
 prompt, verify OCR-clean, then label programmatically. This is a standing rule
 established after real misrendered output, not a stylistic preference.
+
+## The d-series: three-band concept format — images only, under test
+
+A parallel concept format being evaluated, **not a replacement for anything
+currently running**. The original `c01`-`c50` flat-lay swatch assets and both
+runtime pipelines that consume them are untouched and still live. Nothing in this
+section is wired into publishing.
+
+**Scope, stated explicitly by Dev and worth not losing**: this is IMAGE
+GENERATION ONLY right now. Video stitching and social publishing for this series
+come later, as a separate step, once enough concepts are approved. Do not wire it
+into any publishing pipeline yet, and do not treat an approved concept as
+permission to start.
+
+**The format**, copied in structure from a reference reel Dev supplied: three
+full-width horizontal bands of real material TEXTURE — not physical samples
+arranged on a flat-lay, which is what the c-series does — each labelled with its
+material/colour name in wide-tracked serif caps, ink flipping light or dark per
+band. The room shot applies those same three materials 1:1. Pairing is unchanged:
+filename prefix, exactly as described in the naming section above.
+
+**Palette direction**: darker, richer, more saturated than the c-series, which
+leans light and warm-neutral. That contrast is the entire point of the d-series,
+not incidental style drift — don't "correct" a d-series concept back toward the
+c-series look.
+
+### Files
+
+- `concept_tools/band_swatch.py` — composes the three-band card. **The bands are
+  stacked in CODE from three INDEPENDENTLY generated texture tiles, not generated
+  as one image.** Exact horizontal thirds with hard boundaries is precisely the
+  geometry image models render inconsistently; stacking programmatically makes it
+  exact by construction, and each tile gets a simpler prompt so the texture
+  itself comes out better. Same principle as never letting the model render type:
+  if code can guarantee it, don't ask the model for it. Imports
+  `label_swatch.py`'s font/ink/shadow helpers directly rather than duplicating
+  them.
+- `concept_tools/generate_concept.py` — BFL FLUX generation of one full concept
+  (3 band textures + 1 room shot), OCR-verifying every generated image is
+  text-free before any label is composited. Concepts live in a `CONCEPTS` dict in
+  this file; only `d01` (library / Nero Marquina marble / fumed oak / oxblood
+  velvet / brass) is defined so far. Invoked as
+  `python concept_tools/generate_concept.py d01 concept_review/d01`.
+- `.github/workflows/generate-concept.yml` — `workflow_dispatch` ONLY, no
+  schedule, taking a `concept` input matching a `CONCEPTS` key. Generation costs
+  real money per image; it must never fire on a timer.
+
+### Why generation runs inside GitHub Actions, not locally
+
+`BFL_API_KEY` lives in this repo's Actions secrets, and GitHub's secrets API is
+write-only — a value can be set but never read back out, and there is no local
+copy of the key anywhere. Rather than have Dev dig up or regenerate a key just to
+run something locally, generation runs inside the workflow where the secret is
+already usable, and the finished images are committed back to
+`concept_review/<concept>/` for review. **This is a deliberate pattern, not a
+workaround to undo later** — keep using it for any future BFL generation unless
+Dev hands over the key value directly in chat.
+
+### BFL API specifics — learned the hard way, don't rediscover
+
+- Base: `https://api.bfl.ai/v1/flux-2-pro`
+- Auth header is `x-key: <key>`, **not** `Authorization: Bearer <key>`.
+- `POST` returns `{id, polling_url}`. **Poll the RETURNED `polling_url`**, never
+  one you construct yourself — the global endpoint load-balances across clusters,
+  so a self-built URL can end up polling the wrong one.
+- Poll status values: `Pending` / `Ready` / `Error`.
+- On `Ready`, `result.sample` is a URL that **expires in 10 minutes**. Download
+  the bytes immediately; never store or reuse the URL itself.
+- Width/height should be multiples of 32.
+
+Replicate was abandoned for this specific work — that account returned HTTP 402,
+insufficient credit — in favour of BFL direct. This doesn't affect anything else
+that may still be running on Replicate; check before assuming either way.
+
+### The first real d01 run failed, and why that mattered structurally
+
+Run #1 of `generate-concept.yml` (`workflow_dispatch`, `concept=d01`) failed. It
+got bands 1 and 2 generated and OCR-clean, then tripped the no-text check on band
+3 (oxblood velvet) with a single hit — `('Yen.', 72.0)` — and exited non-zero.
+Three consequences, each worth understanding rather than just retrying past:
+
+1. **The whole concept died on one image.** Bands 1 and 2 had already passed and
+   were paid for; both were discarded, and the room shot was never even
+   submitted. Failure was all-or-nothing across four independently generated
+   images.
+2. **The evidence was destroyed.** The offending texture lived only in the
+   runner's `concept_review/d01/_textures/`, the workflow uploaded no artifacts,
+   and the commit step never ran because it sits after the failing step. So the
+   run could report THAT the guard fired but gave no way to judge WHETHER IT
+   SHOULD HAVE — and `72.0` is genuinely ambiguous, well below the 91-96% that
+   real composited labels scored when `ocr_verify.py` was validated, and exactly
+   the kind of score PSM 11 sparse-text mode produces from pile noise on a velvet
+   macro.
+3. Nothing was committed, so `concept_review/` did not exist at all afterward.
+
+**The fix, and what it deliberately does NOT do**: `_generate_clean()` now
+re-rolls the SAME prompt for just the failing image, up to `MAX_TEXT_RETRIES`
+(3), instead of failing the concept — generation is stochastic and the prompt
+already excludes text, so a hit is usually about that sample rather than that
+prompt. Every rejected sample is kept as `<path>.rejected-<n>.png`, and the
+workflow uploads them as an artifact on failure (`if: failure()`) so a human can
+actually look at what tripped it. They're stripped before the commit step so they
+never land in the repo as if they were output.
+
+**The confidence threshold was deliberately left alone.** Relaxing
+`MIN_CONFIDENCE` to make one ambiguous hit go away would trade a safeguard that
+earned its strictness (see `ocr_verify.py`'s own header) for a single data point.
+A prompt that genuinely produces text still fails the concept — it just takes
+three samples to establish that instead of one, and now leaves the images behind
+to prove it. If a future d-series concept fails here repeatedly, look at the
+artifact before touching either the threshold or the prompt.
 
 ## Hosting
 
@@ -547,7 +667,10 @@ the Facebook publishing fix above — see that section before regenerating this)
 from Drive — read from env by drive_upload.py, not a local file, so this works
 unattended in Actions), `BUFFER_API_KEY` (personal key on the dedicated Core Decor
 Buffer account, see the Buffer section above — NOT the_higher_being's account),
-`BUFFER_TIKTOK_CHANNEL_ID`, `BUFFER_YOUTUBE_CHANNEL_ID`. `SWATCH_ASSETS_DIR`/
+`BUFFER_TIKTOK_CHANNEL_ID`, `BUFFER_YOUTUBE_CHANNEL_ID`, `BFL_API_KEY` (BFL FLUX
+image generation for the d-series — used only by `generate-concept.yml`, by
+neither runtime pipeline; see the d-series section for why generation runs inside
+Actions rather than locally). `SWATCH_ASSETS_DIR`/
 `APPLICATION_ASSETS_DIR` are workflow-set paths into this repo's own assets/
 folder, not secrets. `META_APP_ID` and `GDRIVE_INPUT_PATH` are no longer used — the
 Reels API doesn't need an app ID, and input now comes from the Drive Template Reels
@@ -620,3 +743,14 @@ this project's history and should keep holding for future sessions too.
   missed run since being added — the query logic was verified against real
   historical data before shipping, but its first live trigger (if/when one happens)
   is still worth confirming actually worked end-to-end.
+- **d-series band/room timing rhythm — genuinely undecided, ask before assuming.**
+  The reference video holds its swatch band for ~0.7s and the room shot for ~1.0s
+  (swatch deliberately shorter than the payoff), while the existing runtime
+  pipeline gives both beats equal weight from template timing. Whether the
+  d-series should adopt that uneven rhythm was still mid-conversation when the
+  pivot to "images first, video later" happened, and was never settled. Don't
+  default to either answer when video stitching for this series actually starts —
+  raise it with Dev.
+- The d-series is images-only and unapproved so far: only `d01` is defined in
+  `CONCEPTS`, and it must be approved by Dev before the remaining concepts are
+  generated. Nothing about this series is connected to publishing yet.
