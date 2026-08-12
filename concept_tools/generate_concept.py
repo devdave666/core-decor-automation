@@ -90,22 +90,27 @@ ROOM_LIGHT = (
     "atmospheric."
 )
 
-# WHY THIS EXISTS: the room prompt previously listed only architecture — millwork,
+# WHY THIS EXISTS: the room prompt once listed only architecture — millwork,
 # ceiling coves, shadow-line baseboards — and nothing else, so the model returned
 # a beautifully built but completely empty showroom. Dev's note was "no photos, no
-# furniture, no decorations." Every room in the reference reel is densely styled,
-# and that styling is most of what makes those frames read as interesting rather
-# than as architectural documentation. Naming the objects explicitly is what gets
-# them into the frame; the model will not infer them from "luxury interior."
-STYLING = (
-    " Fully styled and lived-in, never empty or showroom-bare: a large framed "
-    "landscape painting on the wall, a mature potted olive tree in a wide stoneware "
-    "planter, dried branches and foliage in ceramic vases, stacked hardback books, "
-    "a turned wooden bowl and a tray, pillar candles, layered cushions in mixed "
-    "velvet, linen and boucle, a draped throw blanket, a textured jute rug, "
-    "floor-length sheer linen curtains, and small bronze and ceramic objects "
-    "arranged along the shelves. Styled for an architectural magazine shoot — "
-    "generous, considered and warm, never sparse."
+# furniture, no decorations." Naming the objects explicitly is what gets them into
+# the frame; the model will not infer them from "luxury interior."
+#
+# DENSITY IS A SEPARATE AXIS FROM CONTENT, and this constant governs density only.
+# d01's approved room went slightly the other way — busy shelves, several seats and
+# a lot of small objects. The reference frame Dev singled out as the target is
+# calmer: fewer, larger, well-spaced pieces with real breathing room. His words
+# were "not too cramped and not too empty."
+#
+# The specific objects live per-concept in CONCEPTS[...]["styling"], NOT here, so
+# that every room does not end up with the same olive tree and landscape painting.
+# Dev asked to keep switching decor styles between concepts; a single global object
+# list would quietly defeat that.
+STYLING_RULE = (
+    " Styled and lived-in, but never cluttered: a small number of larger, "
+    "well-spaced pieces with clear breathing room between them, and generous areas "
+    "of floor and wall left deliberately open. Neither sparse nor crowded — the "
+    "restraint of an architectural magazine shoot."
 )
 
 # Composed in depth rather than as a flat elevation. The reference reel's rooms
@@ -274,11 +279,11 @@ def build_concept(concept, out_dir, parts="all"):
         out_dir.mkdir(parents=True, exist_ok=True)
         room_label = f"{stem} room"
         room_prompt = (
-            f"Interior photograph of {concept['room']}."
+            f"Interior photograph of {concept['room']}, {concept['style']}."
             + COMPOSITION
             + f" The space applies exactly these materials: {concept['materials_sentence']}"
-            " Bespoke millwork, integrated ceiling coves, shadow-line baseboards."
-            + STYLING + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
+            f" Furnished and dressed with: {concept['styling']}"
+            + STYLING_RULE + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
         )
         _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label, app_path)
         _fit_final(app_path)
@@ -287,10 +292,33 @@ def build_concept(concept, out_dir, parts="all"):
     return swatch_path, app_path
 
 
+# Each concept carries its own decor style and its own object list, because Dev
+# asked to keep switching interior decor styles between concepts. Two conventions
+# worth keeping as this grows:
+#
+# 1. VARY THE STYLE. d01 is traditional/classical; d02 is warm organic modern.
+#    Don't let a new concept default to the register of the one before it.
+# 2. TWO RICH BANDS PLUS ONE LIGHT NEUTRAL. Every card in the reference reel is
+#    built this way (navy/cognac/warm-white, olive/walnut/ivory, plum/brass/soft-
+#    ivory...). d01 is all three dark, which is why its labels never exercised
+#    label_swatch's adaptive ink — with no light band there is nothing to flip to.
+#    d02 onward follows the reference formula; d01 stays as approved.
 CONCEPTS = {
+    # APPROVED — swatch and room shot both signed off by Dev. The style/styling
+    # fields below record what the approved room shot actually contained; they
+    # were previously a single global constant. Don't regenerate this concept to
+    # "check" them.
     "d01": {
         "stem": "d01_lib_oxblood",
         "room": "a private residential library and reading room",
+        "style": "traditional classical English panelled interior",
+        "styling": (
+            "a large framed landscape painting lit by a brass picture light, a "
+            "mature potted olive tree in a wide stoneware planter, dried branches "
+            "in a ceramic vase, stacked hardback books, a turned wooden bowl, "
+            "pillar candles on a tray, layered velvet and boucle cushions, a "
+            "draped throw, a textured jute rug and floor-length linen curtains."
+        ),
         "bands": [
             {"label": "Nero Marquina",
              "texture": "honed matte deep black Nero Marquina marble with fine crisp "
@@ -307,6 +335,38 @@ CONCEPTS = {
             "floor-to-ceiling fumed smoked oak panelling and bookshelves in deep chocolate "
             "brown, deep oxblood burgundy velvet upholstery on the seating, and aged "
             "unlacquered brass picture lights and hardware."
+        ),
+    },
+    "d02": {
+        "stem": "d02_dine_olive",
+        "room": "a residential dining room",
+        "style": "warm organic modern Mediterranean interior, soft rounded forms "
+                  "and hand-finished plaster rather than panelled joinery",
+        "styling": (
+            "a long solid walnut dining table with sculptural rounded-back chairs, "
+            "a low ceramic bowl of fruit and two tall tapered candles on the table, "
+            "an oversized handmade stoneware urn holding dried pampas on a walnut "
+            "sideboard, one large abstract canvas in muted earth tones, a woven "
+            "rush rug, and floor-length unbleached linen curtains beside a tall "
+            "window."
+        ),
+        "bands": [
+            {"label": "Olive Limewash",
+             "texture": "deep olive green limewash plaster wall with soft cloudy "
+                         "tonal mottling, fine chalky matte surface and subtle "
+                         "trowel texture"},
+            {"label": "European Walnut",
+             "texture": "solid European walnut timber in warm mid brown with "
+                         "flowing cathedral grain, fine open pores and a satin "
+                         "hand-rubbed oil finish"},
+            {"label": "Travertine",
+             "texture": "honed pale cream travertine stone with soft horizontal "
+                         "banding, natural open pitting and a warm matte surface"},
+        ],
+        "materials_sentence": (
+            "deep olive green limewash plaster on the walls, a solid European walnut "
+            "dining table and sideboard in warm mid brown, honed pale cream travertine "
+            "on the floor and window sill, and aged bronze hardware and lighting."
         ),
     },
 }
