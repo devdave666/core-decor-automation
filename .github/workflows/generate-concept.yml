@@ -1,0 +1,58 @@
+name: Generate Concept
+
+# Runs the concept image generation INSIDE Actions, because BFL_API_KEY lives in
+# this repo's Actions secrets and that API is write-only — the value can never be
+# read back out, and there is no local copy. Rather than move a secret out of the
+# secret store to use it locally, generation happens where the secret already is
+# and the finished images are committed back for review.
+#
+# Manual only — no schedule. Concept generation costs money per image and is a
+# deliberate act, not something that should fire on a timer.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: "Concept id to generate (see CONCEPTS in concept_tools/generate_concept.py)"
+        required: true
+        default: "d01"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tesseract (for the no-rendered-text verification step)
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install Python dependencies
+        run: pip install requests pillow pytesseract
+
+      - name: Generate concept
+        env:
+          BFL_API_KEY: ${{ secrets.BFL_API_KEY }}
+        run: python concept_tools/generate_concept.py "${{ inputs.concept }}" "concept_review/${{ inputs.concept }}"
+
+      - name: Commit generated assets for review
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+          # Intermediate band textures are working files, not deliverables.
+          rm -rf "concept_review/${{ inputs.concept }}/_textures"
+          git add "concept_review/${{ inputs.concept }}"
+          if git diff --staged --quiet; then
+            echo "No new assets to commit"
+          else
+            git commit -m "Generate concept ${{ inputs.concept }} for review"
+            git pull --rebase --autostash origin main
+            git push
+          fi
