@@ -715,6 +715,30 @@ less contrast than it started with. `grade_room.py` still exists and its
 diagnostic, not a goal.** The section below records the exposure data honestly;
 read it as evidence that darkness was the wrong target, not as a recipe.
 
+**WHAT ACTUALLY WORKED (v6), and the prompt order that goes with it.** Blue hour
+just after sunset with every lamp switched on: cool blue twilight in the windows,
+warm 2700K practicals layered at three or four heights each visibly glowing and
+throwing its own pool with gradual falloff, shadows tinted cool blue, texture
+catching low raking light, and an explicit clause that the lamplight reveals the
+room's true material colours rather than washing everything amber. d07 came back
+exactly right on the first try.
+
+**Prompt ORDER has now been wrong in both directions — know both failure modes:**
+- Lighting buried ~400 words in (v3-v5): flat bright daylight, instruction
+  effectively ignored.
+- Lighting moved to the very front (first v6 run): beautiful light, but the
+  concept's materials vanished — d07 returned warm plaster and brass with its
+  petrol lacquer, burl walnut and travertine absent, breaking the swatch-to-room
+  1:1 match the format exists for.
+- **Current, working: MATERIALS first** (stated as the defining feature that must
+  be clearly visible), **then ROOM_LIGHT**, then COMPOSITION, then SPATIAL_RULE,
+  then styling and fixtures. Both defining properties lead. Don't move either one
+  down without re-checking the other.
+
+**And note the number this landed on: mean L 113.0.** That is BRIGHTER than the
+graded 77.8 image Dev rejected as "very dark and has no lighting at all", and it
+looks incomparably better. Final proof that mean luminance was never the goal.
+
 ### Exposure numbers — a diagnostic, and the record of what did not work
 
 Five prompt versions tried to control the room's overall darkness. v1 (hard
@@ -1163,7 +1187,7 @@ this project's history and should keep holding for future sessions too.
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
   | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | APPROVED |
-  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Silver Travertine | awaiting review — main group clean, foreground side table queried |
+  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Silver Travertine | awaiting review — relit at blue hour (v6), materials and geometry verified |
 
   All six room types from the original naming convention (`kit`, `bath`, `dine`,
   `foyer`, `lib`, `suite`) were in use as of d06, so d07 onward introduces NEW
