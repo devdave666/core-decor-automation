@@ -25,7 +25,6 @@ import sys
 import time
 from pathlib import Path
 
-import requests
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -153,6 +152,11 @@ COMPOSITION = (
 
 
 def _generate(prompt, width, height, label):
+    # Imported here, not at module scope, so that reading CONCEPTS and the prompt
+    # constants — which QA tooling like check_legibility.py does — never requires
+    # an HTTP library to be installed.
+    import requests
+
     key = os.environ.get("BFL_API_KEY")
     if not key:
         raise SystemExit("BFL_API_KEY not set in environment")

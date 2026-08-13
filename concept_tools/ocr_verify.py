@@ -18,7 +18,6 @@ room photo.
 """
 
 import sys
-import pytesseract
 from PIL import Image
 
 MIN_CONFIDENCE = 55
@@ -27,6 +26,11 @@ TESSERACT_CONFIG = "--psm 11"
 
 
 def find_text(image_path, min_confidence=MIN_CONFIDENCE, min_chars=MIN_CHARS):
+    # Imported here rather than at module scope so that importing this module for
+    # its constants does not require tesseract to be installed. The runtime
+    # behaviour of the check itself is unchanged — PSM 11 still applies, see above.
+    import pytesseract
+
     img = Image.open(image_path)
     data = pytesseract.image_to_data(img, config=TESSERACT_CONFIG,
                                       output_type=pytesseract.Output.DICT)
