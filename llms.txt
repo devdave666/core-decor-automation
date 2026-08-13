@@ -678,6 +678,59 @@ d01 landed at 84.5 / 0.06 / 16.8.
 Do not reintroduce hard directional daylight, sun shafts, or specular language to
 make a room "pop". That exact change has already been rejected once.
 
+### Overall exposure is NOT reliably promptable — grade it in code instead
+
+Five prompt versions tried to control the room's overall darkness. v1 (hard
+daylight) and v2 (blanket underexposure) were rejected on look. v3, v4 and v5
+described dawn, then late dusk, then outright night with dark windows and lamps
+as the only source — and v5 additionally moved the whole lighting block to the
+FRONT of the prompt, where BFL's guide says FLUX weights it most heavily.
+Measured on d07, one sample each, against a reference target of mean L 63-71 and
+crushed 15-26%:
+
+| version | wording | mean L | crushed % |
+|---------|---------|--------|-----------|
+| v3 | soft dawn, practicals up | 112.8 | 2.4 |
+| v4 | late dusk, practicals dominant | 108.0 | 6.9 |
+| v5 | night, dark windows, lamps only, moved to front | **132.6** | 3.3 |
+
+**That is noise, not a trend, and the most extreme wording in the strongest
+position came back the brightest of the three.** The model is not disobeying a
+weak instruction — it returns the bright editorial interior its training
+distribution is saturated with, and a palette of cream boucle, white ceiling and
+pale marble pins the histogram bright regardless of the text. Do not "fix" this
+by writing a sixth, angrier version of ROOM_LIGHT. That has been tried three
+times and costs a paid image per attempt.
+
+`concept_tools/grade_room.py` solves it deterministically: a pure gamma curve on
+RGB, exponent bisected to land mean luminance on target. On d07 it took
+132.6/3.3% to **77.8 mean L and 24.9% crushed, blown 0.01%** — every number
+inside the reference band, first pass, no API call. Gamma is used rather than a
+black-point/levels move on purpose: it COMPRESSES shadows instead of clipping
+them, so nothing is forced to pure black and shadow detail survives — precisely
+the failure that got v2 rejected.
+
+**This is the project's own principle, not a new one.** `band_swatch.py` stacks
+bands in code because exact thirds are "what image models render inconsistently",
+and labels are composited in code because the model spells unreliably. Same rule:
+if code can guarantee it, don't ask the model for it.
+
+**The split of responsibility, which matters if editing either side:**
+- The PROMPT owns light QUALITY and DIRECTION — lamps lit, warm, and above all no
+  hard sun shafts or blown highlights. Those genuinely cannot be fixed afterwards;
+  a baked-in sun shaft stays a sun shaft at any exposure. That is why v1 was a
+  prompt failure and had to be fixed as one, and llms.txt's older line that the
+  lighting failures were "all in the PROMPT, never in post-processing" remains
+  true *for that case*.
+- `grade_room.py` owns LEVEL — mean luminance and shadow depth, a global
+  monotonic transform, which is the thing post does perfectly and a generative
+  model does not.
+
+It also closes the long-standing open finding that room exposure varied with each
+palette's own reflectance (d01 84.5 vs d02 111.6 under an identical prompt).
+Grading to a target normalises across palettes by construction, so the series can
+finally have one consistent mood.
+
 ### Styling and composition
 
 Before v3 the room prompt described only architecture — millwork, ceiling coves,
