@@ -626,6 +626,51 @@ CONCEPTS = {
             "stair hardware, and warm pale sand limewash plaster on the walls."
         ),
     },
+    # d04, d05 and d06 ran indigo, teal and cobalt back to back — three matte
+    # plasters in a row. This keeps Dev's bluer-tones steer but moves it into a
+    # high-gloss lacquered register so the series reads as a new direction rather
+    # than a fourth variation on textured blue paint. First concept written with
+    # SPATIAL_RULE in place from the start.
+    "d07": {
+        "stem": "d07_liv_petrol",
+        "fixtures": (
+            "a pair of large frosted-glass globe table lamps on the flanking "
+            "cabinets, one tall arced floor lamp with a polished chrome shade "
+            "reaching over the seating, and warm concealed cove lighting along the "
+            "ceiling perimeter."
+        ),
+        "room": "a residential living room",
+        "style": "Italian postwar modernist interior in the Milanese manner, "
+                  "sculptural rounded seating, glossy lacquered casework and "
+                  "polished metal, glamorous and confident without ornament",
+        "styling": (
+            "a low curved modular sofa in cream boucle facing a thick oval "
+            "travertine coffee table, a single sculptural lounge chair angled "
+            "beside it, a long lacquered credenza against the back wall carrying "
+            "two frosted-glass globe lamps and one large abstract canvas above it, "
+            "a tall arced floor lamp reaching over the seating, and a low bowl of "
+            "citrus on the coffee table."
+        ),
+        "bands": [
+            {"label": "Petrol Lacquer",
+             "texture": "deep petrol blue high-gloss lacquered wood panel with a "
+                        "flawless mirror-smooth surface, rich saturated colour and "
+                        "soft reflected sheen"},
+            {"label": "Burl Walnut",
+             "texture": "polished walnut burl veneer with dense swirling eyed "
+                        "figure, warm chocolate and amber tones and a deep glassy "
+                        "lacquered finish"},
+            {"label": "Silver Travertine",
+             "texture": "honed silver-grey travertine stone with fine horizontal "
+                        "banding, natural open pitting and a soft matte surface"},
+        ],
+        "materials_sentence": (
+            "deep petrol blue high-gloss lacquer on the credenza and built-in "
+            "casework, polished burl walnut on the side tables and cabinet fronts, "
+            "honed silver-grey travertine on the coffee table and floor, and "
+            "polished chrome on the lighting and furniture frames."
+        ),
+    },
 }
 
 if __name__ == "__main__":
