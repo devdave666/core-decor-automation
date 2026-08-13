@@ -741,6 +741,22 @@ Three samples is not proof, and the sample size that produced the original defec
 was one. Keep doing the geometry pass on new concepts; do not treat this as
 solved.
 
+**d07 confirms it is not solved, and shows where the rule is weakest.** d07 was
+the first concept generated with `SPATIAL_RULE` in place from the start. Its main
+seating group came back clean and verified — the coffee table's pedestal rests
+flat with visible floor between it and the sofa's plinth, and the armchair's
+chrome legs are grounded and separate. But its FOREGROUND side table is
+unresolvable on close inspection: the burl top cantilevers left over the chair's
+seat, its left end blending into the chair's burl armrest with no clear boundary,
+and its only two legs sit under the right-hand end and reach the floor through
+where the chair's base is. At full-frame scale it reads as a normal side table.
+Zoomed, it does not resolve.
+
+The pattern across d06 and d07 is worth noting: **the failure has moved to the
+near foreground.** `COMPOSITION` deliberately asks for objects in the near field
+for depth, and that is where the model has the least room to establish clean
+separation. When doing the geometry pass, check the foreground layer FIRST.
+
 **GLOBAL CONSTANTS MUST NOT NAME OBJECTS OR FIXTURES — this mistake has now been
 made twice.** The first time, a single global styling constant would have put the
 same olive tree and landscape painting into every room; it was moved into
@@ -1057,7 +1073,7 @@ this project's history and should keep holding for future sessions too.
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
   | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | APPROVED |
-  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Silver Travertine | generating |
+  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Silver Travertine | awaiting review — main group clean, foreground side table queried |
 
   All six room types from the original naming convention (`kit`, `bath`, `dine`,
   `foyer`, `lib`, `suite`) were in use as of d06, so d07 onward introduces NEW
