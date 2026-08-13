@@ -101,18 +101,30 @@ BAND_LIGHT = (
 #
 # Do not reintroduce hard directional daylight, sun shafts, or specular language
 # to make a room "pop" — that exact change was rejected once already.
+#
+# SECOND RULE, LEARNED SEPARATELY:
+# ROOM_LIGHT DESCRIBES LIGHT QUALITY ONLY — NO SPECIFIC FIXTURES. Each concept
+# names its own in a "fixtures" field, the same way it names its own styling.
+#
+# This constant used to hardcode "table lamps under cream shades" and "picture
+# lights above the artwork" for every room in the series. d05 is a BATHROOM and
+# came back with two table lamps and a framed picture on the wall, none of which
+# its styling field asked for. Dev caught it and asked, reasonably, why a bathroom
+# had table lamps in it.
+#
+# It is exactly the mistake already fixed one layer up: a single global object
+# list was moved into per-concept "styling" so every room would not get the same
+# olive tree, and then the LIGHTING constant went on naming specific fixtures
+# globally and nobody noticed. Keep fixture nouns out of here.
 ROOM_LIGHT = (
     " Lit by soft low-angle dawn light through large windows — warm, gentle and "
     "heavily diffused, with no hard-edged sun shafts, no light beams and no "
     "blown-out highlights anywhere in the frame. The interior mood lighting is "
-    "turned well up and does most of the work: table lamps under cream shades, "
-    "brass wall sconces, picture lights above the artwork, and generous diffused "
-    "ceiling light — concealed cove lighting washing the ceiling perimeter, soft "
-    "recessed downlights and a warm diffused ceiling fixture — all glowing warmly "
-    "at 2700K and layered so light comes from several heights at once, each source "
-    "throwing its own soft pool. Shadows stay open and keep their detail rather "
-    "than crushing to black. Warm, muted, gently desaturated colour grade. Calm, "
-    "intimate, richly atmospheric."
+    "turned well up and does most of the work, glowing warmly at 2700K and layered "
+    "so light arrives from several heights at once, each source throwing its own "
+    "soft pool, with generous diffused light across the ceiling. Shadows stay open "
+    "and keep their detail rather than crushing to black. Warm, muted, gently "
+    "desaturated colour grade. Calm, intimate, richly atmospheric."
 )
 
 # WHY THIS EXISTS: the room prompt once listed only architecture — millwork,
@@ -311,7 +323,9 @@ def build_concept(concept, out_dir, parts="all"):
             + COMPOSITION
             + f" The space applies exactly these materials: {concept['materials_sentence']}"
             f" Furnished and dressed with: {concept['styling']}"
-            + STYLING_RULE + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
+            + STYLING_RULE
+            + f" The room's own light fittings are: {concept['fixtures']}"
+            + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
         )
         _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label, app_path)
         _fit_final(app_path)
@@ -338,6 +352,11 @@ CONCEPTS = {
     # "check" them.
     "d01": {
         "stem": "d01_lib_oxblood",
+        "fixtures": (
+            "aged unlacquered brass picture lights above the artwork, table lamps "
+            "under cream shades on the side tables, slim brass wall sconces flanking "
+            "the fireplace, and concealed cove lighting along the ceiling perimeter."
+        ),
         "room": "a private residential library and reading room",
         "style": "traditional classical English panelled interior",
         "styling": (
@@ -367,6 +386,11 @@ CONCEPTS = {
     },
     "d02": {
         "stem": "d02_dine_olive",
+        "fixtures": (
+            "a single large hand-formed plaster pendant hung low over the dining "
+            "table, two discreet plaster wall sconces, tapered candles on the table, "
+            "and concealed cove lighting along the ceiling perimeter."
+        ),
         "room": "a residential dining room",
         "style": "warm organic modern Mediterranean interior, soft rounded forms "
                   "and hand-finished plaster rather than panelled joinery",
@@ -399,6 +423,11 @@ CONCEPTS = {
     },
     "d03": {
         "stem": "d03_suite_plum",
+        "fixtures": (
+            "a pair of alabaster table lamps on the nightstands, fluted brass wall "
+            "sconces flanking the bed, and concealed cove lighting washing the "
+            "stepped ceiling perimeter."
+        ),
         "room": "a primary bedroom suite",
         "style": "restrained Art Deco interior, fluted and stepped geometric "
                   "detailing, lacquered surfaces and symmetry, glamorous but not "
@@ -430,6 +459,11 @@ CONCEPTS = {
     },
     "d04": {
         "stem": "d04_kit_indigo",
+        "fixtures": (
+            "two simple shaded pendants hung over the island, warm concealed task "
+            "lighting beneath the open shelving, and soft recessed ceiling "
+            "downlights."
+        ),
         "room": "a residential kitchen",
         "style": "Belgian minimalist wabi-sabi interior, hand-finished imperfect "
                   "surfaces, honest materials, quiet and unfussy with no ornament",
@@ -464,6 +498,12 @@ CONCEPTS = {
     },
     "d05": {
         "stem": "d05_bath_teal",
+        "fixtures": (
+            "a single paper lantern pendant, slim linen-shaded wall sconces, warm "
+            "concealed cove lighting washing the ceiling perimeter, and discreet "
+            "recessed downlights. No table lamps and no framed artwork — this is a "
+            "wet room and its lighting is wall-mounted, ceiling-mounted or suspended."
+        ),
         "room": "a residential primary bathroom",
         "style": "Japandi interior, Japanese-Scandinavian restraint, low "
                   "horizontal lines, precise slatted joinery and uncluttered calm",
