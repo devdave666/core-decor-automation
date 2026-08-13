@@ -63,6 +63,30 @@ QUALITY_ROOM = (
     "smoothness."
 )
 
+# BAND TEXTURES MUST BE EVENLY LIT — this is a legibility requirement, not taste.
+#
+# The band prompt used to ask for "subtle low-angle raking light revealing the
+# surface relief" plus a "deep, rich, saturated, moody dark colour grade". Both
+# fought the format. Raking light bakes vignettes and hot stripes into a tile that
+# is then used as a TYPOGRAPHIC BACKGROUND, and the labels are what suffer: d04's
+# chalk limestone came back blotched near-black in places, which swallowed the end
+# of its own label whole (see label_swatch.py's CONTRAST HALO block). The moody
+# grade also darkened tiles well below the colour of the same material in the room
+# shot, loosening the 1:1 swatch-to-room match the format is built on — d02's
+# walnut and travertine drifted 71 and 79 in RGB distance where its evenly-lit
+# limewash drifted 14.
+#
+# The reference reel's own cards are flat, even and calm. This matches them.
+BAND_LIGHT = (
+    " Perfectly even, flat, shadowless studio illumination across the entire frame, "
+    "identical brightness corner to corner, no vignetting, no hot spots, no bright "
+    "stripes, no dark blotches, no strong directional or raking light, no cast "
+    "shadows. The material's own colour is true and consistent across the whole "
+    "surface. Natural, accurate, neutral colour — neither darkened nor artificially "
+    "saturated. Fine surface relief stays visible through texture detail alone "
+    "rather than through dramatic lighting."
+)
+
 # THE LIGHTING DIRECTION IS THE WHOLE POINT OF THIS CONSTANT — read before editing.
 # d01's first room shot was rejected as "too bright for the mood." The cause was
 # in the prompt, not in post: it asked for "high-contrast directional natural
@@ -83,11 +107,13 @@ ROOM_LIGHT = (
     "heavily diffused, with no hard-edged sun shafts, no light beams and no "
     "blown-out highlights anywhere in the frame. The interior mood lighting is "
     "turned well up and does most of the work: table lamps under cream shades, "
-    "brass wall sconces, picture lights above the artwork and concealed cove "
-    "lighting, all glowing warmly at 2700K, each throwing its own soft pool of "
-    "light. Shadows stay open and keep their detail rather than crushing to black. "
-    "Warm, muted, gently desaturated colour grade. Calm, intimate, richly "
-    "atmospheric."
+    "brass wall sconces, picture lights above the artwork, and generous diffused "
+    "ceiling light — concealed cove lighting washing the ceiling perimeter, soft "
+    "recessed downlights and a warm diffused ceiling fixture — all glowing warmly "
+    "at 2700K and layered so light comes from several heights at once, each source "
+    "throwing its own soft pool. Shadows stay open and keep their detail rather "
+    "than crushing to black. Warm, muted, gently desaturated colour grade. Calm, "
+    "intimate, richly atmospheric."
 )
 
 # WHY THIS EXISTS: the room prompt once listed only architecture — millwork,
@@ -263,10 +289,8 @@ def build_concept(concept, out_dir, parts="all"):
                 f"Extreme close-up flat straight-on macro photograph of {band['texture']}. "
                 "The material fills the entire frame edge to edge as one flat even surface, "
                 "perfectly parallel to the camera, zero perspective, zero objects or props, "
-                "no visible edges, borders, corners or background. Even studio illumination "
-                "with subtle low-angle raking light revealing the surface relief. "
-                "Deep, rich, saturated, moody dark colour grade."
-                + QUALITY_TEXTURE + NO_TEXT
+                "no visible edges, borders, corners or background."
+                + BAND_LIGHT + QUALITY_TEXTURE + NO_TEXT
             )
             p = _generate_clean(prompt, BAND_W, BAND_H, label, tmp / f"{stem}_band{i}.png")
             band_paths.append(p)
