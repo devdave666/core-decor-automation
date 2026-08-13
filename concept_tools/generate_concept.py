@@ -130,18 +130,36 @@ BAND_LIGHT = (
 # lights above the artwork" for every room in the series, and d05 (a BATHROOM)
 # duly came back with two table lamps and a framed picture. Keep fixture nouns
 # out of here.
+# V5 — v4 was directionally right and far too timid. Measured on d07: mean L moved
+# only 112.8 -> 108.0 and crushed only 2.4% -> 6.9%, against targets of 70-85 and
+# 15-25%. It also came back COOL and overcast-looking rather than warm, because it
+# still asked for lingering window daylight in a room full of cream boucle and pale
+# marble. Two fixes, applied together:
+#   1. WORDING: stop hedging. "Late dusk with dim daylight still at the windows"
+#      leaves the model an ambient-daylight excuse, and with a high-reflectance
+#      palette it takes it. v5 says night, windows dark, no daylight at all, lamps
+#      are the ONLY source, most of the frame in deep shadow. The detail-in-shadow
+#      clause stays and is load-bearing — it is the one thing that stops this
+#      becoming v2, which crushed 34.1% of the frame to black and was rejected.
+#   2. POSITION: this constant is now emitted near the FRONT of the room prompt,
+#      right after the room and style, instead of ~400 words in. BFL's guide is
+#      explicit that FLUX.2 weights earlier prompt elements more heavily, and at
+#      571 words this prompt has plenty of room to bury an instruction. Lighting
+#      is currently the failing axis, so it gets the early slot.
 ROOM_LIGHT = (
-    " Lit at late dusk, after the sun has gone down, when only a little dim cool "
-    "light still lingers at the windows — the remaining daylight is soft, low and "
-    "secondary. The room's own warm lamps at 2700K are the main source and carry "
-    "the exposure, layered so light arrives from several heights at once, each "
-    "throwing its own soft pool that falls away gently into the surrounding "
-    "darkness. Large areas of the frame rest in deep, soft shadow that still holds "
-    "its detail and texture, so the room reads genuinely dark and low-key while "
-    "staying completely legible. Lit areas stay gentle and controlled, with no "
-    "hard-edged sun shafts, no light beams and no blown-out highlights anywhere in "
-    "the frame. Warm, muted, gently desaturated colour grade. Calm, intimate, "
-    "nocturnal and richly atmospheric."
+    " The photograph is a dark, warm, low-key night interior lit entirely by the "
+    "room's own lamps. It is night outside and the windows are dark, with no "
+    "daylight anywhere in the room. The warm 2700K lamps are the only light "
+    "source and they light the space unevenly: each throws a small pool of warm "
+    "amber light across the surfaces nearest it, and that light falls away "
+    "quickly, so most of the frame sits in deep warm shadow. The ceiling, the "
+    "upper walls, the far corners and any floor away from a lamp are genuinely "
+    "dark, while still holding their detail and texture rather than going flat "
+    "black. The image overall is dominated by shadow with a few glowing pools of "
+    "warm light within it — deep, moody, firelit chiaroscuro. Rich warm amber "
+    "against deep shadow, gently desaturated. The lit areas stay soft and "
+    "controlled, with no hard-edged sun shafts, no light beams and no blown-out "
+    "highlights. Calm, intimate, nocturnal and richly atmospheric."
 )
 
 # WHY THIS EXISTS: the room prompt once listed only architecture — millwork,
@@ -389,14 +407,18 @@ def build_concept(concept, out_dir, parts="all"):
         out_dir.mkdir(parents=True, exist_ok=True)
         room_label = f"{stem} room"
         room_prompt = (
+            # ROOM_LIGHT goes EARLY — see its own v5 note. FLUX.2 weights earlier
+            # prompt elements more heavily, and lighting buried ~400 words in was
+            # being obeyed only weakly against a bright palette.
             f"Interior photograph of {concept['room']}, {concept['style']}."
+            + ROOM_LIGHT
             + COMPOSITION
             + SPATIAL_RULE
             + f" The space applies exactly these materials: {concept['materials_sentence']}"
             f" Furnished and dressed with: {concept['styling']}"
             + STYLING_RULE
             + f" The room's own light fittings are: {concept['fixtures']}"
-            + ROOM_LIGHT + QUALITY_ROOM + NO_TEXT
+            + QUALITY_ROOM + NO_TEXT
         )
         _generate_clean(room_prompt, ROOM_W, ROOM_H, room_label, app_path)
         _fit_final(app_path)
