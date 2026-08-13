@@ -533,6 +533,45 @@ CONCEPTS = {
             "cypress on the bath decking and bench, and blackened steel fixtures."
         ),
     },
+    "d06": {
+        "stem": "d06_foyer_cobalt",
+        "fixtures": (
+            "a single oversized brass-and-glass lantern pendant hung down the "
+            "stairwell, a pair of slim brass wall sconces flanking the console "
+            "mirror, and warm concealed cove lighting along the ceiling perimeter. "
+            "No table lamps and no floor lamps — this is a circulation space, not "
+            "a seating room."
+        ),
+        "room": "a residential entry foyer with a staircase",
+        "style": "Moroccan riad-inspired eclectic interior, warm hand-crafted "
+                  "texture and layered pattern, arched openings and traditional "
+                  "joinery, richly coloured but curated rather than cluttered",
+        "styling": (
+            "a slim console table beneath a large arched brass-framed mirror, a "
+            "woven rattan bench along one wall with a single patterned cushion, a "
+            "tall potted olive tree in a glazed cobalt ceramic planter, two or "
+            "three vintage-pattern rugs layered underfoot on the stair landing, "
+            "and one oversized ceramic urn standing beside the staircase."
+        ),
+        "bands": [
+            {"label": "Cobalt Zellige",
+             "texture": "hand-glazed cobalt blue zellige tile mosaic in small "
+                        "square tiles with subtle glaze variation, a soft wet "
+                        "sheen and fine irregular grout lines"},
+            {"label": "Hammered Brass",
+             "texture": "hand-hammered aged brass sheet with fine dimpled "
+                        "texture, warm antique patina and soft directional sheen"},
+            {"label": "Sand Limewash",
+             "texture": "warm pale sand limewash plaster with soft cloudy "
+                        "trowelled texture, fine chalky matte surface and gentle "
+                        "tonal mottling"},
+        ],
+        "materials_sentence": (
+            "hand-glazed cobalt blue zellige tile mosaic on the stair riser and "
+            "console backsplash, hand-hammered aged brass on the mirror frame and "
+            "stair hardware, and warm pale sand limewash plaster on the walls."
+        ),
+    },
 }
 
 if __name__ == "__main__":

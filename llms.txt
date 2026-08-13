@@ -927,10 +927,12 @@ this project's history and should keep holding for future sessions too.
   | d01 | library | traditional English panelled | Nero Marquina / Fumed Oak / Oxblood Velvet | APPROVED |
   | d02 | dining | warm organic modern Mediterranean | Olive Limewash / European Walnut / Travertine | APPROVED |
   | d03 | suite | restrained Art Deco | Aubergine Lacquer / Antique Brass / Alabaster | APPROVED |
-  | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | bands reshot, awaiting review |
-  | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | room reshot, awaiting review |
+  | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
+  | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
+  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | generating |
 
-  `foyer` is the only room type from the naming convention not yet used.
+  All room types from the naming convention (`kit`, `bath`, `dine`, `foyer`,
+  `lib`, `suite`) are now in use as of d06.
   **Dev's standing palette steer as of d04: bluer tones with textured paint**, and
   keep switching decor register between concepts.
 - The OCR no-text guard's `MIN_CONFIDENCE` is very likely miscalibrated for macro
