@@ -462,6 +462,37 @@ CONCEPTS = {
             "limestone on the island, counters and floor, and aged pewter hardware."
         ),
     },
+    "d05": {
+        "stem": "d05_bath_teal",
+        "room": "a residential primary bathroom",
+        "style": "Japandi interior, Japanese-Scandinavian restraint, low "
+                  "horizontal lines, precise slatted joinery and uncluttered calm",
+        "styling": (
+            "a low freestanding stone bath, a floor-to-ceiling slatted charred "
+            "cedar screen filtering the light, one hand-thrown ceramic vessel "
+            "holding a single bare branch, folded linen towels stacked on a low "
+            "bench, a paper lantern pendant, and a small round wooden stool beside "
+            "the bath."
+        ),
+        "bands": [
+            {"label": "Teal Tadelakt",
+             "texture": "deep teal blue polished tadelakt plaster with soft cloudy "
+                         "tonal movement, a faint waxed sheen and gently undulating "
+                         "hand-burnished surface"},
+            {"label": "Charred Cedar",
+             "texture": "shou sugi ban charred cedar timber in deep charcoal black "
+                         "with a fine crackled alligator surface and soft silvery "
+                         "carbon bloom"},
+            {"label": "Pale Hinoki",
+             "texture": "pale blonde hinoki cypress timber with fine straight even "
+                         "grain, a smooth planed matte surface and warm cream tone"},
+        ],
+        "materials_sentence": (
+            "deep teal blue polished tadelakt plaster on the walls and bath surround, "
+            "charred black cedar on the slatted screen and vanity, pale blonde hinoki "
+            "cypress on the bath decking and bench, and blackened steel fixtures."
+        ),
+    },
 }
 
 if __name__ == "__main__":
