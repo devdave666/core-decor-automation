@@ -614,6 +614,59 @@ documentation. The reference reel's rooms nearly all place objects in the near
 field, and that depth is much of why they look inhabited. True verticals are kept
 from the original direction.
 
+**GLOBAL CONSTANTS MUST NOT NAME OBJECTS OR FIXTURES — this mistake has now been
+made twice.** The first time, a single global styling constant would have put the
+same olive tree and landscape painting into every room; it was moved into
+per-concept `styling`. The lighting constant then went on hardcoding *"table lamps
+under cream shades"* and *"picture lights above the artwork"* for every room, and
+nobody noticed until d05 — a BATHROOM — came back with two table lamps and a
+framed picture on the wall that its styling field had never asked for. Dev caught
+it by asking, reasonably, why a bathroom had table lamps in it.
+
+`ROOM_LIGHT` now describes light QUALITY only: diffuse, layered, 2700K, arriving
+from several heights, shadows holding detail, no sun shafts. Fittings live in each
+concept's own `fixtures` field. d05's explicitly rules out table lamps and framed
+art on the grounds that it is a wet room. Keep fixture nouns out of the global
+constant; there is a check for this worth repeating after edits — assert none of
+"table lamp", "picture light", "sconce", "pendant", "downlight", "cove" appears in
+`ROOM_LIGHT`.
+
+(For what it's worth, table lamps in a large primary bathroom are a genuine
+high-end design move, so the output was not absurd on its face — but it was an
+artifact of a global default rather than a decision, and a mains lamp beside a
+freestanding tub would fail UK zone regs and US GFCI rules anyway.)
+
+### Band textures must be evenly lit, and labels carry a contrasting halo
+
+Two linked fixes after d04's card shipped with the final letters of CHALK
+LIMESTONE completely invisible.
+
+**The halo.** Adaptive ink picks one colour per line from the MEAN luminance
+behind it. That band contained near-black blotches, so the mean said "light
+ground, use dark ink" while part of the word sat over near-black. A stronger drop
+shadow cannot fix this — the shadow is always black, so under dark ink over a dark
+patch it adds nothing. `label_swatch.draw_label()` now draws a soft blurred
+contour in the CONTRASTING tone: dark behind pale ink, pale behind dark ink. It is
+invisible on an even texture and only does work where the ground fights the ink,
+so the module's no-scrim rule still holds.
+
+**`BAND_LIGHT`.** The band prompt used to ask for "subtle low-angle raking light"
+and a "deep, rich, saturated, moody dark colour grade". Raking light bakes
+vignettes and hot stripes into a tile that is then used as a TYPOGRAPHIC
+BACKGROUND, which is what created the blotches. It also darkened tiles below the
+same material in the room shot. Band textures are now flat, even and shadowless,
+which both fixed the legibility and moved the cards closer to the reference reel's
+own flat, calm cards.
+
+**`concept_tools/check_legibility.py` is the metric, and MEASURE PER GLYPH.**
+Compare a character's own pixels against the ring immediately around it. A line or
+column average mixes glyph, halo and background together: it hid this failure
+completely and separately invented a fake one, wrongly flagging AGED ELM at 43.1
+on a card where the correct metric scores it 102.7. On the broken d04 card the
+final E of LIMESTONE scored 0.9 out of 255; after both fixes it scores 122.4, and
+all fifteen labels across d01-d05 pass with a worst case of 67.8. The script exits
+non-zero on any character below 45, so it can gate a run.
+
 ### Room exposure depends on the concept's own palette
 
 An open finding, not yet acted on. d01 and d02 use an identical lighting prompt
@@ -866,17 +919,31 @@ this project's history and should keep holding for future sessions too.
   default to either answer when video stitching for this series actually starts —
   raise it with Dev.
 - **The d-series remains images-only.** Nothing about it is connected to
-  publishing, and no video stitching exists for it. Concept status: `d01`
-  (library, Art-Deco-free traditional) APPROVED both halves, `d02` (Mediterranean
-  dining) APPROVED, `d03` (Art Deco suite) generated and awaiting review. Dev
-  reviews each concept by eye before the next is generated — generate one at a
-  time, not a batch.
+  publishing, and no video stitching exists for it. Dev reviews each concept by
+  eye before the next is generated — generate one at a time, not a batch. Status:
+
+  | id | room | style | bands | status |
+  |----|------|-------|-------|--------|
+  | d01 | library | traditional English panelled | Nero Marquina / Fumed Oak / Oxblood Velvet | APPROVED |
+  | d02 | dining | warm organic modern Mediterranean | Olive Limewash / European Walnut / Travertine | APPROVED |
+  | d03 | suite | restrained Art Deco | Aubergine Lacquer / Antique Brass / Alabaster | APPROVED |
+  | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | bands reshot, awaiting review |
+  | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | room reshot, awaiting review |
+
+  `foyer` is the only room type from the naming convention not yet used.
+  **Dev's standing palette steer as of d04: bluer tones with textured paint**, and
+  keep switching decor register between concepts.
 - The OCR no-text guard's `MIN_CONFIDENCE` is very likely miscalibrated for macro
   texture (see the d-series section for the accumulated hit data). Raised with
   Dev, not yet ruled on, deliberately unchanged.
 - Room exposure varies with each concept's own palette reflectance under an
-  identical lighting prompt — 84.5 vs 111.6 mean luminance between d01 and d02.
-  Only matters if consistent mood across the series becomes a requirement.
-- d-series band textures carry baked-in lighting gradients that loosen the
-  swatch-to-room material match. Raised against d02, approved as-is, fixable via
-  `parts=bands` if it ever matters.
+  identical lighting prompt — 84.5 (d01) vs 111.6 (d02) mean luminance. Only
+  matters if consistent mood across the series becomes a requirement.
+- Swatch-to-room material drift is the most persistent open issue: the same
+  material reads differently on its band than in the room. Worst instances are
+  d02's walnut and travertine (RGB distance 71 and 79), d03's alabaster (77) and
+  d05's teal, against d02's evenly-lit limewash at 14. `BAND_LIGHT` improved the
+  cause but has not eliminated it. Raised repeatedly, approved as-is each time —
+  do not silently "fix" it, but it is fixable via `parts=bands`.
+- Room shots contain gibberish lettering on book spines that OCR passes as clean.
+  Flagged, undecided.
