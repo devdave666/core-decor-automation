@@ -146,20 +146,44 @@ BAND_LIGHT = (
 #      explicit that FLUX.2 weights earlier prompt elements more heavily, and at
 #      571 words this prompt has plenty of room to bury an instruction. Lighting
 #      is currently the failing axis, so it gets the early slot.
+# V6 — v5 WAS WRONG ABOUT WHAT IT WAS ASKING FOR, not merely too weak.
+#
+# v3/v4/v5 chased DARKNESS: dawn, then dusk, then "night, windows dark, no
+# daylight anywhere, most of the frame in deep shadow." Dev's verdict on the
+# result was blunt and correct — "very dark and has no lighting at all."
+#
+# The mistake: aesthetic interior lighting is about CONTRAST BETWEEN WARM LIT
+# POOLS AND COOL SHADOW, not about how little light there is. Every source on
+# moody interior work says the same thing and v5 violated the central one:
+#   - The defining move is WARM 2700K INTERIOR LIGHT AGAINST COOL BLUE TWILIGHT
+#     AT THE WINDOWS. v5 said the windows were dark with no daylight at all,
+#     which deleted the exact contrast that creates the effect.
+#   - Lamps go at three or four DIFFERENT HEIGHTS so the room reads as warm
+#     pools, with overhead light dimmed or out of frame.
+#   - Shadows should be tinted COOL BLUE against warm golden highlights; that
+#     colour opposition is what reads as "aesthetic" rather than merely dim.
+#   - Texture — bouclé, brass, plaster, stone — catching raking lamplight is
+#     much of the richness.
+#
+# A room can be BRIGHT in average luminance and still look beautifully lit, and
+# a dark room with no visible sources looks like a photograph of a switched-off
+# room. Chase visible warm sources and falloff, never a target darkness. See the
+# exposure section in llms.txt for why grading in post cannot substitute for this.
 ROOM_LIGHT = (
-    " The photograph is a dark, warm, low-key night interior lit entirely by the "
-    "room's own lamps. It is night outside and the windows are dark, with no "
-    "daylight anywhere in the room. The warm 2700K lamps are the only light "
-    "source and they light the space unevenly: each throws a small pool of warm "
-    "amber light across the surfaces nearest it, and that light falls away "
-    "quickly, so most of the frame sits in deep warm shadow. The ceiling, the "
-    "upper walls, the far corners and any floor away from a lamp are genuinely "
-    "dark, while still holding their detail and texture rather than going flat "
-    "black. The image overall is dominated by shadow with a few glowing pools of "
-    "warm light within it — deep, moody, firelit chiaroscuro. Rich warm amber "
-    "against deep shadow, gently desaturated. The lit areas stay soft and "
-    "controlled, with no hard-edged sun shafts, no light beams and no blown-out "
-    "highlights. Calm, intimate, nocturnal and richly atmospheric."
+    " Photographed at blue hour just after sunset, with every light in the room "
+    "switched on: through the windows the sky is deep cool blue twilight, while "
+    "the room's own warm 2700K practical lamps light the interior. The lamps are "
+    "layered at three or four different heights and each one glows visibly and "
+    "throws its own soft golden pool of light across the surfaces nearest it, "
+    "falling away gradually into shadow, so the room is lit in warm pools rather "
+    "than flatly from overhead. The contrast between that warm golden interior "
+    "light and the cool blue twilight at the windows is the defining quality of "
+    "the photograph. Shadows are deep and softly tinted cool blue, and keep their "
+    "detail and texture rather than going flat black. Bouclé, brass, plaster and "
+    "stone catch the low raking lamplight and show their texture. Rich warm amber "
+    "highlights against cool blue shadow, gently desaturated, in soft gradual "
+    "gradients, with no hard-edged sun shafts, no light beams and no blown-out "
+    "highlights. Cosy, intimate, glowing and richly atmospheric."
 )
 
 # WHY THIS EXISTS: the room prompt once listed only architecture — millwork,

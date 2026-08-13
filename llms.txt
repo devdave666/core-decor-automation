@@ -678,7 +678,44 @@ d01 landed at 84.5 / 0.06 / 16.8.
 Do not reintroduce hard directional daylight, sun shafts, or specular language to
 make a room "pop". That exact change has already been rejected once.
 
-### Overall exposure is NOT reliably promptable — grade it in code instead
+### AESTHETIC LIGHTING IS CONTRAST, NOT DARKNESS — read this before touching ROOM_LIGHT
+
+**This is the most-repeated mistake in this project's history. Five prompt
+versions and a post-processing tool were all spent chasing the wrong variable.**
+
+v3, v4 and v5 progressively chased DARKNESS — dawn, then late dusk, then "night,
+windows dark, no daylight anywhere, most of the frame in deep shadow." Then
+`grade_room.py` was built to force the mean-luminance number down with a gamma
+curve when the prompt would not. Dev's verdict on that graded result was blunt
+and correct: **"very dark and has no lighting at all."**
+
+Both were wrong for the same reason. Aesthetic interior lighting is about the
+CONTRAST BETWEEN WARM LIT POOLS AND COOL SHADOW. It is not about how little light
+is in the frame. The specifics that actually matter:
+
+- **Warm 2700K interior light against COOL BLUE TWILIGHT at the windows is the
+  single defining move.** v5 said the windows were dark with no daylight at all,
+  which deleted precisely the contrast that creates the look. Blue hour, not
+  night.
+- Lamps at **three or four different heights**, each visibly glowing and throwing
+  its own pool, overhead light dimmed or out of frame.
+- **Shadows tinted cool blue against warm golden highlights** — that colour
+  opposition is what reads as "aesthetic" rather than merely dim.
+- Texture (bouclé, brass, plaster, stone) catching low raking lamplight.
+
+**A room can be high in average luminance and still look beautifully lit; a dark
+room with no visible sources just looks switched off.** Never optimise toward a
+target darkness.
+
+**And post-processing cannot create lighting.** A gamma pull dims the lamps along
+with everything else, so a flatly-lit frame becomes a flatly-lit dark frame with
+less contrast than it started with. `grade_room.py` still exists and its
+`measure()` is genuinely useful for reporting mean L / blown / crushed, but
+**grading is not the answer to "this doesn't look good", and the numbers are a
+diagnostic, not a goal.** The section below records the exposure data honestly;
+read it as evidence that darkness was the wrong target, not as a recipe.
+
+### Exposure numbers — a diagnostic, and the record of what did not work
 
 Five prompt versions tried to control the room's overall darkness. v1 (hard
 daylight) and v2 (blanket underexposure) were rejected on look. v3, v4 and v5
