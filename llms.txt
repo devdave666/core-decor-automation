@@ -1056,10 +1056,13 @@ this project's history and should keep holding for future sessions too.
   | d03 | suite | restrained Art Deco | Aubergine Lacquer / Antique Brass / Alabaster | APPROVED |
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
-  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | re-rolled room with SPATIAL_RULE active, geometry verified clean — awaiting review |
+  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | APPROVED |
 
-  All room types from the naming convention (`kit`, `bath`, `dine`, `foyer`,
-  `lib`, `suite`) are now in use as of d06.
+  All six room types from the original naming convention (`kit`, `bath`, `dine`,
+  `foyer`, `lib`, `suite`) were in use as of d06, so d07 onward introduces NEW
+  room-type tags. That is fine and expected — the pipeline ignores the room tag
+  entirely, it exists for humans skimming the folder. Keep them short and
+  obvious, and keep the series letter + number as the load-bearing part.
   **Dev's standing palette steer as of d04: bluer tones with textured paint**, and
   keep switching decor register between concepts.
 
