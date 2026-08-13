@@ -726,10 +726,20 @@ suspect regions is what confirms it — at full-frame scale both d06 defects wer
 easy to miss and both were obvious once enlarged. Same philosophy as judging
 lighting by measured numbers rather than impression.
 
-`SPATIAL_RULE` reduces this failure; it has not been shown to eliminate it. It
-went in after d06 was already generated, so **the first real test of it is the
-next concept generated from scratch** — d06's own repair was done by editing, not
-by regeneration.
+**`SPATIAL_RULE`'s first real test passed, on all three samples.** d06's room was
+re-rolled with `parts=room` after the rule went in. The run tripped the OCR guard
+3/3 (again — see below), but all three rejected samples were inspected and every
+one of them was geometrically clean: no interpenetrating solids anywhere, and in
+the sample that was kept, every stair tread is empty and walkable with the olive
+tree's planter and the urn standing on the FLOOR beside the staircase, tucked
+against the wall — exactly what the rule asks for, and exactly the defect Dev
+sent the previous version back for. Console and foreground stool each show four
+legs resting on the floor with open floor between them, verified by zooming in
+rather than at full-frame scale.
+
+Three samples is not proof, and the sample size that produced the original defect
+was one. Keep doing the geometry pass on new concepts; do not treat this as
+solved.
 
 **GLOBAL CONSTANTS MUST NOT NAME OBJECTS OR FIXTURES — this mistake has now been
 made twice.** The first time, a single global styling constant would have put the
@@ -1046,7 +1056,7 @@ this project's history and should keep holding for future sessions too.
   | d03 | suite | restrained Art Deco | Aubergine Lacquer / Antique Brass / Alabaster | APPROVED |
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
-  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | swatch fine; room "loved otherwise" but sent back for geometry — edited once, urns still part-fixed |
+  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | re-rolled room with SPATIAL_RULE active, geometry verified clean — awaiting review |
 
   All room types from the naming convention (`kit`, `bath`, `dine`, `foyer`,
   `lib`, `suite`) are now in use as of d06.
@@ -1093,9 +1103,18 @@ this project's history and should keep holding for future sessions too.
   approved at roughly this length, but it is a plausible contributor to styling
   drift and to instructions being only partly obeyed. Raise with Dev before
   adding anything further to that prompt.
-- **d06's room shot is repaired but not finished.** The console-through-bench
-  intersection is genuinely fixed and verified by zooming in. The urns moved out
-  of the walking path but still stand on the stair treads rather than on the
-  floor, and the edit changed them from one terracotta plus one blue urn into
-  three matching blue ones. Awaiting Dev's call on whether that is good enough or
-  wants a second targeted edit.
+- **d06's room shot was re-rolled rather than edited further, at Dev's call.** The
+  edited version fixed the console-through-bench intersection but only partly
+  complied on the urns (off the walkway, still on the treads) and restyled them
+  in the process. The re-roll under `SPATIAL_RULE` came back clean on all three
+  samples and is what is committed. The edited version is not lost — it is in
+  git history at `a494b11`, recoverable with
+  `git checkout a494b11 -- concept_review/d06/d06_foyer_cobalt_app.png`.
+- **d06 has now tripped the OCR no-text guard 9 times out of 9 room-shot
+  attempts**, across three separate runs (two `parts=all`, one `parts=room`),
+  every hit low-confidence garbage on zellige tile and stair ironwork. Its room
+  shot has never once passed the guard, and every committed version of it has
+  been placed by hand after visual inspection. This is the strongest single piece
+  of evidence yet that `MIN_CONFIDENCE` is miscalibrated for ornate pattern.
+  Still not changed unilaterally — but d06 is the concept to point at when
+  deciding.
