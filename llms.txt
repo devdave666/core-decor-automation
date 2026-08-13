@@ -453,6 +453,10 @@ c-series look.
 - `.github/workflows/generate-concept.yml` — `workflow_dispatch` ONLY, no
   schedule, taking a `concept` input matching a `CONCEPTS` key and a `parts`
   input. Generation costs real money per image; it must never fire on a timer.
+- `concept_tools/edit_room.py` + `.github/workflows/edit-room.yml` — EDITS an
+  already-committed room shot in place instead of re-rolling it. See "Editing a
+  room instead of re-rolling it" below for when to reach for this rather than
+  `parts=room`.
 
 **`parts` (all / bands / room) exists for a real reason** — the two halves of a
 concept get approved separately in practice. d01's swatch was approved on its
@@ -463,6 +467,48 @@ nothing needs the intermediate band textures to rebuild only the room. Reach for
 `parts=room` whenever only the room is in question — it is one image instead of
 four, and it leaves the approved swatch byte-identical (verified via `git diff`,
 not assumed).
+
+### Editing a room instead of re-rolling it — the third axis
+
+`parts=room` re-rolls the WHOLE room shot: camera, architecture, styling, light.
+That is right when the room is wrong and wrong when the room is right except for
+one fixable flaw, because the good version is gone the moment you re-roll.
+
+d06 forced this. Dev's verdict on its room shot was "I love this application
+photo otherwise" — the only problems were two geometry hallucinations. Re-rolling
+would have discarded a composition he had just said he liked, gambling on getting
+an equally good one back. `edit_room.py` sends the committed image back through
+the SAME `flux-2-pro` endpoint with an `input_image` parameter (base64 of the
+local file — same auth, same polling, no new model), so only the named thing
+changes.
+
+- Invoked as `python concept_tools/edit_room.py <concept> "<instruction>"`, or
+  via `edit-room.yml`'s `workflow_dispatch` with a free-text `instruction`.
+- **The preservation clause is appended automatically** (`PRESERVE` in that
+  module) and must not be dropped. BFL's editing guide is explicit that an edit
+  prompt has to state what stays the same as well as what changes; without it an
+  edit relights the frame, moves the camera and restyles objects nobody asked
+  about, losing the very composition the edit existed to protect.
+- Write the instruction the way that guide says: name what changes, refer to
+  objects by WHERE THEY ARE in the frame ("the two urns standing on the bottom
+  stair tread"), and be specific. Vague directives ("fix the furniture") do not
+  work.
+- The pre-edit image is kept as a `before-edit-<concept>` workflow artifact, so
+  an edit that comes back worse is recoverable. It is stripped before commit.
+- **The no-text guard REPORTS on this path but does not gate it**, unlike
+  generation — the source was already human-verified text-free, a
+  furniture-repositioning edit cannot introduce lettering, and d06's room is the
+  confirmed worst case for the guard's false positive. `MIN_CONFIDENCE` is
+  untouched and still strict for generation. Do not generalise this exemption
+  back into `generate_concept.py`.
+- **Known limitation, measured on the first real use:** an edit does not fully
+  preserve the identity of the objects it MOVES. d06's edit correctly separated
+  the console from the bench, but it also turned one terracotta urn and one blue
+  urn into three matching blue ones, and only partly complied on placement —
+  moving the urns out of the walking path but leaving them standing on the stair
+  treads rather than on the floor as instructed. Expect partial compliance on
+  placement and drift on the moved objects specifically; everything untouched
+  did hold. Budget for a second pass, and check the result rather than assuming.
 
 ### Concept definition shape
 
@@ -500,6 +546,41 @@ Dev hands over the key value directly in chat.
 - On `Ready`, `result.sample` is a URL that **expires in 10 minutes**. Download
   the bytes immediately; never store or reuse the URL itself.
 - Width/height should be multiples of 32.
+- **The same endpoint also EDITS**: add an `input_image` parameter (an image URL
+  or raw base64, no `data:` prefix) and the call becomes an edit of that image
+  rather than a fresh generation. No separate model, endpoint or auth. Omit
+  width/height when editing so the source's own dimensions carry through.
+  Additional references go in `input_image_2` … `input_image_8`.
+
+### BFL prompting rules — from their own docs, checked August 2026
+
+Read before editing any prompt constant. These are documented model behaviours,
+not preferences:
+
+- **FLUX.2 does not support negative prompts.** Their words: "focus on describing
+  what you want, not what you don't want." Naming a defect can summon it. New
+  prompt text must state the DESIRED state instead — `SPATIAL_RULE` is written
+  that way deliberately and has no "no ..." clause in it. The older negative
+  phrasing in `NO_TEXT`, `BAND_LIGHT` and `ROOM_LIGHT` predates this finding and
+  is deliberately left alone: it has five approved concepts behind it, and
+  rewriting working prompts to chase a docs quote would be an unvalidated change.
+  Don't add NEW negatives, and don't mass-rewrite the old ones without a reason.
+- **Word order is weighted** — earlier elements get more attention. Geometry and
+  composition go early, which is why `SPATIAL_RULE` sits immediately after
+  `COMPOSITION` rather than at the end.
+- **Spatial control is done with explicit layering and prepositions** —
+  foreground / midground / background, "on", "behind", "in front of", "to the
+  right of". This is the documented lever for placement, and the reason the
+  d06 edit instruction named objects by where they sit in the frame.
+- **Length: their bands are short 10-30, medium 30-80, long 80-300+ words**, with
+  the warning "start short, add only what changes the image — more words do not
+  automatically mean better results." **The d-series room prompt is now ~533
+  words**, well past the top of their long band. That is an OPEN CONCERN, not a
+  resolved one: it may be diluting attention across instructions and is a
+  plausible contributor to the styling-drift and partial-compliance problems seen
+  here. It has NOT been trimmed, because five concepts were approved at roughly
+  this length and shortening it is a change worth making deliberately with Dev
+  rather than silently. Raise it before adding another constant to that prompt.
 
 Replicate was abandoned for this specific work — that account returned HTTP 402,
 insufficient credit — in favour of BFL direct. This doesn't affect anything else
@@ -613,6 +694,42 @@ the original dead-centre symmetrical elevation, which read as catalogue
 documentation. The reference reel's rooms nearly all place objects in the near
 field, and that depth is much of why they look inhabited. True verticals are kept
 from the original direction.
+
+### Geometry hallucinations — a THIRD failure axis, separate from light and styling
+
+`SPATIAL_RULE` exists because d06's room shot was committed and presented for
+approval with two impossible things in it, and neither lighting nor styling
+review would ever have caught them:
+
+1. The console table's rear leg passed straight THROUGH the frame of the rattan
+   bench in front of it — two solid objects interpenetrating.
+2. Two large urns stood on the bottom stair tread, blocking the only route up.
+
+Dev caught both by eye and circled them; the session that generated it had looked
+at the same image and called it good. That is the lesson worth keeping: **a
+generative room shot can be correctly lit, correctly styled, correctly materialled
+and still be spatially impossible.** The model composes a convincing flat picture
+without maintaining a consistent 3D scene underneath it, so solids merge and
+circulation routes get furnished over.
+
+`SPATIAL_RULE` states, affirmatively, that the room is a coherent 3D space:
+furniture separated by visible floor, legs complete and visible where they meet
+the floor, objects back against walls, and doorways, thresholds, stair treads and
+the main walking route left open and walkable. It sits right after `COMPOSITION`
+so geometry is grouped early in the prompt. It is written with zero negative
+clauses on purpose — see the BFL prompting rules above.
+
+**Reviewing a room shot now needs an explicit geometry pass of its own**, separate
+from judging mood: trace where each piece of furniture meets the floor, and check
+that every walking route and stair is actually passable. Cropping and zooming the
+suspect regions is what confirms it — at full-frame scale both d06 defects were
+easy to miss and both were obvious once enlarged. Same philosophy as judging
+lighting by measured numbers rather than impression.
+
+`SPATIAL_RULE` reduces this failure; it has not been shown to eliminate it. It
+went in after d06 was already generated, so **the first real test of it is the
+next concept generated from scratch** — d06's own repair was done by editing, not
+by regeneration.
 
 **GLOBAL CONSTANTS MUST NOT NAME OBJECTS OR FIXTURES — this mistake has now been
 made twice.** The first time, a single global styling constant would have put the
@@ -929,7 +1046,7 @@ this project's history and should keep holding for future sessions too.
   | d03 | suite | restrained Art Deco | Aubergine Lacquer / Antique Brass / Alabaster | APPROVED |
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
-  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | awaiting review — room shot manually recovered, see below |
+  | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | swatch fine; room "loved otherwise" but sent back for geometry — edited once, urns still part-fixed |
 
   All room types from the naming convention (`kit`, `bath`, `dine`, `foyer`,
   `lib`, `suite`) are now in use as of d06.
@@ -970,3 +1087,15 @@ this project's history and should keep holding for future sessions too.
   do not silently "fix" it, but it is fixable via `parts=bands`.
 - Room shots contain gibberish lettering on book spines that OCR passes as clean.
   Flagged, undecided.
+- **The d-series room prompt is ~533 words, well past BFL's own recommended
+  ceiling** (their "long" band tops out around 300, with an explicit warning that
+  more words do not mean better results). Untouched because five concepts were
+  approved at roughly this length, but it is a plausible contributor to styling
+  drift and to instructions being only partly obeyed. Raise with Dev before
+  adding anything further to that prompt.
+- **d06's room shot is repaired but not finished.** The console-through-bench
+  intersection is genuinely fixed and verified by zooming in. The urns moved out
+  of the walking path but still stand on the stair treads rather than on the
+  floor, and the edit changed them from one terracotta plus one blue urn into
+  three matching blue ones. Awaiting Dev's call on whether that is good enough or
+  wants a second targeted edit.
