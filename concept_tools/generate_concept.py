@@ -180,7 +180,9 @@ ROOM_LIGHT = (
     "light and the cool blue twilight at the windows is the defining quality of "
     "the photograph. Shadows are deep and softly tinted cool blue, and keep their "
     "detail and texture rather than going flat black. Bouclé, brass, plaster and "
-    "stone catch the low raking lamplight and show their texture. Rich warm amber "
+    "stone catch the low raking lamplight and show their texture. The warm "
+    "lamplight reveals the room's own materials and their true colours clearly "
+    "and accurately, rather than washing everything to a uniform amber. Rich warm "
     "highlights against cool blue shadow, gently desaturated, in soft gradual "
     "gradients, with no hard-edged sun shafts, no light beams and no blown-out "
     "highlights. Cosy, intimate, glowing and richly atmospheric."
@@ -431,15 +433,26 @@ def build_concept(concept, out_dir, parts="all"):
         out_dir.mkdir(parents=True, exist_ok=True)
         room_label = f"{stem} room"
         room_prompt = (
-            # ROOM_LIGHT goes EARLY — see its own v5 note. FLUX.2 weights earlier
-            # prompt elements more heavily, and lighting buried ~400 words in was
-            # being obeyed only weakly against a bright palette.
+            # ORDER IS DELIBERATE AND HAS BEEN WRONG TWICE. FLUX.2 weights earlier
+            # prompt elements more heavily, so the two things that define a
+            # concept — ITS MATERIALS and ITS LIGHT — both go up front, materials
+            # first.
+            #
+            # Lighting buried ~400 words in was obeyed only weakly (v3/v4/v5).
+            # Moving it to the very front fixed the light and then broke the
+            # materials instead: d07 came back beautifully lit in warm plaster and
+            # brass, with its petrol lacquer, burl walnut and silver travertine
+            # essentially absent. A room that does not show the concept's own
+            # three materials breaks the swatch-to-room 1:1 match the whole format
+            # is built on, so materials lead and lighting follows immediately.
             f"Interior photograph of {concept['room']}, {concept['style']}."
+            + f" The space is built from exactly these materials, which are the "
+            f"defining feature of the room and must be clearly visible: "
+            f"{concept['materials_sentence']}"
             + ROOM_LIGHT
             + COMPOSITION
             + SPATIAL_RULE
-            + f" The space applies exactly these materials: {concept['materials_sentence']}"
-            f" Furnished and dressed with: {concept['styling']}"
+            + f" Furnished and dressed with: {concept['styling']}"
             + STYLING_RULE
             + f" The room's own light fittings are: {concept['fixtures']}"
             + QUALITY_ROOM + NO_TEXT
