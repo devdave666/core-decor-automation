@@ -87,44 +87,61 @@ BAND_LIGHT = (
 )
 
 # THE LIGHTING DIRECTION IS THE WHOLE POINT OF THIS CONSTANT — read before editing.
-# d01's first room shot was rejected as "too bright for the mood." The cause was
-# in the prompt, not in post: it asked for "high-contrast directional natural
-# daylight through large windows" plus "crisp specular highlights," which is a
-# recipe for exactly the hard diagonal sun shaft and blown highlights it produced.
 #
-# The second attempt removed direct sun entirely and asked for a stop and a half
-# of underexposure. That killed the shaft (blown pixels 0.24% -> 0.05%) but
-# crushed 34.1% of the frame to near-black, against 15-26% in the reference —
-# the sofa and floor lost all detail. Dawn/dusk light plus brighter practicals is
-# the correction: keep the sun soft and low, let the interior fixtures carry the
-# exposure, and state explicitly that shadows keep their detail.
+# V4, AND THE REASON IS MEASURED, NOT A MOOD SWING. v3 (dawn light, practicals up)
+# was approved on d01 and then quietly drifted the whole series bright. Measured
+# across every concept's room shot, mean luminance / crushed %:
+#     d01 84.5 / 16.8   d02 111.6 / 2.6   d03 81.7 / 2.2   d04 102.3 / 2.8
+#     d05 94.5 / 7.2    d06 133.2 / 3.4   d07 112.8 / 2.4
+# against a reference-reel target of mean L 63-71 and crushed 15-26%. Only d01 was
+# ever close. The crushed figure is the telling one: it collapsed from 16.8% to
+# 2-3%, meaning the later rooms contain almost no deep shadow at all, which is
+# exactly why they read flat and lit rather than atmospheric. Dev's note was that
+# he prefers it "a little darker... morning, late evening or night, so the
+# lighting is soft and the room looks more aesthetically" — a standing preference,
+# not a one-off on d07.
+#
+# THE LEVER IS TIME OF DAY AND SHADOW FALLOFF, NOT EXPOSURE. This is the whole
+# lesson of the rejected versions below and must not be relearned:
+#   v1 — "high-contrast directional daylight" + "crisp specular highlights":
+#        hard diagonal sun shaft, blown highlights. Rejected "too bright for the
+#        mood" — despite being the DARKEST image of that set by mean luminance
+#        (57.8). A hard shaft reads bright even when the frame average is low.
+#   v2 — direct sun removed, "underexposed roughly one and a half stops":
+#        killed the shaft but crushed 34.1% of the frame to near-black; sofa and
+#        floor lost all detail. Rejected as too dark. GLOBAL UNDEREXPOSURE IS NOT
+#        THE LEVER — it was never an exposure problem.
+#   v3 — soft low-angle dawn, practicals up, shadows explicitly detailed.
+#        Approved on d01, then drifted bright across d02-d07 as above.
+#   v4 — this one. Moves the hour from dawn to late dusk so the ambient daylight
+#        contribution is genuinely small, makes the practicals the main source
+#        rather than merely "turned up", and asks for real falloff into deep
+#        shadow WHILE explicitly keeping detail in it — the one thing v2 got
+#        wrong. Aim: mean L back toward 70-85 with crushed back up to 15-25%,
+#        without reintroducing v1's blown highlights.
 #
 # Do not reintroduce hard directional daylight, sun shafts, or specular language
-# to make a room "pop" — that exact change was rejected once already.
+# to make a room "pop". That exact change has already been rejected once.
 #
 # SECOND RULE, LEARNED SEPARATELY:
 # ROOM_LIGHT DESCRIBES LIGHT QUALITY ONLY — NO SPECIFIC FIXTURES. Each concept
 # names its own in a "fixtures" field, the same way it names its own styling.
-#
 # This constant used to hardcode "table lamps under cream shades" and "picture
-# lights above the artwork" for every room in the series. d05 is a BATHROOM and
-# came back with two table lamps and a framed picture on the wall, none of which
-# its styling field asked for. Dev caught it and asked, reasonably, why a bathroom
-# had table lamps in it.
-#
-# It is exactly the mistake already fixed one layer up: a single global object
-# list was moved into per-concept "styling" so every room would not get the same
-# olive tree, and then the LIGHTING constant went on naming specific fixtures
-# globally and nobody noticed. Keep fixture nouns out of here.
+# lights above the artwork" for every room in the series, and d05 (a BATHROOM)
+# duly came back with two table lamps and a framed picture. Keep fixture nouns
+# out of here.
 ROOM_LIGHT = (
-    " Lit by soft low-angle dawn light through large windows — warm, gentle and "
-    "heavily diffused, with no hard-edged sun shafts, no light beams and no "
-    "blown-out highlights anywhere in the frame. The interior mood lighting is "
-    "turned well up and does most of the work, glowing warmly at 2700K and layered "
-    "so light arrives from several heights at once, each source throwing its own "
-    "soft pool, with generous diffused light across the ceiling. Shadows stay open "
-    "and keep their detail rather than crushing to black. Warm, muted, gently "
-    "desaturated colour grade. Calm, intimate, richly atmospheric."
+    " Lit at late dusk, after the sun has gone down, when only a little dim cool "
+    "light still lingers at the windows — the remaining daylight is soft, low and "
+    "secondary. The room's own warm lamps at 2700K are the main source and carry "
+    "the exposure, layered so light arrives from several heights at once, each "
+    "throwing its own soft pool that falls away gently into the surrounding "
+    "darkness. Large areas of the frame rest in deep, soft shadow that still holds "
+    "its detail and texture, so the room reads genuinely dark and low-key while "
+    "staying completely legible. Lit areas stay gentle and controlled, with no "
+    "hard-edged sun shafts, no light beams and no blown-out highlights anywhere in "
+    "the frame. Warm, muted, gently desaturated colour grade. Calm, intimate, "
+    "nocturnal and richly atmospheric."
 )
 
 # WHY THIS EXISTS: the room prompt once listed only architecture — millwork,
