@@ -1,0 +1,78 @@
+name: Edit Room Shot
+
+# Repairs an already-committed room shot in place rather than re-rolling it.
+# Runs inside Actions for the same reason generate-concept.yml does: BFL_API_KEY
+# lives in this repo's Actions secrets and cannot be read back out.
+#
+# Manual only, no schedule — same as generation, this costs money per image and
+# is a deliberate act.
+#
+# Use this when a room shot is GOOD EXCEPT for something specific. Use
+# generate-concept.yml with parts=room when the room itself is wrong; that
+# re-rolls the whole composition, which is exactly what this workflow exists to
+# avoid when the composition is one worth keeping.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: "Concept id whose room shot to edit (must already be committed)"
+        required: true
+        default: "d06"
+      instruction:
+        description: "What to change. Be specific and say where things are in the frame. What stays the same is added automatically."
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  edit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tesseract (the no-text check reports on edits, does not gate them)
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install Python dependencies
+        run: pip install requests pillow pytesseract
+
+      - name: Edit room shot
+        env:
+          BFL_API_KEY: ${{ secrets.BFL_API_KEY }}
+        run: python concept_tools/edit_room.py "${{ inputs.concept }}" "${{ inputs.instruction }}"
+
+      # The pre-edit image is the only copy of the composition being repaired.
+      # If the edit comes back worse, this artifact is how it gets recovered —
+      # `always()` for the same reason generate-concept.yml uses it: a green run
+      # that quietly deleted its own evidence is the failure mode already hit
+      # once on this project.
+      - name: Upload the pre-edit image
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: before-edit-${{ inputs.concept }}
+          path: concept_review/${{ inputs.concept }}/*.before-edit.png
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Commit the edited room shot
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+          # Working file, kept as the artifact above, never committed as output.
+          rm -f "concept_review/${{ inputs.concept }}"/*.before-edit.png
+          git add "concept_review/${{ inputs.concept }}"
+          if git diff --staged --quiet; then
+            echo "No change to commit"
+          else
+            git commit -m "Edit ${{ inputs.concept }} room shot: ${{ inputs.instruction }}"
+            git pull --rebase --autostash origin main
+            git push
+          fi

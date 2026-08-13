@@ -162,8 +162,55 @@ COMPOSITION = (
     "vertical lines, no wide-angle lens distortion, no fisheye."
 )
 
+# PHYSICAL COHERENCE — added after d06, whose room shot looked good enough that it
+# was committed and presented for approval before Dev spotted two geometry
+# failures in it that a careful look would have caught:
+#   1. The console table's rear leg passed straight THROUGH the frame of the
+#      rattan bench standing in front of it — two solid objects interpenetrating.
+#   2. Two large urns sat squarely on the bottom stair tread, blocking the only
+#      route up the staircase.
+# This is the classic generative failure mode: the model composes a convincing
+# flat picture without maintaining a consistent 3D scene underneath it, so solids
+# pass through each other and circulation routes get furnished over. Neither
+# defect is a lighting or styling problem, so no existing constant covered it.
+#
+# WRITTEN AFFIRMATIVELY, AND THAT IS LOAD-BEARING, NOT A STYLE CHOICE.
+# BFL's own FLUX.2 prompting guide states the model does NOT support negative
+# prompts — "focus on describing what you want, not what you don't want." So
+# "no overlapping furniture" is the wrong shape of instruction entirely: it names
+# the defect and can summon it. Every clause below states the desired end state
+# (separated, resting, visible, clear, walkable) instead. If this rule ever needs
+# strengthening, add more affirmative description — do not add "no ..." clauses.
+#
+# The negative phrasing elsewhere in this file (NO_TEXT, and the "no hot spots"
+# language in BAND_LIGHT and ROOM_LIGHT) predates that finding and is left alone
+# on purpose: it has five approved concepts behind it, and rewriting prompts that
+# currently work would be an unvalidated change chasing a docs quote.
+#
+# Placed immediately after COMPOSITION so all geometry instruction sits together
+# near the front of the prompt — the same guide notes FLUX.2 weights earlier
+# prompt elements more heavily than later ones.
+SPATIAL_RULE = (
+    " The room is a physically coherent three-dimensional space. Every piece of "
+    "furniture stands squarely on the floor in its own clear area of open floor, "
+    "fully separate from every other piece, with a visible gap of empty floor "
+    "between neighbouring pieces so each one reads as a solid, distinct object. "
+    "Legs, frames and edges stay complete and clearly visible where they meet the "
+    "floor, each piece passing in front of or behind its neighbours with obvious "
+    "depth between them. Large objects and furniture sit back against the walls "
+    "and into the corners, so that doorways, thresholds, stair treads and the main "
+    "walking route through the room stay open, level and clear underfoot — a "
+    "person could walk the full path and climb any stairs unobstructed."
+)
 
-def _generate(prompt, width, height, label):
+
+def _generate(prompt, width, height, label, input_image=None):
+    """
+    `input_image` (base64 PNG/JPEG bytes, no data: prefix) switches this from
+    text-to-image to EDITING that image — same endpoint, same auth, same polling,
+    per BFL's docs. Width/height are omitted when editing so the source image's
+    own dimensions carry through rather than being reinterpreted.
+    """
     # Imported here, not at module scope, so that reading CONCEPTS and the prompt
     # constants — which QA tooling like check_legibility.py does — never requires
     # an HTTP library to be installed.
@@ -174,10 +221,16 @@ def _generate(prompt, width, height, label):
         raise SystemExit("BFL_API_KEY not set in environment")
     headers = {"x-key": key, "Content-Type": "application/json", "accept": "application/json"}
 
+    payload = {"prompt": prompt, "output_format": "png"}
+    if input_image is None:
+        payload["width"] = width
+        payload["height"] = height
+    else:
+        payload["input_image"] = input_image
+
     r = requests.post(f"{API_BASE}/{MODEL}",
                        headers=headers,
-                       json={"prompt": prompt, "width": width, "height": height,
-                             "output_format": "png"},
+                       json=payload,
                        timeout=60)
     if r.status_code >= 400:
         raise SystemExit(f"[{label}] submit failed {r.status_code}: {r.text[:500]}")
@@ -321,6 +374,7 @@ def build_concept(concept, out_dir, parts="all"):
         room_prompt = (
             f"Interior photograph of {concept['room']}, {concept['style']}."
             + COMPOSITION
+            + SPATIAL_RULE
             + f" The space applies exactly these materials: {concept['materials_sentence']}"
             f" Furnished and dressed with: {concept['styling']}"
             + STYLING_RULE
