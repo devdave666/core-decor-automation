@@ -1,0 +1,59 @@
+name: Single Product Reel
+
+# One-off product drop: a Drive folder with exactly one swatch photo and any
+# number of application photos of that same product. Not on a schedule —
+# each run corresponds to a specific new folder Dev points it at, same
+# "deliberate act, manual only" reasoning as generate-concept.yml.
+
+on:
+  workflow_dispatch:
+    inputs:
+      drive_folder:
+        description: "Drive folder id or full folder URL (swatch + application photos)"
+        required: true
+      product_name:
+        description: "Product name for captions — leave blank to use the Drive folder's own name"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  single-product-reel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install librosa moviepy requests numpy
+
+      - name: Configure git for automated commits
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run single product reel pipeline
+        env:
+          DRIVE_FOLDER: ${{ inputs.drive_folder }}
+          PRODUCT_NAME: ${{ inputs.product_name }}
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          BUFFER_PINTEREST_CHANNEL_ID: ${{ secrets.BUFFER_PINTEREST_CHANNEL_ID }}
+        run: python single_product_reel/single_product_pipeline.py

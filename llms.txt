@@ -1318,3 +1318,81 @@ this project's history and should keep holding for future sessions too.
   of evidence yet that `MIN_CONFIDENCE` is miscalibrated for ornate pattern.
   Still not changed unilaterally — but d06 is the concept to point at when
   deciding.
+
+## Single Product Reel — the third content type (2026-08-14)
+
+Added `single_product_reel/single_product_pipeline.py` and
+`.github/workflows/single-product-reel.yml` for a format neither the original
+swatch+application rotation (`core_decor_reel_pipeline.py`) nor Hot Takes
+(`hot_takes/`) cover: a ONE-OFF product drop from a Drive folder Dev points it
+at, containing exactly one swatch photo and any number of application photos
+of that same product — not the committed `assets/` pool, not a paired
+swatch/application filename convention.
+
+Built the same way Hot Takes was built alongside the original pipeline: reuses
+every shared stage (Drive fetching, audio mastering, template cut-timing
+extraction, Meta/Buffer publishing, repo hosting, the git-backed counter
+helper) directly from `core_decor_reel_pipeline.py`, with its own
+`single_product_reel/template_index.txt` so its position in the Drive Template
+Reels rotation never collides with the other two pipelines' counters — same
+reasoning already recorded above for Hot Takes' own `_fetch_template_for_audio`.
+
+**Reel structure**: segment 0 is always the swatch (the anticipation beat),
+every later segment is `random.choice(application_photos)` chosen WITH
+replacement — repeats across segments are expected and correct, not a bug, per
+Dev's literal instruction ("cycle through all the applications randomly even
+they repeat"). Because the swatch only ever appears in segment 0, the reel is
+guaranteed to end on an application shot for any template with 2+ cuts, with
+none of `core.build_reel`'s parity/alternation bookkeeping needed — that
+bookkeeping exists there specifically to keep a fixed swatch/application PAIR
+alternating correctly, which doesn't apply here.
+
+**Swatch detection**: whichever file in the folder has `"swatch"` in its name
+(case-insensitive). If none match, falls back to the first file alphabetically
+and logs a warning — worth checking on the first run of a new folder that
+doesn't follow this naming convention, since a silent wrong guess here would
+mean an application photo gets used as the opening "material" shot instead of
+the actual swatch.
+
+**Product name**: `PRODUCT_NAME` workflow input if given, otherwise the Drive
+folder's own display name via the new `drive_upload.get_folder_name()`. Rename
+the Drive folder to something caption-worthy before dispatching if the raw
+folder name wouldn't read well in a caption.
+
+**"A song already in our library"**: resolved with Dev as meaning the next
+Template Reel in the existing Drive Template Reels rotation — its mastered
+audio AND its real cut-timing, exactly the mechanism the other two pipelines
+already use. There is no separate music library in this repo; every track this
+project has ever posted with came from that same folder.
+
+**Captions, per Dev's instruction, deliberately two different shapes** — see
+the new functions in `caption_bank.py`:
+  - `get_link_in_bio_caption(product_name)` → Instagram, Facebook, TikTok,
+    YouTube. Short hook + a natural link-in-bio CTA naming the product, same
+    "don't read as AI-written" voice as `get_caption()` but no rotation index
+    (this is a one-off run, not a pool to cycle through without repeats).
+  - `get_pinterest_seo_caption(product_name)` → Pinterest only. Deliberately
+    long and keyword-front-loaded, not just a longer version of the other
+    caption — Pinterest's own search surfaces reward descriptive, keyword-dense
+    pin text, and front-load the product name + keywords since Pinterest
+    truncates descriptions in search results.
+
+**Pinterest publishes via Buffer** (`core.publish_to_buffer(..., platform=
+"pinterest")`) — Dev confirmed Pinterest is already a connected Buffer channel,
+referenced as the new `BUFFER_PINTEREST_CHANNEL_ID` secret, same as the
+existing `BUFFER_TIKTOK_CHANNEL_ID` / `BUFFER_YOUTUBE_CHANNEL_ID` pattern.
+Deliberately uses `publish_to_buffer`'s plain minimal path — caption text + one
+video asset, no extra `metadata` block — rather than guessing at a
+title/board field the way the YouTube branch does for `categoryId`/`privacy`.
+Buffer's exact GraphQL input schema for Pinterest posts (title separate from
+description? board selection, or does the channel already imply one board?)
+has never been tested against this project's real Buffer account. Dev's own
+words: "it's okay if you can't write a custom caption for it, I can probably
+update it later" — so the first real run through this workflow IS the test;
+if Buffer rejects or mishandles the Pinterest post, add the missing metadata
+field to the `if platform == "pinterest":` branch of `publish_to_buffer()`
+afterward, the same way the YouTube branch was built, rather than guessing now.
+
+This workflow is `workflow_dispatch` only, no schedule — same "deliberate act"
+reasoning as `generate-concept.yml`: it corresponds to one specific Drive
+folder Dev has just pointed it at, not a recurring rotation.

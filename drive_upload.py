@@ -104,6 +104,19 @@ def upload_file(local_path, folder_id, remote_name=None, mime_type="image/png"):
     return r.json()
 
 
+def get_folder_name(folder_id):
+    """Returns a Drive folder's own display name — used to derive a product name
+    from a one-off product folder without requiring it be typed in by hand."""
+    token = _get_access_token()
+    r = requests.get(
+        f"https://www.googleapis.com/drive/v3/files/{folder_id}",
+        params={"fields": "name"},
+        headers={"Authorization": f"Bearer {token}"}, timeout=30,
+    )
+    r.raise_for_status()
+    return r.json()["name"]
+
+
 def list_files_in_folder(folder_id):
     """Returns [{'id':..., 'name':...}, ...] for all non-trashed files in a folder,
     sorted by name for deterministic rotation ordering."""

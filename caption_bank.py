@@ -131,3 +131,91 @@ def get_caption(index):
 def cycle_length():
     """Number of posts before hook/tail combinations start repeating."""
     return len(HOOKS) * len(TAILS)
+
+
+# ---------------------------------------------------------------------------
+# Single-product drops — one swatch, many application shots of the SAME
+# product, sourced from a one-off Drive folder rather than the rotating
+# c-/d-series pool. Short link-in-bio caption for IG/FB/TikTok/YouTube, long
+# SEO caption for Pinterest. See single_product_reel/single_product_pipeline.py.
+# ---------------------------------------------------------------------------
+
+LINK_IN_BIO_HOOKS = [
+    "kept coming back to this one so here it is",
+    "this material's been living in every room we mock up lately",
+    "the one everyone keeps asking about",
+    "put this through a few different rooms just to see, results below",
+    "this is the material, not the theory of the material",
+    "wanted to show this one on more than just the swatch",
+    "this is the one that made the shortlist every single time",
+    "still the easiest recommend in the whole library",
+]
+
+LINK_IN_BIO_TAILS = [
+    "link in bio if you want the details on {product}",
+    "{product} — link in bio for sourcing",
+    "everything on {product} is in the bio link",
+    "link in bio, that's where {product} lives",
+    "full breakdown of {product} through the bio link",
+    "bio link has the rest on {product}",
+]
+
+
+def get_link_in_bio_caption(product_name):
+    """
+    Short caption for IG/FB/TikTok/YouTube on a single-product drop — a hook line
+    plus a natural link-in-bio CTA naming the product, same modular hook/tail
+    shape as get_caption() but without an index (one-off run, not a rotation).
+    """
+    import random
+
+    hook = random.choice(LINK_IN_BIO_HOOKS)
+    tail = random.choice(LINK_IN_BIO_TAILS).format(product=product_name)
+    hashtags = " ".join(FIXED_HASHTAGS)
+    return f"{hook}.\n{tail}\n\n{hashtags}"
+
+
+PINTEREST_SEO_OPENERS = [
+    "{product} is the kind of material that changes how a whole room reads.",
+    "If you're planning a space around {product}, here's what to know before you commit to it.",
+    "{product} keeps showing up in our material boards for a reason.",
+]
+
+PINTEREST_KEYWORD_POOL = [
+    "interior design", "home renovation", "material palette", "natural stone",
+    "kitchen design", "bathroom design", "living room decor", "moodboard",
+    "interior styling", "modern luxury interiors", "organic modern design",
+    "warm minimalism", "textured surfaces", "design inspiration",
+    "home makeover ideas", "luxury home design",
+]
+
+
+def get_pinterest_seo_caption(product_name):
+    """
+    Long-form, keyword-front-loaded description for Pinterest SEO — Pinterest's
+    own search surfaces reward descriptive, keyword-dense pin text far more than
+    the short-hook style used elsewhere, so this is deliberately a different
+    shape from get_caption()/get_link_in_bio_caption(), not just a longer
+    version of them. Front-loads the product name and top keywords in the first
+    sentence, since Pinterest truncates descriptions in search results.
+    """
+    import random
+
+    opener = random.choice(PINTEREST_SEO_OPENERS).format(product=product_name)
+    keywords = random.sample(PINTEREST_KEYWORD_POOL, 6)
+
+    body = (
+        f"{opener} Save this pin for {product_name} inspiration — whether you're "
+        f"planning a full renovation or just swapping one material at a time, this "
+        f"is the kind of finish that pulls a room together instead of competing "
+        f"with everything else in it.\n\n"
+        f"See it paired against real application shots, not just the swatch card, "
+        f"so you know how {product_name} actually reads in a finished space under "
+        f"real lighting — the swatch alone rarely tells the whole story.\n\n"
+        f"Perfect for {keywords[0]}, {keywords[1]}, and {keywords[2]} boards. Also "
+        f"a strong fit if you're collecting ideas around {keywords[3]}, "
+        f"{keywords[4]}, or {keywords[5]}.\n\n"
+        f"Pin this for later, and tap through for the full sourcing details on "
+        f"{product_name} — link in bio."
+    )
+    return body
