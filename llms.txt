@@ -1227,10 +1227,18 @@ this project's history and should keep holding for future sessions too.
   If a future concept dies the same way, this is the recovery path: pull the
   artifact, eyeball the rejects, hand-place the best one rather than blindly
   re-running `parts=all` a third time and re-paying for bands that already passed.
-- The OCR no-text guard's `MIN_CONFIDENCE` is very likely miscalibrated — not just
-  for macro texture but for any busy ornamental pattern (see d06 above for a
-  confirmed non-texture instance). Raised with Dev repeatedly, not yet ruled on,
-  deliberately unchanged.
+- **The OCR guard's `MIN_CONFIDENCE` was RAISED 55 -> 85 by Dev on 2026-08-14**,
+  after every hit across all nine concepts turned out to be a false positive in
+  a 55-83 band while real composited labels scored 91-96. There has never been
+  a true positive above 83. The cost of 55 was real: d06's room never passed
+  once in nine attempts, and d09 lost a whole concept — two already-paid,
+  already-passing bands discarded — to ('wake', 60.0) on a linen weave.
+  The standing rule that the model must never render type is UNCHANGED: the
+  prompt still excludes text, the guard still runs on every image, and genuine
+  legible words score far above 85. **Still to confirm on the next Actions run:
+  the both-directions validation (a labelled card must still FAIL) has not been
+  re-run at 85 — pytesseract is not installed locally.** If a real rendered word
+  ever slips through below 85, lower it again and record the sample.
 - Room exposure varies with each concept's own palette reflectance under an
   identical lighting prompt — 84.5 (d01) vs 111.6 (d02) mean luminance. Only
   matters if consistent mood across the series becomes a requirement.
