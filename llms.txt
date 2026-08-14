@@ -430,6 +430,14 @@ asset folders, so rotation covers whatever is really on disk. **If you add
 concepts, just drop matched `_swatch`/`_app` pairs into those two folders; no
 count needs updating.**
 
+**First d-series reel published 2026-08-14.** 19.8s, 16 concepts, starting
+offset 50 — so it opened with all seven d-series concepts (d01-d07) and then ran
+on into c01-c09. Instagram media_id 18147586012463215, Facebook video_id
+3092586927602898, TikTok 6a7e9cbd6bf062f95aaa15b5, YouTube
+6a7e9cc7dcbc3184d7f319fe, template 1/4. Offset advanced 50 -> 9 (50+16 mod 57),
+so the NEXT scheduled reel resumes mid-c-series at c10; if the d-series should
+lead again, reset `concept_offset.txt` to 50.
+
 **Only APPROVED concepts get promoted.** d08 was deliberately held back — it is
 unreviewed and has two open styling questions (an unrequested laptop on the desk;
 the leather desk chair and abstract canvas its own styling field names are both
