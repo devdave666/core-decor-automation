@@ -235,9 +235,20 @@ def run_pipeline():
             public_url, link_in_bio_caption, os.environ["BUFFER_YOUTUBE_CHANNEL_ID"], "youtube",
             youtube_title=link_in_bio_caption.split("\n")[0][:100],
         )
-        pinterest_id = core.publish_to_buffer(
-            public_url, pinterest_caption, os.environ["BUFFER_PINTEREST_CHANNEL_ID"], "pinterest",
-        )
+        pinterest_channel_id = os.environ.get("BUFFER_PINTEREST_CHANNEL_ID", "").strip()
+        if pinterest_channel_id:
+            pinterest_id = core.publish_to_buffer(public_url, pinterest_caption, pinterest_channel_id, "pinterest")
+        else:
+            # Optional, not required: Dev confirmed Pinterest is Buffer-connected but
+            # the channel id secret isn't set up yet ("it's okay if you can't write a
+            # custom caption for it, I can probably update it later"). Skip rather
+            # than block IG/FB/TikTok/YouTube, which don't depend on it.
+            log.warning(
+                "BUFFER_PINTEREST_CHANNEL_ID not set — skipping Pinterest publish. "
+                "Add the secret and re-run this workflow to publish there too. "
+                "Pinterest caption that would have been used:\n%s", pinterest_caption,
+            )
+            pinterest_id = None
 
         core._write_and_commit_counter(
             repo_root, TEMPLATE_INDEX_FILE, (t_idx + 1) % n_templates,
@@ -252,10 +263,12 @@ def run_pipeline():
 
 
 if __name__ == "__main__":
+    # BUFFER_PINTEREST_CHANNEL_ID is intentionally NOT required — see the skip
+    # logic in run_pipeline(). Every other platform here has no such fallback:
+    # missing any of these means the run can't do its job at all.
     required = ["DRIVE_FOLDER", "META_SYSTEM_USER_TOKEN", "META_IG_BUSINESS_ACCOUNT_ID", "META_PAGE_ID",
                 "GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_OAUTH_REFRESH_TOKEN",
-                "BUFFER_API_KEY", "BUFFER_TIKTOK_CHANNEL_ID", "BUFFER_YOUTUBE_CHANNEL_ID",
-                "BUFFER_PINTEREST_CHANNEL_ID"]
+                "BUFFER_API_KEY", "BUFFER_TIKTOK_CHANNEL_ID", "BUFFER_YOUTUBE_CHANNEL_ID"]
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
         log.error("Missing required environment variables: %s", ", ".join(missing))
