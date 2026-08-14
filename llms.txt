@@ -1223,12 +1223,26 @@ this project's history and should keep holding for future sessions too.
 - Room exposure varies with each concept's own palette reflectance under an
   identical lighting prompt — 84.5 (d01) vs 111.6 (d02) mean luminance. Only
   matters if consistent mood across the series becomes a requirement.
-- Swatch-to-room material drift is the most persistent open issue: the same
-  material reads differently on its band than in the room. Worst instances are
-  d02's walnut and travertine (RGB distance 71 and 79), d03's alabaster (77) and
-  d05's teal, against d02's evenly-lit limewash at 14. `BAND_LIGHT` improved the
-  cause but has not eliminated it. Raised repeatedly, approved as-is each time —
-  do not silently "fix" it, but it is fixable via `parts=bands`.
+- Swatch-to-room material drift, the most persistent issue in the series, now has
+  a working method. **Compare HUE AND SATURATION SEPARATELY — raw RGB distance is
+  the wrong metric** and is what made this look unfixable for six concepts. Since
+  ROOM_LIGHT v6 the room is deliberately lamplit while `BAND_LIGHT` keeps the
+  bands flat and evenly lit for label legibility, so every material measures
+  darker in the room than on its tile, and raw RGB distance mostly reports that
+  lighting difference rather than any real mismatch. On d07 raw distance said all
+  three bands drifted (63 / 27 / 37); split apart, hue was already correct on all
+  three and only saturation was off.
+  Worked example, d07 retuned via `parts=bands` against the approved room:
+  walnut went from S=95 (fiery orange-red) against the room's 63, to within 17;
+  travertine from S=1 (dead neutral grey) against the room's 20, to within 12;
+  hue within 1-5 degrees on all three. The travertine was also renamed from
+  "Silver Travertine" to "Roman Travertine" because the approved room shows warm
+  cream stone, not silver — **check the band NAME against the room too, not just
+  its colour.**
+  A tile will never match a moody room on BRIGHTNESS and should not be made to;
+  `BAND_LIGHT` stays flat. Hue and saturation are the things that can match.
+  Historical raw-distance figures, kept for context but not comparable to the
+  above: d02 walnut 71 and travertine 79, d03 alabaster 77, d02 limewash 14.
 - Room shots contain gibberish lettering on book spines that OCR passes as clean.
   Flagged, undecided.
 - **The d-series room prompt is ~533 words, well past BFL's own recommended
