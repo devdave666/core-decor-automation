@@ -409,7 +409,32 @@ spelling and kerning; generate the texture with text explicitly excluded from th
 prompt, verify OCR-clean, then label programmatically. This is a standing rule
 established after real misrendered output, not a stylistic preference.
 
-## The d-series: three-band concept format — images only, under test
+## The d-series: three-band concept format — LIVE IN THE REEL ROTATION
+
+**As of 2026-08-14 the d-series is no longer "images only, under test".** d01-d07
+were promoted out of `concept_review/` into `assets/swatches` and
+`assets/application`, which is the only place the reel pipeline looks. Until then
+the entire d-series existed purely as review artefacts and had never appeared in
+a published reel. 57 matched pairs now, nothing unmatched on either side.
+
+`concept_offset.txt` was set to 50 — d01's index in the sorted pair list — so the
+next reel LEADS with the d-series instead of continuing through the older
+c-series.
+
+**A latent bug had to be fixed for this to work at all.** `N_CONCEPTS = 50` was
+hardcoded from when the c-series was the whole library, and the concept offset
+was taken modulo it. With 57 pairs on disk, indices 50-56 could never be the
+START of a reel, so the d-series — and every concept added after it — would have
+been reachable only by mid-reel spillover. The count now derives from the actual
+asset folders, so rotation covers whatever is really on disk. **If you add
+concepts, just drop matched `_swatch`/`_app` pairs into those two folders; no
+count needs updating.**
+
+**Only APPROVED concepts get promoted.** d08 was deliberately held back — it is
+unreviewed and has two open styling questions (an unrequested laptop on the desk;
+the leather desk chair and abstract canvas its own styling field names are both
+absent).
+
 
 A parallel concept format being evaluated, **not a replacement for anything
 currently running**. The original `c01`-`c50` flat-lay swatch assets and both
