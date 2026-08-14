@@ -849,8 +849,14 @@ CONCEPTS = {
              "texture": "warm cognac tan aniline leather with fine natural grain, "
                         "soft creasing and a gently burnished patina"},
             {"label": "Ivory Linen",
+             # "fine visible slubbed texture" tripped the no-text guard 3/3 and
+             # killed the whole concept. Slub is irregular thick flecks in the
+             # yarn, which is exactly the letter-like blob pattern PSM 11 sparse
+             # mode reads as sparse text. A smooth even weave is both less
+             # trigger-prone AND closer to the reference sofa, which is a plain
+             # cream upholstery rather than a coarse slubbed linen.
              "texture": "heavyweight ivory linen upholstery weave in warm off "
-                        "white with a fine visible slubbed texture and a soft "
+                        "white with a fine smooth even regular weave and a soft "
                         "matte surface"},
         ],
         "materials_sentence": (
