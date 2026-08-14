@@ -727,24 +727,34 @@ CONCEPTS = {
             "a tall arced floor lamp reaching over the seating, and a low bowl of "
             "citrus on the coffee table."
         ),
+        # Retuned against the APPROVED room shot, measured rather than eyeballed.
+        # Hue was already right on all three (0-6 degrees off); saturation was not.
+        # The walnut band came back at S=95, a fiery orange-red, against the room's
+        # calmer S=63 mid-brown; the travertine band came back at S=1, dead neutral
+        # grey, against the room's warm S=20 cream — and the room's stone is
+        # genuinely warm, so "Silver Travertine" was the wrong name as well as the
+        # wrong colour. Descriptions below aim at what the approved room actually
+        # shows. See llms.txt on why hue/saturation is the right comparison here
+        # and raw RGB distance is not.
         "bands": [
             {"label": "Petrol Lacquer",
-             "texture": "deep petrol blue high-gloss lacquered wood panel with a "
-                        "flawless mirror-smooth surface, rich saturated colour and "
-                        "soft reflected sheen"},
+             "texture": "deep dark petrol teal-blue high-gloss lacquered wood "
+                        "panel with a flawless mirror-smooth surface, deep muted "
+                        "blue-green colour and soft reflected sheen"},
             {"label": "Burl Walnut",
-             "texture": "polished walnut burl veneer with dense swirling eyed "
-                        "figure, warm chocolate and amber tones and a deep glassy "
-                        "lacquered finish"},
-            {"label": "Silver Travertine",
-             "texture": "honed silver-grey travertine stone with fine horizontal "
-                        "banding, natural open pitting and a soft matte surface"},
+             "texture": "polished walnut burl veneer in warm mid brown with "
+                        "swirling eyed figure, gentle honey and soft brown tones "
+                        "rather than fiery orange, and a satin lacquered finish"},
+            {"label": "Roman Travertine",
+             "texture": "honed warm cream travertine stone in soft beige with fine "
+                        "horizontal banding, natural open pitting and a soft matte "
+                        "surface"},
         ],
         "materials_sentence": (
-            "deep petrol blue high-gloss lacquer on the credenza and built-in "
-            "casework, polished burl walnut on the side tables and cabinet fronts, "
-            "honed silver-grey travertine on the coffee table and floor, and "
-            "polished chrome on the lighting and furniture frames."
+            "deep petrol teal-blue high-gloss lacquer on the credenza and built-in "
+            "casework, polished warm brown burl walnut on the side tables and "
+            "cabinet fronts, honed warm cream travertine on the coffee table and "
+            "floor, and polished chrome on the lighting and furniture frames."
         ),
     },
 }
