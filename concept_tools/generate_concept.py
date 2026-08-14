@@ -804,6 +804,63 @@ CONCEPTS = {
             "reading chair and rug, and dark stained oak on the desk top."
         ),
     },
+    # BUILT FROM A REFERENCE DEV SUPPLIED, and the first concept in the series
+    # driven by real engagement data rather than taste alone: an Instagram post
+    # (@styledandorganizedhome, "7 color combinations that always work") sitting at
+    # 7.2k likes and 4.1k shares. Shares at that ratio matter more than likes for
+    # reach, so this palette is worth treating as validated rather than guessed.
+    #
+    # It also puts BLUE BACK, which supersedes d08's deliberate break from the
+    # indigo/teal/cobalt/petrol run — Dev picked a navy reference, so navy it is.
+    #
+    # Register is transitional American classic, which the series has not used.
+    # Closest prior is d01, also panelled, but that is a dark oxblood-and-marble
+    # LIBRARY; this is a relaxed navy-and-cognac living room. Keep them distinct:
+    # d01 is formal and enclosed, this one is comfortable and layered.
+    "d09": {
+        "stem": "d09_liv_navy",
+        "fixtures": (
+            "a slim aged brass picture light over the artwork, a single brass wall "
+            "sconce with a small fabric shade beside it, warm concealed strip "
+            "lighting inside every bay of the built-in bookcases, and one large "
+            "dark ceramic table lamp under a wide ivory shade."
+        ),
+        "room": "a residential living room with fitted joinery",
+        "style": "transitional American classic interior, painted panelled walls "
+                  "and glazed built-in bookcases, deep comfortable upholstery and "
+                  "warm metals, layered and relaxed rather than formal",
+        "styling": (
+            "a deep ivory linen sectional sofa layered with navy velvet, cognac "
+            "leather and striped cushions and a draped knitted throw, a cognac "
+            "leather armchair turned into the room in the near foreground, a low "
+            "black marble coffee table on a slim dark metal frame carrying a round "
+            "wooden tray with a potted green plant, a stack of books and a dark "
+            "bowl, a tall slender ficus tree in the corner by the window, one "
+            "large soft abstract canvas in muted greys hung centrally, built-in "
+            "shelves styled with books, small green plants and dark ceramics, and "
+            "a thick cream textured rug over a dark herringbone wood floor."
+        ),
+        "bands": [
+            {"label": "Navy Panelling",
+             "texture": "deep navy blue painted timber panelling with a smooth "
+                        "satin eggshell finish, fine flat brushwork and soft "
+                        "even sheen"},
+            {"label": "Cognac Leather",
+             "texture": "warm cognac tan aniline leather with fine natural grain, "
+                        "soft creasing and a gently burnished patina"},
+            {"label": "Ivory Linen",
+             "texture": "heavyweight ivory linen upholstery weave in warm off "
+                        "white with a fine visible slubbed texture and a soft "
+                        "matte surface"},
+        ],
+        "materials_sentence": (
+            "deep navy blue painted panelling and fitted built-in bookcases, warm "
+            "cognac tan leather on the armchair, ivory linen upholstery on the "
+            "sectional sofa, honed black marble on the coffee table, aged brass "
+            "on the picture light, sconce and hardware, and a dark stained "
+            "herringbone wood floor."
+        ),
+    },
 }
 
 if __name__ == "__main__":
