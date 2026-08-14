@@ -933,7 +933,13 @@ def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolera
 
 TEMPLATE_INDEX_FILE = "template_index.txt"
 CONCEPT_OFFSET_FILE = "concept_offset.txt"
-N_CONCEPTS = 50
+
+# DERIVED FROM THE ASSET FOLDERS, NOT HARDCODED. This was `N_CONCEPTS = 50` back
+# when the c-series was the whole library, and it silently became wrong the moment
+# the d-series was promoted into assets/: the offset was taken modulo 50, so with
+# 57 pairs on disk indices 50-56 could never be the START of a reel. Every new
+# concept added from now on would have been reachable only by mid-reel spillover.
+# Deriving it means the rotation covers whatever is actually there.
 
 
 def _read_counter(repo_root, filename, default=0):
@@ -986,7 +992,8 @@ def run_pipeline():
         wav_path = extract_and_master_audio(template_path, output_dir / "processed_audio.wav")
         cuts = extract_template_cut_timestamps(template_path)
 
-        concept_offset = _read_counter(repo_root, CONCEPT_OFFSET_FILE, default=0) % N_CONCEPTS
+        n_concepts = len(_pair_swatches_with_applications(swatch_dir, application_dir))
+        concept_offset = _read_counter(repo_root, CONCEPT_OFFSET_FILE, default=0) % n_concepts
         reel_path, concepts_used = build_reel_from_template_timing(
             cuts, wav_path, swatch_dir, application_dir,
             output_dir / "final_output_reel.mp4", concept_start_offset=concept_offset,
@@ -1009,8 +1016,8 @@ def run_pipeline():
         _write_and_commit_counter(repo_root, TEMPLATE_INDEX_FILE, (template_idx + 1) % n_templates,
                                     f"Advance template index to {(template_idx + 1) % n_templates}")
         _write_and_commit_counter(repo_root, CONCEPT_OFFSET_FILE,
-                                    (concept_offset + concepts_used) % N_CONCEPTS,
-                                    f"Advance concept offset to {(concept_offset + concepts_used) % N_CONCEPTS}")
+                                    (concept_offset + concepts_used) % n_concepts,
+                                    f"Advance concept offset to {(concept_offset + concepts_used) % n_concepts}")
 
         log.info("Done. Instagram media_id=%s Facebook video_id=%s TikTok post_id=%s YouTube post_id=%s "
                   "template=%d/%d concepts_used=%d",
