@@ -1187,7 +1187,8 @@ this project's history and should keep holding for future sessions too.
   | d04 | kitchen | Belgian minimalist wabi-sabi | Indigo Limewash / Aged Elm / Chalk Limestone | APPROVED |
   | d05 | bathroom | Japandi | Teal Tadelakt / Charred Cedar / Pale Hinoki | APPROVED |
   | d06 | foyer | Moroccan riad eclectic | Cobalt Zellige / Hammered Brass / Sand Limewash | APPROVED |
-  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Silver Travertine | awaiting review — relit at blue hour (v6), materials and geometry verified |
+  | d07 | living | Italian postwar modernist (Milanese) | Petrol Lacquer / Burl Walnut / Roman Travertine | APPROVED — first concept lit by ROOM_LIGHT v6 |
+  | d08 | study | Brutalist / raw-material modernism | Board-Formed Concrete / Patinated Bronze / Oatmeal Wool | generating |
 
   All six room types from the original naming convention (`kit`, `bath`, `dine`,
   `foyer`, `lib`, `suite`) were in use as of d06, so d07 onward introduces NEW

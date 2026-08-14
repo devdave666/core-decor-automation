@@ -757,6 +757,53 @@ CONCEPTS = {
             "floor, and polished chrome on the lighting and furniture frames."
         ),
     },
+    # BREAKS THE BLUE RUN DELIBERATELY. d04-d07 were indigo, teal, cobalt and
+    # petrol - four consecutive blues off Dev's "bluer tones with textured paint"
+    # steer from d04. The steer's other half is honoured instead: board-formed
+    # concrete is about as textured a surface as this series has used. Flagged to
+    # Dev rather than assumed; trivial to swap back to a blue if he wants it.
+    #
+    # Also the first concept designed entirely under ROOM_LIGHT v6, so its
+    # materials are chosen knowing they will be seen under warm lamplight at blue
+    # hour - raw concrete and patinated bronze both come alive under exactly that.
+    "d08": {
+        "stem": "d08_study_concrete",
+        "fixtures": (
+            "a low bronze desk lamp with a dark shade, a single tall floor lamp "
+            "beside the reading chair, warm concealed lighting under the shelving, "
+            "and a small picture light over the artwork."
+        ),
+        "room": "a private residential study and work room",
+        "style": "Brutalist raw-material modernism, honest heavy materials and "
+                  "strong horizontal planes, monastic and quiet rather than "
+                  "aggressive, softened by textiles",
+        "styling": (
+            "a heavy solid desk facing into the room with a single leather chair "
+            "behind it, a deep low reading armchair in oatmeal wool with a folded "
+            "throw, a long built-in shelf carrying a short row of books and two "
+            "dark ceramic vessels, one large dark abstract canvas, a thick wool "
+            "rug, and a single sculptural stone bowl on the desk."
+        ),
+        "bands": [
+            {"label": "Board-Formed Concrete",
+             "texture": "board-formed cast concrete in warm mid grey with crisp "
+                        "horizontal timber plank imprints, fine aggregate "
+                        "speckling and a dry matte surface"},
+            {"label": "Patinated Bronze",
+             "texture": "solid patinated bronze metal with a deep warm brown "
+                        "surface, soft mottled verdigris bloom and a low satin "
+                        "lustre"},
+            {"label": "Oatmeal Wool",
+             "texture": "thick undyed oatmeal wool felt with a dense soft fibrous "
+                        "nap, fine natural flecking and a warm pale cream tone"},
+        ],
+        "materials_sentence": (
+            "board-formed cast concrete in warm mid grey on the walls and ceiling "
+            "with the timber plank imprints clearly visible, patinated bronze on "
+            "the shelving, desk frame and lamp bases, thick oatmeal wool on the "
+            "reading chair and rug, and dark stained oak on the desk top."
+        ),
+    },
 }
 
 if __name__ == "__main__":
