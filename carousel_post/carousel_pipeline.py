@@ -91,8 +91,12 @@ def run_pipeline():
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        swatch_jpg = prepare_carousel_image(swatch_path, tmp / "swatch.jpg")
-        app_jpg = prepare_carousel_image(app_path, tmp / "application.jpg")
+        # anchor_y=1.0: crop only ever comes off the TOP, so the swatch card's
+        # material-name label (bottom fifth of frame) always survives. The
+        # application shot has no such constraint, so it gets a normal
+        # centered crop. See prepare_image.py for the full reasoning.
+        swatch_jpg = prepare_carousel_image(swatch_path, tmp / "swatch.jpg", anchor_y=1.0)
+        app_jpg = prepare_carousel_image(app_path, tmp / "application.jpg", anchor_y=0.5)
 
         # Swatch first, application second, in ONE push so both raw URLs go
         # live together rather than the second one racing the first commit.

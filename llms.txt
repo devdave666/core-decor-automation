@@ -1429,7 +1429,7 @@ modulo applied before writing), matching how the main pipeline's own
 `advance_caption_index` behaves — `caption_bank.get_caption()` already mods
 everything it needs internally.
 
-### The JPEG + aspect-ratio problem, and why it isn't solved by cropping
+### The JPEG + aspect-ratio problem — READ THIS, the approach changed once already
 
 This project's swatch/application assets are 1072x1920 (9:16, ratio 0.5625) —
 built for the video reels. Two real constraints, confirmed against Meta's own
@@ -1438,22 +1438,34 @@ API accepts **JPEG only** — a PNG `image_url` is rejected outright — and fee
 carousel images must fall within a **4:5 to 1.91:1** aspect ratio. 9:16 is far
 outside that band on both counts.
 
-Center-cropping 9:16 down to 4:5 was considered and rejected. c01's swatch
-card carries its material-name label in roughly the bottom fifth of the
-frame — close enough to where a symmetric center-crop lands that it risks
-slicing through the text, and a room shot's ceiling or floor line is just as
-exposed to an arbitrary crop. Since 4:5 (0.8) is proportionally WIDER per
-unit height than 9:16 (0.5625), fitting the WHOLE source inside a 4:5 canvas
-means shrinking to fit the HEIGHT and pillarboxing left/right — this only
-ever pillarboxes, it can never crop top or bottom, so nothing in the original
-frame is ever lost. `prepare_image.prepare_carousel_image()` does this:
-scales the source to fit inside a 1080x1350 canvas, and fills the empty
-sides with a blurred, darkened extension of the same image rather than a flat
-bar — the same technique Instagram's own app uses when a taller photo is
-posted to feed. Verified by eye against c01's real assets (both the swatch
-card's full three-line label and the application shot's ceiling/floor are
-intact, nothing cropped) before considering this done, not just assumed to
-work from the math.
+**v1 — fit-inside + blurred pillarbox — shipped, posted for real, then
+rejected on the actual live result.** Since 4:5 (0.8) is proportionally WIDER
+per unit height than 9:16 (0.5625), the reasoning was: fit the WHOLE source
+inside a 4:5 canvas by shrinking to the HEIGHT, and fill the empty left/right
+space with a blurred, darkened extension of the same image (the technique
+Instagram's own app uses when a taller photo is posted to feed) — content-
+preserving by construction, nothing ever cropped. It worked exactly as
+designed and still looked wrong: Dev's verdict on the first real post was
+that the blurred side bars just read as empty space, not a considered design
+choice. **Content preservation was optimized for at the expense of the actual
+visual result — worth remembering before re-deriving "never crop, only pad"
+as obviously correct on the next image-shape problem.**
+
+**v2 — current — full-bleed COVER crop, anchored to protect the swatch
+label.** Dev's instruction after seeing v1 live: losing some top/bottom is
+fine, as long as the swatch card's material-name text stays visible. Scale
+the source to COVER the 4:5 canvas completely (width is always the binding
+dimension for this project's 9:16-into-4:5 case, so overflow is always in
+HEIGHT) and crop the overflow — `prepare_carousel_image(src, dest, anchor_y)`
+in `prepare_image.py`, where `anchor_y` places the crop window vertically
+(0.0 keeps the top, 1.0 keeps the bottom, 0.5 is centered). `carousel_
+pipeline.py` calls it with **anchor_y=1.0 for the swatch** — crop only ever
+comes off the TOP, so the label (bottom fifth of frame on c01) survives
+regardless of exactly where it sits on any given concept — and **anchor_y=0.5
+for the application shot**, a normal centered crop, since it has no
+text-survival constraint. Verified by eye against c01's real assets after the
+change: full-bleed on both images, no side bars, and the swatch label sits
+comfortably inside the frame with margin to spare.
 
 ### Publishing shape is genuinely different per platform, not just "post the image"
 

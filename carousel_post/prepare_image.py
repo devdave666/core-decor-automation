@@ -8,46 +8,44 @@ must fall within a 4:5 (portrait) to 1.91:1 (landscape) aspect ratio.
 This project's swatch and application assets are 9:16 (1072x1920, ratio
 0.5625) — built for the video reels — which is far outside that band.
 
-Center-cropping the 9:16 source down to 4:5 was considered and rejected: c01's
-swatch card carries its material-name label in roughly the bottom fifth of the
-frame, close enough to where a symmetric center-crop lands that it risks
-slicing through the text. Since 4:5 (0.8) is proportionally WIDER per unit
-height than 9:16 (0.5625), fitting the whole source inside a 4:5 canvas means
-shrinking to fit the HEIGHT and pillarboxing left/right — never cropping top
-or bottom — so nothing in the original frame is ever lost. The pillarbox is
-filled with a blurred, darkened extension of the same image rather than a flat
-bar, the same technique Instagram's own app uses when a taller photo is
-posted to feed.
+FIRST VERSION of this function fit the whole 9:16 source inside a 4:5 canvas
+and filled the leftover left/right space with a blurred extension of the same
+image, so nothing in the original frame was ever lost. Shipped, posted for
+real, and Dev's verdict on the live result was that the blurred side bars just
+read as empty space — not the desired look. Replaced with a full-bleed CROP
+instead: scale the source to COVER the 4:5 canvas completely and crop the
+overflow, on Dev's explicit instruction that losing some top/bottom is fine
+as long as the swatch card's material-name text stays visible.
+
+Since 4:5 (0.8) is proportionally WIDER per unit height than 9:16 (0.5625),
+covering a 4:5 canvas with a 9:16 source means width is always the binding
+dimension — the overflow is always in HEIGHT, so the crop only ever comes off
+the top and/or bottom, never the sides. `anchor_y` controls where that crop
+window sits vertically (0.0 = keep the top, lose the bottom; 1.0 = keep the
+bottom, lose the top; 0.5 = centered). The swatch card's material-name label
+sits in roughly the bottom fifth of the frame (verified by eye on c01), so
+`carousel_pipeline.py` calls this with anchor_y=1.0 for swatches — crop only
+ever comes off the top, guaranteeing the label survives regardless of exactly
+where it sits on any given concept. Application (room) shots have no such
+constraint, so they use anchor_y=0.5 (a normal centered crop).
 """
 from pathlib import Path
 
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 
 CANVAS_SIZE = (1080, 1350)  # Instagram's standard 4:5 feed/carousel size
 
 
-def prepare_carousel_image(src_path, dest_path):
+def prepare_carousel_image(src_path, dest_path, anchor_y=0.5):
     canvas_w, canvas_h = CANVAS_SIZE
     src = Image.open(src_path).convert("RGB")
 
-    # Blurred background: scale to COVER the canvas, center-crop, blur, darken
-    # slightly so the sharp foreground still reads clearly against it.
     cover_scale = max(canvas_w / src.width, canvas_h / src.height)
-    bg = src.resize((round(src.width * cover_scale), round(src.height * cover_scale)), Image.LANCZOS)
-    left = (bg.width - canvas_w) // 2
-    top = (bg.height - canvas_h) // 2
-    bg = bg.crop((left, top, left + canvas_w, top + canvas_h))
-    bg = bg.filter(ImageFilter.GaussianBlur(40))
-    bg = ImageEnhance.Brightness(bg).enhance(0.6)
+    scaled = src.resize((round(src.width * cover_scale), round(src.height * cover_scale)), Image.LANCZOS)
 
-    # Foreground: scale to FIT entirely inside the canvas. The source's own
-    # height is always the limiting dimension here (4:5 is wider per unit
-    # height than 9:16), so this only ever pillarboxes, never crops.
-    fit_scale = min(canvas_w / src.width, canvas_h / src.height)
-    fg = src.resize((round(src.width * fit_scale), round(src.height * fit_scale)), Image.LANCZOS)
-
-    canvas = bg.copy()
-    canvas.paste(fg, ((canvas_w - fg.width) // 2, (canvas_h - fg.height) // 2))
+    overflow_y = scaled.height - canvas_h
+    top = round(overflow_y * max(0.0, min(1.0, anchor_y)))
+    canvas = scaled.crop((0, top, canvas_w, top + canvas_h))
 
     dest_path = Path(dest_path)
     canvas.save(dest_path, "JPEG", quality=92)
