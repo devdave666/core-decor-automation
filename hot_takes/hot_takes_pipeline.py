@@ -85,7 +85,18 @@ def build_hot_take(application_images, opinion_pair, audio_wav_path, boundaries,
     from moviepy import ImageClip, AudioFileClip, CompositeVideoClip
 
     duration = boundaries[-1]
-    audio = AudioFileClip(str(audio_wav_path)).subclipped(0, duration)
+    # ffprobe (core.get_audio_duration_seconds, used upstream to build `boundaries`)
+    # and moviepy's own decoder can disagree on a track's duration by a few
+    # milliseconds — confirmed on a real run: both printed as "14.00" in the
+    # error message, but moviepy's actually-decoded length was fractionally
+    # SHORTER, so `.subclipped(0, duration)` raised "end_time should be smaller
+    # or equal to the clip's duration" even though they looked identical at
+    # 2-decimal precision. Clamp the subclip's end to whatever moviepy itself
+    # measures, not the externally-computed value, so this can't recur for any
+    # future template regardless of its exact length.
+    audio_full = AudioFileClip(str(audio_wav_path))
+    duration = min(duration, audio_full.duration)
+    audio = audio_full.subclipped(0, duration)
     n_segments = len(boundaries) - 1
     if len(application_images) != n_segments:
         raise core.PipelineError(
