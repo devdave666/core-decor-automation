@@ -1,0 +1,53 @@
+name: Carousel Post
+
+# Fourth content type: a static two-image carousel (c-series swatch, then its
+# own application shot) — see carousel_post/carousel_pipeline.py's module
+# docstring for the full design notes and platform-scope reasoning. Own state
+# under carousel_post/ so this rotation never collides with the other three
+# pipelines' counters. No ffmpeg/librosa needed — this is the first content
+# type in the repo that isn't building a video.
+
+on:
+  schedule:
+    # Tuesday and Friday, 16:00 UTC — twice a week per Dev's request. A
+    # placeholder time/day pair, same as every other schedule in this repo
+    # (14:00 UTC daily-reel, 18:00 UTC every-2-days hot-takes) — deliberately
+    # offset from both so nothing lands in the same window. Revisit once
+    # there's engagement data.
+    - cron: "0 16 * * 2,5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  carousel-post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests pillow
+
+      - name: Configure git for automated commits
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run carousel post pipeline
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          SWATCH_ASSETS_DIR: ${{ github.workspace }}/assets/swatches
+          APPLICATION_ASSETS_DIR: ${{ github.workspace }}/assets/application
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_PINTEREST_CHANNEL_ID: ${{ secrets.BUFFER_PINTEREST_CHANNEL_ID }}
+        run: python carousel_post/carousel_pipeline.py

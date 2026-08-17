@@ -928,6 +928,212 @@ def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolera
 
 
 # ---------------------------------------------------------------------------
+# Image carousel publishing — added for carousel_post/, the fourth content type.
+# Genuinely different container shapes from the REELS/video paths above, not a
+# variant of them: Instagram needs per-image "carousel item" containers folded
+# into one parent container; Facebook has no carousel object at all and uses an
+# ordinary multi-photo feed post instead; Buffer's asset schema takes an "image"
+# key instead of "video". Kept here rather than inside carousel_post/ because
+# they lean on the exact same _graph_post/_graph_get/PipelineError plumbing
+# already centralized in this file — genuinely shared, not content-type-specific.
+# ---------------------------------------------------------------------------
+
+def upload_images_to_public_host(local_paths, repo_root, media_subdir="media/carousels"):
+    """
+    Same zero-cost git-commit + raw.githubusercontent.com hosting pattern as
+    upload_video_to_public_host above, generalized for a BATCH of images landing
+    in one commit/push rather than one video per push — a carousel always needs
+    at least two images published together, and pushing them one at a time would
+    mean multiple commits (and multiple propagation waits) for what is really one
+    unit of content.
+    """
+    import shutil
+
+    repo_root = Path(repo_root)
+    media_dir = repo_root / media_subdir
+    media_dir.mkdir(parents=True, exist_ok=True)
+
+    ts = int(time.time())
+    dests = []
+    for i, local_path in enumerate(local_paths):
+        dest = media_dir / f"carousel_{ts}_{i}.jpg"
+        shutil.copy(local_path, dest)
+        dests.append(dest)
+
+    _prune_old_carousel_images(media_dir, keep_latest=20)  # 10 carousels' worth, 2 images each
+
+    subprocess.run(["git", "-C", str(repo_root), "add", "-A", media_subdir], check=True)
+    subprocess.run(["git", "-C", str(repo_root), "commit", "-m", f"Add carousel images {ts}"], check=True)
+    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+
+    remote = subprocess.run(
+        ["git", "-C", str(repo_root), "remote", "get-url", "origin"],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    owner, repo = _parse_owner_repo(remote)
+    branch = subprocess.run(
+        ["git", "-C", str(repo_root), "branch", "--show-current"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip() or "main"
+
+    urls = []
+    for dest in dests:
+        rel_path = dest.relative_to(repo_root).as_posix()
+        raw_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{rel_path}"
+        for attempt in range(6):
+            time.sleep(3)
+            try:
+                r = requests.head(raw_url, timeout=10, allow_redirects=True)
+                if r.status_code == 200:
+                    log.info("Confirmed carousel image is live at %s", raw_url)
+                    urls.append(raw_url)
+                    break
+            except requests.RequestException:
+                pass
+        else:
+            raise PipelineError(f"Pushed {dest.name} but raw.githubusercontent.com isn't serving it yet: {raw_url}")
+    return urls
+
+
+def _prune_old_carousel_images(media_dir, keep_latest):
+    files = sorted(Path(media_dir).glob("carousel_*.jpg"), key=lambda p: p.stat().st_mtime)
+    for old_file in files[:-keep_latest] if len(files) > keep_latest else []:
+        old_file.unlink()
+        log.info("Pruned old carousel image: %s", old_file.name)
+
+
+def publish_carousel_to_instagram(image_urls, caption):
+    """
+    A carousel is a different container SHAPE from the REELS path in
+    publish_to_instagram above, not a variant of it: each image first becomes
+    its own is_carousel_item child container, then one parent container with
+    media_type=CAROUSEL references all of them by id via children, and only
+    the PARENT gets published. Order is preserved exactly as given — this
+    project's carousel callers must pass [swatch_url, application_url] in that
+    order so the swatch is the first thing seen, same reveal logic already used
+    throughout the video reel pipelines.
+
+    Meta's content-publishing API accepts JPEG only for image_url (confirmed
+    against Meta's own docs before writing this — a PNG image_url is rejected
+    outright) and requires an aspect ratio between 4:5 and 1.91:1. Never call
+    this with a raw asset PNG; see carousel_post/prepare_image.py for the
+    conversion this depends on.
+    """
+    if len(image_urls) < 2:
+        raise PipelineError(f"Instagram carousel needs at least 2 images, got {len(image_urls)}")
+
+    ig_user_id = os.environ["META_IG_BUSINESS_ACCOUNT_ID"]
+
+    child_ids = []
+    for url in image_urls:
+        child = _graph_post(f"{ig_user_id}/media", image_url=url, is_carousel_item="true")
+        child_ids.append(child["id"])
+    log.info("Created %d carousel item containers: %s", len(child_ids), child_ids)
+
+    container = _graph_post(
+        f"{ig_user_id}/media",
+        media_type="CAROUSEL", children=",".join(child_ids), caption=caption,
+    )
+    container_id = container["id"]
+
+    log.info("Polling carousel container %s for FINISHED status...", container_id)
+    deadline = time.time() + 5 * 60
+    while time.time() < deadline:
+        status = _graph_get(container_id, fields="status_code")["status_code"]
+        log.info("  container status: %s", status)
+        if status == "FINISHED":
+            break
+        if status in ("ERROR", "EXPIRED"):
+            raise PipelineError(f"Instagram carousel container {container_id} failed with status {status}")
+        time.sleep(10)
+    else:
+        raise PipelineError(f"Instagram carousel container {container_id} did not finish within timeout")
+
+    result = _graph_post(f"{ig_user_id}/media_publish", creation_id=container_id)
+    log.info("Published Instagram carousel: media id %s", result["id"])
+    return result["id"]
+
+
+def publish_photo_post_to_facebook(image_urls, caption):
+    """
+    Facebook Pages have no separate "carousel" object the way Instagram does —
+    the closest equivalent is an ordinary feed post with multiple attached
+    photos, which Facebook's own UI renders as a swipeable gallery. Each photo
+    is uploaded UNPUBLISHED first (published=false) to get a photo id without it
+    appearing as its own standalone post, then one /feed post attaches all of
+    them via attached_media, in the same order given.
+    """
+    page_id = os.environ["META_PAGE_ID"]
+
+    media_fbids = []
+    for url in image_urls:
+        photo = _graph_post(f"{page_id}/photos", url=url, published="false")
+        media_fbids.append(photo["id"])
+    log.info("Uploaded %d unpublished Facebook photos: %s", len(media_fbids), media_fbids)
+
+    attached_media = json.dumps([{"media_fbid": fbid} for fbid in media_fbids])
+    result = _graph_post(f"{page_id}/feed", message=caption, attached_media=attached_media)
+    log.info("Published Facebook photo post: post id %s", result["id"])
+    return result["id"]
+
+
+def publish_image_carousel_to_buffer(image_urls, caption, channel_id, platform):
+    """
+    Best-effort image/carousel post via Buffer's GraphQL API, for platforms this
+    project reaches only through Buffer (TikTok, Pinterest) rather than a direct
+    API. UNTESTED against this project's real Buffer account as of when this was
+    written — same "first real run is the test" position already taken for the
+    Pinterest video path in single_product_reel (see that module for the
+    precedent). Callers should treat a failure here as non-fatal.
+
+    The asset shape — `{"image": {"url": ...}}` per entry, an ordered list for
+    multiple images — is confirmed from Buffer's own current API docs, not
+    guessed. What is NOT confirmed: whether Buffer actually surfaces multiple
+    image assets as a real swipeable carousel on TikTok's "photo mode" or a
+    Pinterest multi-image pin for THIS project's connected channels, versus
+    posting only the first image, or rejecting multi-image assets for a given
+    channel type outright. If this misbehaves, check the real response body
+    before assuming the schema itself is wrong.
+    """
+    token = os.environ["BUFFER_API_KEY"]
+    mutation = """
+    mutation CreatePost($input: CreatePostInput!) {
+      createPost(input: $input) {
+        __typename
+        ... on PostActionSuccess { post { id status } }
+        ... on InvalidInputError { message }
+        ... on LimitReachedError { message }
+        ... on UnauthorizedError { message }
+        ... on UnexpectedError { message }
+        ... on RestProxyError { message }
+        ... on NotFoundError { message }
+      }
+    }
+    """
+    post_input = {
+        "channelId": channel_id,
+        "mode": "shareNow",
+        "schedulingType": "automatic",
+        "needsApproval": False,
+        "text": caption,
+        "assets": [{"image": {"url": url}} for url in image_urls],
+    }
+    r = requests.post(
+        "https://api.buffer.com/graphql",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        json={"query": mutation, "variables": {"input": post_input}},
+        timeout=60,
+    )
+    body = r.json()
+    result = body.get("data", {}).get("createPost", {})
+    if result.get("__typename") != "PostActionSuccess":
+        raise PipelineError(f"Buffer image publish to {platform} failed: {result.get('message', body)}")
+    post_id = result["post"]["id"]
+    log.info("Published image carousel to %s via Buffer: post id %s", platform, post_id)
+    return post_id
+
+
+# ---------------------------------------------------------------------------
 # Orchestration
 # ---------------------------------------------------------------------------
 

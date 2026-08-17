@@ -54,6 +54,10 @@ files:
   pipelines later consume. Includes the in-progress **d-series** three-band
   concept format, which is currently IMAGE GENERATION ONLY and deliberately not
   connected to any publishing. See "The d-series" below before touching it.
+- `carousel_post/` — a FOURTH content type: a static two-image carousel
+  (c-series swatch, then its own application shot), twice a week. No video, no
+  audio, no ffmpeg. See "Carousel Post" below — don't assume anything
+  video/Reels-specific above applies to it.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -1396,3 +1400,125 @@ afterward, the same way the YouTube branch was built, rather than guessing now.
 This workflow is `workflow_dispatch` only, no schedule — same "deliberate act"
 reasoning as `generate-concept.yml`: it corresponds to one specific Drive
 folder Dev has just pointed it at, not a recurring rotation.
+
+## Carousel Post — the fourth content type (2026-08-17)
+
+Added `carousel_post/carousel_pipeline.py`, `carousel_post/prepare_image.py`
+and `.github/workflows/carousel-post.yml` for a format none of the first
+three content types cover: a static two-IMAGE carousel, not a video. Image 1
+is a c-series swatch, image 2 is that same concept's application shot — the
+same "swatch is the anticipation beat, application is the payoff" reveal
+logic already used throughout the video reel pipelines, just with no audio,
+no cut-timing, no ffmpeg, no librosa at all. First content type in the repo
+that needs none of them.
+
+**Scope is deliberately the ORIGINAL c-series only (c01-c50)**, filtered out
+of the same `assets/swatches` / `assets/application` folders the d-series now
+also lives in — `carousel_pipeline._c_series_pairs()` reuses
+`core._pair_swatches_with_applications()` then keeps only stems starting with
+`"c"`. Dev asked for this against the c-series specifically; nothing stops a
+d-series carousel from being a later, separate decision the way d-series
+video publishing will be.
+
+**Own counters**, both under `carousel_post/`: `concept_index.txt` and
+`caption_index.txt`. Same reasoning already recorded above for Hot Takes —
+reusing the root-level `concept_offset.txt`/`caption_index.txt` would race
+this pipeline's position against the main daily pipeline's whenever both run
+close together. `caption_index.txt` here is a plain unbounded increment (no
+modulo applied before writing), matching how the main pipeline's own
+`advance_caption_index` behaves — `caption_bank.get_caption()` already mods
+everything it needs internally.
+
+### The JPEG + aspect-ratio problem, and why it isn't solved by cropping
+
+This project's swatch/application assets are 1072x1920 (9:16, ratio 0.5625) —
+built for the video reels. Two real constraints, confirmed against Meta's own
+current docs before writing any code (not assumed): the content-publishing
+API accepts **JPEG only** — a PNG `image_url` is rejected outright — and feed/
+carousel images must fall within a **4:5 to 1.91:1** aspect ratio. 9:16 is far
+outside that band on both counts.
+
+Center-cropping 9:16 down to 4:5 was considered and rejected. c01's swatch
+card carries its material-name label in roughly the bottom fifth of the
+frame — close enough to where a symmetric center-crop lands that it risks
+slicing through the text, and a room shot's ceiling or floor line is just as
+exposed to an arbitrary crop. Since 4:5 (0.8) is proportionally WIDER per
+unit height than 9:16 (0.5625), fitting the WHOLE source inside a 4:5 canvas
+means shrinking to fit the HEIGHT and pillarboxing left/right — this only
+ever pillarboxes, it can never crop top or bottom, so nothing in the original
+frame is ever lost. `prepare_image.prepare_carousel_image()` does this:
+scales the source to fit inside a 1080x1350 canvas, and fills the empty
+sides with a blurred, darkened extension of the same image rather than a flat
+bar — the same technique Instagram's own app uses when a taller photo is
+posted to feed. Verified by eye against c01's real assets (both the swatch
+card's full three-line label and the application shot's ceiling/floor are
+intact, nothing cropped) before considering this done, not just assumed to
+work from the math.
+
+### Publishing shape is genuinely different per platform, not just "post the image"
+
+Added to `core_decor_reel_pipeline.py` rather than inside `carousel_post/`,
+since these lean on the exact same `_graph_post`/`_graph_get`/`PipelineError`
+plumbing already centralized there — genuinely shared, not content-type-
+specific, same bar as everything else that lives in that file rather than a
+subfolder.
+
+- **Instagram** (`publish_carousel_to_instagram`) — a different container
+  SHAPE from the REELS path, not a variant of it: each image becomes its own
+  `is_carousel_item` child container first, then one parent container with
+  `media_type=CAROUSEL` and `children` referencing all child ids gets
+  published. Order is preserved exactly as passed in.
+- **Facebook** (`publish_photo_post_to_facebook`) — Facebook Pages have no
+  carousel object at all. The equivalent is an ordinary `/feed` post with
+  multiple photos attached: upload each photo UNPUBLISHED first
+  (`published=false` to `/{page_id}/photos`) so it doesn't appear as its own
+  standalone post, then one `/feed` post with `attached_media` referencing all
+  the resulting photo ids. Facebook's own UI renders this as a swipeable
+  gallery.
+- **TikTok / Pinterest** (`publish_image_carousel_to_buffer`) — best-effort,
+  attempted via Buffer, same as everything else this project reaches through
+  Buffer rather than a direct API. **UNVERIFIED against this project's real
+  Buffer account as of when this was written** — same "first real run is the
+  test" position already taken for the Pinterest video path in
+  `single_product_reel` (see that section above). The asset shape
+  (`{"image": {"url": ...}}` per entry, ordered list for multiple images) is
+  confirmed from Buffer's own current API docs, not guessed — what's NOT
+  confirmed is whether Buffer actually surfaces multiple image assets as a
+  real swipeable carousel on TikTok's "photo mode" or a Pinterest multi-image
+  pin for THIS project's connected channels, versus posting only the first
+  image, or rejecting multi-image assets outright for a given channel type.
+  **A failure here does not fail the run** — `carousel_pipeline.run_pipeline()`
+  wraps both calls in try/except and only logs a warning, since IG and FB are
+  the proven, required platforms for this format and shouldn't be blocked by
+  an unverified extra path. If either misbehaves on a real run, check the
+  actual response body before assuming the schema is wrong.
+- **YouTube — not attempted at all**, unlike TikTok/Pinterest. This project's
+  YouTube channel is wired via Buffer for Shorts VIDEO content only, and there
+  is no image/carousel post surface available through that same channel. This
+  isn't "untested", it's "not a thing this integration can do" — don't add a
+  speculative attempt here the way TikTok/Pinterest have one.
+
+### Schedule
+
+`.github/workflows/carousel-post.yml`, Tuesday and Friday at 16:00 UTC — twice
+a week per Dev's request. Placeholder day/time, same status as every other
+schedule in this repo (14:00 UTC daily-reel, 18:00 UTC every-2-days
+hot-takes) — deliberately offset from both so nothing lands in the same
+window, revisit once there's engagement data.
+
+### Open / not yet verified
+
+- **Never run end-to-end against live accounts as of this writing.** Every
+  piece was checked individually (image prep verified by eye on real c01
+  assets, Buffer's image asset schema confirmed from current docs, Meta's
+  carousel/multi-photo request shapes confirmed from current docs, all new
+  Python compiles and the c-series filter was confirmed to isolate exactly 50
+  pairs from the 57 on disk), but no real post has actually gone out yet. The
+  first scheduled or manually-dispatched run IS the real test — check actual
+  post ids on all platforms attempted, the same discipline already applied to
+  every other pipeline in this repo before it was trusted.
+- TikTok and Pinterest publish paths are speculative, see above — don't be
+  surprised if the first run needs a follow-up fix to
+  `publish_image_carousel_to_buffer` once a real response body is seen.
+- Caption content is identical across every platform attempted, same known
+  tradeoff already recorded for the main daily pipeline — not platform-native.
