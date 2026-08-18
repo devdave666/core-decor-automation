@@ -1,0 +1,221 @@
+/* .modal-backdrop and .toolbar both set their own `display`, which has the
+   same specificity as the browser's default `[hidden] { display: none }`
+   rule and comes later in the cascade -- without this, `hidden` gets
+   silently overridden and the modal/toolbar show even when JS sets
+   element.hidden = true. Confirmed via a real headless-browser screenshot
+   before this fix was added, not assumed. */
+[hidden] {
+  display: none !important;
+}
+
+.token-gate {
+  display: flex;
+  justify-content: center;
+  padding: 0 24px 64px;
+}
+
+.token-box {
+  max-width: 560px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 32px;
+  border-radius: 2px;
+}
+
+.token-box h2 {
+  font-family: "Fry's Baskerville", Georgia, serif;
+  font-weight: 400;
+  margin-top: 0;
+}
+
+.token-box ol {
+  color: var(--ink-dim);
+  font-size: 14px;
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+.token-box code {
+  color: var(--accent);
+}
+
+.token-box .warn {
+  font-size: 12px;
+  color: var(--ink-dim);
+  border-left: 2px solid var(--accent);
+  padding-left: 12px;
+  line-height: 1.6;
+}
+
+#token-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 12px 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-family: monospace;
+}
+
+#token-save,
+#logout-btn,
+.modal-btn-primary,
+.modal-btn-secondary {
+  padding: 10px 20px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#token-save:hover,
+#logout-btn:hover,
+.modal-btn-primary:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+  color: var(--ink-dim);
+  font-size: 13px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.admin-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.admin-card:hover {
+  border-color: var(--accent);
+}
+
+.admin-card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-card-body {
+  padding: 12px 14px 14px;
+}
+
+.admin-card-tag {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 4px;
+}
+
+.admin-card-title {
+  font-family: "Fry's Baskerville", Georgia, serif;
+  font-size: 14px;
+  margin: 0 0 4px;
+  font-weight: 400;
+}
+
+.admin-card-product {
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin: 0;
+  min-height: 14px;
+}
+
+.admin-card.is-linked::after {
+  content: "LINKED";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 3px 7px;
+}
+
+.admin-card.is-blank .admin-card-product::before {
+  content: "+ Add product";
+  color: var(--ink-dim);
+  font-style: italic;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 28px;
+  max-width: 460px;
+  width: 100%;
+}
+
+.modal h3 {
+  font-family: "Fry's Baskerville", Georgia, serif;
+  font-weight: 400;
+  margin-top: 0;
+}
+
+.modal label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 16px 0 6px;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  justify-content: flex-end;
+}
+
+.modal-error {
+  color: #d97b6c;
+  font-size: 13px;
+  margin-top: 12px;
+  margin-bottom: 0;
+}

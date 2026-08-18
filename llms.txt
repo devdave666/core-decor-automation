@@ -1931,6 +1931,63 @@ all-`null` state via a backup diff check.
 his Amazon Associates account (or a higher-commission network — see the
 earlier monetization discussion in this session about Amazon's 1-4% home
 goods rate vs. 8-20% via LTK/ShareASale/Awin for DTC home brands) and fill
-in real `productName`/`productUrl` pairs in `products.js`. This page is
-the mechanism, not the revenue — it earns nothing until real links are
-added.
+in real `productName`/`productUrl` pairs. This page is the mechanism, not
+the revenue — it earns nothing until real links are added.
+
+### `shop/admin.html` — in-browser editing, added same day after Dev asked for it directly
+
+Dev asked for a way to click a blank card and fill in the product directly,
+rather than hand-editing a file. Two things had to change to make that safe:
+
+- **`products.js` → `products.json`.** A `.js` file with comments (the
+  original ships had inline `// e.g. "..."` guidance comments) can't be
+  safely read-modify-written by a script without risking corrupting the
+  formatting or silently dropping the comments. Pure JSON round-trips
+  losslessly. `shop.js` was updated to `fetch("products.json")` instead of
+  relying on a `<script src="products.js">` global — confirmed this still
+  works via a fresh headless-browser screenshot before moving on, not
+  assumed from the code alone.
+- **`shop/admin.html` + `admin.js` + `admin.css`** — a separate page, not
+  linked from the public `index.html`, so casual visitors never see it.
+  Gated behind a GitHub fine-grained personal access token the user creates
+  and pastes in themselves: stored ONLY in that browser's `localStorage`
+  under `coredecor_shop_admin_token`, sent only to `api.github.com`, never
+  written to any file or committed anywhere. The token is scoped to
+  **Contents: Read and write on this one repository only** — the page's own
+  first-run screen walks through creating exactly that token, not a
+  broader classic PAT, deliberately narrower than the automation token
+  already in `env.template` (principle of least privilege — this token
+  living in a browser's local storage is a meaningfully different risk
+  profile than one living in a GitHub Actions secret).
+- Save flow always re-fetches the file's current `sha` immediately before
+  writing (via the GitHub Contents API), rather than reusing whatever `sha`
+  was loaded when the page first opened — avoids clobbering a change made
+  from another tab or device in between.
+
+**A real bug was caught before shipping, not after**: the modal and the
+toolbar both rendered VISIBLE despite `hidden` being correctly set on them
+via JS. Root cause, confirmed via an actual headless-browser screenshot
+showing the bug, not just reasoned about: `.modal-backdrop { display: flex
+}` and `.toolbar { display: flex }` have the exact same CSS specificity as
+the browser's built-in `[hidden] { display: none }` rule, and being defined
+later in the author stylesheet, won the tie. Fixed with a single global
+`[hidden] { display: none !important; }` rule at the top of `admin.css`.
+**Any future admin-page style that sets its own `display` on an element that
+can also be `hidden` needs this same rule in place, or it will silently
+break again** — this isn't specific to the modal/toolbar, it's a property of
+the CSS cascade that applies to any such element.
+
+**Verified with a full mocked end-to-end test before trusting it**, not just
+visual inspection: a throwaway local test harness (not committed) overrode
+`window.fetch` to return canned data shaped like a real GitHub Contents API
+response, pre-set a fake token in `localStorage`, then loaded the real
+`admin.js` unmodified. Screenshotted three states: the grid rendering
+correctly with a mix of linked/blank cards, a card click opening the modal
+correctly pre-filled with that concept's existing data, and — the real test
+— programmatically filling the modal and clicking Save, confirming the
+status line updated to "Saved c02 — live in about a minute," the card
+re-rendered with the new data and a LINKED badge, and the modal closed, all
+with no thrown JS errors. This is the same rigor already established
+elsewhere in this project (Dolly Reel's smoke test, the carousel image-prep
+checks) — a UI that LOOKS right in one screenshot isn't the same as one that
+actually completes its core interaction.

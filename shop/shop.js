@@ -1,6 +1,9 @@
-// Renders PRODUCTS (products.js) into #grid. A product with no productUrl is
-// skipped entirely -- this page can go live with zero real links filled in
-// and simply grows as they get added, rather than shipping broken cards.
+// Fetches products.json and renders into #grid. A product with no productUrl
+// is skipped entirely -- this page can go live with zero real links filled
+// in and simply grows as they get added, rather than shipping broken cards.
+// JSON (not a .js literal) specifically so admin.html can safely read-modify-
+// write a single entry via the GitHub API without any risk of corrupting
+// hand-written formatting or comments.
 
 function appendTracking(url, id) {
   try {
@@ -58,9 +61,18 @@ function renderCard(product) {
   return card;
 }
 
-function render() {
+async function render() {
   const grid = document.getElementById("grid");
-  const shoppable = PRODUCTS.filter((p) => p.productUrl);
+  let products;
+  try {
+    const res = await fetch("products.json", { cache: "no-store" });
+    products = await res.json();
+  } catch (err) {
+    console.error("Failed to load products.json", err);
+    return;
+  }
+
+  const shoppable = products.filter((p) => p.productUrl);
 
   if (shoppable.length === 0) {
     const empty = document.createElement("p");

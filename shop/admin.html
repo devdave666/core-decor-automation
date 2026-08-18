@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Core Decor — Shop Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header>
+    <h1>Shop Admin</h1>
+    <p>Click any card to add or edit its product link. Changes save straight to the live site.</p>
+  </header>
+
+  <div id="token-gate" class="token-gate" hidden>
+    <div class="token-box">
+      <h2>Connect your GitHub token</h2>
+      <p>
+        Create a token scoped to <strong>only this repository</strong>, with
+        <strong>Contents: Read and write</strong> permission and nothing else:
+      </p>
+      <ol>
+        <li>Go to <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+        <li>Repository access → <strong>Only select repositories</strong> → <code>core-decor-automation</code></li>
+        <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong> (leave everything else as No access)</li>
+        <li>Generate, copy the token, and paste it below</li>
+      </ol>
+      <p class="warn">
+        This token is stored ONLY in this browser's local storage. It is never sent anywhere
+        except directly to api.github.com. Don't use this page on a shared or public computer,
+        and revoke the token on GitHub if this device is ever lost.
+      </p>
+      <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" />
+      <button id="token-save">Save Token</button>
+    </div>
+  </div>
+
+  <div id="toolbar" class="toolbar" hidden>
+    <span id="status-line"></span>
+    <button id="logout-btn">Log out (clear token)</button>
+  </div>
+
+  <main id="admin-grid" class="admin-grid" hidden></main>
+
+  <div id="modal-backdrop" class="modal-backdrop" hidden>
+    <div class="modal">
+      <h3 id="modal-title">Edit Product</h3>
+      <label>Product name</label>
+      <input type="text" id="modal-name" placeholder="Brushed Brass 3-Head Pendant Light" />
+      <label>Affiliate / product URL</label>
+      <input type="text" id="modal-url" placeholder="https://amzn.to/..." />
+      <div class="modal-actions">
+        <button id="modal-clear" class="modal-btn-secondary">Clear</button>
+        <button id="modal-cancel" class="modal-btn-secondary">Cancel</button>
+        <button id="modal-save" class="modal-btn-primary">Save</button>
+      </div>
+      <p id="modal-error" class="modal-error" hidden></p>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
