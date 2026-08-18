@@ -1555,3 +1555,23 @@ c04_kit_mtnlux, c05_kit_brut), 8 images, one carousel:
 configured). Caption content is identical across every platform attempted,
 same known tradeoff already recorded for the main daily pipeline — not
 platform-native.
+
+## Caption bank and Hot Takes opinion pool expanded (2026-08-18)
+
+Dev asked for more non-boring variation in both pools — repetition was
+becoming noticeable across runs.
+
+- `caption_bank.py`: `HOOKS` 30 → 48, `TAILS` 20 → 30. `cycle_length()`
+  (`len(HOOKS) * len(TAILS)`) went from 600 to 1440 before hook/tail
+  combinations repeat. New entries follow the same v2 voice rules the module
+  docstring already lays out — varied rhythm, no forced hook+CTA+hashtag-wall
+  template, occasional lowercase starts, real-person asides rather than
+  directive CTAs. No code change needed; `get_caption()` already derives its
+  modulo math from `len(HOOKS)`/`len(TAILS)` directly.
+- `hot_takes/opinion_bank.py`: `OPINIONS` 25 → 44. The original 25 were all
+  the same "They: dismissive line / Me: pushback" shape; the new entries keep
+  every pair a two-line setup/punchline (that's load-bearing — see
+  `render_text_block`'s 1.6s reveal gap) but vary the joke structure itself
+  (not every line opens with "They:"), while still passing the file's
+  DELIBERATELY GENERIC test — no color/material references, so any entry
+  still reads correctly over any of the 50 application photos.

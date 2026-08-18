@@ -53,6 +53,24 @@ HOOKS = [
     "this one's for the people who notice hardware finishes",
     "the swatch doesn't do this stone justice, wait for the room",
     "picked these two, argued about the metal for a while, here's where we landed",
+    "okay but the grain on this wood is unreasonable",
+    "we don't usually post two boards in one week but here we are",
+    "I keep opening this photo just to look at it, no reason",
+    "this is what happens when nobody vetoes the stone",
+    "honestly didn't think this would make the cut, it did",
+    "the second you see the room you'll get why we led with this swatch",
+    "not a subtle material board, on purpose",
+    "this one almost got scrapped twice",
+    "someone in the group chat called this one boring, they were wrong",
+    "the veining on this stone did the whole job for us",
+    "we usually lead with the room, flipped it this time",
+    "this combo shouldn't work on paper and yet",
+    "took the long way to get here but the pairing's right",
+    "the kind of material board you screenshot and forget why",
+    "put this one up against three others, it won",
+    "this is the one the client actually picked, for once",
+    "the finish on this one photographs better than it looks in person, rare",
+    "didn't expect the metal to be the star but here we are",
 ]
 
 TAILS = [
@@ -76,6 +94,16 @@ TAILS = [
     "the metal choice was a whole debate, for the record",
     "we go back and forth on which material to lead with every time",
     "",  # sometimes a real post just ends, no tail line at all
+    "drop a 🤍 if you'd actually live in this",
+    "this is the last board before we start the room for real",
+    "genuinely can't pick a favorite material here, don't make me",
+    "if this one gets saved enough we'll do a full room breakdown",
+    "the client hasn't seen this pairing yet, wish us luck",
+    "we go through more of these than actually make it to a room",
+    "half the team wanted a different metal, they lost",
+    "this is what's sitting on the desk right now, unfinished",
+    "no hashtag wall today either, some things speak for themselves",
+    "already regret not posting this one sooner",
 ]
 
 HASHTAG_POOL = [
