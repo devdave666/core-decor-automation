@@ -1,0 +1,55 @@
+name: Dolly Reel
+
+# Fifth content type: application photos only, no swatches, each stitched
+# into one continuous multi-clip reel with a Ken Burns push-in per clip. See
+# dolly_reel/dolly_reel_pipeline.py's module docstring for the full design
+# notes, including why real depth-based parallax was tried and rejected in
+# favor of a plain push-in.
+#
+# workflow_dispatch ONLY, deliberately no schedule yet -- this is a brand
+# new, unverified content type. Per Dev's explicit instruction: the first
+# manually-dispatched run IS meant to be a real live post for his review: a
+# `schedule:` trigger only gets added here once he's approved that run's
+# actual output, same pattern as every other new content type in this repo.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  dolly-reel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Configure git for automated commits
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run Dolly Reel pipeline
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+        run: python dolly_reel/dolly_reel_pipeline.py

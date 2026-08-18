@@ -54,10 +54,15 @@ files:
   pipelines later consume. Includes the in-progress **d-series** three-band
   concept format, which is currently IMAGE GENERATION ONLY and deliberately not
   connected to any publishing. See "The d-series" below before touching it.
-- `carousel_post/` — a FOURTH content type: a static two-image carousel
-  (c-series swatch, then its own application shot), twice a week. No video, no
-  audio, no ffmpeg. See "Carousel Post" below — don't assume anything
-  video/Reels-specific above applies to it.
+- `carousel_post/` — a FOURTH content type: a static multi-image carousel
+  (c-series, several concepts per post as of 2026-08-18), twice a week. No
+  video, no audio, no ffmpeg. See "Carousel Post" below — don't assume
+  anything video/Reels-specific above applies to it.
+- `dolly_reel/` — a FIFTH content type, UNVERIFIED as of this writing:
+  application photos only (no swatches), each given a Ken Burns push-in and
+  stitched into one multi-clip reel on a template's cut-timing, same
+  beat-synced-montage shape as Hot Takes. See "Dolly Reel" below, including
+  why real depth-based parallax was tried and rejected first.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -1575,3 +1580,134 @@ becoming noticeable across runs.
   (not every line opens with "They:"), while still passing the file's
   DELIBERATELY GENERIC test — no color/material references, so any entry
   still reads correctly over any of the 50 application photos.
+
+## Dolly Reel — the fifth content type (2026-08-18), UNVERIFIED as of this writing
+
+Dev shared a real reference clip and asked to test a new reel concept: a
+continuous forward dolly push-in through a room, named with real VFX terms —
+"2.5D Parallax Zoom", "3D Camera Projection Push/Pull", "Vertigo Effect" —
+built from application photos only (no swatches), stitched clips forming one
+reel, more than one concept per reel.
+
+### What the reference clip actually showed, checked by pulling real frames
+
+Downloaded via the user's uploads path, analyzed with `ffprobe`/`ffmpeg`
+frame extraction (not eyeballed at native playback speed) since no video-
+watching tool is available. 720x1280, 30fps, 16.1s. The last ~5.5s was an
+"instasave"-style repost bumper (Instagram icon reveal + `@IY_ARCH` handle)
+tacked on by whatever tool downloaded it — not part of the actual shot.
+The real creative content, 0–10s, is a single continuous **forward dolly
+push** — no pan, no pull-back, despite those being named in the brief.
+Worth knowing if this ever gets re-analyzed: the brief's "push-in then
+pull-back + pan" doesn't describe THIS reference clip; it's a one-way push
+the whole way through.
+
+### The real technical question: can real parallax come from a single static AI photo?
+
+Yes, in principle — this is genuinely established technique (Meta's old "3D
+Photos" feature, LeiaPix, the published "3D Ken Burns Effect" research all do
+exactly this from one still image, AI-generated or real; it only needs a
+depth map, doesn't care about the photo's origin). Two prototypes were built
+and tested locally against a real application photo (`c01_kit_modlux_app.png`)
+to find out whether it was ACHIEVABLE HERE, not just possible in theory —
+throwaway scripts, kept at `concept_tools/_test_parallax.py` and
+`concept_tools/_test_layered_parallax.py` as documented evidence, not wired
+into any pipeline:
+
+- **Depth estimation itself works well.** `depth-anything/Depth-Anything-V2-Small-hf`
+  via `transformers`, CPU-only, ~2s/image after the model is cached (~7s
+  cold). The depth map came out accurate on the first try — foreground
+  counter/stools/floor read near, the far wall/window read far, verified by
+  eye against the depth visualization, not assumed.
+- **Test B — continuous per-pixel depth-weighted zoom** (an inverse-warp
+  trick: each pixel's own local zoom scales with its own depth value).
+  Produced real parallax separation but visibly BENT every straight line by
+  the final frame — window mullions, countertop edges, cabinet fronts all
+  curved. Not acceptable against this brand's architectural photography.
+- **Test C — layered parallax** (3 discrete depth bands — background/
+  midground/foreground — each a RIGID center-zoom of the same full photo,
+  blended with depth-driven soft weights; the classic multiplane-camera
+  trick). Fixed the bent-lines problem — straight lines stay straight within
+  a layer by construction — but produced visible dark ghosting/double-edge
+  halos at every depth boundary (the pendant lights, the chair, the
+  counter-to-window edge): two differently-scaled copies of the same photo
+  not quite lining up where layers blend.
+- **Root cause, same in both**: genuine depth-based parallax needs true 3D
+  reprojection (rendering from a moving virtual camera against the depth map
+  as a surface) PLUS inpainting the small slivers of background revealed
+  from behind foreground objects as the camera pushes in — real information
+  that doesn't exist in a single 2D photo and has to be synthesized. Neither
+  test did that; both are 2D approximations, which is exactly why both show
+  artifacts. A proper implementation is real additional engineering (a
+  dedicated inpainting model or a lighter OpenCV fill, neither built or
+  tested here) with an unproven payoff.
+
+**Dev's call after seeing the side-by-side**: drop true parallax, ship the
+plain Ken Burns push-in (test A — zero geometric artifacts, matches the
+"push-in" half of the brief exactly, costs nothing extra to run). True
+parallax stays possible as a future investment if ever revisited — the two
+test scripts above are the starting point, not proof it can't be done, just
+proof the cheap version isn't clean enough for this brand's photography.
+
+### What was actually built
+
+`dolly_reel/dolly_reel_pipeline.py` — structurally Hot Takes' beat-synced-
+montage shape (reuses the Drive Template Reels rotation for audio AND real
+cut-timing via `core.extract_template_cut_timestamps`, one application photo
+per detected cut segment), not the original swatch+application pipeline's
+shape. `compute_segment_boundaries` is a deliberate copy of
+`hot_takes_pipeline`'s function of the same name, not an import — sibling
+content-type modules in this repo only import `core_decor_reel_pipeline.py`,
+never each other. Own counters, all under `dolly_reel/`: `application_index.txt`,
+`template_index.txt`, `caption_index.txt` — same collision-avoidance reasoning
+already recorded above for Hot Takes and Carousel Post.
+
+**The one genuinely new piece**: `_pushin_clip()` — plain ffmpeg `zoompan`,
+supersampled 3x before the zoom (so the crop window doesn't visibly soften at
+the most-zoomed-in frame), zoom RATE fixed per second
+(`ZOOM_RATE_PER_SECOND = 0.07`, matching the tested feel of 1.0→1.35 over 5s)
+rather than a fixed end-zoom, so segments of different lengths (from real
+cut-timing, not uniform) all push at the same visual pace instead of some
+looking rushed and others barely moving. Capped at `MAX_ZOOM = 1.5` so an
+unusually long segment can't push in far enough to look distorted. Segments
+are rendered independently, concatenated via ffmpeg's concat demuxer, then
+muxed against the mastered template audio — no MoviePy involved anywhere in
+this pipeline, deliberately: the whole thing is pure ffmpeg CLI calls through
+`core._run_ffmpeg`, since that primitive was already proven artifact-free in
+the comparison tests and MoviePy's time-varying resize wasn't tested. Only
+pip dependency is `requests` (via `core_decor_reel_pipeline.py`'s own
+unconditional imports) — no librosa, no moviepy, no numpy, unlike every
+other pipeline in this repo.
+
+**Smoke-tested locally before relying on the real GitHub Actions run**: a
+throwaway script (not committed) ran the full build chain — audio mastering,
+cut-timing extraction, 14 push-in segments, concat, mux — against a local
+stand-in video (`Inspiration video.mp4`, not a real Drive template) instead
+of the real Meta/Buffer/Drive-credentialed path, to catch bugs before
+spending a real live post on them. Produced a valid `11.91s, 1072x1920,
+codec=h264` file, confirmed via `core.validate_reel_for_meta`; frames pulled
+from four different points in the output confirmed clean hard cuts between
+four different application photos with straight architectural lines
+throughout (kitchen, mountain-lux kitchen, wabi-sabi bath, French powder
+room) — the push-in reads correctly across a real multi-segment sequence,
+not just a single isolated clip. **This stand-in video is a fast-cut source
+(~0.7–1.0s segments, target zoom only ~1.05–1.07)** — noticeably faster than
+the ~1.2s average segment length the main pipeline's own d-series reel run
+showed (16 concepts in 19.8s, documented above). If a REAL Drive template
+turns out to be similarly fast-cut, the push-in may read as barely
+perceptible per segment; this is a pacing risk worth checking against the
+actual first live run's real output, not something the smoke test could
+rule out using a non-project stand-in video.
+
+### Status and next step
+
+`.github/workflows/dolly-reel.yml` — `workflow_dispatch` ONLY, deliberately
+no `schedule:` trigger yet, same as every other brand-new content type in
+this repo before it's trusted (`generate-concept.yml` follows the identical
+pattern). **Per Dev's explicit instruction: the first manually-dispatched
+run IS meant to be a real live post for his review** — not held back behind
+a preview/approval step first. Once he approves that real run's actual
+output (real post IDs on Instagram/Facebook/TikTok/YouTube, and the push-in
+pacing judged against the real segment lengths a real Drive template
+produces), a `schedule:` trigger gets added here, same promotion path every
+other pipeline in this repo has already gone through.
