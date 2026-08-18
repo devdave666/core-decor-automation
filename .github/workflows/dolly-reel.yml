@@ -30,7 +30,12 @@ jobs:
           python-version: "3.11"
 
       - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        # Static-binary action instead of apt -- apt-get install ffmpeg hung
+        # indefinitely on ubuntu-latest twice in a row on 2026-08-18 (no
+        # GitHub-wide incident at the time, confirmed via githubstatus.com;
+        # this specific package install path was the flaky part). This
+        # avoids the apt/mirror network path entirely.
+        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Install Python dependencies
         run: pip install requests

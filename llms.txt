@@ -1748,3 +1748,29 @@ through it. This protects every pipeline in the repo, not just Dolly Reel —
 if a future pipeline adds its own raw `git push` instead of reusing this
 helper or one of the four functions above, it will reintroduce exactly this
 failure mode the next time two schedules overlap.
+
+### The second and third dispatches both hung on `apt-get install ffmpeg` — switched to a static binary
+
+After the git-push-retry fix landed, two more manual dispatches (16:36 and
+16:44 UTC) both hung indefinitely on the workflow's `sudo apt-get update &&
+sudo apt-get install -y ffmpeg` step specifically — everything before it
+(checkout, Python setup) completed in seconds both times, then this one step
+never finished, confirmed genuinely stuck rather than just slow by polling
+past 9+ minutes with no change and confirming the in-progress job's logs
+return `BlobNotFound` (not a step-status reporting lag — the step's own
+`status` field stays `in_progress`, which flips immediately on real
+completion regardless of when logs get archived). `githubstatus.com` showed
+no active Actions incident at the time, so this reads as ordinary apt-mirror
+flakiness on that specific package, not a GitHub-wide outage. Both stuck
+runs were cancelled via the Actions API rather than left to time out on
+their own.
+
+**Fix**: replaced the apt install with `FedericoCarboni/setup-ffmpeg@v3`, a
+marketplace action that downloads a static ffmpeg binary directly instead of
+going through apt/the package mirror network path at all. Only changed in
+`dolly-reel.yml` for now — `daily-reel.yml` and `hot-takes-reel.yml` still
+use the apt-based install and it worked fine on both of their most recent
+real runs today, so this wasn't touched as a blanket fix, just the workflow
+that was actually failing. If apt-based ffmpeg installs start failing on
+OTHER pipelines too, that's the signal to swap the rest of them over to the
+same static-binary action rather than assuming this fix alone covers it.
