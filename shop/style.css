@@ -1,0 +1,140 @@
+@font-face {
+  font-family: "Fry's Baskerville";
+  src: url("https://raw.githubusercontent.com/devdave666/core-decor-automation/main/concept_tools/fonts/FrysBaskerville.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --bg: #14120f;
+  --panel: #1c1a16;
+  --ink: #f2ede3;
+  --ink-dim: #b8b0a1;
+  --accent: #c9a96a;
+  --border: #33302a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  padding: 64px 24px 40px;
+  text-align: center;
+}
+
+header h1 {
+  font-family: "Fry's Baskerville", Georgia, serif;
+  font-size: clamp(28px, 5vw, 44px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  font-weight: 400;
+}
+
+header p {
+  color: var(--ink-dim);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  padding: 18px 20px 22px;
+}
+
+.card-tag {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 6px;
+}
+
+.card-title {
+  font-family: "Fry's Baskerville", Georgia, serif;
+  font-size: 17px;
+  margin: 0 0 4px;
+  font-weight: 400;
+}
+
+.card-product {
+  font-size: 13px;
+  color: var(--ink-dim);
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.card-cta {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 11px 0;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.card-cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-dim);
+  padding: 64px 24px;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 0 24px 64px;
+}

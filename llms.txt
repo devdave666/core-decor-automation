@@ -1869,3 +1869,68 @@ application daily reel, Hot Takes, Single Product Reel, Carousel Post, and
 Dolly Reel — each with its own schedule, own counters, own state, publishing
 independently to Instagram/Facebook plus TikTok/YouTube/Pinterest via
 Buffer where wired.
+
+## Shop the Look — a monetization page, not a content pipeline (2026-08-18)
+
+Dev's actual monetization state going in: an Amazon Associates Linktree with
+**zero revenue so far**. Root cause diagnosed in conversation, not guessed —
+the posted content (generic AI room concepts) and the affiliate links (real
+Amazon products) were completely disconnected; nothing a viewer just watched
+was actually clickable/purchasable. Dev also flagged that featuring real
+products in NEW renders costs real BFL generation money, ruling out "just
+regenerate everything with real products in frame" as the quick fix.
+
+**What this is**: `shop/` — a static page, not a pipeline, requiring zero
+new AI generation. Reuses the EXISTING 57 application photos already live in
+reels/carousels (referenced directly from `assets/application/` via
+raw.githubusercontent.com, the same zero-cost hosting pattern used
+everywhere else in this repo) and lets Dev attach real affiliate links to
+each one after the fact. A viewer who recognizes a room from a video now has
+somewhere real to click.
+
+**Files**:
+- `shop/products.js` — one entry per concept (`id`, `image`, `room`,
+  `style`, `productName`, `productUrl`), generated programmatically from the
+  actual `assets/application/` filenames (room/style codes decoded via the
+  same naming convention documented above under "Concept asset naming"), not
+  hand-transcribed. **`productName`/`productUrl` are deliberately `null` for
+  all 57 entries** — real affiliate URLs were never fabricated or guessed;
+  only Dev can fill these in with his actual Amazon/affiliate links.
+- `shop/shop.js` — renders only products WITH a `productUrl` set; a card
+  with `productUrl: null` is skipped entirely, never shown broken. Appends
+  `utm_source=coredecor&utm_medium=shop_page&utm_content={id}` to every link
+  on click, so which concepts actually convert is trackable without Dev
+  manually tagging each link himself. `rel="sponsored"` on every CTA link
+  plus a footer disclosure line — Google/FTC affiliate-link requirements,
+  not optional styling.
+- `shop/style.css` — matches the swatch-card brand register (dark editorial,
+  Fry's Baskerville for headings via the SAME font file already hosted at
+  `concept_tools/fonts/FrysBaskerville.ttf`, no new asset).
+- `shop/README.md` — how to add a real product (edit one entry in
+  `products.js`, push — no build step, no deploy step).
+
+**Hosting**: GitHub Pages was already enabled on this repo (root of `main`,
+serving `data-deletion.html`/`privacy-policy.html` for Meta app compliance)
+— confirmed via the Pages API before assuming it needed setup, not guessed.
+`shop/index.html` is now live at
+`https://devdave666.github.io/core-decor-automation/shop/` with no
+additional configuration.
+
+**Verified locally before pushing**: served the page with `python -m
+http.server`, screenshotted with headless Edge (`msedge.exe --headless
+--screenshot`, no browser automation framework installed — this environment
+has Edge at
+`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`, no
+Chromium/Playwright). Confirmed the zero-links empty state reads cleanly
+(not broken/blank), then temporarily patched one entry with a fake test
+product+URL to confirm card rendering (image, room tag, style title, product
+name, tracked CTA button) before reverting `products.js` back to the clean
+all-`null` state via a backup diff check.
+
+**Still needed before this earns anything**: Dev has to actually go through
+his Amazon Associates account (or a higher-commission network — see the
+earlier monetization discussion in this session about Amazon's 1-4% home
+goods rate vs. 8-20% via LTK/ShareASale/Awin for DTC home brands) and fill
+in real `productName`/`productUrl` pairs in `products.js`. This page is
+the mechanism, not the revenue — it earns nothing until real links are
+added.
