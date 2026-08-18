@@ -1532,19 +1532,26 @@ schedule in this repo (14:00 UTC daily-reel, 18:00 UTC every-2-days
 hot-takes) — deliberately offset from both so nothing lands in the same
 window, revisit once there's engagement data.
 
-### Open / not yet verified
+### First live run — 2026-08-18, manually dispatched to verify the multi-concept change
 
-- **Never run end-to-end against live accounts as of this writing.** Every
-  piece was checked individually (image prep verified by eye on real c01
-  assets, Buffer's image asset schema confirmed from current docs, Meta's
-  carousel/multi-photo request shapes confirmed from current docs, all new
-  Python compiles and the c-series filter was confirmed to isolate exactly 50
-  pairs from the 57 on disk), but no real post has actually gone out yet. The
-  first scheduled or manually-dispatched run IS the real test — check actual
-  post ids on all platforms attempted, the same discipline already applied to
-  every other pipeline in this repo before it was trusted.
-- TikTok and Pinterest publish paths are speculative, see above — don't be
-  surprised if the first run needs a follow-up fix to
-  `publish_image_carousel_to_buffer` once a real response body is seen.
-- Caption content is identical across every platform attempted, same known
-  tradeoff already recorded for the main daily pipeline — not platform-native.
+**Confirmed working end-to-end, first real post this pipeline ever made.**
+Manually dispatched via `workflow_dispatch` right after the multi-concept
+change above shipped, specifically to verify it against real accounts, not
+just compiled code. 4 concepts (c02_kit_scandi, c03_kit_indloft,
+c04_kit_mtnlux, c05_kit_brut), 8 images, one carousel:
+
+- **Instagram**: media_id `18127461283686439` — succeeded.
+- **Facebook**: post_id `..._122122971933091378` — succeeded.
+- **TikTok via Buffer**: post_id `6a846040033c29724fd00e12` — succeeded.
+  First real confirmation that `publish_image_carousel_to_buffer`'s
+  multi-image asset shape actually works for TikTok photo-mode on this
+  project's connected channel; it was previously speculative (see above).
+- **Pinterest**: skipped — `BUFFER_PINTEREST_CHANNEL_ID` isn't set in this
+  repo's secrets. Not tested; add the secret before trusting that path.
+- Counters advanced correctly for a 4-concept batch, not by 1:
+  `concept_index.txt` 1 → 5, `caption_index.txt` 1 → 2.
+
+**Still open**: Pinterest publish path remains unverified (no channel ID
+configured). Caption content is identical across every platform attempted,
+same known tradeoff already recorded for the main daily pipeline — not
+platform-native.
