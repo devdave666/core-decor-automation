@@ -1827,3 +1827,28 @@ the smoke test) because nobody was specifically looking for directional
 drift at the low zoom levels (~1.04-1.07x) those segments used — it only
 became obvious to a human watching the real posted video with real playback
 motion, not from inspecting individual static frames.
+
+**Re-run after the fix, confirmed corrected**: same-day follow-up dispatch,
+drew template 2/4 this time (only 9 segments across 19.9s — much slower
+pacing than the first run's 31, so each push-in gets ~2.2s instead of
+~0.6s, a real stress test for whether centering holds at a MORE noticeable
+zoom level too, not just the fast-cut case). Published clean on all four
+platforms: Instagram media_id `17952450183248438`, Facebook Reels post_id
+`122122987113091378`, TikTok post_id `6a849331f43c887d411d5ba0`, YouTube
+post_id `6a84933c8ec8f62532e920a2`. Counters advanced cleanly again,
+`application_index.txt` 31→40, `template_index.txt` 1→2,
+`caption_index.txt` 1→2.
+
+**Second, unrelated infra flake hit mid-way through re-running this fix**:
+the very next dispatch attempt (before the one that succeeded) hung on
+`actions/checkout@v4` itself — not our own code, not even the ffmpeg step —
+for several minutes before being cancelled. No GitHub-wide incident at the
+time either. Between this and the earlier `apt-get install ffmpeg` hang,
+that's three separate stuck-runner incidents in about an hour, on three
+different steps, all resolved by cancel-and-redispatch rather than any code
+change (except the one genuine ffmpeg-to-static-binary fix). Worth knowing
+if a future dispatch just sits at "in_progress" with no step progressing
+for several minutes: check `githubstatus.com` first, but don't assume it's
+this repo's code without checking which step is actually stuck — a
+transient runner issue and a real bug look identical from run status alone
+and need the per-step timestamps to tell apart.
