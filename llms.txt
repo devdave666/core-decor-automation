@@ -1774,3 +1774,27 @@ real runs today, so this wasn't touched as a blanket fix, just the workflow
 that was actually failing. If apt-based ffmpeg installs start failing on
 OTHER pipelines too, that's the signal to swap the rest of them over to the
 same static-binary action rather than assuming this fix alone covers it.
+
+### First successful live run — 2026-08-18, confirmed on all four platforms
+
+The next dispatch after the ffmpeg fix went end-to-end clean: real Drive
+template 1/4, 31 segments from real cut-timing in 19.8s (application images
+1-31/57), every push-in clip rendered, concatenated, muxed, validated, and
+published:
+
+- **Instagram**: media_id `18057315959790065`.
+- **Facebook Reels**: video_id `1441858494772822`, post_id
+  `122122986159091378` — verified delivered length 19.8s matches expected
+  (`_verify_facebook_video_duration`), confirming the concatenated-segments
+  approach doesn't trip the historical Facebook truncation bug (see that
+  section above) now that publishing goes through the Reels pull-based API.
+- **TikTok via Buffer**: post_id `6a848eb9af0852fb78ea185f`.
+- **YouTube via Buffer**: post_id `6a848ec46723dcd0cf4892a0`.
+- All three counters (`application_index.txt` 0→31, `template_index.txt`
+  0→1, `caption_index.txt` 0→1) committed and pushed cleanly on the FIRST
+  attempt, no collision this time — `_git_push_with_retry()` exists for when
+  one happens again, not because every run hits it.
+
+**Awaiting Dev's review of the actual posted video** before adding a
+`schedule:` trigger to `dolly-reel.yml` — per his explicit instruction, this
+live run itself was the test, not a preview step.
