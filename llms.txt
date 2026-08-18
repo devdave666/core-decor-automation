@@ -58,11 +58,11 @@ files:
   (c-series, several concepts per post as of 2026-08-18), twice a week. No
   video, no audio, no ffmpeg. See "Carousel Post" below — don't assume
   anything video/Reels-specific above applies to it.
-- `dolly_reel/` — a FIFTH content type, UNVERIFIED as of this writing:
-  application photos only (no swatches), each given a Ken Burns push-in and
-  stitched into one multi-clip reel on a template's cut-timing, same
-  beat-synced-montage shape as Hot Takes. See "Dolly Reel" below, including
-  why real depth-based parallax was tried and rejected first.
+- `dolly_reel/` — a FIFTH content type, LIVE IN THE SCHEDULE as of
+  2026-08-18: application photos only (no swatches), each given a Ken Burns
+  push-in and stitched into one multi-clip reel on a template's cut-timing,
+  same beat-synced-montage shape as Hot Takes. See "Dolly Reel" below,
+  including why real depth-based parallax was tried and rejected first.
 
 ## Cut-timing approach: read this before touching anything beat-related
 
@@ -1581,7 +1581,7 @@ becoming noticeable across runs.
   DELIBERATELY GENERIC test — no color/material references, so any entry
   still reads correctly over any of the 50 application photos.
 
-## Dolly Reel — the fifth content type (2026-08-18), UNVERIFIED as of this writing
+## Dolly Reel — the fifth content type (2026-08-18), LIVE IN THE SCHEDULE
 
 Dev shared a real reference clip and asked to test a new reel concept: a
 continuous forward dolly push-in through a room, named with real VFX terms —
@@ -1852,3 +1852,20 @@ for several minutes: check `githubstatus.com` first, but don't assume it's
 this repo's code without checking which step is actually stuck — a
 transient runner issue and a real bug look identical from run status alone
 and need the per-step timestamps to tell apart.
+
+### PROMOTED TO PRODUCTION — 2026-08-18
+
+Dev's verdict on the corrected re-run: "Its great push it live." `dolly-
+reel.yml` now has a real `schedule:` trigger (`0 10 * * 1,4` — Monday and
+Thursday, 10:00 UTC), same promotion path every other pipeline in this repo
+went through: build it, dispatch it manually, fix what a real live run
+exposes, get an explicit approval, then and only then make it scheduled.
+Placeholder day/time, same status as every other schedule in this repo —
+revisit once there's engagement data. `workflow_dispatch` stays available
+alongside it for manual test runs going forward.
+
+This is now a FULLY LIVE, five-pipeline repo: the original swatch+
+application daily reel, Hot Takes, Single Product Reel, Carousel Post, and
+Dolly Reel — each with its own schedule, own counters, own state, publishing
+independently to Instagram/Facebook plus TikTok/YouTube/Pinterest via
+Buffer where wired.

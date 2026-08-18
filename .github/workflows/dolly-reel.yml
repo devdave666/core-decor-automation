@@ -6,13 +6,18 @@ name: Dolly Reel
 # notes, including why real depth-based parallax was tried and rejected in
 # favor of a plain push-in.
 #
-# workflow_dispatch ONLY, deliberately no schedule yet -- this is a brand
-# new, unverified content type. Per Dev's explicit instruction: the first
-# manually-dispatched run IS meant to be a real live post for his review: a
-# `schedule:` trigger only gets added here once he's approved that run's
-# actual output, same pattern as every other new content type in this repo.
+# PROMOTED TO SCHEDULED 2026-08-18, after two manually-dispatched live runs
+# (the first caught a real zoompan centering bug from Dev watching the
+# actual post; the second, re-run after the fix, was approved: "Its great
+# push it live"). Twice a week, offset from every other schedule in this
+# repo so nothing lands in the same window: 14:00 UTC daily-reel, 18:00 UTC
+# every-2-days hot-takes, 16:00 UTC Tue/Fri carousel-post, 20:00 UTC daily
+# missed-post-check. Placeholder day/time, same status as every other
+# schedule here -- revisit once there's engagement data.
 
 on:
+  schedule:
+    - cron: "0 10 * * 1,4"  # Monday and Thursday, 10:00 UTC
   workflow_dispatch: {}
 
 permissions:
