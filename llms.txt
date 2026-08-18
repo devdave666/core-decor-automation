@@ -1711,3 +1711,40 @@ output (real post IDs on Instagram/Facebook/TikTok/YouTube, and the push-in
 pacing judged against the real segment lengths a real Drive template
 produces), a `schedule:` trigger gets added here, same promotion path every
 other pipeline in this repo has already gone through.
+
+### The first real dispatch failed, and it exposed a repo-wide bug, not a Dolly Reel bug
+
+The first `workflow_dispatch` run (2026-08-18, 16:28 UTC) built a completely
+valid reel — real Drive template (1/4), 31 segments from real cut-timing in
+19.8s, every push-in clip rendered, concatenated, muxed, and validated
+(`19.805167s, 1072x1920, codec=h264`) — then died one step later inside
+`upload_video_to_public_host`'s own `git push`, with a plain non-fast-forward
+rejection. **No post went out on any platform** — `publish_to_instagram` and
+everything after it in `run_pipeline()` runs strictly after this push, so the
+failure happened before any Meta/Buffer call was ever made, not mid-publish.
+
+Root cause, confirmed from the actual commit timestamps, not guessed:
+Carousel Post's own Tuesday/Friday 16:00 UTC schedule fired independently and
+pushed "Add carousel images 1787070659" at 16:30:59 UTC, landing on `main`
+while this Dolly Reel run's OWN local commit (made from a checkout taken
+several minutes earlier) was still sitting unpushed, waiting on 31 segments
+to render. When it finally tried to push at 16:32:12, origin had moved out
+from under it. **This is a real, repo-wide bug that has nothing to do with
+Dolly Reel specifically** — every one of the (now five) pipelines in this
+repo commits and pushes straight to `main` with a bare `git push` and no
+retry, and this project now has multiple independent schedules plus
+workflow_dispatch, all capable of overlapping in the same few-minute window.
+It was only a matter of time before two of them collided; Dolly Reel's
+unusually long build time (31 individually-rendered ffmpeg segments) just
+made the collision window wide enough to actually hit for the first time.
+
+**The fix**: `core._git_push_with_retry()`, a shared helper that retries a
+failed push with `git pull --rebase origin main` in between attempts (5
+tries, short backoff) instead of dying on the first collision. All four
+existing raw `git push` call sites in `core_decor_reel_pipeline.py`
+(`_write_and_commit_counter`, `advance_caption_index`,
+`upload_video_to_public_host`, `upload_images_to_public_host`) now route
+through it. This protects every pipeline in the repo, not just Dolly Reel —
+if a future pipeline adds its own raw `git push` instead of reusing this
+helper or one of the four functions above, it will reintroduce exactly this
+failure mode the next time two schedules overlap.

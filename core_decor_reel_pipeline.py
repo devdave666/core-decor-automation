@@ -565,7 +565,7 @@ def advance_caption_index(repo_root, index):
     counter_path.write_text(str(index + 1))
     subprocess.run(["git", "-C", str(repo_root), "add", "caption_index.txt"], check=True)
     subprocess.run(["git", "-C", str(repo_root), "commit", "-m", f"Advance caption index to {index + 1}"], check=True)
-    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+    _git_push_with_retry(repo_root)
 
 
 def _parse_owner_repo(remote_url):
@@ -610,7 +610,7 @@ def upload_video_to_public_host(local_path, repo_root, media_subdir="media/reels
     rel_path = dest.relative_to(repo_root).as_posix()
     subprocess.run(["git", "-C", str(repo_root), "add", "-A", media_subdir], check=True)
     subprocess.run(["git", "-C", str(repo_root), "commit", "-m", f"Add reel {filename}"], check=True)
-    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+    _git_push_with_retry(repo_root)
 
     remote = subprocess.run(
         ["git", "-C", str(repo_root), "remote", "get-url", "origin"],
@@ -964,7 +964,7 @@ def upload_images_to_public_host(local_paths, repo_root, media_subdir="media/car
 
     subprocess.run(["git", "-C", str(repo_root), "add", "-A", media_subdir], check=True)
     subprocess.run(["git", "-C", str(repo_root), "commit", "-m", f"Add carousel images {ts}"], check=True)
-    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+    _git_push_with_retry(repo_root)
 
     remote = subprocess.run(
         ["git", "-C", str(repo_root), "remote", "get-url", "origin"],
@@ -1150,6 +1150,31 @@ CONCEPT_OFFSET_FILE = "concept_offset.txt"
 # Deriving it means the rotation covers whatever is actually there.
 
 
+def _git_push_with_retry(repo_root, max_attempts=5):
+    """
+    Five independent pipelines now commit+push directly to `main` with no
+    server-side coordination (the original daily reel, Hot Takes, Single
+    Product Reel, Carousel Post, Dolly Reel), each on its own schedule plus
+    workflow_dispatch, all capable of landing a push in the same few-minute
+    window. A bare `git push` loses that race outright with a hard
+    non-fast-forward failure and no retry -- confirmed for real on
+    2026-08-18, when a manually-dispatched Dolly Reel run's own push
+    collided with Carousel Post's scheduled run mid-flight and the whole
+    pipeline died one step short of publishing, after already building a
+    valid 19.8s reel. Retry with `git pull --rebase` between attempts
+    instead of failing on the very first collision.
+    """
+    for attempt in range(1, max_attempts + 1):
+        result = subprocess.run(["git", "-C", str(repo_root), "push"], capture_output=True, text=True)
+        if result.returncode == 0:
+            return
+        log.warning("git push failed (attempt %d/%d): %s", attempt, max_attempts, result.stderr.strip())
+        if attempt == max_attempts:
+            raise PipelineError(f"git push failed after {max_attempts} attempts: {result.stderr.strip()}")
+        subprocess.run(["git", "-C", str(repo_root), "pull", "--rebase", "origin", "main"], check=True)
+        time.sleep(2 * attempt)
+
+
 def _read_counter(repo_root, filename, default=0):
     p = Path(repo_root) / filename
     return int(p.read_text().strip()) if p.exists() else default
@@ -1160,7 +1185,7 @@ def _write_and_commit_counter(repo_root, filename, value, message):
     p.write_text(str(value))
     subprocess.run(["git", "-C", str(repo_root), "add", filename], check=True)
     subprocess.run(["git", "-C", str(repo_root), "commit", "-m", message], check=True)
-    subprocess.run(["git", "-C", str(repo_root), "push"], check=True)
+    _git_push_with_retry(repo_root)
 
 
 def fetch_next_template(repo_root, output_dir):
