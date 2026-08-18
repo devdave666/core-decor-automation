@@ -1008,10 +1008,12 @@ def publish_carousel_to_instagram(image_urls, caption):
     publish_to_instagram above, not a variant of it: each image first becomes
     its own is_carousel_item child container, then one parent container with
     media_type=CAROUSEL references all of them by id via children, and only
-    the PARENT gets published. Order is preserved exactly as given — this
-    project's carousel callers must pass [swatch_url, application_url] in that
-    order so the swatch is the first thing seen, same reveal logic already used
-    throughout the video reel pipelines.
+    the PARENT gets published. Order is preserved exactly as given — callers
+    pass image_urls as one or more [swatch_url, application_url] pairs
+    concatenated in order, so each concept's swatch is seen right before its
+    own application shot, same reveal logic already used throughout the video
+    reel pipelines. Instagram allows up to 10 children per carousel; callers
+    are responsible for staying under that.
 
     Meta's content-publishing API accepts JPEG only for image_url (confirmed
     against Meta's own docs before writing this — a PNG image_url is rejected

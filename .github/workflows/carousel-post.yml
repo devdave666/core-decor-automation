@@ -1,7 +1,8 @@
 name: Carousel Post
 
-# Fourth content type: a static two-image carousel (c-series swatch, then its
-# own application shot) — see carousel_post/carousel_pipeline.py's module
+# Fourth content type: a static multi-image carousel — CONCEPTS_PER_CAROUSEL
+# c-series concepts per post, each contributing its own swatch-then-
+# application pair — see carousel_post/carousel_pipeline.py's module
 # docstring for the full design notes and platform-scope reasoning. Own state
 # under carousel_post/ so this rotation never collides with the other three
 # pipelines' counters. No ffmpeg/librosa needed — this is the first content

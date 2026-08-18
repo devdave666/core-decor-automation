@@ -1401,16 +1401,30 @@ This workflow is `workflow_dispatch` only, no schedule — same "deliberate act"
 reasoning as `generate-concept.yml`: it corresponds to one specific Drive
 folder Dev has just pointed it at, not a recurring rotation.
 
-## Carousel Post — the fourth content type (2026-08-17)
+## Carousel Post — the fourth content type (2026-08-17, multi-concept 2026-08-18)
 
 Added `carousel_post/carousel_pipeline.py`, `carousel_post/prepare_image.py`
 and `.github/workflows/carousel-post.yml` for a format none of the first
-three content types cover: a static two-IMAGE carousel, not a video. Image 1
-is a c-series swatch, image 2 is that same concept's application shot — the
+three content types cover: a static multi-IMAGE carousel, not a video. Each
+post cycles through `CONCEPTS_PER_CAROUSEL` (4) c-series concepts, and each
+concept contributes its own swatch-then-application pair in order — the
 same "swatch is the anticipation beat, application is the payoff" reveal
-logic already used throughout the video reel pipelines, just with no audio,
-no cut-timing, no ffmpeg, no librosa at all. First content type in the repo
-that needs none of them.
+logic already used throughout the video reel pipelines, repeated per concept
+across the carousel instead of a single pair. No audio, no cut-timing, no
+ffmpeg, no librosa at all. First content type in the repo that needs none of
+them.
+
+**Originally shipped as ONE concept per post (2 images).** Dev's instruction
+2026-08-18: a carousel should be multiple slides showing more than one
+concept, not just one swatch+application pair. `run_pipeline()` now reads
+`CONCEPT_INDEX_FILE` as a START index, takes `CONCEPTS_PER_CAROUSEL`
+consecutive concepts (wrapping via modulo, same as before), and advances the
+counter by however many concepts were actually used — not by 1 — so the
+rotation still covers every concept exactly once per full cycle regardless of
+batch size. 4 concepts = 8 images per post, safely under Instagram's 10-child
+carousel limit. `publish_carousel_to_instagram` already took an arbitrary-
+length `image_urls` list (no code change needed there beyond a docstring
+update) — the 2-image assumption only lived in the caller.
 
 **Scope is deliberately the ORIGINAL c-series only (c01-c50)**, filtered out
 of the same `assets/swatches` / `assets/application` folders the d-series now

@@ -2,10 +2,12 @@
 Carousel Post — the fourth Core Decor content type (2026-08-17)
 =================================================================
 A genuinely different shape from every other pipeline in this repo: a static
-IMAGE carousel, not a video. Two images per post, always in a fixed order —
-the c-series swatch first, then its own application shot second — reusing the
-"swatch is the anticipation beat, application is the payoff" logic already
-established for the video reels, just with no audio and no cut-timing
+IMAGE carousel, not a video. CONCEPTS_PER_CAROUSEL concepts per post (4 as of
+2026-08-18), each contributing its own swatch-then-application pair in fixed
+order — the c-series swatch first, then its own application shot second,
+reusing the "swatch is the anticipation beat, application is the payoff"
+logic already established for the video reels, just repeated across multiple
+concepts in one post instead of a single pair. No audio, no cut-timing
 involved at all. No Drive, no ffmpeg, no librosa: this is the first content
 type in the repo that needs none of them.
 
@@ -57,6 +59,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 CONCEPT_INDEX_FILE = "carousel_post/concept_index.txt"
 CAPTION_INDEX_FILE = "carousel_post/caption_index.txt"
 
+# Each concept contributes 2 images (swatch, application). 4 concepts = 8
+# images per post — real variety per carousel rather than one swatch+
+# application pair, while staying safely under Instagram's 10-child carousel
+# limit. Dev's instruction (2026-08-18): a carousel should be "multiple
+# slides", not just one concept.
+CONCEPTS_PER_CAROUSEL = 4
+
 
 def _c_series_pairs(swatch_dir, application_dir):
     """Same filename-prefix pairing as every other pipeline in this repo
@@ -83,9 +92,15 @@ def run_pipeline():
     repo_root = os.environ.get("GITHUB_WORKSPACE") or os.environ.get("REPO_ROOT", ".")
 
     pairs = _c_series_pairs(swatch_dir, application_dir)
-    concept_idx = core._read_counter(repo_root, CONCEPT_INDEX_FILE, default=0) % len(pairs)
-    swatch_path, app_path = pairs[concept_idx]
-    log.info("Concept %d/%d: %s", concept_idx + 1, len(pairs), swatch_path.stem)
+    n_concepts = min(CONCEPTS_PER_CAROUSEL, len(pairs))
+    start_idx = core._read_counter(repo_root, CONCEPT_INDEX_FILE, default=0) % len(pairs)
+    concept_indices = [(start_idx + i) % len(pairs) for i in range(n_concepts)]
+    selected = [pairs[i] for i in concept_indices]
+    log.info(
+        "Concepts %s (%d of %d total): %s",
+        [i + 1 for i in concept_indices], n_concepts, len(pairs),
+        ", ".join(s.stem for s, _ in selected),
+    )
 
     caption, caption_idx = _next_caption(repo_root)
 
@@ -95,13 +110,18 @@ def run_pipeline():
         # material-name label (bottom fifth of frame) always survives. The
         # application shot has no such constraint, so it gets a normal
         # centered crop. See prepare_image.py for the full reasoning.
-        swatch_jpg = prepare_carousel_image(swatch_path, tmp / "swatch.jpg", anchor_y=1.0)
-        app_jpg = prepare_carousel_image(app_path, tmp / "application.jpg", anchor_y=0.5)
+        # Each concept contributes its own swatch-then-application pair, in
+        # order, preserving the "swatch is the anticipation beat, application
+        # is the payoff" reveal per concept, repeated across the carousel.
+        jpgs = []
+        for i, (swatch_path, app_path) in enumerate(selected):
+            jpgs.append(prepare_carousel_image(swatch_path, tmp / f"swatch_{i}.jpg", anchor_y=1.0))
+            jpgs.append(prepare_carousel_image(app_path, tmp / f"application_{i}.jpg", anchor_y=0.5))
 
-        # Swatch first, application second, in ONE push so both raw URLs go
-        # live together rather than the second one racing the first commit.
+        # One push so all raw URLs go live together rather than racing each
+        # other's commit.
         image_urls = core.upload_images_to_public_host(
-            [swatch_jpg, app_jpg], repo_root, media_subdir="media/carousels",
+            jpgs, repo_root, media_subdir="media/carousels",
         )
 
     ig_id = core.publish_carousel_to_instagram(image_urls, caption)
@@ -137,12 +157,13 @@ def run_pipeline():
     # YouTube deliberately not attempted — see module docstring.
 
     # Advance state only after the two REQUIRED platforms (IG, FB) confirm — a
-    # failed run shouldn't burn a concept slot or a caption slot. TikTok/
+    # failed run shouldn't burn concept slots or a caption slot. TikTok/
     # Pinterest are best-effort and don't gate this, same as Pinterest doesn't
     # gate single_product_reel.
+    next_start = (start_idx + n_concepts) % len(pairs)
     core._write_and_commit_counter(
-        repo_root, CONCEPT_INDEX_FILE, (concept_idx + 1) % len(pairs),
-        f"Carousel Post: advance concept index to {(concept_idx + 1) % len(pairs)}",
+        repo_root, CONCEPT_INDEX_FILE, next_start,
+        f"Carousel Post: advance concept index to {next_start}",
     )
     core._write_and_commit_counter(
         repo_root, CAPTION_INDEX_FILE, caption_idx + 1,
@@ -151,8 +172,9 @@ def run_pipeline():
 
     log.info(
         "Done. Instagram media_id=%s Facebook post_id=%s TikTok post_id=%s Pinterest post_id=%s "
-        "concept=%d/%d (%s)",
-        ig_id, fb_id, tiktok_id, pinterest_id, concept_idx + 1, len(pairs), swatch_path.stem,
+        "concepts=%d/%d (%s)",
+        ig_id, fb_id, tiktok_id, pinterest_id, n_concepts, len(pairs),
+        ", ".join(s.stem for s, _ in selected),
     )
 
 
