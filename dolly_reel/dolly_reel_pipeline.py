@@ -121,6 +121,15 @@ def _pushin_clip(image_path, duration, output_path):
     Scales the source 3x before zoompan (supersampling) so the crop window
     doesn't visibly soften at the most-zoomed-in frame -- same technique
     validated in the throwaway comparison test.
+
+    x/y MUST be set explicitly -- zoompan defaults both to 0, which anchors
+    the crop window at the source's top-left corner rather than its center.
+    A real live run confirmed this exactly: every clip read as drifting
+    toward the bottom-right instead of pushing straight into the middle,
+    because the top-left corner stayed pinned in place while the rest of
+    the frame grew and was pushed outward around it. The standard centered
+    formula -- x='iw/2-(iw/zoom/2)', y='ih/2-(ih/zoom/2)' -- keeps the crop
+    window centered on the source at every zoom level instead.
     """
     target_zoom = min(1.0 + ZOOM_RATE_PER_SECOND * duration, MAX_ZOOM)
     n_frames = max(round(duration * FPS), 1)
@@ -129,7 +138,9 @@ def _pushin_clip(image_path, duration, output_path):
     core._run_ffmpeg(
         ["-framerate", str(FPS), "-loop", "1", "-i", str(image_path),
          "-vf", f"scale={W * 3}:{H * 3},"
-                f"zoompan=z='min(zoom+{increment},{target_zoom})':d={n_frames}:s={W}x{H}:fps={FPS}",
+                f"zoompan=z='min(zoom+{increment},{target_zoom})':"
+                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+                f"d={n_frames}:s={W}x{H}:fps={FPS}",
          "-frames:v", str(n_frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
          str(output_path)],
         f"push-in clip for {Path(image_path).name} ({duration:.2f}s, target zoom {target_zoom:.2f})",

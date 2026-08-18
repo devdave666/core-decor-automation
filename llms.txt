@@ -1798,3 +1798,32 @@ published:
 **Awaiting Dev's review of the actual posted video** before adding a
 `schedule:` trigger to `dolly-reel.yml` — per his explicit instruction, this
 live run itself was the test, not a preview step.
+
+### Real bug found from watching the actual posted video: zoom drifted top-left to bottom-right instead of centering
+
+Dev's own review of the live post caught it immediately: every clip read as
+sliding from the top-left toward the bottom-right rather than pushing
+straight into the center. Root cause: `_pushin_clip()`'s `zoompan` filter
+call never set `x`/`y` — ffmpeg's zoompan defaults BOTH to `0`, which
+anchors the shrinking crop window at the source's top-left corner. As zoom
+increases, that corner stays pinned in place while everything else grows and
+gets pushed outward and off-frame — exactly the "drifting toward
+bottom-right" look, repeated identically on all 31 clips since every one
+used the same unset default.
+
+**Fix**: added the standard centered-zoom expressions,
+`x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'`, which keep the crop window
+centered on the source at every zoom level. Verified locally before
+re-running live: rendered a 3s test clip on the same `c01_kit_modlux_app.png`
+image, pulled the first and last frame, confirmed the pendant light/
+countertop/window all grow proportionally in place around the same center
+of composition instead of sliding toward one corner.
+
+**Worth remembering for any future ffmpeg `zoompan` use in this repo**: the
+filter's `x`/`y` default to `0`, not centered — every call needs those two
+expressions set explicitly, or it silently reproduces this exact bug. This
+wasn't caught by any of the earlier comparison tests (`test_a_kenburns.mp4`,
+the smoke test) because nobody was specifically looking for directional
+drift at the low zoom levels (~1.04-1.07x) those segments used — it only
+became obvious to a human watching the real posted video with real playback
+motion, not from inspecting individual static frames.
