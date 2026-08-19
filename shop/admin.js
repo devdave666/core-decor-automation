@@ -19,10 +19,20 @@ const modalTitle = document.getElementById("modal-title");
 const modalName = document.getElementById("modal-name");
 const modalUrl = document.getElementById("modal-url");
 const modalError = document.getElementById("modal-error");
+const modalNotice = document.getElementById("modal-notice");
+const modalSuggested = document.getElementById("modal-suggested");
+const modalSuggestedText = document.getElementById("modal-suggested-text");
+const searchAmazonBtn = document.getElementById("modal-search-amazon");
+const pasteClipboardBtn = document.getElementById("modal-paste-clipboard");
 
 let currentSha = null;
 let currentProducts = null;
 let activeProductId = null;
+let visibilityListener = null;
+
+function titleCase(s) {
+  return s.replace(/\w\S*/g, (w) => w[0].toUpperCase() + w.slice(1));
+}
 
 function utf8ToBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
@@ -112,6 +122,13 @@ function renderGrid() {
     productLine.textContent = product.productName || "";
     body.appendChild(productLine);
 
+    if (!product.productUrl && product.searchKeywords) {
+      const kw = document.createElement("p");
+      kw.className = "admin-card-keywords";
+      kw.textContent = `try: ${product.searchKeywords}`;
+      body.appendChild(kw);
+    }
+
     card.appendChild(body);
     card.addEventListener("click", () => openModal(product.id));
     grid.appendChild(card);
@@ -122,9 +139,21 @@ function openModal(id) {
   activeProductId = id;
   const product = currentProducts.find((p) => p.id === id);
   modalTitle.textContent = `${product.id} — ${product.room}, ${product.style}`;
-  modalName.value = product.productName || "";
+  modalName.value = product.productName || (product.searchKeywords ? titleCase(product.searchKeywords) : "");
   modalUrl.value = product.productUrl || "";
   modalError.hidden = true;
+  modalNotice.hidden = true;
+  pasteClipboardBtn.classList.remove("pulse");
+
+  if (product.searchKeywords) {
+    modalSuggested.hidden = false;
+    modalSuggestedText.textContent = product.searchKeywords;
+    searchAmazonBtn.disabled = false;
+  } else {
+    modalSuggested.hidden = true;
+    searchAmazonBtn.disabled = true;
+  }
+
   modalBackdrop.hidden = false;
   modalName.focus();
 }
@@ -132,6 +161,52 @@ function openModal(id) {
 function closeModal() {
   modalBackdrop.hidden = true;
   activeProductId = null;
+  if (visibilityListener) {
+    document.removeEventListener("visibilitychange", visibilityListener);
+    visibilityListener = null;
+  }
+}
+
+function handleSearchAmazon() {
+  const product = currentProducts.find((p) => p.id === activeProductId);
+  if (!product?.searchKeywords) return;
+  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(product.searchKeywords)}`, "_blank", "noopener");
+
+  // When the user comes back to this tab (after grabbing a SiteStripe link
+  // on Amazon), pulse the paste button so the next step is obvious --
+  // removes the need to remember what to do next.
+  if (visibilityListener) document.removeEventListener("visibilitychange", visibilityListener);
+  visibilityListener = () => {
+    if (document.visibilityState === "visible") {
+      pasteClipboardBtn.classList.add("pulse");
+      document.removeEventListener("visibilitychange", visibilityListener);
+      visibilityListener = null;
+    }
+  };
+  document.addEventListener("visibilitychange", visibilityListener);
+}
+
+async function handlePasteClipboard() {
+  pasteClipboardBtn.classList.remove("pulse");
+  modalError.hidden = true;
+  try {
+    const text = (await navigator.clipboard.readText()).trim();
+    if (!text) {
+      modalNotice.textContent = "Clipboard is empty — copy the SiteStripe link first, then try again.";
+      modalNotice.hidden = false;
+      return;
+    }
+    modalUrl.value = text;
+    const looksLikeAmazon = /amazon\.[a-z.]+|amzn\.to/i.test(text);
+    modalNotice.textContent = looksLikeAmazon
+      ? "Pasted."
+      : "Pasted — doesn't look like an Amazon link, double check before saving.";
+    modalNotice.hidden = false;
+  } catch {
+    modalNotice.textContent = "Couldn't read the clipboard automatically — paste manually into the URL field (Ctrl+V).";
+    modalNotice.hidden = false;
+    modalUrl.focus();
+  }
 }
 
 async function handleSave() {
@@ -216,6 +291,8 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 document.getElementById("modal-cancel").addEventListener("click", closeModal);
 document.getElementById("modal-save").addEventListener("click", handleSave);
 document.getElementById("modal-clear").addEventListener("click", handleClear);
+searchAmazonBtn.addEventListener("click", handleSearchAmazon);
+pasteClipboardBtn.addEventListener("click", handlePasteClipboard);
 modalBackdrop.addEventListener("click", (e) => {
   if (e.target === modalBackdrop) closeModal();
 });

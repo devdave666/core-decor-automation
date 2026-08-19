@@ -145,6 +145,14 @@
   min-height: 14px;
 }
 
+.admin-card-keywords {
+  font-size: 10px;
+  color: var(--ink-dim);
+  font-style: italic;
+  margin: 2px 0 0;
+  min-height: 12px;
+}
+
 .admin-card.is-linked::after {
   content: "LINKED";
   position: absolute;
@@ -186,6 +194,72 @@
   font-family: "Fry's Baskerville", Georgia, serif;
   font-weight: 400;
   margin-top: 0;
+}
+
+.modal-suggested {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.modal-suggested-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 3px;
+}
+
+.modal-suggested-text {
+  font-size: 14px;
+  margin: 0;
+}
+
+.modal-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-btn-flow {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.modal-btn-flow:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.modal-btn-flow.pulse {
+  animation: pulse-glow 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 106, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(201, 169, 106, 0); }
+}
+
+.modal-flow-hint {
+  font-size: 11px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  margin: 10px 0 4px;
+}
+
+.modal-notice {
+  color: var(--accent);
+  font-size: 13px;
+  margin-top: 12px;
+  margin-bottom: 0;
 }
 
 .modal label {

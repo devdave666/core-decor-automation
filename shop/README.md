@@ -19,10 +19,31 @@ walks through the exact steps and links straight to the token creation
 form). Paste it in once — it's saved in that browser's local storage only,
 never sent anywhere but `api.github.com`, and never touches this repo or any
 file. From there, every concept shows as a card: blank ones say "+ Add
-product", linked ones are tagged "LINKED". Click any card, fill in the
-product name and URL, hit Save — it commits straight to `products.json` on
-`main` via the GitHub API and is live within about a minute. Clear removes a
-link. Log out wipes the saved token from that browser.
+product" plus a suggested search term, linked ones are tagged "LINKED".
+
+**The fast path per card** (no Amazon product-search API access yet — see
+"Amazon Creators API" below — so this is the real workflow until that
+unlocks):
+
+1. Click a card. The modal opens with a suggested search term already
+   filled into the product name field (editable) and shown above the
+   buttons.
+2. Click **"1. Search on Amazon"** — opens Amazon's search for that term in
+   a new tab.
+3. On Amazon (logged into Associates): find the item, use **SiteStripe**
+   (the toolbar Amazon shows at the top of the page) → **Text** → **Copy**.
+   This step happens on Amazon's own page and can't be automated from
+   here — it's the only way to generate a REAL affiliate-tagged link
+   without API access.
+4. Come back to this tab. Click **"2. Paste link from clipboard"** — it
+   reads the clipboard automatically and fills the URL field (and flags if
+   it doesn't look like an Amazon link, so a wrong copy doesn't slip
+   through unnoticed).
+5. Click **Save**.
+
+Five clicks total on our side, plus SiteStripe's own copy step on Amazon —
+about as tight as this gets without programmatic product search. **Clear**
+removes a link. **Log out** wipes the saved token from that browser.
 
 Don't use this page on a shared/public computer, and revoke the token from
 GitHub's settings if the device it's saved on is ever lost or compromised.
@@ -59,3 +80,20 @@ reads UTM params — no manual tagging needed per link.
   recognizes a room from a video can find it here.
 - `rel="sponsored"` on every CTA link, and a disclosure line in the footer —
   required by Google/FTC guidance for affiliate links, not optional styling.
+- Each product entry carries a `searchKeywords` field — a short, concrete
+  description of the real object identified by actually looking at that
+  concept's photo (e.g. "3-light cluster bubble glass pendant light brass"
+  for c01), not guessed from the room/style name alone. Drives both the
+  card hint and the admin modal's "Search on Amazon" button.
+
+## Amazon Creators API — why this isn't fully automated (yet)
+
+Amazon's Creators API (the PA-API 5.0 replacement) can search products and
+generate affiliate links programmatically, but requires **10 qualifying
+Associates sales in the past 30 days** — confirmed against this account's
+real credentials, which return `AssociateNotEligible`. See `amazon_
+creators.py`, `check_eligibility.py`, and llms.txt's "Amazon Creators API"
+section. Once `check-amazon-eligibility.yml` reports success, the
+SiteStripe step above can be replaced with a real automated search +
+propose flow. Until then, this manual-but-tightened workflow is what
+generates the sales that unlock that in the first place.

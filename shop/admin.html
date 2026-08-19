@@ -47,6 +47,21 @@
   <div id="modal-backdrop" class="modal-backdrop" hidden>
     <div class="modal">
       <h3 id="modal-title">Edit Product</h3>
+
+      <div id="modal-suggested" class="modal-suggested" hidden>
+        <p class="modal-suggested-label">Suggested search</p>
+        <p id="modal-suggested-text" class="modal-suggested-text"></p>
+      </div>
+
+      <div class="modal-flow">
+        <button id="modal-search-amazon" class="modal-btn-flow">1. Search on Amazon ↗</button>
+        <button id="modal-paste-clipboard" class="modal-btn-flow">2. Paste link from clipboard</button>
+      </div>
+      <p class="modal-flow-hint">
+        On Amazon: find the item, click SiteStripe's <strong>Text</strong> button, then
+        <strong>Copy</strong> — then come back here and hit "Paste link from clipboard."
+      </p>
+
       <label>Product name</label>
       <input type="text" id="modal-name" placeholder="Brushed Brass 3-Head Pendant Light" />
       <label>Affiliate / product URL</label>
@@ -57,6 +72,7 @@
         <button id="modal-save" class="modal-btn-primary">Save</button>
       </div>
       <p id="modal-error" class="modal-error" hidden></p>
+      <p id="modal-notice" class="modal-notice" hidden></p>
     </div>
   </div>
 
