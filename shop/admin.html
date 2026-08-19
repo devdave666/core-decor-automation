@@ -49,12 +49,19 @@
       <button id="editor-back" class="modal-btn-secondary">← Back to grid</button>
       <h2 id="editor-title"></h2>
       <p class="editor-hint">
-        Click a dot to edit or delete it. Click empty space on the photo to add a new one.
-        Drag a dot to reposition — it saves the moment you let go.
+        Click a dot to edit or delete it. Click empty space on the photo to add a new one —
+        it snaps to the nearest grid intersection. Drag a dot to reposition; it snaps and
+        saves the moment you let go.
       </p>
+      <label class="editor-grid-control">
+        Grid tightness
+        <input type="range" id="grid-size" min="10" max="80" step="2" value="40" />
+        <span id="grid-size-label">40×40</span>
+      </label>
     </div>
     <div id="editor-image-wrap" class="editor-image-wrap">
       <img id="editor-image" alt="" />
+      <div id="editor-grid-overlay" class="editor-grid-overlay"></div>
     </div>
   </div>
 

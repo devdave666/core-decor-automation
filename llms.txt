@@ -2289,3 +2289,64 @@ admin with no console errors.
 Still not done: OneLink (Amazon's native geo-redirect across marketplaces)
 isn't wired up — noted in `shop/README.md` as the right next step once
 there's real traffic, not built speculatively now.
+
+## Hotspot accuracy fix + snap-to-grid tool (2026-08-19, same day as the hotspot feature)
+
+Dev came back after using the admin page live (see the "Shop admin: reposition"
+/"update"/"delete" commits he made directly through the deployed old and new
+admin.js while this session was in progress -- merged in cleanly, see below)
+and said the AI-drafted hotspot positions were mostly wrong: "misplaced almost
+all marks." His fix suggestion: a visible grid overlay in the editor, dots
+placed at grid intersections, and "tighter" grid than whatever default I'd
+reach for. He'd already hand-corrected `c03` through the admin UI and named
+it as the accuracy bar to match, and asked for `c01`-`c05` as a test batch
+before approving a pass over the rest.
+
+**Diagnosis before fixing anything**: rendered the *actual saved* hotspot
+coordinates as crosshairs directly onto each photo (PIL, temp `_check_*.png`
+files, viewed and deleted after) rather than trusting written x/y numbers or
+re-deriving positions from prose descriptions -- that's what actually showed
+where a dot lands vs. guessing from percentages. Most of c01/c02's dots were
+already close; the real misses were c04's kitchen faucet dot (landed on the
+window frame, not the faucet -- moved ~2-3% right/down) and c05's "Cabinet
+Pulls" hotspot, which was flat-out mislabeled: it sat on a small stone/mineral
+bookend decor piece, and this photo's minimalist brutalist cabinets don't
+have visible pulls at all. Relabeled to "Stone Bookend Decor" with matching
+search keywords rather than leaving a hotspot pointing at nothing real.
+
+Fixed c01/c02/c04/c05 (16 hotspots total) by looking directly at each photo
+and hand-placing pixel-accurate positions, snapped to a clean grid, then
+re-rendered the crosshair overlay again to confirm before considering it
+done -- same verify-by-rendering approach as the diagnosis step, not just
+"edited the JSON and assumed it's right."
+
+**New admin feature** (`shop/admin.html`, `shop/admin.css`, `shop/admin.js`):
+the hotspot editor now shows a faint reference grid over the photo (CSS
+`repeating-linear-gradient`, cell size driven by a `--cell` custom property)
+plus a **Grid tightness** range slider (10-80 cells, default 40 = 2.5% cells,
+remembered in localStorage per-browser). Both click-to-create and
+drag-to-reposition now snap to the nearest grid intersection (`snap()` in
+admin.js, rounds to the nearest cell) instead of landing at the raw cursor
+position -- this is the actual fix for "misplaced marks" going forward, not
+just a one-time data correction. Verified with a from-scratch mocked-fetch
+test harness (same pattern as the original admin.js tests): default grid
+renders at the right cell size, the slider changes it live, a click snaps a
+new hotspot to the expected grid intersection, and a drag snaps an existing
+one at a different (tighter) grid setting -- 9/9 checks passed before the
+harness file was deleted.
+
+**Remote sync note**: while this session was paused (user hit a usage limit
+mid-task) and again between turns, Dev kept using the live admin page --
+merged in three separate rounds of his real edits (`git fetch` + `git merge`,
+never `--force` or `-X ours`) rather than overwriting them: 4 real product
+links for c01-c04 added through the *old* pre-hotspot admin.js (folded into
+`hotspots[0]` for those concepts, `marketplace: "ca"`), then his own manual
+c01-c04 repositioning and c03 additions/deletions through the *new*
+hotspot-editor admin.js once it went live. Always `git fetch` and check
+`git log --oneline HEAD..origin/main` before pushing on this repo now --
+Dev actively edits `products.json` through the deployed admin page in
+real time, independent of whatever's happening in a chat session.
+
+c06 through c50 and d01-d07 still carry the original AI-drafted positions,
+not yet reviewed at this new accuracy bar -- waiting on Dev's approval of
+c01-c05 before doing the rest.

@@ -184,6 +184,37 @@
   margin: 0;
 }
 
+.editor-grid-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.editor-grid-control input[type="range"] {
+  flex: 1;
+  max-width: 220px;
+  accent-color: var(--accent);
+}
+
+#grid-size-label {
+  color: var(--accent);
+  min-width: 52px;
+}
+
+.editor-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(to right, rgba(201, 169, 106, 0.35) 0, rgba(201, 169, 106, 0.35) 1px, transparent 1px, transparent var(--cell)),
+    repeating-linear-gradient(to bottom, rgba(201, 169, 106, 0.35) 0, rgba(201, 169, 106, 0.35) 1px, transparent 1px, transparent var(--cell));
+}
+
 .editor-image-wrap {
   position: relative;
   max-width: 720px;

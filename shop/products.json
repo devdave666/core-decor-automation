@@ -7,8 +7,8 @@
     "hotspots": [
       {
         "id": "c01-h1",
-        "x": 57.78769992646717,
-        "y": 27.17602997869097,
+        "x": 57.5,
+        "y": 22.5,
         "label": "Pendant Light",
         "productName": "3-light Cluster Bubble Glass Pendant Light Brass",
         "productUrl": "https://www.amazon.ca/s?k=3-light+cluster+bubble+glass+pendant+light+brass&linkCode=ll2&tag=dev0f7d-20&linkId=62a3ae9b9028ed71c6a6a73fbc737a3a&ref_=as_li_ss_tl",
@@ -17,8 +17,8 @@
       },
       {
         "id": "c01-h2",
-        "x": 66.71627135503859,
-        "y": 71.98705179787964,
+        "x": 67.5,
+        "y": 70,
         "label": "Bar Stools",
         "productName": null,
         "productUrl": null,
@@ -27,8 +27,8 @@
       },
       {
         "id": "c01-h3",
-        "x": 41.51786168416341,
-        "y": 56.533063479812206,
+        "x": 42.5,
+        "y": 55,
         "label": "Kitchen Faucet",
         "productName": null,
         "productUrl": null,
@@ -37,8 +37,8 @@
       },
       {
         "id": "c01-h4",
-        "x": 85.16865230741955,
-        "y": 39.80509489668518,
+        "x": 85,
+        "y": 40,
         "label": "Cabinet Pulls",
         "productName": null,
         "productUrl": null,
@@ -55,8 +55,8 @@
     "hotspots": [
       {
         "id": "c02-h1",
-        "x": 25,
-        "y": 25,
+        "x": 22.5,
+        "y": 17.5,
         "label": "Pendant Light",
         "productName": "Rattan Bell Pendant Light",
         "productUrl": "https://www.amazon.ca/s?k=rattan+bell+pendant+light&linkCode=ll2&tag=dev0f7d-20&linkId=b0193de453ea007843f1cd6917ec90ac&ref_=as_li_ss_tl",
@@ -65,8 +65,8 @@
       },
       {
         "id": "c02-h2",
-        "x": 14,
-        "y": 68,
+        "x": 20,
+        "y": 60,
         "label": "Counter Stool",
         "productName": null,
         "productUrl": null,
@@ -75,8 +75,8 @@
       },
       {
         "id": "c02-h3",
-        "x": 79.01786168416342,
-        "y": 47.670563517845935,
+        "x": 80,
+        "y": 47.5,
         "label": "Kitchen Faucet",
         "productName": null,
         "productUrl": null,
@@ -85,8 +85,8 @@
       },
       {
         "id": "c02-h4",
-        "x": 83.97817611694336,
-        "y": 63.2907211904658,
+        "x": 85,
+        "y": 62.5,
         "label": "Cabinet Pulls",
         "productName": null,
         "productUrl": null,
@@ -171,8 +171,8 @@
     "hotspots": [
       {
         "id": "c04-h1",
-        "x": 59.37500454130627,
-        "y": 29.945561058331567,
+        "x": 60,
+        "y": 30,
         "label": "Chandelier",
         "productName": "Brass Sputnik Starburst Chandelier",
         "productUrl": "https://amzn.to/3SnHSEz",
@@ -181,8 +181,8 @@
       },
       {
         "id": "c04-h2",
-        "x": 63.24405216035389,
-        "y": 60.74275051801936,
+        "x": 62.5,
+        "y": 60,
         "label": "Plaid Bar Stools",
         "productName": null,
         "productUrl": null,
@@ -191,8 +191,8 @@
       },
       {
         "id": "c04-h3",
-        "x": 52.52976644606817,
-        "y": 46.064234401354206,
+        "x": 50,
+        "y": 47.5,
         "label": "Kitchen Faucet",
         "productName": null,
         "productUrl": null,
@@ -201,8 +201,8 @@
       },
       {
         "id": "c04-h4",
-        "x": 62.946433112734844,
-        "y": 50.0523597645763,
+        "x": 62.5,
+        "y": 50,
         "label": "Cutting Boards",
         "productName": null,
         "productUrl": null,
@@ -219,8 +219,8 @@
     "hotspots": [
       {
         "id": "c05-h1",
-        "x": 51,
-        "y": 63,
+        "x": 50,
+        "y": 62.5,
         "label": "Kitchen Faucet",
         "productName": null,
         "productUrl": null,
@@ -230,7 +230,7 @@
       {
         "id": "c05-h2",
         "x": 50,
-        "y": 83,
+        "y": 72.5,
         "label": "Bar Stools",
         "productName": null,
         "productUrl": null,
@@ -239,8 +239,8 @@
       },
       {
         "id": "c05-h3",
-        "x": 88,
-        "y": 58,
+        "x": 87.5,
+        "y": 57.5,
         "label": "Crystal Geode Decor",
         "productName": null,
         "productUrl": null,
@@ -249,13 +249,13 @@
       },
       {
         "id": "c05-h4",
-        "x": 8,
-        "y": 66,
-        "label": "Cabinet Pulls",
+        "x": 7.5,
+        "y": 65,
+        "label": "Stone Bookend Decor",
         "productName": null,
         "productUrl": null,
         "marketplace": "us",
-        "searchKeywords": "matte black bar cabinet pulls"
+        "searchKeywords": "raw amethyst stone bookend decor piece"
       }
     ]
   },

@@ -48,11 +48,16 @@ badge (e.g. "2/4").
 
 **Per card:**
 
-1. Click a card — opens the full photo with every hotspot shown as a dot.
+1. Click a card — opens the full photo with every hotspot shown as a dot,
+   plus a faint reference grid over the image and a **Grid tightness**
+   slider above it (more cells = finer control; remembered per-browser).
    Filled dots are linked; dashed dots are pending.
 2. Click a dashed dot to edit it, or click empty space on the photo to add
-   a brand new one. Drag any dot to reposition it — it saves the position
-   the moment you let go, no extra click needed.
+   a brand new one — it snaps to the nearest grid intersection rather than
+   landing wherever the cursor happened to be, which is what actually gets
+   a dot centered on the real object instead of just near it. Drag any dot
+   to reposition it — it snaps live while dragging and saves the moment
+   you let go, no extra click needed.
 3. In the modal: pick **US (amazon.com)** or **CA (amazon.ca)** — both of
    Dev's Associates accounts are active now, so this matters (see
    "Amazon.ca vs Amazon.com" below). Click **"1. Search on Amazon"** —

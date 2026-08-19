@@ -30,6 +30,11 @@ const editorBack = document.getElementById("editor-back");
 const editorTitle = document.getElementById("editor-title");
 const editorImageWrap = document.getElementById("editor-image-wrap");
 const editorImage = document.getElementById("editor-image");
+const editorGridOverlay = document.getElementById("editor-grid-overlay");
+const gridSizeInput = document.getElementById("grid-size");
+const gridSizeLabel = document.getElementById("grid-size-label");
+
+const GRID_SIZE_KEY = "coredecor_shop_admin_grid_size";
 
 const modalBackdrop = document.getElementById("modal-backdrop");
 const modalTitle = document.getElementById("modal-title");
@@ -205,8 +210,8 @@ function attachMarkerDrag(marker, hotspot) {
     if (!dragging && Math.hypot(e.clientX - startX, e.clientY - startY) < 5) return;
     dragging = true;
     const rect = editorImage.getBoundingClientRect();
-    const x = clamp(((e.clientX - rect.left) / rect.width) * 100);
-    const y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+    const x = snap(((e.clientX - rect.left) / rect.width) * 100);
+    const y = snap(((e.clientY - rect.top) / rect.height) * 100);
     marker.style.left = `${x}%`;
     marker.style.top = `${y}%`;
   });
@@ -215,8 +220,8 @@ function attachMarkerDrag(marker, hotspot) {
     try { marker.releasePointerCapture(e.pointerId); } catch {}
     if (dragging) {
       const rect = editorImage.getBoundingClientRect();
-      hotspot.x = clamp(((e.clientX - rect.left) / rect.width) * 100);
-      hotspot.y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+      hotspot.x = snap(((e.clientX - rect.left) / rect.width) * 100);
+      hotspot.y = snap(((e.clientY - rect.top) / rect.height) * 100);
       statusLine.textContent = `Saving position for ${hotspot.id}...`;
       try {
         await saveProducts(getToken(), currentProducts, `Shop admin: reposition ${hotspot.id}`);
@@ -235,11 +240,37 @@ function clamp(n) {
   return Math.max(0, Math.min(100, n));
 }
 
+// The grid is a visual + snapping aid, not stored data -- every x/y still
+// saves as a plain percentage. "Tighter" grid = more cells = finer snap
+// resolution, which is what actually fixes hotspots landing near an item
+// instead of on it.
+let gridSize = Number(localStorage.getItem(GRID_SIZE_KEY)) || 40;
+
+function snap(n) {
+  const cell = 100 / gridSize;
+  return clamp(Math.round(n / cell) * cell);
+}
+
+function updateGridOverlay() {
+  const cellPct = 100 / gridSize;
+  editorGridOverlay.style.setProperty("--cell", `${cellPct}%`);
+  gridSizeLabel.textContent = `${gridSize}×${gridSize}`;
+  gridSizeInput.value = gridSize;
+}
+
+gridSizeInput.addEventListener("input", () => {
+  gridSize = Number(gridSizeInput.value);
+  localStorage.setItem(GRID_SIZE_KEY, String(gridSize));
+  updateGridOverlay();
+});
+
+updateGridOverlay();
+
 editorImageWrap.addEventListener("click", (e) => {
   if (e.target !== editorImage) return;
   const rect = editorImage.getBoundingClientRect();
-  const x = clamp(((e.clientX - rect.left) / rect.width) * 100);
-  const y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+  const x = snap(((e.clientX - rect.left) / rect.width) * 100);
+  const y = snap(((e.clientY - rect.top) / rect.height) * 100);
   pendingNewHotspot = { x, y };
   openModal(activeProductId, null);
 });
