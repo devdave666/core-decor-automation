@@ -150,6 +150,16 @@
         "productUrl": null,
         "marketplace": "us",
         "searchKeywords": "multi tier over the counter rack"
+      },
+      {
+        "id": "c03-h6",
+        "x": 28.07539531162807,
+        "y": 55.42525003372324,
+        "label": "Fruit Basket",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "Fruit Basket"
       }
     ]
   },
