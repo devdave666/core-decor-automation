@@ -1991,3 +1991,104 @@ with no thrown JS errors. This is the same rigor already established
 elsewhere in this project (Dolly Reel's smoke test, the carousel image-prep
 checks) — a UI that LOOKS right in one screenshot isn't the same as one that
 actually completes its core interaction.
+
+## Amazon Creators API — real credentials tested live, confirmed blocked (2026-08-18)
+
+Dev asked for a fully automatic pipeline: search each application photo on
+Amazon, find similar products, auto-link them. Real constraints surfaced
+before any of that got built (see the "quicker revenue"/"programmatically
+search" conversation earlier the same day): Amazon has no image-similarity
+search API at all — only keyword search — and the only programmatic path
+(what turned out to be Amazon's new **Creators API**, not the classic
+PA-API) has a real eligibility gate. This section is the record of actually
+testing that gate against Dev's real account, not assuming it from docs
+alone.
+
+### What the Creators API actually is
+
+**Replaces PA-API 5.0 outright — PA-API is being retired May 15, 2026**
+(Offers V1 inside PA-API goes first, January 31, 2026; Offers V2 only
+exists in the Creators API). Confirmed from Amazon's own docs
+(`affiliate-program.amazon.com/creatorsapi/docs`), not a third-party
+summary alone. Genuinely different from PA-API in three ways:
+- **OAuth2 client_credentials grant** instead of AWS Signature V4 — a
+  `client_id`/`client_secret` pair gets exchanged for a 1-hour Bearer token
+  at `https://api.amazon.com/auth/o2/token`, scope `creatorsapi::default`.
+- **New host and path shape**: `https://creatorsapi.amazon/catalog/v1/
+  searchItems` (confirmed by hitting it directly — `creatorsapi.amazon.com`
+  doesn't even resolve, and the old `webservices.amazon.com` host returns a
+  generic Amazon error page, not a Creators API response).
+- **lowerCamelCase fields** (`itemIds` not `ItemIds`), unlike PA-API's
+  PascalCase.
+- **Eligibility**: confirmed from Amazon's own docs — **10 qualifying
+  Associates sales in the past 30 days**, stricter than PA-API's old
+  3-sales/180-days rule mentioned earlier in this session before the actual
+  Creators API migration was discovered. This is the number that matters
+  now; the earlier 3/180 figure is obsolete.
+
+### Dev supplied real credentials mid-conversation — handled per this repo's existing credential discipline
+
+Dev uploaded `Core_Decorcredentials.csv` (columns: `Application`,
+`Application Id`, `Credential Id`, `Secret`, `Version` — a real OAuth app
+registration, `Application: Core_Decor`, `Version: 3.1`). Two things done
+before touching it: confirmed `env.template` is `.gitignore`d (`git
+check-ignore -v env.template` — real check, not assumed) before writing
+anything to it, and never printed the raw secret or the resulting access
+token anywhere in a chat response — every test script masked both to a
+few characters on each end.
+
+**Tested live against Amazon's real servers, not just read about**:
+1. Token request succeeded — real Bearer token issued, `expires_in: 3600`.
+2. A real `SearchItems` call against the confirmed-correct endpoint
+   returned `{"reason":"AssociateNotEligible","type":"AccessDeniedException"}`
+   — proof the credentials, endpoint, and request shape are ALL correct,
+   and the only blocker is Amazon's own sales threshold. This matters:
+   without testing live, "not eligible" and "wrong endpoint/malformed
+   request" look identical from the outside, and only one of those is
+   fixable by writing better code.
+
+**Credentials stored as encrypted GitHub Actions secrets**
+(`AMAZON_CREATORS_APPLICATION_ID`, `AMAZON_CREATORS_CREDENTIAL_ID`,
+`AMAZON_CREATORS_SECRET`) using the same libsodium sealed-box encryption
+GitHub's API requires (`PyNaCl`, fetched the repo's public key via
+`GET .../actions/secrets/public-key` first) — the same mechanism GitHub's
+own UI uses, not a workaround. `AMAZON_ASSOCIATE_TAG` (`dev0f7d-20`, the
+Associates "-20" tracking tag Dev provided) was stored as a plain
+repository **variable**, not a secret — deliberately, since it's not
+sensitive on its own (it's embedded in every public affiliate link already)
+and using the Variables API rather than Secrets API for it is the correct
+distinction, not laziness. `env.template` got the same three credential
+names added but left BLANK, matching every other credential in that file
+except `GITHUB_TOKEN` — the file's own stated philosophy is values "only
+ever pasted into a chat transiently and never stored by me," and there was
+no reason to break that pattern just because the values happened to be
+available in this session. `AMAZON_ASSOCIATE_TAG` alone was filled in with
+its real value locally, since it isn't a secret.
+
+### What got built, ready but dormant
+
+- `shop/amazon_creators.py` — reusable `get_access_token()` /
+  `search_items()`, raising `AmazonCreatorsError` with a `.reason` field so
+  callers can distinguish `AssociateNotEligible` (expected, not a bug) from
+  a genuine failure.
+- `shop/check_eligibility.py` — run any time to check whether the account
+  has crossed the threshold yet. Exits 0 on "not eligible yet" (that's the
+  expected steady state, not a failure) and only exits non-zero on a real,
+  unexpected API error.
+- `.github/workflows/check-amazon-eligibility.yml` — `workflow_dispatch`
+  only, runs the above without needing a chat session at all.
+- **Verified functionally before considering it done**, not just
+  `py_compile`-checked: ran the actual production script locally with the
+  real credentials loaded into ephemeral subprocess env vars (never written
+  to any file, never printed) and confirmed it correctly reports "Not
+  eligible yet" with exit code 0.
+
+**Deliberately NOT built yet**: the actual "search each concept's photo,
+propose matching products" pipeline Dev originally asked for. Building that
+against an API that will reject every single call right now would be
+wasted effort with no way to verify it actually works end-to-end — the
+right time to build it is once `check-amazon-eligibility.yml` reports
+success for real. Until then, the realistic path to filling in `shop/
+products.json` is the manual SiteStripe + admin-tool workflow already
+built, which has the added benefit of being what generates the qualifying
+sales that unlock this in the first place.

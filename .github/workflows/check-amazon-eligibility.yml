@@ -1,0 +1,32 @@
+name: Check Amazon Creators API Eligibility
+
+# workflow_dispatch ONLY -- this checks whether the account has crossed
+# Amazon's 10-qualifying-sales-in-30-days threshold for Creators API
+# access (confirmed blocked as of 2026-08-18, see llms.txt). Run this any
+# time to check without needing a chat session. A "not eligible yet"
+# result is a normal, expected outcome (job succeeds), not a failure --
+# only a genuine unexpected API error fails the job.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check-eligibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check eligibility
+        env:
+          AMAZON_CREATORS_CREDENTIAL_ID: ${{ secrets.AMAZON_CREATORS_CREDENTIAL_ID }}
+          AMAZON_CREATORS_SECRET: ${{ secrets.AMAZON_CREATORS_SECRET }}
+          AMAZON_ASSOCIATE_TAG: ${{ vars.AMAZON_ASSOCIATE_TAG }}
+        run: python shop/check_eligibility.py
