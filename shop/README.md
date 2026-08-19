@@ -28,8 +28,9 @@ unlocks):
 1. Click a card. The modal opens with a suggested search term already
    filled into the product name field (editable) and shown above the
    buttons.
-2. Click **"1. Search on Amazon"** — opens Amazon's search for that term in
-   a new tab.
+2. Click **"1. Search on Amazon"** — opens Amazon.ca's search for that term
+   in a new tab (Dev's Associates account is Canada-only until it qualifies
+   for the US program too — see "Amazon.ca vs Amazon.com" below).
 3. On Amazon (logged into Associates): find the item, use **SiteStripe**
    (the toolbar Amazon shows at the top of the page) → **Text** → **Copy**.
    This step happens on Amazon's own page and can't be automated from
@@ -85,6 +86,25 @@ reads UTM params — no manual tagging needed per link.
   concept's photo (e.g. "3-light cluster bubble glass pendant light brass"
   for c01), not guessed from the room/style name alone. Drives both the
   card hint and the admin modal's "Search on Amazon" button.
+
+## Amazon.ca vs Amazon.com
+
+Dev's Associates account is approved for **Amazon.ca only** — not yet
+qualified for the US program. A tag copied from an amazon.com SiteStripe
+won't earn commission under this account, so every link needs to be
+generated from **amazon.ca**. The admin page's "Search on Amazon" button and
+the paste-clipboard check both enforce this (the paste step flags any pasted
+link that isn't `amazon.ca`).
+
+**Smart, location-based redirect** (send a US visitor to amazon.com, a UK
+visitor to amazon.co.uk, etc., while still crediting Dev) is a real feature
+Amazon supports natively — it's called **OneLink**, set up from Associates
+Central. It requires Dev to have (or add) an Associates tag in each
+marketplace OneLink should route to; right now that's only `.ca`, so
+OneLink isn't useful yet beyond what a plain `.ca` link already does. Once
+the US program clears (see "Amazon Creators API" below — same 10-sales
+threshold gates both), OneLink is the right next step rather than a custom
+geo-IP redirect built here.
 
 ## Amazon Creators API — why this isn't fully automated (yet)
 

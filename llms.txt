@@ -2160,3 +2160,31 @@ picked up the `pulse` class after a simulated `visibilitychange`, the
 clipboard mock's URL landed in the URL field with a "Pasted." notice, and
 Save completed with the status line and modal both updating correctly —
 every step of the real interaction, not just a static screenshot.
+
+## Fix: shop admin was generating amazon.com links, not amazon.ca (2026-08-19)
+
+Dev reported "Shop This Look" style links kept redirecting to amazon.com.
+Root cause: Dev's Associates account is approved for **Amazon.ca only** (not
+yet qualified for the US program — same 10-sales/30-day threshold that
+blocks the Creators API, see above), but `admin.js`'s "Search on Amazon"
+button opened `www.amazon.com/s?k=...`, so any SiteStripe link copied from
+that search carried a tag that wouldn't earn commission under this account.
+`amazon_creators.py`'s `search_items()` had the same wrong default
+(`marketplace="www.amazon.com"`), which would have repeated the bug once
+Creators API access unblocks.
+
+Fixed both to `.ca`. Also tightened `admin.js`'s paste-clipboard check: it
+now distinguishes "not an Amazon link at all" from "an Amazon link but the
+wrong marketplace" (`amazon.com`, `amazon.co.uk`, etc.) and shows a specific
+warning for the latter, rather than treating any `amazon.*` domain as fine.
+`products.json` had no real links saved yet (all `productUrl: null`), so
+nothing existing needed correcting — this was caught before any bad link
+went live.
+
+**Smart location-based redirect** (route a US visitor to amazon.com, a UK
+visitor to amazon.co.uk, etc.) was also asked about. Answer given: that's
+Amazon's own **OneLink** feature (Associates Central), not something to
+build as custom geo-IP logic — but OneLink only pays out through
+marketplaces where Dev actually holds an Associates tag, and right now
+that's `.ca` alone. Revisit OneLink once the US Associates program clears,
+not before. See `shop/README.md`'s new "Amazon.ca vs Amazon.com" section.

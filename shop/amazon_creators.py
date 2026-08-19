@@ -50,7 +50,7 @@ def get_access_token(client_id, client_secret):
         )
 
 
-def search_items(access_token, keywords, partner_tag, marketplace="www.amazon.com", item_count=5):
+def search_items(access_token, keywords, partner_tag, marketplace="www.amazon.ca", item_count=5):
     """Raises AmazonCreatorsError with reason='AssociateNotEligible' when
     the account doesn't meet Amazon's sales threshold -- this is the
     expected failure mode until that clears, not a bug to work around."""

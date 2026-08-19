@@ -170,7 +170,7 @@ function closeModal() {
 function handleSearchAmazon() {
   const product = currentProducts.find((p) => p.id === activeProductId);
   if (!product?.searchKeywords) return;
-  window.open(`https://www.amazon.com/s?k=${encodeURIComponent(product.searchKeywords)}`, "_blank", "noopener");
+  window.open(`https://www.amazon.ca/s?k=${encodeURIComponent(product.searchKeywords)}`, "_blank", "noopener");
 
   // When the user comes back to this tab (after grabbing a SiteStripe link
   // on Amazon), pulse the paste button so the next step is obvious --
@@ -198,9 +198,12 @@ async function handlePasteClipboard() {
     }
     modalUrl.value = text;
     const looksLikeAmazon = /amazon\.[a-z.]+|amzn\.to/i.test(text);
-    modalNotice.textContent = looksLikeAmazon
-      ? "Pasted."
-      : "Pasted — doesn't look like an Amazon link, double check before saving.";
+    const wrongMarketplace = /amazon\.(?!ca\b)[a-z.]+/i.test(text);
+    modalNotice.textContent = !looksLikeAmazon
+      ? "Pasted — doesn't look like an Amazon link, double check before saving."
+      : wrongMarketplace
+      ? "Pasted — this is an amazon.com (or other non-.ca) link. Your Associates account is Canada-only right now, so this tag likely won't earn commission. Re-copy from amazon.ca."
+      : "Pasted.";
     modalNotice.hidden = false;
   } catch {
     modalNotice.textContent = "Couldn't read the clipboard automatically — paste manually into the URL field (Ctrl+V).";
