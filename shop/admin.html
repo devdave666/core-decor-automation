@@ -11,7 +11,7 @@
 <body>
   <header>
     <h1>Shop Admin</h1>
-    <p>Click any card to add or edit its product link. Changes save straight to the live site.</p>
+    <p>Click any card to open its photo, then click a dot to edit it or click empty space to add one. Changes save straight to the live site.</p>
   </header>
 
   <div id="token-gate" class="token-gate" hidden>
@@ -44,13 +44,34 @@
 
   <main id="admin-grid" class="admin-grid" hidden></main>
 
+  <div id="editor" class="editor" hidden>
+    <div class="editor-header">
+      <button id="editor-back" class="modal-btn-secondary">← Back to grid</button>
+      <h2 id="editor-title"></h2>
+      <p class="editor-hint">
+        Click a dot to edit or delete it. Click empty space on the photo to add a new one.
+        Drag a dot to reposition — it saves the moment you let go.
+      </p>
+    </div>
+    <div id="editor-image-wrap" class="editor-image-wrap">
+      <img id="editor-image" alt="" />
+    </div>
+  </div>
+
   <div id="modal-backdrop" class="modal-backdrop" hidden>
     <div class="modal">
-      <h3 id="modal-title">Edit Product</h3>
+      <h3 id="modal-title">Edit Hotspot</h3>
 
-      <div id="modal-suggested" class="modal-suggested" hidden>
-        <p class="modal-suggested-label">Suggested search</p>
-        <p id="modal-suggested-text" class="modal-suggested-text"></p>
+      <label>Item label <span class="modal-label-hint">(shown on hover over the dot)</span></label>
+      <input type="text" id="modal-label" placeholder="Accent Armchair" />
+
+      <label>Search terms</label>
+      <input type="text" id="modal-search-terms" placeholder="e.g. brass gooseneck kitchen faucet" />
+
+      <label>Marketplace <span class="modal-label-hint">(which Amazon account this link's tag belongs to)</span></label>
+      <div class="modal-marketplace">
+        <button type="button" id="modal-market-us" class="modal-market-btn is-active" data-market="us">US · amazon.com</button>
+        <button type="button" id="modal-market-ca" class="modal-market-btn" data-market="ca">CA · amazon.ca</button>
       </div>
 
       <div class="modal-flow">
@@ -67,7 +88,7 @@
       <label>Affiliate / product URL</label>
       <input type="text" id="modal-url" placeholder="https://amzn.to/..." />
       <div class="modal-actions">
-        <button id="modal-clear" class="modal-btn-secondary">Clear</button>
+        <button id="modal-delete" class="modal-btn-secondary modal-btn-danger">Delete hotspot</button>
         <button id="modal-cancel" class="modal-btn-secondary">Cancel</button>
         <button id="modal-save" class="modal-btn-primary">Save</button>
       </div>

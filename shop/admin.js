@@ -3,6 +3,14 @@
 // lives ONLY in this browser's localStorage and is sent only to
 // api.github.com, never anywhere else, never written to any file in this
 // repo. This admin page is not linked from the public shop page.
+//
+// Each concept photo can carry multiple hotspots (light fixture, rug,
+// chair, ...), each its own Amazon affiliate link. Clicking a grid card
+// opens the full photo in the editor view: click an existing dot to edit
+// it, click empty space to add a new one, drag a dot to reposition. The
+// editor displays the image at native aspect ratio (no CSS crop) -- same as
+// shop.js -- so a hotspot's x/y percentage means the same spot in both
+// places.
 
 const OWNER = "devdave666";
 const REPO = "core-decor-automation";
@@ -10,29 +18,39 @@ const FILE_PATH = "shop/products.json";
 const BRANCH = "main";
 const TOKEN_KEY = "coredecor_shop_admin_token";
 
+const MARKET_HOSTS = { us: "www.amazon.com", ca: "www.amazon.ca" };
+
 const tokenGate = document.getElementById("token-gate");
 const toolbar = document.getElementById("toolbar");
 const statusLine = document.getElementById("status-line");
 const grid = document.getElementById("admin-grid");
+
+const editor = document.getElementById("editor");
+const editorBack = document.getElementById("editor-back");
+const editorTitle = document.getElementById("editor-title");
+const editorImageWrap = document.getElementById("editor-image-wrap");
+const editorImage = document.getElementById("editor-image");
+
 const modalBackdrop = document.getElementById("modal-backdrop");
 const modalTitle = document.getElementById("modal-title");
+const modalLabel = document.getElementById("modal-label");
+const modalSearchTerms = document.getElementById("modal-search-terms");
 const modalName = document.getElementById("modal-name");
 const modalUrl = document.getElementById("modal-url");
 const modalError = document.getElementById("modal-error");
 const modalNotice = document.getElementById("modal-notice");
-const modalSuggested = document.getElementById("modal-suggested");
-const modalSuggestedText = document.getElementById("modal-suggested-text");
+const marketUsBtn = document.getElementById("modal-market-us");
+const marketCaBtn = document.getElementById("modal-market-ca");
 const searchAmazonBtn = document.getElementById("modal-search-amazon");
 const pasteClipboardBtn = document.getElementById("modal-paste-clipboard");
+const deleteBtn = document.getElementById("modal-delete");
 
-let currentSha = null;
 let currentProducts = null;
 let activeProductId = null;
+let activeHotspotId = null; // null while the modal is creating a brand-new hotspot
+let pendingNewHotspot = null; // { x, y } while creating, until Save
+let selectedMarket = "us";
 let visibilityListener = null;
-
-function titleCase(s) {
-  return s.replace(/\w\S*/g, (w) => w[0].toUpperCase() + w.slice(1));
-}
 
 function utf8ToBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
@@ -91,11 +109,19 @@ async function saveProducts(token, products, message) {
   return res.json();
 }
 
+function nextHotspotId(product) {
+  const n = (product.hotspots || []).length + 1;
+  return `${product.id}-h${n}`;
+}
+
 function renderGrid() {
   grid.innerHTML = "";
   for (const product of currentProducts) {
+    const hotspots = product.hotspots || [];
+    const linked = hotspots.filter((h) => h.productUrl).length;
+
     const card = document.createElement("div");
-    card.className = `admin-card ${product.productUrl ? "is-linked" : "is-blank"}`;
+    card.className = "admin-card";
     card.dataset.id = product.id;
 
     const img = document.createElement("img");
@@ -103,6 +129,11 @@ function renderGrid() {
     img.alt = `${product.style} ${product.room}`;
     img.loading = "lazy";
     card.appendChild(img);
+
+    const badge = document.createElement("span");
+    badge.className = `admin-card-badge ${linked === hotspots.length && hotspots.length > 0 ? "is-complete" : linked === 0 ? "is-pending" : ""}`;
+    badge.textContent = `${linked}/${hotspots.length}`;
+    card.appendChild(badge);
 
     const body = document.createElement("div");
     body.className = "admin-card-body";
@@ -117,50 +148,146 @@ function renderGrid() {
     title.textContent = product.style;
     body.appendChild(title);
 
-    const productLine = document.createElement("p");
-    productLine.className = "admin-card-product";
-    productLine.textContent = product.productName || "";
-    body.appendChild(productLine);
-
-    if (!product.productUrl && product.searchKeywords) {
-      const kw = document.createElement("p");
-      kw.className = "admin-card-keywords";
-      kw.textContent = `try: ${product.searchKeywords}`;
-      body.appendChild(kw);
-    }
-
     card.appendChild(body);
-    card.addEventListener("click", () => openModal(product.id));
+    card.addEventListener("click", () => openEditor(product.id));
     grid.appendChild(card);
   }
 }
 
-function openModal(id) {
-  activeProductId = id;
-  const product = currentProducts.find((p) => p.id === id);
-  modalTitle.textContent = `${product.id} — ${product.room}, ${product.style}`;
-  modalName.value = product.productName || (product.searchKeywords ? titleCase(product.searchKeywords) : "");
-  modalUrl.value = product.productUrl || "";
+function openEditor(productId) {
+  activeProductId = productId;
+  const product = currentProducts.find((p) => p.id === productId);
+  editorTitle.textContent = `${product.id} — ${product.room}, ${product.style}`;
+  editorImage.src = product.image;
+  editorImage.alt = `${product.style} ${product.room}`;
+  grid.hidden = true;
+  editor.hidden = false;
+  renderMarkers();
+}
+
+function closeEditor() {
+  editor.hidden = true;
+  grid.hidden = false;
+  activeProductId = null;
+}
+
+function renderMarkers() {
+  editorImageWrap.querySelectorAll(".editor-marker").forEach((el) => el.remove());
+  const product = currentProducts.find((p) => p.id === activeProductId);
+  (product.hotspots || []).forEach((hotspot, i) => {
+    const marker = document.createElement("div");
+    marker.className = `editor-marker ${hotspot.productUrl ? "" : "is-pending"}`;
+    marker.style.left = `${hotspot.x}%`;
+    marker.style.top = `${hotspot.y}%`;
+    marker.dataset.index = i + 1;
+    marker.dataset.hotspotId = hotspot.id;
+    attachMarkerDrag(marker, hotspot);
+    editorImageWrap.appendChild(marker);
+  });
+}
+
+function attachMarkerDrag(marker, hotspot) {
+  let startX, startY, dragging;
+
+  marker.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+    // Capture can throw if the pointer isn't recognized as active (e.g. a
+    // synthetic/replayed event) -- position tracking below doesn't depend
+    // on capture actually succeeding, so a failed capture is harmless.
+    try { marker.setPointerCapture(e.pointerId); } catch {}
+    startX = e.clientX;
+    startY = e.clientY;
+    dragging = false;
+  });
+
+  marker.addEventListener("pointermove", (e) => {
+    if (startX === undefined) return;
+    if (!dragging && Math.hypot(e.clientX - startX, e.clientY - startY) < 5) return;
+    dragging = true;
+    const rect = editorImage.getBoundingClientRect();
+    const x = clamp(((e.clientX - rect.left) / rect.width) * 100);
+    const y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+    marker.style.left = `${x}%`;
+    marker.style.top = `${y}%`;
+  });
+
+  marker.addEventListener("pointerup", async (e) => {
+    try { marker.releasePointerCapture(e.pointerId); } catch {}
+    if (dragging) {
+      const rect = editorImage.getBoundingClientRect();
+      hotspot.x = clamp(((e.clientX - rect.left) / rect.width) * 100);
+      hotspot.y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+      statusLine.textContent = `Saving position for ${hotspot.id}...`;
+      try {
+        await saveProducts(getToken(), currentProducts, `Shop admin: reposition ${hotspot.id}`);
+        statusLine.textContent = `Repositioned ${hotspot.id}.`;
+      } catch (err) {
+        statusLine.textContent = `Failed to save position: ${err.message}`;
+      }
+    } else {
+      openModal(activeProductId, hotspot.id);
+    }
+    startX = undefined;
+  });
+}
+
+function clamp(n) {
+  return Math.max(0, Math.min(100, n));
+}
+
+editorImageWrap.addEventListener("click", (e) => {
+  if (e.target !== editorImage) return;
+  const rect = editorImage.getBoundingClientRect();
+  const x = clamp(((e.clientX - rect.left) / rect.width) * 100);
+  const y = clamp(((e.clientY - rect.top) / rect.height) * 100);
+  pendingNewHotspot = { x, y };
+  openModal(activeProductId, null);
+});
+
+editorBack.addEventListener("click", closeEditor);
+
+function setMarket(market) {
+  selectedMarket = market;
+  marketUsBtn.classList.toggle("is-active", market === "us");
+  marketCaBtn.classList.toggle("is-active", market === "ca");
+}
+
+marketUsBtn.addEventListener("click", () => setMarket("us"));
+marketCaBtn.addEventListener("click", () => setMarket("ca"));
+modalSearchTerms.addEventListener("input", () => {
+  searchAmazonBtn.disabled = !modalSearchTerms.value.trim();
+});
+
+function openModal(productId, hotspotId) {
+  activeProductId = productId;
+  activeHotspotId = hotspotId;
+  const product = currentProducts.find((p) => p.id === productId);
+  const hotspot = hotspotId ? product.hotspots.find((h) => h.id === hotspotId) : null;
+
+  modalTitle.textContent = hotspot ? `${product.id} — Edit ${hotspot.label || hotspot.id}` : `${product.id} — New hotspot`;
+  modalLabel.value = hotspot?.label || "";
+  modalSearchTerms.value = hotspot?.searchKeywords || "";
+  modalName.value = hotspot?.productName || (hotspot?.searchKeywords ? titleCase(hotspot.searchKeywords) : "");
+  modalUrl.value = hotspot?.productUrl || "";
+  setMarket(hotspot?.marketplace || "us");
+  deleteBtn.hidden = !hotspot;
   modalError.hidden = true;
   modalNotice.hidden = true;
   pasteClipboardBtn.classList.remove("pulse");
-
-  if (product.searchKeywords) {
-    modalSuggested.hidden = false;
-    modalSuggestedText.textContent = product.searchKeywords;
-    searchAmazonBtn.disabled = false;
-  } else {
-    modalSuggested.hidden = true;
-    searchAmazonBtn.disabled = true;
-  }
+  searchAmazonBtn.disabled = !modalSearchTerms.value.trim();
 
   modalBackdrop.hidden = false;
-  modalName.focus();
+  modalLabel.focus();
+}
+
+function titleCase(s) {
+  return s.replace(/\w\S*/g, (w) => w[0].toUpperCase() + w.slice(1));
 }
 
 function closeModal() {
   modalBackdrop.hidden = true;
-  activeProductId = null;
+  activeHotspotId = null;
+  pendingNewHotspot = null;
   if (visibilityListener) {
     document.removeEventListener("visibilitychange", visibilityListener);
     visibilityListener = null;
@@ -168,9 +295,9 @@ function closeModal() {
 }
 
 function handleSearchAmazon() {
-  const product = currentProducts.find((p) => p.id === activeProductId);
-  if (!product?.searchKeywords) return;
-  window.open(`https://www.amazon.ca/s?k=${encodeURIComponent(product.searchKeywords)}`, "_blank", "noopener");
+  const terms = modalSearchTerms.value.trim();
+  if (!terms) return;
+  window.open(`https://${MARKET_HOSTS[selectedMarket]}/s?k=${encodeURIComponent(terms)}`, "_blank", "noopener");
 
   // When the user comes back to this tab (after grabbing a SiteStripe link
   // on Amazon), pulse the paste button so the next step is obvious --
@@ -198,11 +325,14 @@ async function handlePasteClipboard() {
     }
     modalUrl.value = text;
     const looksLikeAmazon = /amazon\.[a-z.]+|amzn\.to/i.test(text);
-    const wrongMarketplace = /amazon\.(?!ca\b)[a-z.]+/i.test(text);
+    const hasAmazonDomain = /amazon\.[a-z.]+/i.test(text);
+    const expectedHost = MARKET_HOSTS[selectedMarket].replace(/^www\./, ""); // "amazon.com" or "amazon.ca"
+    const matchesExpected = new RegExp(expectedHost.replace(".", "\\."), "i").test(text);
+    const wrongMarketplace = hasAmazonDomain && !matchesExpected;
     modalNotice.textContent = !looksLikeAmazon
       ? "Pasted — doesn't look like an Amazon link, double check before saving."
       : wrongMarketplace
-      ? "Pasted — this is an amazon.com (or other non-.ca) link. Your Associates account is Canada-only right now, so this tag likely won't earn commission. Re-copy from amazon.ca."
+      ? `Pasted — this doesn't look like an ${expectedHost} link. You selected ${selectedMarket.toUpperCase()} above; re-copy from the matching Amazon site or switch the marketplace toggle.`
       : "Pasted.";
     modalNotice.hidden = false;
   } catch {
@@ -213,6 +343,8 @@ async function handlePasteClipboard() {
 }
 
 async function handleSave() {
+  const label = modalLabel.value.trim();
+  const searchTerms = modalSearchTerms.value.trim();
   const name = modalName.value.trim();
   const url = modalUrl.value.trim();
 
@@ -228,35 +360,81 @@ async function handleSave() {
 
   const token = getToken();
   const product = currentProducts.find((p) => p.id === activeProductId);
-  const previous = { productName: product.productName, productUrl: product.productUrl };
-  product.productName = name || null;
-  product.productUrl = url || null;
+  product.hotspots = product.hotspots || [];
 
-  statusLine.textContent = `Saving ${activeProductId}...`;
+  let hotspot = activeHotspotId ? product.hotspots.find((h) => h.id === activeHotspotId) : null;
+  const isNew = !hotspot;
+  const previous = hotspot ? { ...hotspot } : null;
+
+  if (isNew) {
+    hotspot = {
+      id: nextHotspotId(product),
+      x: pendingNewHotspot.x,
+      y: pendingNewHotspot.y,
+      label: "",
+      productName: null,
+      productUrl: null,
+      marketplace: "us",
+      searchKeywords: "",
+    };
+    product.hotspots.push(hotspot);
+  }
+
+  hotspot.label = label || null;
+  hotspot.searchKeywords = searchTerms || null;
+  hotspot.productName = name || null;
+  hotspot.productUrl = url || null;
+  hotspot.marketplace = selectedMarket;
+
+  statusLine.textContent = `Saving ${hotspot.id}...`;
   try {
-    await saveProducts(token, currentProducts, `Shop admin: update ${activeProductId}`);
-    statusLine.textContent = `Saved ${activeProductId} — live in about a minute.`;
+    await saveProducts(token, currentProducts, `Shop admin: update ${hotspot.id}`);
+    statusLine.textContent = `Saved ${hotspot.id} — live in about a minute.`;
+    activeHotspotId = hotspot.id;
+    pendingNewHotspot = null;
     renderGrid();
+    renderMarkers();
     closeModal();
   } catch (err) {
-    product.productName = previous.productName;
-    product.productUrl = previous.productUrl;
+    if (isNew) {
+      product.hotspots = product.hotspots.filter((h) => h.id !== hotspot.id);
+    } else {
+      Object.assign(hotspot, previous);
+    }
     modalError.textContent = err.message;
     modalError.hidden = false;
     statusLine.textContent = "Save failed.";
   }
 }
 
-async function handleClear() {
-  modalName.value = "";
-  modalUrl.value = "";
-  await handleSave();
+async function handleDelete() {
+  if (!activeHotspotId) return;
+  const token = getToken();
+  const product = currentProducts.find((p) => p.id === activeProductId);
+  const index = product.hotspots.findIndex((h) => h.id === activeHotspotId);
+  if (index === -1) return;
+  const [removed] = product.hotspots.splice(index, 1);
+
+  statusLine.textContent = `Deleting ${removed.id}...`;
+  try {
+    await saveProducts(token, currentProducts, `Shop admin: delete ${removed.id}`);
+    statusLine.textContent = `Deleted ${removed.id}.`;
+    renderGrid();
+    renderMarkers();
+    closeModal();
+  } catch (err) {
+    product.hotspots.splice(index, 0, removed);
+    modalError.textContent = err.message;
+    modalError.hidden = false;
+    statusLine.textContent = "Delete failed.";
+  }
 }
 
 function showTokenGate() {
   tokenGate.hidden = false;
   toolbar.hidden = true;
   grid.hidden = true;
+  editor.hidden = true;
 }
 
 async function showAdmin(token) {
@@ -264,11 +442,12 @@ async function showAdmin(token) {
   toolbar.hidden = false;
   statusLine.textContent = "Loading products...";
   try {
-    const { products, sha } = await fetchProducts(token);
+    const { products } = await fetchProducts(token);
     currentProducts = products;
-    currentSha = sha;
     grid.hidden = false;
-    statusLine.textContent = `${products.length} concepts, ${products.filter((p) => p.productUrl).length} linked.`;
+    const totalHotspots = products.reduce((sum, p) => sum + (p.hotspots || []).length, 0);
+    const linkedHotspots = products.reduce((sum, p) => sum + (p.hotspots || []).filter((h) => h.productUrl).length, 0);
+    statusLine.textContent = `${products.length} concepts, ${linkedHotspots}/${totalHotspots} hotspots linked.`;
     renderGrid();
   } catch (err) {
     statusLine.textContent = err.message;
@@ -293,7 +472,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 
 document.getElementById("modal-cancel").addEventListener("click", closeModal);
 document.getElementById("modal-save").addEventListener("click", handleSave);
-document.getElementById("modal-clear").addEventListener("click", handleClear);
+deleteBtn.addEventListener("click", handleDelete);
 searchAmazonBtn.addEventListener("click", handleSearchAmazon);
 pasteClipboardBtn.addEventListener("click", handlePasteClipboard);
 modalBackdrop.addEventListener("click", (e) => {

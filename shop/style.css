@@ -68,11 +68,94 @@ header p {
   border-color: var(--accent);
 }
 
+.card-image {
+  position: relative;
+  line-height: 0;
+}
+
 .card img {
   width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+  height: auto;
   display: block;
+}
+
+.hotspot-dot {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: rgba(242, 237, 227, 0.35);
+  border: 1px solid rgba(242, 237, 227, 0.8);
+  cursor: pointer;
+  animation: hotspot-pulse 2.2s ease-in-out infinite;
+}
+
+.hotspot-dot::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.hotspot-dot:hover,
+.hotspot-dot:focus-visible {
+  animation-play-state: paused;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.hotspot-label {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: 5px 9px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.hotspot-dot:hover .hotspot-label,
+.hotspot-dot:focus-visible .hotspot-label {
+  opacity: 1;
+}
+
+@keyframes hotspot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(242, 237, 227, 0.45); }
+  50% { box-shadow: 0 0 0 8px rgba(242, 237, 227, 0); }
+}
+
+.card-shop-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.card-shop-list a {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  color: var(--ink-dim);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.card-shop-list a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .card-body {
@@ -94,31 +177,6 @@ header p {
   font-weight: 400;
 }
 
-.card-product {
-  font-size: 13px;
-  color: var(--ink-dim);
-  margin: 0 0 16px;
-  line-height: 1.4;
-}
-
-.card-cta {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  padding: 11px 0;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.card-cta:hover {
-  background: var(--accent);
-  color: var(--bg);
-}
 
 .empty-state {
   text-align: center;

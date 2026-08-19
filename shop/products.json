@@ -4,512 +4,2725 @@
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c01_kit_modlux_app.png",
     "room": "Kitchen",
     "style": "Modern Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "3-light cluster bubble glass pendant light brass"
+    "hotspots": [
+      {
+        "id": "c01-h1",
+        "x": 49,
+        "y": 28,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "3-light cluster bubble glass pendant light brass"
+      },
+      {
+        "id": "c01-h2",
+        "x": 84,
+        "y": 82,
+        "label": "Bar Stools",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black boucle fabric counter stool metal legs"
+      },
+      {
+        "id": "c01-h3",
+        "x": 41,
+        "y": 65,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass and black gooseneck kitchen faucet"
+      },
+      {
+        "id": "c01-h4",
+        "x": 84,
+        "y": 50,
+        "label": "Cabinet Pulls",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass bar cabinet pulls"
+      }
+    ]
   },
   {
     "id": "c02",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c02_kit_scandi_app.png",
     "room": "Kitchen",
     "style": "Scandinavian",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "rattan bell pendant light"
+    "hotspots": [
+      {
+        "id": "c02-h1",
+        "x": 25,
+        "y": 25,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "rattan bell pendant light"
+      },
+      {
+        "id": "c02-h2",
+        "x": 14,
+        "y": 68,
+        "label": "Counter Stool",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "natural wood round seat backless counter stool"
+      },
+      {
+        "id": "c02-h3",
+        "x": 83,
+        "y": 57,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte black gooseneck kitchen faucet"
+      },
+      {
+        "id": "c02-h4",
+        "x": 92,
+        "y": 60,
+        "label": "Cabinet Pulls",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass bar cabinet pulls"
+      }
+    ]
   },
   {
     "id": "c03",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c03_kit_indloft_app.png",
     "room": "Kitchen",
     "style": "Industrial Loft",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass amber glass dome pendant light set of 3"
+    "hotspots": [
+      {
+        "id": "c03-h1",
+        "x": 48,
+        "y": 32,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass amber glass dome pendant light set of 3"
+      },
+      {
+        "id": "c03-h2",
+        "x": 50,
+        "y": 80,
+        "label": "Bar Stools",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood seat black metal frame bar stool"
+      },
+      {
+        "id": "c03-h3",
+        "x": 50,
+        "y": 68,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass gooseneck kitchen faucet"
+      },
+      {
+        "id": "c03-h4",
+        "x": 73,
+        "y": 58,
+        "label": "Cutting Board",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "round wood cutting board"
+      }
+    ]
   },
   {
     "id": "c04",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c04_kit_mtnlux_app.png",
     "room": "Kitchen",
     "style": "Mountain Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass sputnik starburst chandelier"
+    "hotspots": [
+      {
+        "id": "c04-h1",
+        "x": 60,
+        "y": 27,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass sputnik starburst chandelier"
+      },
+      {
+        "id": "c04-h2",
+        "x": 50,
+        "y": 80,
+        "label": "Plaid Bar Stools",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black and white plaid upholstered counter stool"
+      },
+      {
+        "id": "c04-h3",
+        "x": 53,
+        "y": 63,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass gooseneck kitchen faucet"
+      },
+      {
+        "id": "c04-h4",
+        "x": 70,
+        "y": 58,
+        "label": "Cutting Boards",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "round wood cutting board set"
+      }
+    ]
   },
   {
     "id": "c05",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c05_kit_brut_app.png",
     "room": "Kitchen",
     "style": "Brutalist",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass gooseneck kitchen faucet"
+    "hotspots": [
+      {
+        "id": "c05-h1",
+        "x": 51,
+        "y": 63,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass gooseneck kitchen faucet"
+      },
+      {
+        "id": "c05-h2",
+        "x": 50,
+        "y": 83,
+        "label": "Bar Stools",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black leather counter stool"
+      },
+      {
+        "id": "c05-h3",
+        "x": 88,
+        "y": 58,
+        "label": "Crystal Geode Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "amethyst crystal geode decor piece"
+      },
+      {
+        "id": "c05-h4",
+        "x": 8,
+        "y": 66,
+        "label": "Cabinet Pulls",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte black bar cabinet pulls"
+      }
+    ]
   },
   {
     "id": "c06",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c06_bath_japandi_app.png",
     "room": "Bathroom",
     "style": "Japandi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "pleated fabric drum pendant light set of 2 brass"
+    "hotspots": [
+      {
+        "id": "c06-h1",
+        "x": 50,
+        "y": 33,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "pleated fabric drum pendant light set of 2 brass"
+      },
+      {
+        "id": "c06-h2",
+        "x": 50,
+        "y": 64,
+        "label": "Wall-Mount Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte black wall mount bathroom faucet"
+      },
+      {
+        "id": "c06-h3",
+        "x": 28,
+        "y": 70,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase with pampas grass"
+      },
+      {
+        "id": "c06-h4",
+        "x": 25,
+        "y": 72,
+        "label": "Bath Towels",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "folded cotton bath towels set"
+      }
+    ]
   },
   {
     "id": "c07",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c07_bath_medit_app.png",
     "room": "Bathroom",
     "style": "Mediterranean",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass scallop shell wall sconce"
+    "hotspots": [
+      {
+        "id": "c07-h1",
+        "x": 63,
+        "y": 34,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass scallop shell wall sconce"
+      },
+      {
+        "id": "c07-h2",
+        "x": 88,
+        "y": 47,
+        "label": "Wall Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black arched frame wall mirror"
+      },
+      {
+        "id": "c07-h3",
+        "x": 22,
+        "y": 65,
+        "label": "Soaking Tub",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "freestanding mosaic tile skirt bathtub"
+      },
+      {
+        "id": "c07-h4",
+        "x": 93,
+        "y": 62,
+        "label": "Bathroom Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass wall mount bathroom faucet"
+      }
+    ]
   },
   {
     "id": "c08",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c08_bath_orgmod_app.png",
     "room": "Bathroom",
     "style": "Organic Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "matte ceramic organic shape pendant light"
+    "hotspots": [
+      {
+        "id": "c08-h1",
+        "x": 50,
+        "y": 23,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte ceramic organic shape pendant light"
+      },
+      {
+        "id": "c08-h2",
+        "x": 50,
+        "y": 77,
+        "label": "Bathroom Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass single handle bathroom sink faucet"
+      },
+      {
+        "id": "c08-h3",
+        "x": 24,
+        "y": 79,
+        "label": "Amber Glass Bottles",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "amber glass soap dispenser bottle set"
+      },
+      {
+        "id": "c08-h4",
+        "x": 95,
+        "y": 83,
+        "label": "Crystal Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "quartz crystal cluster decor"
+      }
+    ]
   },
   {
     "id": "c09",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c09_bath_mcm_app.png",
     "room": "Bathroom",
     "style": "Mid-Century Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "round backlit LED bathroom mirror gold frame"
+    "hotspots": [
+      {
+        "id": "c09-h1",
+        "x": 50,
+        "y": 58,
+        "label": "Backlit Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "round backlit LED bathroom mirror gold frame"
+      },
+      {
+        "id": "c09-h2",
+        "x": 18,
+        "y": 50,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black cylinder wall sconce"
+      },
+      {
+        "id": "c09-h3",
+        "x": 50,
+        "y": 97,
+        "label": "Boucle Vanity Cabinet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "olive green boucle upholstered cabinet"
+      },
+      {
+        "id": "c09-h4",
+        "x": 78,
+        "y": 72,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "terracotta vase with eucalyptus"
+      }
+    ]
   },
   {
     "id": "c10",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c10_bath_wabi_app.png",
     "room": "Bathroom",
     "style": "Wabi-Sabi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black cylinder wall sconce"
+    "hotspots": [
+      {
+        "id": "c10-h1",
+        "x": 22,
+        "y": 42,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black cylinder wall sconce"
+      },
+      {
+        "id": "c10-h2",
+        "x": 50,
+        "y": 72,
+        "label": "Bathroom Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte black wall mount bathroom faucet"
+      },
+      {
+        "id": "c10-h3",
+        "x": 24,
+        "y": 70,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "grey ceramic vase"
+      },
+      {
+        "id": "c10-h4",
+        "x": 77,
+        "y": 70,
+        "label": "Folded Towels",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "folded white bath towels"
+      }
+    ]
   },
   {
     "id": "c11",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c11_pow_scandi_app.png",
     "room": "Powder Room",
     "style": "Scandinavian",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black rounded rectangle mirror brass towel ring"
+    "hotspots": [
+      {
+        "id": "c11-h1",
+        "x": 50,
+        "y": 42,
+        "label": "Wall Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black rounded rectangle mirror brass towel ring"
+      },
+      {
+        "id": "c11-h2",
+        "x": 25,
+        "y": 38,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black cylindrical wall sconce brass base"
+      },
+      {
+        "id": "c11-h3",
+        "x": 72,
+        "y": 72,
+        "label": "Amber Glass Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "amber glass vase with greenery"
+      },
+      {
+        "id": "c11-h4",
+        "x": 33,
+        "y": 77,
+        "label": "Pillar Candle",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "vanity pillar candle"
+      }
+    ]
   },
   {
     "id": "c12",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c12_pow_artdeco_app.png",
     "room": "Powder Room",
     "style": "Art Deco",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "fluted brass cabinet pulls art deco"
+    "hotspots": [
+      {
+        "id": "c12-h1",
+        "x": 50,
+        "y": 92,
+        "label": "Cabinet Pulls",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "fluted brass cabinet pulls art deco"
+      },
+      {
+        "id": "c12-h2",
+        "x": 20,
+        "y": 33,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass fluted tube wall sconce"
+      },
+      {
+        "id": "c12-h3",
+        "x": 82,
+        "y": 65,
+        "label": "Brass Obelisk Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass obelisk sculpture decor"
+      },
+      {
+        "id": "c12-h4",
+        "x": 50,
+        "y": 65,
+        "label": "Vanity Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass cross handle bathroom faucet"
+      }
+    ]
   },
   {
     "id": "c13",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c13_pow_coastal_app.png",
     "room": "Powder Room",
     "style": "Coastal",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass arched bathroom mirror with light"
+    "hotspots": [
+      {
+        "id": "c13-h1",
+        "x": 50,
+        "y": 42,
+        "label": "Lighted Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass arched bathroom mirror with light"
+      },
+      {
+        "id": "c13-h2",
+        "x": 15,
+        "y": 56,
+        "label": "Driftwood Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "natural driftwood decor piece"
+      },
+      {
+        "id": "c13-h3",
+        "x": 28,
+        "y": 85,
+        "label": "Glass Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass bud vase with flowers"
+      },
+      {
+        "id": "c13-h4",
+        "x": 9,
+        "y": 72,
+        "label": "Towel Ring",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass towel ring"
+      }
+    ]
   },
   {
     "id": "c14",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c14_pow_french_app.png",
     "room": "Powder Room",
     "style": "French Country",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "ornate gold baroque wall mirror"
+    "hotspots": [
+      {
+        "id": "c14-h1",
+        "x": 50,
+        "y": 42,
+        "label": "Wall Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ornate gold baroque wall mirror"
+      },
+      {
+        "id": "c14-h2",
+        "x": 25,
+        "y": 40,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass fabric shade wall sconce"
+      },
+      {
+        "id": "c14-h3",
+        "x": 30,
+        "y": 65,
+        "label": "Glass Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass vase with lavender flowers"
+      },
+      {
+        "id": "c14-h4",
+        "x": 10,
+        "y": 55,
+        "label": "Towel Ring",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass towel ring"
+      }
+    ]
   },
   {
     "id": "c15",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c15_pow_tropmod_app.png",
     "room": "Powder Room",
     "style": "Tropical Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black dome wall sconce"
+    "hotspots": [
+      {
+        "id": "c15-h1",
+        "x": 18,
+        "y": 47,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black dome wall sconce"
+      },
+      {
+        "id": "c15-h2",
+        "x": 50,
+        "y": 42,
+        "label": "Framed Wall Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed botanical palm print"
+      },
+      {
+        "id": "c15-h3",
+        "x": 83,
+        "y": 58,
+        "label": "Towel Ring",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass towel ring"
+      },
+      {
+        "id": "c15-h4",
+        "x": 50,
+        "y": 75,
+        "label": "Bathroom Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass bathroom sink faucet"
+      }
+    ]
   },
   {
     "id": "c16",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c16_liv_medit_app.png",
     "room": "Living Room",
     "style": "Mediterranean",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black arc floor lamp black drum shade marble base"
+    "hotspots": [
+      {
+        "id": "c16-h1",
+        "x": 76,
+        "y": 70,
+        "label": "Floor Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black arc floor lamp black drum shade marble base"
+      },
+      {
+        "id": "c16-h2",
+        "x": 18,
+        "y": 58,
+        "label": "Slipcover Sofa",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "linen slipcover sofa"
+      },
+      {
+        "id": "c16-h3",
+        "x": 67,
+        "y": 82,
+        "label": "Ceramic Floor Urn",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "large ceramic floor urn vase"
+      },
+      {
+        "id": "c16-h4",
+        "x": 58,
+        "y": 95,
+        "label": "Wood Coffee Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "carved wood coffee table"
+      }
+    ]
   },
   {
     "id": "c17",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c17_liv_indloft_app.png",
     "room": "Living Room",
     "style": "Industrial Loft",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass articulating swing arm floor lamp"
+    "hotspots": [
+      {
+        "id": "c17-h1",
+        "x": 40,
+        "y": 77,
+        "label": "Floor Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass articulating swing arm floor lamp"
+      },
+      {
+        "id": "c17-h2",
+        "x": 80,
+        "y": 83,
+        "label": "Sectional Sofa",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "charcoal grey sectional sofa"
+      },
+      {
+        "id": "c17-h3",
+        "x": 77,
+        "y": 88,
+        "label": "Large Floor Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "large ceramic floor vase"
+      },
+      {
+        "id": "c17-h4",
+        "x": 25,
+        "y": 65,
+        "label": "Coffee Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood and metal coffee table"
+      }
+    ]
   },
   {
     "id": "c18",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c18_liv_mtnlux_app.png",
     "room": "Living Room",
     "style": "Mountain Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "antler style candle chandelier"
+    "hotspots": [
+      {
+        "id": "c18-h1",
+        "x": 53,
+        "y": 40,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "antler style candle chandelier"
+      },
+      {
+        "id": "c18-h2",
+        "x": 50,
+        "y": 88,
+        "label": "Plaid Sofa",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "plaid upholstered sofa"
+      },
+      {
+        "id": "c18-h3",
+        "x": 8,
+        "y": 87,
+        "label": "Table Lamps",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "white drum shade table lamp set of 2"
+      },
+      {
+        "id": "c18-h4",
+        "x": 5,
+        "y": 92,
+        "label": "Wood Stool",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood accent stool"
+      }
+    ]
   },
   {
     "id": "c19",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c19_liv_orgmod_app.png",
     "room": "Living Room",
     "style": "Organic Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass mushroom dome floor lamp"
+    "hotspots": [
+      {
+        "id": "c19-h1",
+        "x": 18,
+        "y": 66,
+        "label": "Floor Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass mushroom dome floor lamp"
+      },
+      {
+        "id": "c19-h2",
+        "x": 85,
+        "y": 92,
+        "label": "Boucle Sofa",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "white boucle upholstered sofa"
+      },
+      {
+        "id": "c19-h3",
+        "x": 75,
+        "y": 75,
+        "label": "Sculptural Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "organic shape ceramic vase"
+      },
+      {
+        "id": "c19-h4",
+        "x": 60,
+        "y": 92,
+        "label": "Coffee Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood coffee table black metal frame"
+      }
+    ]
   },
   {
     "id": "c20",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c20_liv_manor_app.png",
     "room": "Living Room",
     "style": "Manor",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass swing arm picture light"
+    "hotspots": [
+      {
+        "id": "c20-h1",
+        "x": 22,
+        "y": 82,
+        "label": "Picture Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass swing arm picture light"
+      },
+      {
+        "id": "c20-h2",
+        "x": 50,
+        "y": 95,
+        "label": "Velvet Tufted Sofa",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "burgundy velvet tufted sofa"
+      },
+      {
+        "id": "c20-h3",
+        "x": 88,
+        "y": 72,
+        "label": "Bronze Sculpture",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "bronze figurine sculpture"
+      },
+      {
+        "id": "c20-h4",
+        "x": 88,
+        "y": 87,
+        "label": "Wood Side Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "antique wood side table"
+      }
+    ]
   },
   {
     "id": "c21",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c21_bed_artdeco_app.png",
     "room": "Bedroom",
     "style": "Art Deco",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "emerald green velvet channel tufted bed frame"
+    "hotspots": [
+      {
+        "id": "c21-h1",
+        "x": 50,
+        "y": 83,
+        "label": "Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "emerald green velvet channel tufted bed frame"
+      },
+      {
+        "id": "c21-h2",
+        "x": 88,
+        "y": 72,
+        "label": "Table Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome table lamp"
+      },
+      {
+        "id": "c21-h3",
+        "x": 45,
+        "y": 70,
+        "label": "Throw Pillow",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "green velvet throw pillow set"
+      },
+      {
+        "id": "c21-h4",
+        "x": 12,
+        "y": 82,
+        "label": "Marble Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "dark marble gold trim nightstand"
+      }
+    ]
   },
   {
     "id": "c22",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c22_bed_orgmod_app.png",
     "room": "Bedroom",
     "style": "Organic Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "small brass mini pendant light"
+    "hotspots": [
+      {
+        "id": "c22-h1",
+        "x": 21,
+        "y": 70,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "small brass mini pendant light"
+      },
+      {
+        "id": "c22-h2",
+        "x": 60,
+        "y": 88,
+        "label": "Platform Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "curved travertine plinth platform bed frame"
+      },
+      {
+        "id": "c22-h3",
+        "x": 88,
+        "y": 85,
+        "label": "Floating Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "travertine stone floating nightstand"
+      },
+      {
+        "id": "c22-h4",
+        "x": 90,
+        "y": 65,
+        "label": "Decorative Sculpture",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "woven ball decorative sculpture"
+      }
+    ]
   },
   {
     "id": "c23",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c23_bed_mcm_app.png",
     "room": "Bedroom",
     "style": "Mid-Century Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass linear wall sconce"
+    "hotspots": [
+      {
+        "id": "c23-h1",
+        "x": 62,
+        "y": 47,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass linear wall sconce"
+      },
+      {
+        "id": "c23-h2",
+        "x": 88,
+        "y": 95,
+        "label": "Boucle Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "mustard yellow boucle upholstered bed frame"
+      },
+      {
+        "id": "c23-h3",
+        "x": 64,
+        "y": 72,
+        "label": "Ceramic Sculpture",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "abstract white ceramic sculpture"
+      },
+      {
+        "id": "c23-h4",
+        "x": 62,
+        "y": 83,
+        "label": "Wood Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "mid century wood nightstand"
+      }
+    ]
   },
   {
     "id": "c24",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c24_bed_wabi_app.png",
     "room": "Bedroom",
     "style": "Wabi-Sabi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass dome swing arm wall sconce set of 2"
+    "hotspots": [
+      {
+        "id": "c24-h1",
+        "x": 22,
+        "y": 82,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass dome swing arm wall sconce set of 2"
+      },
+      {
+        "id": "c24-h2",
+        "x": 65,
+        "y": 75,
+        "label": "Upholstered Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "linen upholstered bed frame"
+      },
+      {
+        "id": "c24-h3",
+        "x": 28,
+        "y": 95,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase with greenery"
+      },
+      {
+        "id": "c24-h4",
+        "x": 18,
+        "y": 70,
+        "label": "Floating Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood floating nightstand"
+      }
+    ]
   },
   {
     "id": "c25",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c25_bed_modlux_app.png",
     "room": "Bedroom",
     "style": "Modern Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass dome wall sconce"
+    "hotspots": [
+      {
+        "id": "c25-h1",
+        "x": 20,
+        "y": 58,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass dome wall sconce"
+      },
+      {
+        "id": "c25-h2",
+        "x": 50,
+        "y": 80,
+        "label": "Platform Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "charcoal grey platform bed frame"
+      },
+      {
+        "id": "c25-h3",
+        "x": 18,
+        "y": 80,
+        "label": "Floating Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black wood floating nightstand"
+      },
+      {
+        "id": "c25-h4",
+        "x": 15,
+        "y": 70,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase"
+      }
+    ]
   },
   {
     "id": "c26",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c26_off_indloft_app.png",
     "room": "Home Office",
     "style": "Industrial Loft",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "industrial black metal frame desk"
+    "hotspots": [
+      {
+        "id": "c26-h1",
+        "x": 50,
+        "y": 85,
+        "label": "Desk",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "industrial black metal frame desk"
+      },
+      {
+        "id": "c26-h2",
+        "x": 67,
+        "y": 82,
+        "label": "Leather Office Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "cognac tan leather tufted office chair"
+      },
+      {
+        "id": "c26-h3",
+        "x": 40,
+        "y": 79,
+        "label": "Brass Desk Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass desk lamp"
+      },
+      {
+        "id": "c26-h4",
+        "x": 88,
+        "y": 72,
+        "label": "Leather Storage Box",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "leather storage box"
+      }
+    ]
   },
   {
     "id": "c27",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c27_off_coastal_app.png",
     "room": "Home Office",
     "style": "Coastal",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass adjustable articulating desk lamp"
+    "hotspots": [
+      {
+        "id": "c27-h1",
+        "x": 14,
+        "y": 92,
+        "label": "Desk Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass adjustable articulating desk lamp"
+      },
+      {
+        "id": "c27-h2",
+        "x": 50,
+        "y": 90,
+        "label": "Upholstered Desk Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "linen upholstered desk chair"
+      },
+      {
+        "id": "c27-h3",
+        "x": 88,
+        "y": 42,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "blue and white ceramic vase"
+      },
+      {
+        "id": "c27-h4",
+        "x": 83,
+        "y": 96,
+        "label": "Driftwood Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "natural driftwood decor piece"
+      }
+    ]
   },
   {
     "id": "c28",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c28_off_french_app.png",
     "room": "Home Office",
     "style": "French Country",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "chrome articulating swing arm desk lamp"
+    "hotspots": [
+      {
+        "id": "c28-h1",
+        "x": 11,
+        "y": 79,
+        "label": "Desk Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome articulating swing arm desk lamp"
+      },
+      {
+        "id": "c28-h2",
+        "x": 50,
+        "y": 70,
+        "label": "Marble Top Desk",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "marble top writing desk"
+      },
+      {
+        "id": "c28-h3",
+        "x": 50,
+        "y": 88,
+        "label": "Upholstered Desk Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "cream upholstered desk chair"
+      },
+      {
+        "id": "c28-h4",
+        "x": 82,
+        "y": 75,
+        "label": "Metal Pen Cup",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "silver metal desk organizer cup"
+      }
+    ]
   },
   {
     "id": "c29",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c29_off_tropmod_app.png",
     "room": "Home Office",
     "style": "Tropical Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black articulating desk lamp"
+    "hotspots": [
+      {
+        "id": "c29-h1",
+        "x": 30,
+        "y": 70,
+        "label": "Desk Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black articulating desk lamp"
+      },
+      {
+        "id": "c29-h2",
+        "x": 50,
+        "y": 82,
+        "label": "Cane Wood Desk",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "rattan cane wood desk"
+      },
+      {
+        "id": "c29-h3",
+        "x": 50,
+        "y": 92,
+        "label": "Upholstered Desk Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "grey upholstered desk chair"
+      },
+      {
+        "id": "c29-h4",
+        "x": 70,
+        "y": 70,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "grey stoneware ceramic vase"
+      }
+    ]
   },
   {
     "id": "c30",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c30_off_japandi_app.png",
     "room": "Home Office",
     "style": "Japandi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass articulating desk lamp"
+    "hotspots": [
+      {
+        "id": "c30-h1",
+        "x": 18,
+        "y": 58,
+        "label": "Desk Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass articulating desk lamp"
+      },
+      {
+        "id": "c30-h2",
+        "x": 48,
+        "y": 83,
+        "label": "Pouf Ottoman",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "linen cube pouf ottoman"
+      },
+      {
+        "id": "c30-h3",
+        "x": 87,
+        "y": 65,
+        "label": "Concrete Planter",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "concrete planter pot"
+      },
+      {
+        "id": "c30-h4",
+        "x": 75,
+        "y": 45,
+        "label": "Floating Wall Shelf",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood floating wall shelf with brackets"
+      }
+    ]
   },
   {
     "id": "c31",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c31_clo_medit_app.png",
     "room": "Closet",
     "style": "Mediterranean",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "oval brass framed wall mirror"
+    "hotspots": [
+      {
+        "id": "c31-h1",
+        "x": 83,
+        "y": 58,
+        "label": "Wall Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "oval brass framed wall mirror"
+      },
+      {
+        "id": "c31-h2",
+        "x": 18,
+        "y": 37,
+        "label": "Designer Handbag",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "structured leather handbag"
+      },
+      {
+        "id": "c31-h3",
+        "x": 87,
+        "y": 70,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase with olive branch"
+      },
+      {
+        "id": "c31-h4",
+        "x": 66,
+        "y": 53,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black cone wall sconce"
+      }
+    ]
   },
   {
     "id": "c32",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c32_clo_mtnlux_app.png",
     "room": "Closet",
     "style": "Mountain Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass drum wall sconce"
+    "hotspots": [
+      {
+        "id": "c32-h1",
+        "x": 25,
+        "y": 72,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass drum wall sconce"
+      },
+      {
+        "id": "c32-h2",
+        "x": 83,
+        "y": 95,
+        "label": "Leather Briefcase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "leather briefcase bag"
+      },
+      {
+        "id": "c32-h3",
+        "x": 50,
+        "y": 60,
+        "label": "Wood Dresser",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood dresser with drawers"
+      },
+      {
+        "id": "c32-h4",
+        "x": 44,
+        "y": 54,
+        "label": "Leather Handbag",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "leather handbag"
+      }
+    ]
   },
   {
     "id": "c33",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c33_clo_mcm_app.png",
     "room": "Closet",
     "style": "Mid-Century Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "mustard boucle throw pillow"
+    "hotspots": [
+      {
+        "id": "c33-h1",
+        "x": 28,
+        "y": 59,
+        "label": "Throw Pillow",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "mustard boucle throw pillow"
+      },
+      {
+        "id": "c33-h2",
+        "x": 38,
+        "y": 53,
+        "label": "Leather Tote Handbag",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "leather tote handbag"
+      },
+      {
+        "id": "c33-h3",
+        "x": 54,
+        "y": 98,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase with flowers"
+      },
+      {
+        "id": "c33-h4",
+        "x": 54,
+        "y": 82,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass wall sconce"
+      }
+    ]
   },
   {
     "id": "c34",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c34_clo_manor_app.png",
     "room": "Closet",
     "style": "Manor",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black articulating swing arm wall sconce fabric shade"
+    "hotspots": [
+      {
+        "id": "c34-h1",
+        "x": 54,
+        "y": 77,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black articulating swing arm wall sconce fabric shade"
+      },
+      {
+        "id": "c34-h2",
+        "x": 91,
+        "y": 92,
+        "label": "Leather Handbag",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "red leather handbag"
+      },
+      {
+        "id": "c34-h3",
+        "x": 38,
+        "y": 33,
+        "label": "Leather Briefcase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "small leather briefcase bag"
+      },
+      {
+        "id": "c34-h4",
+        "x": 76,
+        "y": 72,
+        "label": "Fabric Shade Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "cream fabric shade brass wall sconce"
+      }
+    ]
   },
   {
     "id": "c35",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c35_clo_indloft_app.png",
     "room": "Closet",
     "style": "Industrial Loft",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass barn dome pendant light"
+    "hotspots": [
+      {
+        "id": "c35-h1",
+        "x": 50,
+        "y": 42,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass barn dome pendant light"
+      },
+      {
+        "id": "c35-h2",
+        "x": 50,
+        "y": 59,
+        "label": "Marble Storage Cube",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black marble storage cube side table"
+      },
+      {
+        "id": "c35-h3",
+        "x": 20,
+        "y": 50,
+        "label": "Clothing Rack",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black pipe garment clothing rack"
+      }
+    ]
   },
   {
     "id": "c36",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c36_din_mtnlux_app.png",
     "room": "Dining Room",
     "style": "Mountain Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "wagon wheel wrought iron candle chandelier"
+    "hotspots": [
+      {
+        "id": "c36-h1",
+        "x": 50,
+        "y": 30,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wagon wheel wrought iron candle chandelier"
+      },
+      {
+        "id": "c36-h2",
+        "x": 25,
+        "y": 90,
+        "label": "Plaid Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brown plaid upholstered dining chair"
+      },
+      {
+        "id": "c36-h3",
+        "x": 50,
+        "y": 85,
+        "label": "Round Dining Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "round granite stone dining table"
+      },
+      {
+        "id": "c36-h4",
+        "x": 60,
+        "y": 72,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass fabric shade wall sconce"
+      }
+    ]
   },
   {
     "id": "c37",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c37_din_mcm_app.png",
     "room": "Dining Room",
     "style": "Mid-Century Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass dome pendant light large"
+    "hotspots": [
+      {
+        "id": "c37-h1",
+        "x": 47,
+        "y": 42,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass dome pendant light large"
+      },
+      {
+        "id": "c37-h2",
+        "x": 30,
+        "y": 73,
+        "label": "Boucle Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "olive green boucle dining chair"
+      },
+      {
+        "id": "c37-h3",
+        "x": 10,
+        "y": 60,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "dark ceramic vase"
+      },
+      {
+        "id": "c37-h4",
+        "x": 88,
+        "y": 60,
+        "label": "Terracotta Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "terracotta ceramic vase"
+      }
+    ]
   },
   {
     "id": "c38",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c38_din_manor_app.png",
     "room": "Dining Room",
     "style": "Manor",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass 2-tier candelabra chandelier"
+    "hotspots": [
+      {
+        "id": "c38-h1",
+        "x": 51,
+        "y": 33,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass 2-tier candelabra chandelier"
+      },
+      {
+        "id": "c38-h2",
+        "x": 25,
+        "y": 78,
+        "label": "Velvet Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "burgundy velvet dining chair"
+      },
+      {
+        "id": "c38-h3",
+        "x": 50,
+        "y": 85,
+        "label": "Marble Dining Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black marble dining table"
+      },
+      {
+        "id": "c38-h4",
+        "x": 18,
+        "y": 55,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black and brass wall sconce"
+      }
+    ]
   },
   {
     "id": "c39",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c39_din_modlux_app.png",
     "room": "Dining Room",
     "style": "Modern Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass ring sculptural chandelier"
+    "hotspots": [
+      {
+        "id": "c39-h1",
+        "x": 35,
+        "y": 30,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass ring sculptural chandelier"
+      },
+      {
+        "id": "c39-h2",
+        "x": 18,
+        "y": 85,
+        "label": "Boucle Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "charcoal boucle dining chair"
+      },
+      {
+        "id": "c39-h3",
+        "x": 30,
+        "y": 72,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black cylinder wall sconce"
+      },
+      {
+        "id": "c39-h4",
+        "x": 93,
+        "y": 72,
+        "label": "Kitchen Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black gooseneck kitchen faucet"
+      }
+    ]
   },
   {
     "id": "c40",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c40_din_medit_app.png",
     "room": "Dining Room",
     "style": "Mediterranean",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "wrought iron scroll chandelier candle bulb"
+    "hotspots": [
+      {
+        "id": "c40-h1",
+        "x": 50,
+        "y": 38,
+        "label": "Chandelier",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wrought iron scroll chandelier candle bulb"
+      },
+      {
+        "id": "c40-h2",
+        "x": 50,
+        "y": 88,
+        "label": "Wood Dining Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "reclaimed wood trestle dining table"
+      },
+      {
+        "id": "c40-h3",
+        "x": 25,
+        "y": 90,
+        "label": "Wood Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood ladderback dining chair"
+      },
+      {
+        "id": "c40-h4",
+        "x": 45,
+        "y": 72,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wrought iron candle wall sconce"
+      }
+    ]
   },
   {
     "id": "c41",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c41_ent_mtnlux_app.png",
     "room": "Entryway",
     "style": "Mountain Luxe",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass barn dome pendant light"
+    "hotspots": [
+      {
+        "id": "c41-h1",
+        "x": 50,
+        "y": 27,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass barn dome pendant light"
+      },
+      {
+        "id": "c41-h2",
+        "x": 50,
+        "y": 52,
+        "label": "Framed Landscape Print",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black and white framed mountain landscape print"
+      },
+      {
+        "id": "c41-h3",
+        "x": 48,
+        "y": 75,
+        "label": "Wood Console Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "reclaimed wood floating console cabinet"
+      },
+      {
+        "id": "c41-h4",
+        "x": 50,
+        "y": 95,
+        "label": "Area Rug",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "patterned wool area rug"
+      }
+    ]
   },
   {
     "id": "c42",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c42_ent_medit_app.png",
     "room": "Entryway",
     "style": "Mediterranean",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black wrought iron lantern pendant light"
+    "hotspots": [
+      {
+        "id": "c42-h1",
+        "x": 50,
+        "y": 18,
+        "label": "Lantern Pendant",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black wrought iron lantern pendant light"
+      },
+      {
+        "id": "c42-h2",
+        "x": 50,
+        "y": 75,
+        "label": "Wood Console Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "light wood console table brass legs"
+      },
+      {
+        "id": "c42-h3",
+        "x": 53,
+        "y": 58,
+        "label": "Framed Wall Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed street scene art print"
+      },
+      {
+        "id": "c42-h4",
+        "x": 50,
+        "y": 98,
+        "label": "Area Rug",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "vintage medallion area rug"
+      }
+    ]
   },
   {
     "id": "c43",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c43_ent_mcm_app.png",
     "room": "Entryway",
     "style": "Mid-Century Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black dome pendant light"
+    "hotspots": [
+      {
+        "id": "c43-h1",
+        "x": 50,
+        "y": 32,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black dome pendant light"
+      },
+      {
+        "id": "c43-h2",
+        "x": 50,
+        "y": 80,
+        "label": "Wood Console Credenza",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "mid century wood console credenza"
+      },
+      {
+        "id": "c43-h3",
+        "x": 35,
+        "y": 47,
+        "label": "Framed Abstract Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed abstract art print"
+      },
+      {
+        "id": "c43-h4",
+        "x": 86,
+        "y": 62,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "grey ceramic vase"
+      }
+    ]
   },
   {
     "id": "c44",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c44_ent_japandi_app.png",
     "room": "Entryway",
     "style": "Japandi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black dome pendant light"
+    "hotspots": [
+      {
+        "id": "c44-h1",
+        "x": 37,
+        "y": 32,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black dome pendant light"
+      },
+      {
+        "id": "c44-h2",
+        "x": 50,
+        "y": 78,
+        "label": "Wood Console Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "light wood console table brass legs"
+      },
+      {
+        "id": "c44-h3",
+        "x": 57,
+        "y": 47,
+        "label": "Framed Abstract Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed abstract art print"
+      },
+      {
+        "id": "c44-h4",
+        "x": 83,
+        "y": 65,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "dark textured ceramic vase"
+      }
+    ]
   },
   {
     "id": "c45",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c45_ent_manor_app.png",
     "room": "Entryway",
     "style": "Manor",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black iron lantern pendant light"
+    "hotspots": [
+      {
+        "id": "c45-h1",
+        "x": 51,
+        "y": 23,
+        "label": "Lantern Pendant",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black iron lantern pendant light"
+      },
+      {
+        "id": "c45-h2",
+        "x": 50,
+        "y": 92,
+        "label": "Velvet Runner Rug",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "magenta velvet runner rug"
+      },
+      {
+        "id": "c45-h3",
+        "x": 50,
+        "y": 75,
+        "label": "Wood Console Cabinet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "dark wood console cabinet brass trim"
+      },
+      {
+        "id": "c45-h4",
+        "x": 50,
+        "y": 53,
+        "label": "Framed Gold Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed gold abstract art"
+      }
+    ]
   },
   {
     "id": "c46",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c46_bar_wabi_app.png",
     "room": "Bar",
     "style": "Wabi-Sabi",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black dome pendant light"
+    "hotspots": [
+      {
+        "id": "c46-h1",
+        "x": 50,
+        "y": 40,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black dome pendant light"
+      },
+      {
+        "id": "c46-h2",
+        "x": 28,
+        "y": 65,
+        "label": "Wine Glass Set",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "crystal wine glass set"
+      },
+      {
+        "id": "c46-h3",
+        "x": 47,
+        "y": 63,
+        "label": "Glass Decanter",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass carafe decanter"
+      },
+      {
+        "id": "c46-h4",
+        "x": 53,
+        "y": 68,
+        "label": "Wood Cheese Board",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "wood serving cheese board"
+      }
+    ]
   },
   {
     "id": "c47",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c47_bar_artdeco_app.png",
     "room": "Bar",
     "style": "Art Deco",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "chrome dome mushroom pendant light"
+    "hotspots": [
+      {
+        "id": "c47-h1",
+        "x": 51,
+        "y": 42,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome dome mushroom pendant light"
+      },
+      {
+        "id": "c47-h2",
+        "x": 93,
+        "y": 87,
+        "label": "Velvet Accent Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "teal velvet tufted accent chair"
+      },
+      {
+        "id": "c47-h3",
+        "x": 77,
+        "y": 65,
+        "label": "Brass Obelisk Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass obelisk sculpture decor"
+      },
+      {
+        "id": "c47-h4",
+        "x": 59,
+        "y": 65,
+        "label": "Crystal Decanter",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "crystal glass decanter"
+      }
+    ]
   },
   {
     "id": "c48",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c48_bar_coastal_app.png",
     "room": "Bar",
     "style": "Coastal",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass dome barn pendant light"
+    "hotspots": [
+      {
+        "id": "c48-h1",
+        "x": 50,
+        "y": 32,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass dome barn pendant light"
+      },
+      {
+        "id": "c48-h2",
+        "x": 50,
+        "y": 65,
+        "label": "Driftwood Decor",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "natural driftwood decor piece"
+      },
+      {
+        "id": "c48-h3",
+        "x": 17,
+        "y": 61,
+        "label": "Bar Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome gooseneck bar faucet"
+      },
+      {
+        "id": "c48-h4",
+        "x": 8,
+        "y": 80,
+        "label": "Cabinet Hardware",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brushed nickel bar cabinet pulls"
+      }
+    ]
   },
   {
     "id": "c49",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c49_bar_french_app.png",
     "room": "Bar",
     "style": "French Country",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "chrome dome pendant light"
+    "hotspots": [
+      {
+        "id": "c49-h1",
+        "x": 50,
+        "y": 32,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome dome pendant light"
+      },
+      {
+        "id": "c49-h2",
+        "x": 8,
+        "y": 50,
+        "label": "Wine Glasses",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "crystal wine glass set"
+      },
+      {
+        "id": "c49-h3",
+        "x": 22,
+        "y": 88,
+        "label": "Glass Decanter",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass carafe decanter"
+      },
+      {
+        "id": "c49-h4",
+        "x": 8,
+        "y": 30,
+        "label": "Brass Cabinet Pulls",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "fluted brass cabinet pulls"
+      }
+    ]
   },
   {
     "id": "c50",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c50_bar_tropmod_app.png",
     "room": "Bar",
     "style": "Tropical Modern",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black dome pendant light"
+    "hotspots": [
+      {
+        "id": "c50-h1",
+        "x": 50,
+        "y": 33,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black dome pendant light"
+      },
+      {
+        "id": "c50-h2",
+        "x": 47,
+        "y": 70,
+        "label": "Wine Glasses",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "crystal wine glass set"
+      },
+      {
+        "id": "c50-h3",
+        "x": 77,
+        "y": 65,
+        "label": "Glass Decanter",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass carafe decanter"
+      },
+      {
+        "id": "c50-h4",
+        "x": 22,
+        "y": 70,
+        "label": "Potted Plant",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "monstera plant in ceramic vase"
+      }
+    ]
   },
   {
     "id": "d01",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d01_lib_oxblood_app.png",
     "room": "Library",
     "style": "Oxblood",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "oxblood burgundy velvet wingback armchair"
+    "hotspots": [
+      {
+        "id": "d01-h1",
+        "x": 67,
+        "y": 95,
+        "label": "Wingback Armchair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "oxblood burgundy velvet wingback armchair"
+      },
+      {
+        "id": "d01-h2",
+        "x": 76,
+        "y": 75,
+        "label": "Table Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "white ceramic table lamp"
+      },
+      {
+        "id": "d01-h3",
+        "x": 54,
+        "y": 50,
+        "label": "Framed Landscape Art",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "framed landscape oil painting print"
+      },
+      {
+        "id": "d01-h4",
+        "x": 90,
+        "y": 75,
+        "label": "Potted Olive Tree",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "artificial potted olive tree"
+      }
+    ]
   },
   {
     "id": "d02",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d02_dine_olive_app.png",
     "room": "Dining Room",
     "style": "Olive",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "dried pampas grass ceramic vase"
+    "hotspots": [
+      {
+        "id": "d02-h1",
+        "x": 33,
+        "y": 62,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "dried pampas grass ceramic vase"
+      },
+      {
+        "id": "d02-h2",
+        "x": 50,
+        "y": 85,
+        "label": "Wood Dining Chairs",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "curved wood dining chair cream cushion"
+      },
+      {
+        "id": "d02-h3",
+        "x": 33,
+        "y": 83,
+        "label": "Wood Console Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "walnut wood console credenza"
+      },
+      {
+        "id": "d02-h4",
+        "x": 18,
+        "y": 92,
+        "label": "Ceramic Fruit Bowl",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic fruit bowl"
+      }
+    ]
   },
   {
     "id": "d03",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d03_suite_plum_app.png",
     "room": "Primary Suite",
     "style": "Plum",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "brass wall sconce set of 2"
+    "hotspots": [
+      {
+        "id": "d03-h1",
+        "x": 83,
+        "y": 40,
+        "label": "Wall Sconce",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass wall sconce set of 2"
+      },
+      {
+        "id": "d03-h2",
+        "x": 50,
+        "y": 75,
+        "label": "Velvet Bed Frame",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "plum velvet channel tufted bed frame"
+      },
+      {
+        "id": "d03-h3",
+        "x": 88,
+        "y": 63,
+        "label": "Table Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "white sculptural base table lamp"
+      },
+      {
+        "id": "d03-h4",
+        "x": 11,
+        "y": 75,
+        "label": "Marble Nightstand",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "marble top brass leg nightstand"
+      }
+    ]
   },
   {
     "id": "d04",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d04_kit_indigo_app.png",
     "room": "Kitchen",
     "style": "Indigo",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "rustic wood counter stool saddle seat"
+    "hotspots": [
+      {
+        "id": "d04-h1",
+        "x": 28,
+        "y": 85,
+        "label": "Counter Stool",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "rustic wood counter stool saddle seat"
+      },
+      {
+        "id": "d04-h2",
+        "x": 76,
+        "y": 72,
+        "label": "Ceramic Pitcher Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic pitcher vase with branches"
+      },
+      {
+        "id": "d04-h3",
+        "x": 63,
+        "y": 83,
+        "label": "Ceramic Fruit Bowl",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "stone ceramic fruit bowl"
+      },
+      {
+        "id": "d04-h4",
+        "x": 38,
+        "y": 78,
+        "label": "Table Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "stoneware base table lamp"
+      }
+    ]
   },
   {
     "id": "d05",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d05_bath_teal_app.png",
     "room": "Bathroom",
     "style": "Teal",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black paper lantern pendant light"
+    "hotspots": [
+      {
+        "id": "d05-h1",
+        "x": 60,
+        "y": 42,
+        "label": "Pendant Light",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black paper lantern pendant light"
+      },
+      {
+        "id": "d05-h2",
+        "x": 62,
+        "y": 82,
+        "label": "Freestanding Bathtub",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black stone freestanding bathtub"
+      },
+      {
+        "id": "d05-h3",
+        "x": 82,
+        "y": 87,
+        "label": "Wall-Mount Tub Faucet",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "matte black wall mount tub faucet"
+      },
+      {
+        "id": "d05-h4",
+        "x": 15,
+        "y": 75,
+        "label": "Ceramic Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "ceramic vase with branches"
+      }
+    ]
   },
   {
     "id": "d06",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d06_foyer_cobalt_app.png",
     "room": "Foyer",
     "style": "Cobalt",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "black wrought iron lantern pendant light"
+    "hotspots": [
+      {
+        "id": "d06-h1",
+        "x": 47,
+        "y": 18,
+        "label": "Lantern Pendant",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "black wrought iron lantern pendant light"
+      },
+      {
+        "id": "d06-h2",
+        "x": 22,
+        "y": 65,
+        "label": "Arched Wall Mirror",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "brass arched frame wall mirror"
+      },
+      {
+        "id": "d06-h3",
+        "x": 91,
+        "y": 78,
+        "label": "Cobalt Ceramic Floor Vase",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "cobalt blue ceramic floor vase"
+      },
+      {
+        "id": "d06-h4",
+        "x": 25,
+        "y": 88,
+        "label": "Wood Console Table",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "carved wood console table"
+      }
+    ]
   },
   {
     "id": "d07",
     "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d07_liv_petrol_app.png",
     "room": "Living Room",
     "style": "Petrol",
-    "productName": null,
-    "productUrl": null,
-    "searchKeywords": "glass bubble mushroom table lamp set of 2"
+    "hotspots": [
+      {
+        "id": "d07-h1",
+        "x": 37,
+        "y": 75,
+        "label": "Table Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "glass bubble mushroom table lamp set of 2"
+      },
+      {
+        "id": "d07-h2",
+        "x": 75,
+        "y": 52,
+        "label": "Chrome Arc Floor Lamp",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "chrome arc floor lamp dome shade"
+      },
+      {
+        "id": "d07-h3",
+        "x": 77,
+        "y": 98,
+        "label": "Boucle Accent Chair",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "white boucle swivel accent chair"
+      },
+      {
+        "id": "d07-h4",
+        "x": 62,
+        "y": 92,
+        "label": "Blue Lacquer Credenza",
+        "productName": null,
+        "productUrl": null,
+        "marketplace": "us",
+        "searchKeywords": "blue glossy lacquer credenza cabinet"
+      }
+    ]
   }
 ]

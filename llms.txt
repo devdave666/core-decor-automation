@@ -2188,3 +2188,104 @@ build as custom geo-IP logic — but OneLink only pays out through
 marketplaces where Dev actually holds an Associates tag, and right now
 that's `.ca` alone. Revisit OneLink once the US Associates program clears,
 not before. See `shop/README.md`'s new "Amazon.ca vs Amazon.com" section.
+
+## Interactive shop hotspots: click-a-dot-on-the-photo, multiple items per room (2026-08-19)
+
+Dev asked two things in one message: (1) why the shop admin only ever
+surfaced the light fixture per photo, not other furniture/decor in frame,
+and (2) build a car-dealership-style interactive hotspot UI — translucent
+dots on the application photo, click one to jump straight to that item's
+Amazon listing. Also: Dev's US Amazon Associates account is now active
+alongside the existing Canada one.
+
+Asked Dev two scoping questions before building (via AskUserQuestion, not
+guessed): who identifies the extra shoppable items in the 57 existing
+photos (chose: Claude drafts them first, via image analysis, for Dev to
+review/reposition/link), and how the admin should pick US vs CA per link
+now that both accounts are live (chose: per-item toggle, default US).
+
+**Schema change**: `shop/products.json` — each concept's single top-level
+`productName`/`productUrl`/`searchKeywords` became a `hotspots` array.
+Each hotspot has its own `id`, `x`/`y` (percentage position on the photo),
+`label`, `productName`, `productUrl`, `marketplace` (`"us"`|`"ca"`), and
+`searchKeywords`. A concept only shows on the public page if at least one
+hotspot has a real `productUrl`; only linked hotspots render a dot.
+
+**Coordinate math decision that mattered**: the photos are ~1072x1920
+(portrait), but the site's cards used `aspect-ratio: 4/5; object-fit:
+cover`, which crops ~15% off the top and bottom. Storing x/y against the
+raw image and rendering with that crop would have desynced every dot from
+where it visually sits. Fixed by dropping the crop entirely — both
+`shop/style.css`'s `.card img` and the admin editor's image now render at
+native aspect ratio (`width:100%; height:auto`, no `object-fit`). This
+means a hotspot's x/y percentage is the same number in the admin editor and
+on the live site, no conversion needed. Don't reintroduce `object-fit:
+cover` on either without redoing this math for all 227 existing hotspots.
+
+**Public page** (`shop/shop.js`): each linked hotspot renders as a pulsing
+translucent dot (`.hotspot-dot`) positioned absolutely on the photo, with a
+hover tooltip showing the item name and a direct link (target `_blank`,
+`rel="noopener sponsored"`) to its tracked Amazon URL. A plain-text link
+list underneath each photo duplicates the same links as a non-hover
+fallback (mobile, accessibility, crawlability) — dots alone aren't
+guaranteed discoverable. UTM tracking now uses `{conceptId}-{hotspotId}`
+as `utm_content` so per-item click-through is measurable, not just
+per-photo.
+
+**Admin page** (`shop/admin.js`, `shop/admin.html`, `shop/admin.css`):
+clicking a grid card (now badged `linked/total` instead of a binary
+LINKED/blank) opens a full-photo editor. Existing hotspots show as dots —
+solid for linked, dashed for pending. Click a dashed dot to open the edit
+modal (same SiteStripe search-and-paste flow as before, now with a
+**US/CA marketplace toggle** that changes which `amazon.<tld>` domain the
+"Search on Amazon" button opens and what the paste-clipboard mismatch
+check expects). Click empty photo space to create a brand-new hotspot at
+that point. **Drag any dot to reposition** — implemented with Pointer
+Events (not native HTML5 drag-and-drop) so it works the same for mouse and
+touch; commits the new x/y via the same GitHub Contents API PUT the rest of
+the admin already uses, save-on-drop with no separate confirm step.
+"Delete hotspot" removes a dot entirely (for AI-drafted items not worth
+pursuing); clearing just the URL field and saving unlinks without deleting
+the dot.
+
+**227 hotspots drafted for the 57 existing photos** by a background
+general-purpose agent (not by directly reading all 57 images inline —
+would have blown up this session's context): read each photo, kept the
+existing light-fixture `searchKeywords` verbatim as hotspot #1, identified
+2-4 additional prominent purchasable items (rugs, chairs, faucets,
+mirrors, cabinet hardware, vases, etc.) with plausible Amazon search
+phrasing and an estimated x/y position. Validated programmatically before
+merging: all 57 ids present, every array 2-5 items, all coordinates in
+[0,100], no missing label/searchKeywords. The agent flagged 8 concepts
+(c05, c12, c21, c26, c33, d01, d02, d04) where the *original* light-fixture
+`searchKeywords` actually described a different object entirely (a data
+quirk from however those were first authored, e.g. c05's "light fixture"
+keywords were really a kitchen faucet) — relabeled to match what the text
+actually describes rather than silently leaving a wrong label. These are
+a first draft, not verified pixel-by-pixel against the photos — expect
+Dev to reposition/relink/delete some while going through them.
+
+**amazon_creators.py**: default `marketplace` param flipped back to
+`www.amazon.com` (was briefly `www.amazon.ca` from the single-account fix
+earlier this session) now that both accounts are live and US is the
+chosen default — still unused/blocked by the Creators API eligibility gate
+either way.
+
+**Verified before calling this done**, not just written and assumed
+working: `node --check` on both JS files; a headless Edge
+(`--headless=new --dump-dom`) render of the public page with one hotspot
+temporarily linked confirmed the dot's `style="left:52%;top:22%"` and
+tracked `href` matched exactly what was set, then the fixture was
+reverted; a from-scratch mocked-fetch test harness (same technique as the
+original admin.js test — `window.fetch`/`navigator.clipboard` mocked, real
+unmodified `admin.js` loaded) drove the full click-empty-space →
+fill-fields → Save → reopen → Delete sequence end-to-end against a fake
+GitHub Contents API and asserted on the resulting JSON (20/20 checks
+passed) before the harness file was deleted; a final headless render of
+both real pages (all-real, all-unlinked `products.json`) confirmed the
+empty-state message on the public page and a clean token-gate load on
+admin with no console errors.
+
+Still not done: OneLink (Amazon's native geo-redirect across marketplaces)
+isn't wired up — noted in `shop/README.md` as the right next step once
+there's real traffic, not built speculatively now.
