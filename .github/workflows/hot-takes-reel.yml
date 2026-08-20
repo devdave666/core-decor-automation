@@ -6,11 +6,12 @@ name: Hot Takes Reel
 # schedule so the two formats don't both land in the same daily window.
 on:
   schedule:
-    # 18:00 UTC — a placeholder time, same as the main schedule's own 14:00 UTC
-    # choice; adjust once there's engagement data to know what actually performs
-    # better. Deliberately not daily to start — every 2 days keeps the "hot take"
-    # format feeling occasional rather than diluting it into routine content.
-    - cron: "0 18 */2 * *"
+    # 18:00 UTC daily — bumped from every 2 days once real engagement data
+    # showed this format performing well (same "follow the numbers" logic
+    # that created Hot Takes in the first place). The opinion pool was
+    # expanded 44 -> 94 alongside this change specifically so daily posting
+    # doesn't burn through it and start repeating sooner than before.
+    - cron: "0 18 * * *"
   workflow_dispatch: {}
 
 permissions:

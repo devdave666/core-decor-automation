@@ -2488,3 +2488,41 @@ Real zero-cost alternatives offered: a URL-shortener with a custom alias
 (`devdave666.github.io` at the root instead of the current
 `/core-decor-automation/shop/` project-page path) for a shorter
 still-github.io link -- both free, neither is a real custom domain.
+
+## Hot Takes: daily schedule + opinion pool 44 -> 94 (2026-08-20)
+
+Dev reported Hot Takes performing really well and asked to increase
+frequency and add more dialogues, explicitly wanting it "very interesting
+and scroll-stopping" — same "follow the real numbers" logic already
+recorded above for why Hot Takes exists at all and why d09's palette was
+trusted.
+
+`.github/workflows/hot-takes-reel.yml`: cron `"0 18 */2 * *"` (every 2
+days) -> `"0 18 * * *"` (daily), same 18:00 UTC slot so it still doesn't
+collide with the main daily-reel's 14:00 UTC run. Checked the other
+workflows' schedules before changing this (`daily-reel.yml` 14:00 UTC
+daily, `dolly-reel.yml` Mon/Thu 10:00 UTC, `carousel-post.yml` Tue/Fri
+16:00 UTC) — daily brings Hot Takes to parity with the flagship format,
+not past it; going to 2x/day wasn't done here since there's no engagement
+data yet justifying that big a jump, and it would burn the opinion/caption
+pools twice as fast for no confirmed benefit. Worth revisiting once there
+are real numbers at the new cadence.
+
+`hot_takes/opinion_bank.py`: `OPINIONS` 44 -> 94 (+50), matching the
+2026-08-18 expansion's exact constraints (documented above and in the
+module's own docstring) — every new entry still passes the DELIBERATELY
+GENERIC test (no color/material references, checked programmatically with
+a regex sweep for the obvious offenders — beige/brass/marble/black/white/
+gold/walnut/oak/velvet/linen/wood/concrete/leather — as well as by eye),
+still a two-line setup/punchline pair (load-bearing for the 1.6s reveal
+gap in `render_text_block`), still a mix of "They: dismissive / Me:
+pushback" and standalone philosophical-statement pairs rather than one
+repeated joke shape. Sized the expansion specifically around the schedule
+change: doubling posting frequency without growing the pool would have
+meant every opinion repeating twice as often, undoing a lot of the
+"feels fresh" benefit the frequency increase was meant to capture.
+Verified before committing: `len(OPINIONS)` == 94, zero exact-duplicate
+pairs, zero malformed (non-2-tuple or empty-string) entries, YAML itself
+parsed and re-checked for the correct cron string and that
+`workflow_dispatch` survived the edit (it's a sibling of `schedule:` under
+`on:`, not nested inside it — easy indentation mistake to introduce here).
