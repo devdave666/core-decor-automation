@@ -1017,8 +1017,8 @@
     "hotspots": [
       {
         "id": "c21-h1",
-        "x": 50,
-        "y": 83,
+        "x": 51,
+        "y": 73,
         "label": "Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -1027,8 +1027,8 @@
       },
       {
         "id": "c21-h2",
-        "x": 88,
-        "y": 72,
+        "x": 81,
+        "y": 58,
         "label": "Table Lamp",
         "productName": null,
         "productUrl": null,
@@ -1037,8 +1037,8 @@
       },
       {
         "id": "c21-h3",
-        "x": 45,
-        "y": 70,
+        "x": 40,
+        "y": 59,
         "label": "Throw Pillow",
         "productName": null,
         "productUrl": null,
@@ -1047,8 +1047,8 @@
       },
       {
         "id": "c21-h4",
-        "x": 12,
-        "y": 82,
+        "x": 11,
+        "y": 67,
         "label": "Marble Nightstand",
         "productName": null,
         "productUrl": null,
@@ -1065,8 +1065,8 @@
     "hotspots": [
       {
         "id": "c22-h1",
-        "x": 21,
-        "y": 70,
+        "x": 20,
+        "y": 45,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -1075,8 +1075,8 @@
       },
       {
         "id": "c22-h2",
-        "x": 60,
-        "y": 88,
+        "x": 49,
+        "y": 70,
         "label": "Platform Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -1085,8 +1085,8 @@
       },
       {
         "id": "c22-h3",
-        "x": 88,
-        "y": 85,
+        "x": 85,
+        "y": 60,
         "label": "Floating Nightstand",
         "productName": null,
         "productUrl": null,
@@ -1095,8 +1095,8 @@
       },
       {
         "id": "c22-h4",
-        "x": 90,
-        "y": 65,
+        "x": 83,
+        "y": 39,
         "label": "Decorative Sculpture",
         "productName": null,
         "productUrl": null,
