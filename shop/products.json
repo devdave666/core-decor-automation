@@ -1113,8 +1113,8 @@
     "hotspots": [
       {
         "id": "c23-h1",
-        "x": 62,
-        "y": 47,
+        "x": 60,
+        "y": 36,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1124,7 +1124,7 @@
       {
         "id": "c23-h2",
         "x": 88,
-        "y": 95,
+        "y": 68,
         "label": "Boucle Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -1134,7 +1134,7 @@
       {
         "id": "c23-h3",
         "x": 64,
-        "y": 72,
+        "y": 53,
         "label": "Ceramic Sculpture",
         "productName": null,
         "productUrl": null,
@@ -1143,8 +1143,8 @@
       },
       {
         "id": "c23-h4",
-        "x": 62,
-        "y": 83,
+        "x": 53,
+        "y": 58,
         "label": "Wood Nightstand",
         "productName": null,
         "productUrl": null,
@@ -1161,8 +1161,8 @@
     "hotspots": [
       {
         "id": "c24-h1",
-        "x": 22,
-        "y": 82,
+        "x": 21,
+        "y": 49,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1171,8 +1171,8 @@
       },
       {
         "id": "c24-h2",
-        "x": 65,
-        "y": 75,
+        "x": 73,
+        "y": 85,
         "label": "Upholstered Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -1181,8 +1181,8 @@
       },
       {
         "id": "c24-h3",
-        "x": 28,
-        "y": 95,
+        "x": 30,
+        "y": 62,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1191,8 +1191,8 @@
       },
       {
         "id": "c24-h4",
-        "x": 18,
-        "y": 70,
+        "x": 19,
+        "y": 68,
         "label": "Floating Nightstand",
         "productName": null,
         "productUrl": null,
@@ -1209,8 +1209,8 @@
     "hotspots": [
       {
         "id": "c25-h1",
-        "x": 20,
-        "y": 58,
+        "x": 21,
+        "y": 53,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1220,7 +1220,7 @@
       {
         "id": "c25-h2",
         "x": 50,
-        "y": 80,
+        "y": 74,
         "label": "Platform Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -1229,8 +1229,8 @@
       },
       {
         "id": "c25-h3",
-        "x": 18,
-        "y": 80,
+        "x": 26,
+        "y": 59,
         "label": "Floating Nightstand",
         "productName": null,
         "productUrl": null,
@@ -1239,8 +1239,8 @@
       },
       {
         "id": "c25-h4",
-        "x": 15,
-        "y": 70,
+        "x": 19,
+        "y": 60,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1257,8 +1257,8 @@
     "hotspots": [
       {
         "id": "c26-h1",
-        "x": 50,
-        "y": 85,
+        "x": 34,
+        "y": 62,
         "label": "Desk",
         "productName": null,
         "productUrl": null,
@@ -1267,8 +1267,8 @@
       },
       {
         "id": "c26-h2",
-        "x": 67,
-        "y": 82,
+        "x": 46,
+        "y": 67,
         "label": "Leather Office Chair",
         "productName": null,
         "productUrl": null,
@@ -1277,8 +1277,8 @@
       },
       {
         "id": "c26-h3",
-        "x": 40,
-        "y": 79,
+        "x": 37,
+        "y": 54,
         "label": "Brass Desk Lamp",
         "productName": null,
         "productUrl": null,
@@ -1287,8 +1287,8 @@
       },
       {
         "id": "c26-h4",
-        "x": 88,
-        "y": 72,
+        "x": 81,
+        "y": 58,
         "label": "Leather Storage Box",
         "productName": null,
         "productUrl": null,
@@ -1305,8 +1305,8 @@
     "hotspots": [
       {
         "id": "c27-h1",
-        "x": 14,
-        "y": 92,
+        "x": 24,
+        "y": 47,
         "label": "Desk Lamp",
         "productName": null,
         "productUrl": null,
@@ -1315,8 +1315,8 @@
       },
       {
         "id": "c27-h2",
-        "x": 50,
-        "y": 90,
+        "x": 49,
+        "y": 63,
         "label": "Upholstered Desk Chair",
         "productName": null,
         "productUrl": null,
@@ -1325,8 +1325,8 @@
       },
       {
         "id": "c27-h3",
-        "x": 88,
-        "y": 42,
+        "x": 87,
+        "y": 25,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1335,8 +1335,8 @@
       },
       {
         "id": "c27-h4",
-        "x": 83,
-        "y": 96,
+        "x": 78,
+        "y": 55,
         "label": "Driftwood Decor",
         "productName": null,
         "productUrl": null,
@@ -1353,8 +1353,8 @@
     "hotspots": [
       {
         "id": "c28-h1",
-        "x": 11,
-        "y": 79,
+        "x": 27,
+        "y": 56,
         "label": "Desk Lamp",
         "productName": null,
         "productUrl": null,
@@ -1363,8 +1363,8 @@
       },
       {
         "id": "c28-h2",
-        "x": 50,
-        "y": 70,
+        "x": 67,
+        "y": 83,
         "label": "Marble Top Desk",
         "productName": null,
         "productUrl": null,
@@ -1373,8 +1373,8 @@
       },
       {
         "id": "c28-h3",
-        "x": 50,
-        "y": 88,
+        "x": 49,
+        "y": 72,
         "label": "Upholstered Desk Chair",
         "productName": null,
         "productUrl": null,
@@ -1383,8 +1383,8 @@
       },
       {
         "id": "c28-h4",
-        "x": 82,
-        "y": 75,
+        "x": 77,
+        "y": 77,
         "label": "Metal Pen Cup",
         "productName": null,
         "productUrl": null,
@@ -1401,8 +1401,8 @@
     "hotspots": [
       {
         "id": "c29-h1",
-        "x": 30,
-        "y": 70,
+        "x": 37,
+        "y": 56,
         "label": "Desk Lamp",
         "productName": null,
         "productUrl": null,
@@ -1411,8 +1411,8 @@
       },
       {
         "id": "c29-h2",
-        "x": 50,
-        "y": 82,
+        "x": 49,
+        "y": 65,
         "label": "Cane Wood Desk",
         "productName": null,
         "productUrl": null,
@@ -1422,7 +1422,7 @@
       {
         "id": "c29-h3",
         "x": 50,
-        "y": 92,
+        "y": 70,
         "label": "Upholstered Desk Chair",
         "productName": null,
         "productUrl": null,
@@ -1431,8 +1431,8 @@
       },
       {
         "id": "c29-h4",
-        "x": 70,
-        "y": 70,
+        "x": 63,
+        "y": 58,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1450,7 +1450,7 @@
       {
         "id": "c30-h1",
         "x": 18,
-        "y": 58,
+        "y": 48,
         "label": "Desk Lamp",
         "productName": null,
         "productUrl": null,
@@ -1459,8 +1459,8 @@
       },
       {
         "id": "c30-h2",
-        "x": 48,
-        "y": 83,
+        "x": 47,
+        "y": 77,
         "label": "Pouf Ottoman",
         "productName": null,
         "productUrl": null,
@@ -1469,8 +1469,8 @@
       },
       {
         "id": "c30-h3",
-        "x": 87,
-        "y": 65,
+        "x": 86,
+        "y": 54,
         "label": "Concrete Planter",
         "productName": null,
         "productUrl": null,
@@ -1479,8 +1479,8 @@
       },
       {
         "id": "c30-h4",
-        "x": 75,
-        "y": 45,
+        "x": 81,
+        "y": 31,
         "label": "Floating Wall Shelf",
         "productName": null,
         "productUrl": null,
@@ -1641,8 +1641,8 @@
     "hotspots": [
       {
         "id": "c34-h1",
-        "x": 54,
-        "y": 77,
+        "x": 48,
+        "y": 42,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1651,8 +1651,8 @@
       },
       {
         "id": "c34-h2",
-        "x": 91,
-        "y": 92,
+        "x": 78,
+        "y": 58,
         "label": "Leather Handbag",
         "productName": null,
         "productUrl": null,
@@ -1661,8 +1661,8 @@
       },
       {
         "id": "c34-h3",
-        "x": 38,
-        "y": 33,
+        "x": 35,
+        "y": 19,
         "label": "Leather Briefcase",
         "productName": null,
         "productUrl": null,
@@ -1671,8 +1671,8 @@
       },
       {
         "id": "c34-h4",
-        "x": 76,
-        "y": 72,
+        "x": 70,
+        "y": 38,
         "label": "Fabric Shade Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1689,8 +1689,8 @@
     "hotspots": [
       {
         "id": "c35-h1",
-        "x": 50,
-        "y": 42,
+        "x": 48,
+        "y": 25,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -1699,8 +1699,8 @@
       },
       {
         "id": "c35-h2",
-        "x": 50,
-        "y": 59,
+        "x": 47,
+        "y": 66,
         "label": "Marble Storage Cube",
         "productName": null,
         "productUrl": null,
@@ -1709,8 +1709,8 @@
       },
       {
         "id": "c35-h3",
-        "x": 20,
-        "y": 50,
+        "x": 15,
+        "y": 38,
         "label": "Clothing Rack",
         "productName": null,
         "productUrl": null,
@@ -1728,7 +1728,7 @@
       {
         "id": "c36-h1",
         "x": 50,
-        "y": 30,
+        "y": 42,
         "label": "Chandelier",
         "productName": null,
         "productUrl": null,
@@ -1737,8 +1737,8 @@
       },
       {
         "id": "c36-h2",
-        "x": 25,
-        "y": 90,
+        "x": 14,
+        "y": 70,
         "label": "Plaid Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -1747,8 +1747,8 @@
       },
       {
         "id": "c36-h3",
-        "x": 50,
-        "y": 85,
+        "x": 52,
+        "y": 66,
         "label": "Round Dining Table",
         "productName": null,
         "productUrl": null,
@@ -1757,8 +1757,8 @@
       },
       {
         "id": "c36-h4",
-        "x": 60,
-        "y": 72,
+        "x": 52,
+        "y": 48,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1776,7 +1776,7 @@
       {
         "id": "c37-h1",
         "x": 47,
-        "y": 42,
+        "y": 38,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -1785,8 +1785,8 @@
       },
       {
         "id": "c37-h2",
-        "x": 30,
-        "y": 73,
+        "x": 19,
+        "y": 60,
         "label": "Boucle Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -1795,8 +1795,8 @@
       },
       {
         "id": "c37-h3",
-        "x": 10,
-        "y": 60,
+        "x": 9,
+        "y": 50,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1805,8 +1805,8 @@
       },
       {
         "id": "c37-h4",
-        "x": 88,
-        "y": 60,
+        "x": 86,
+        "y": 50,
         "label": "Terracotta Vase",
         "productName": null,
         "productUrl": null,
@@ -1823,8 +1823,8 @@
     "hotspots": [
       {
         "id": "c38-h1",
-        "x": 51,
-        "y": 33,
+        "x": 50,
+        "y": 30,
         "label": "Chandelier",
         "productName": null,
         "productUrl": null,
@@ -1833,8 +1833,8 @@
       },
       {
         "id": "c38-h2",
-        "x": 25,
-        "y": 78,
+        "x": 18,
+        "y": 55,
         "label": "Velvet Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -1844,7 +1844,7 @@
       {
         "id": "c38-h3",
         "x": 50,
-        "y": 85,
+        "y": 60,
         "label": "Marble Dining Table",
         "productName": null,
         "productUrl": null,
@@ -1853,8 +1853,8 @@
       },
       {
         "id": "c38-h4",
-        "x": 18,
-        "y": 55,
+        "x": 22,
+        "y": 39,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1871,8 +1871,8 @@
     "hotspots": [
       {
         "id": "c39-h1",
-        "x": 35,
-        "y": 30,
+        "x": 40,
+        "y": 23,
         "label": "Chandelier",
         "productName": null,
         "productUrl": null,
@@ -1881,8 +1881,8 @@
       },
       {
         "id": "c39-h2",
-        "x": 18,
-        "y": 85,
+        "x": 25,
+        "y": 83,
         "label": "Boucle Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -1891,8 +1891,8 @@
       },
       {
         "id": "c39-h3",
-        "x": 30,
-        "y": 72,
+        "x": 32,
+        "y": 43,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1901,8 +1901,8 @@
       },
       {
         "id": "c39-h4",
-        "x": 93,
-        "y": 72,
+        "x": 89,
+        "y": 55,
         "label": "Kitchen Faucet",
         "productName": null,
         "productUrl": null,
@@ -1919,8 +1919,8 @@
     "hotspots": [
       {
         "id": "c40-h1",
-        "x": 50,
-        "y": 38,
+        "x": 48,
+        "y": 29,
         "label": "Chandelier",
         "productName": null,
         "productUrl": null,
@@ -1929,8 +1929,8 @@
       },
       {
         "id": "c40-h2",
-        "x": 50,
-        "y": 88,
+        "x": 37,
+        "y": 59,
         "label": "Wood Dining Table",
         "productName": null,
         "productUrl": null,
@@ -1939,8 +1939,8 @@
       },
       {
         "id": "c40-h3",
-        "x": 25,
-        "y": 90,
+        "x": 26,
+        "y": 62,
         "label": "Wood Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -1949,8 +1949,8 @@
       },
       {
         "id": "c40-h4",
-        "x": 45,
-        "y": 72,
+        "x": 48,
+        "y": 44,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1967,7 +1967,7 @@
     "hotspots": [
       {
         "id": "c41-h1",
-        "x": 50,
+        "x": 47,
         "y": 27,
         "label": "Pendant Light",
         "productName": null,
@@ -1978,7 +1978,7 @@
       {
         "id": "c41-h2",
         "x": 50,
-        "y": 52,
+        "y": 43,
         "label": "Framed Landscape Print",
         "productName": null,
         "productUrl": null,
@@ -1987,8 +1987,8 @@
       },
       {
         "id": "c41-h3",
-        "x": 48,
-        "y": 75,
+        "x": 29,
+        "y": 58,
         "label": "Wood Console Table",
         "productName": null,
         "productUrl": null,
@@ -1998,7 +1998,7 @@
       {
         "id": "c41-h4",
         "x": 50,
-        "y": 95,
+        "y": 75,
         "label": "Area Rug",
         "productName": null,
         "productUrl": null,
@@ -2159,8 +2159,8 @@
     "hotspots": [
       {
         "id": "c45-h1",
-        "x": 51,
-        "y": 23,
+        "x": 50,
+        "y": 24,
         "label": "Lantern Pendant",
         "productName": null,
         "productUrl": null,
@@ -2170,7 +2170,7 @@
       {
         "id": "c45-h2",
         "x": 50,
-        "y": 92,
+        "y": 73,
         "label": "Velvet Runner Rug",
         "productName": null,
         "productUrl": null,
@@ -2180,7 +2180,7 @@
       {
         "id": "c45-h3",
         "x": 50,
-        "y": 75,
+        "y": 57,
         "label": "Wood Console Cabinet",
         "productName": null,
         "productUrl": null,
@@ -2189,8 +2189,8 @@
       },
       {
         "id": "c45-h4",
-        "x": 50,
-        "y": 53,
+        "x": 51,
+        "y": 39,
         "label": "Framed Gold Art",
         "productName": null,
         "productUrl": null,
@@ -2207,8 +2207,8 @@
     "hotspots": [
       {
         "id": "c46-h1",
-        "x": 50,
-        "y": 40,
+        "x": 47,
+        "y": 37,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -2217,8 +2217,8 @@
       },
       {
         "id": "c46-h2",
-        "x": 28,
-        "y": 65,
+        "x": 25,
+        "y": 54,
         "label": "Wine Glass Set",
         "productName": null,
         "productUrl": null,
@@ -2227,8 +2227,8 @@
       },
       {
         "id": "c46-h3",
-        "x": 47,
-        "y": 63,
+        "x": 44,
+        "y": 52,
         "label": "Glass Decanter",
         "productName": null,
         "productUrl": null,
@@ -2238,7 +2238,7 @@
       {
         "id": "c46-h4",
         "x": 53,
-        "y": 68,
+        "y": 56,
         "label": "Wood Cheese Board",
         "productName": null,
         "productUrl": null,
@@ -2255,8 +2255,8 @@
     "hotspots": [
       {
         "id": "c47-h1",
-        "x": 51,
-        "y": 42,
+        "x": 50,
+        "y": 37,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -2265,8 +2265,8 @@
       },
       {
         "id": "c47-h2",
-        "x": 93,
-        "y": 87,
+        "x": 92,
+        "y": 76,
         "label": "Velvet Accent Chair",
         "productName": null,
         "productUrl": null,
@@ -2275,8 +2275,8 @@
       },
       {
         "id": "c47-h3",
-        "x": 77,
-        "y": 65,
+        "x": 79,
+        "y": 54,
         "label": "Brass Obelisk Decor",
         "productName": null,
         "productUrl": null,
@@ -2285,8 +2285,8 @@
       },
       {
         "id": "c47-h4",
-        "x": 59,
-        "y": 65,
+        "x": 58,
+        "y": 51,
         "label": "Crystal Decanter",
         "productName": null,
         "productUrl": null,
@@ -2304,7 +2304,7 @@
       {
         "id": "c48-h1",
         "x": 50,
-        "y": 32,
+        "y": 27,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -2313,8 +2313,8 @@
       },
       {
         "id": "c48-h2",
-        "x": 50,
-        "y": 65,
+        "x": 51,
+        "y": 51,
         "label": "Driftwood Decor",
         "productName": null,
         "productUrl": null,
@@ -2323,8 +2323,8 @@
       },
       {
         "id": "c48-h3",
-        "x": 17,
-        "y": 61,
+        "x": 18,
+        "y": 50,
         "label": "Bar Faucet",
         "productName": null,
         "productUrl": null,
@@ -2333,8 +2333,8 @@
       },
       {
         "id": "c48-h4",
-        "x": 8,
-        "y": 80,
+        "x": 12,
+        "y": 64,
         "label": "Cabinet Hardware",
         "productName": null,
         "productUrl": null,
@@ -2351,8 +2351,8 @@
     "hotspots": [
       {
         "id": "c49-h1",
-        "x": 50,
-        "y": 32,
+        "x": 49,
+        "y": 27,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -2361,8 +2361,8 @@
       },
       {
         "id": "c49-h2",
-        "x": 8,
-        "y": 50,
+        "x": 7,
+        "y": 37,
         "label": "Wine Glasses",
         "productName": null,
         "productUrl": null,
@@ -2371,8 +2371,8 @@
       },
       {
         "id": "c49-h3",
-        "x": 22,
-        "y": 88,
+        "x": 26,
+        "y": 55,
         "label": "Glass Decanter",
         "productName": null,
         "productUrl": null,
@@ -2382,7 +2382,7 @@
       {
         "id": "c49-h4",
         "x": 8,
-        "y": 30,
+        "y": 20,
         "label": "Brass Cabinet Pulls",
         "productName": null,
         "productUrl": null,
@@ -2447,8 +2447,8 @@
     "hotspots": [
       {
         "id": "d01-h1",
-        "x": 67,
-        "y": 95,
+        "x": 54,
+        "y": 64,
         "label": "Wingback Armchair",
         "productName": null,
         "productUrl": null,
@@ -2457,8 +2457,8 @@
       },
       {
         "id": "d01-h2",
-        "x": 76,
-        "y": 75,
+        "x": 75,
+        "y": 49,
         "label": "Table Lamp",
         "productName": null,
         "productUrl": null,
@@ -2468,7 +2468,7 @@
       {
         "id": "d01-h3",
         "x": 54,
-        "y": 50,
+        "y": 34,
         "label": "Framed Landscape Art",
         "productName": null,
         "productUrl": null,
@@ -2477,8 +2477,8 @@
       },
       {
         "id": "d01-h4",
-        "x": 90,
-        "y": 75,
+        "x": 91,
+        "y": 63,
         "label": "Potted Olive Tree",
         "productName": null,
         "productUrl": null,
@@ -2495,8 +2495,8 @@
     "hotspots": [
       {
         "id": "d02-h1",
-        "x": 33,
-        "y": 62,
+        "x": 32,
+        "y": 44,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -2505,8 +2505,8 @@
       },
       {
         "id": "d02-h2",
-        "x": 50,
-        "y": 85,
+        "x": 49,
+        "y": 70,
         "label": "Wood Dining Chairs",
         "productName": null,
         "productUrl": null,
@@ -2515,8 +2515,8 @@
       },
       {
         "id": "d02-h3",
-        "x": 33,
-        "y": 83,
+        "x": 39,
+        "y": 51,
         "label": "Wood Console Table",
         "productName": null,
         "productUrl": null,
@@ -2525,8 +2525,8 @@
       },
       {
         "id": "d02-h4",
-        "x": 18,
-        "y": 92,
+        "x": 15,
+        "y": 56,
         "label": "Ceramic Fruit Bowl",
         "productName": null,
         "productUrl": null,
@@ -2543,8 +2543,8 @@
     "hotspots": [
       {
         "id": "d03-h1",
-        "x": 83,
-        "y": 40,
+        "x": 86,
+        "y": 33,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -2553,8 +2553,8 @@
       },
       {
         "id": "d03-h2",
-        "x": 50,
-        "y": 75,
+        "x": 48,
+        "y": 48,
         "label": "Velvet Bed Frame",
         "productName": null,
         "productUrl": null,
@@ -2564,7 +2564,7 @@
       {
         "id": "d03-h3",
         "x": 88,
-        "y": 63,
+        "y": 49,
         "label": "Table Lamp",
         "productName": null,
         "productUrl": null,
@@ -2573,8 +2573,8 @@
       },
       {
         "id": "d03-h4",
-        "x": 11,
-        "y": 75,
+        "x": 13,
+        "y": 55,
         "label": "Marble Nightstand",
         "productName": null,
         "productUrl": null,
