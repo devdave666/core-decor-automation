@@ -2434,3 +2434,57 @@ true})`, not a plain assignment, to mock it (the earlier admin.js test
 harness in this file's history already knew this; re-learned it the hard
 way here since a new harness was started from scratch instead of copying
 the old one forward).
+
+## Compressed shop images for a snappier page + Instagram bio readiness check (2026-08-20)
+
+Dev asked if the shop page was ready to link in his Instagram bio. Checked
+for real rather than assuming: fetched the actual live production URL
+(not localhost) and confirmed it serves the current `products.json` (57
+concepts, 232/233 hotspots linked), then checked mobile rendering.
+
+**Worth recording since it wasted real effort**: the first mobile check
+(headless Edge `--window-size=390,3200 --screenshot`) showed the header
+title and the per-item pill list clipped at the right edge, looking like a
+real horizontal-overflow bug. It wasn't — confirmed via an iframe-based
+diagnostic (load the real page in a 390px-wide iframe, walk every element's
+`getBoundingClientRect()`, check for anything exceeding the viewport) that
+`document.body.scrollWidth` was 390, exactly matching the viewport, with
+zero real overflow. The only element geometrically exceeding the viewport
+was an invisible `.hotspot-label` tooltip (`opacity: 0`, only shown on
+hover) -- harmless. A follow-up screenshot of that same iframe rendered
+perfectly. Conclusion: headless Edge/Chrome's direct top-level navigation
+under `--headless=new` applies some viewport-meta-driven zoom/shrink
+heuristic that a plain `--window-size` doesn't fully suppress, and it was
+never actually representative of real mobile rendering. Trust the
+DOM-measurement diagnostic (iframe + scrollWidth/getBoundingClientRect)
+over a direct headless screenshot for mobile-viewport checks on this
+project going forward -- don't repeat the false alarm.
+
+**Image compression**: the 57 application photos are ~3.4MB PNGs each
+(190MB total) -- fine for the reel/carousel pipelines they were made for,
+heavy for a mobile shop page even with `loading="lazy"`. Confirmed via
+`grep` that `assets/application/*.png` is a real dependency of
+`carousel_pipeline.py` and the `daily-reel`/`carousel-post` GitHub Actions
+workflows before touching anything -- so the originals were left
+completely untouched. Instead, re-encoded all 57 to WebP quality 85
+(Pillow, `method=6`) into a new `assets/application_web/` directory:
+190MB -> 17.3MB, a 90.9% reduction, visually confirmed near-lossless on a
+sample (details like marble veining and pendant-light glass texture held
+up fine). `shop/products.json`'s `image` field for all 57 concepts now
+points at the `.webp` copies instead of the `.png` originals via
+raw.githubusercontent.com. `assets/application/` itself and every other
+pipeline reference to it are unchanged.
+
+Also asked about a free custom domain for the bio link, since the current
+URL is the unbranded `devdave666.github.io/core-decor-automation/shop/`.
+Answered honestly rather than oversell it: GitHub Pages *hosting* is free
+regardless, but actually *owning* a custom domain name always costs
+something from a real registrar (~$10-15/year, sometimes promotional
+first-year pricing) -- there's no legitimate way around that; free
+domain-giveaway services (Freenom etc.) were deliberately not recommended,
+they have a bad reputation for reclaiming domains and being used for abuse.
+Real zero-cost alternatives offered: a URL-shortener with a custom alias
+(e.g. Bitly), or restructuring to a GitHub User Page
+(`devdave666.github.io` at the root instead of the current
+`/core-decor-automation/shop/` project-page path) for a shorter
+still-github.io link -- both free, neither is a real custom domain.

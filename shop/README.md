@@ -139,10 +139,14 @@ manual tagging needed per link.
 - Matches the swatch-card brand register: dark editorial background, Fry's
   Baskerville for headings (same font already used for swatch labels, hosted
   from `concept_tools/fonts/` via raw.githubusercontent.com — no new asset).
-- Product images are the SAME application photos already posted in reels/
-  carousels, referenced directly from `assets/application/` via
-  raw.githubusercontent.com — zero new render cost, and a viewer who
-  recognizes a room from a video can find it here.
+- Product images are WebP re-encodes of the same application photos posted
+  in reels/carousels, in `assets/application_web/` (quality 85, ~91%
+  smaller than the source PNGs in `assets/application/` with no visible
+  quality loss — 190MB → 17MB across all 57). The originals in
+  `assets/application/` are untouched and still what the reel/carousel
+  pipelines use (`carousel_pipeline.py`, the daily-reel/carousel-post
+  workflows) — don't repoint those to the WebP copies, they're shop-only.
+  A viewer who recognizes a room from a video can still find it here.
 - `rel="sponsored"` on every hotspot link (dot and text-list version alike),
   and a disclosure line in the footer — required by Google/FTC guidance for
   affiliate links, not optional styling.

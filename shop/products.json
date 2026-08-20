@@ -1,7 +1,7 @@
 [
   {
     "id": "c01",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c01_kit_modlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c01_kit_modlux_app.webp",
     "room": "Kitchen",
     "style": "Modern Luxe",
     "hotspots": [
@@ -52,7 +52,7 @@
   },
   {
     "id": "c02",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c02_kit_scandi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c02_kit_scandi_app.webp",
     "room": "Kitchen",
     "style": "Scandinavian",
     "hotspots": [
@@ -103,7 +103,7 @@
   },
   {
     "id": "c03",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c03_kit_indloft_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c03_kit_indloft_app.webp",
     "room": "Kitchen",
     "style": "Industrial Loft",
     "hotspots": [
@@ -176,7 +176,7 @@
   },
   {
     "id": "c04",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c04_kit_mtnlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c04_kit_mtnlux_app.webp",
     "room": "Kitchen",
     "style": "Mountain Luxe",
     "hotspots": [
@@ -227,7 +227,7 @@
   },
   {
     "id": "c05",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c05_kit_brut_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c05_kit_brut_app.webp",
     "room": "Kitchen",
     "style": "Brutalist",
     "hotspots": [
@@ -279,7 +279,7 @@
   },
   {
     "id": "c06",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c06_bath_japandi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c06_bath_japandi_app.webp",
     "room": "Bathroom",
     "style": "Japandi",
     "hotspots": [
@@ -331,7 +331,7 @@
   },
   {
     "id": "c07",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c07_bath_medit_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c07_bath_medit_app.webp",
     "room": "Bathroom",
     "style": "Mediterranean",
     "hotspots": [
@@ -394,7 +394,7 @@
   },
   {
     "id": "c08",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c08_bath_orgmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c08_bath_orgmod_app.webp",
     "room": "Bathroom",
     "style": "Organic Modern",
     "hotspots": [
@@ -468,7 +468,7 @@
   },
   {
     "id": "c09",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c09_bath_mcm_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c09_bath_mcm_app.webp",
     "room": "Bathroom",
     "style": "Mid-Century Modern",
     "hotspots": [
@@ -520,7 +520,7 @@
   },
   {
     "id": "c10",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c10_bath_wabi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c10_bath_wabi_app.webp",
     "room": "Bathroom",
     "style": "Wabi-Sabi",
     "hotspots": [
@@ -572,7 +572,7 @@
   },
   {
     "id": "c11",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c11_pow_scandi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c11_pow_scandi_app.webp",
     "room": "Powder Room",
     "style": "Scandinavian",
     "hotspots": [
@@ -624,7 +624,7 @@
   },
   {
     "id": "c12",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c12_pow_artdeco_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c12_pow_artdeco_app.webp",
     "room": "Powder Room",
     "style": "Art Deco",
     "hotspots": [
@@ -676,7 +676,7 @@
   },
   {
     "id": "c13",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c13_pow_coastal_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c13_pow_coastal_app.webp",
     "room": "Powder Room",
     "style": "Coastal",
     "hotspots": [
@@ -728,7 +728,7 @@
   },
   {
     "id": "c14",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c14_pow_french_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c14_pow_french_app.webp",
     "room": "Powder Room",
     "style": "French Country",
     "hotspots": [
@@ -780,7 +780,7 @@
   },
   {
     "id": "c15",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c15_pow_tropmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c15_pow_tropmod_app.webp",
     "room": "Powder Room",
     "style": "Tropical Modern",
     "hotspots": [
@@ -832,7 +832,7 @@
   },
   {
     "id": "c16",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c16_liv_medit_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c16_liv_medit_app.webp",
     "room": "Living Room",
     "style": "Mediterranean",
     "hotspots": [
@@ -884,7 +884,7 @@
   },
   {
     "id": "c17",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c17_liv_indloft_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c17_liv_indloft_app.webp",
     "room": "Living Room",
     "style": "Industrial Loft",
     "hotspots": [
@@ -936,7 +936,7 @@
   },
   {
     "id": "c18",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c18_liv_mtnlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c18_liv_mtnlux_app.webp",
     "room": "Living Room",
     "style": "Mountain Luxe",
     "hotspots": [
@@ -988,7 +988,7 @@
   },
   {
     "id": "c19",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c19_liv_orgmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c19_liv_orgmod_app.webp",
     "room": "Living Room",
     "style": "Organic Modern",
     "hotspots": [
@@ -1040,7 +1040,7 @@
   },
   {
     "id": "c20",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c20_liv_manor_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c20_liv_manor_app.webp",
     "room": "Living Room",
     "style": "Manor",
     "hotspots": [
@@ -1092,7 +1092,7 @@
   },
   {
     "id": "c21",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c21_bed_artdeco_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c21_bed_artdeco_app.webp",
     "room": "Bedroom",
     "style": "Art Deco",
     "hotspots": [
@@ -1144,7 +1144,7 @@
   },
   {
     "id": "c22",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c22_bed_orgmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c22_bed_orgmod_app.webp",
     "room": "Bedroom",
     "style": "Organic Modern",
     "hotspots": [
@@ -1196,7 +1196,7 @@
   },
   {
     "id": "c23",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c23_bed_mcm_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c23_bed_mcm_app.webp",
     "room": "Bedroom",
     "style": "Mid-Century Modern",
     "hotspots": [
@@ -1248,7 +1248,7 @@
   },
   {
     "id": "c24",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c24_bed_wabi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c24_bed_wabi_app.webp",
     "room": "Bedroom",
     "style": "Wabi-Sabi",
     "hotspots": [
@@ -1300,7 +1300,7 @@
   },
   {
     "id": "c25",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c25_bed_modlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c25_bed_modlux_app.webp",
     "room": "Bedroom",
     "style": "Modern Luxe",
     "hotspots": [
@@ -1352,7 +1352,7 @@
   },
   {
     "id": "c26",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c26_off_indloft_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c26_off_indloft_app.webp",
     "room": "Home Office",
     "style": "Industrial Loft",
     "hotspots": [
@@ -1404,7 +1404,7 @@
   },
   {
     "id": "c27",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c27_off_coastal_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c27_off_coastal_app.webp",
     "room": "Home Office",
     "style": "Coastal",
     "hotspots": [
@@ -1456,7 +1456,7 @@
   },
   {
     "id": "c28",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c28_off_french_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c28_off_french_app.webp",
     "room": "Home Office",
     "style": "French Country",
     "hotspots": [
@@ -1508,7 +1508,7 @@
   },
   {
     "id": "c29",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c29_off_tropmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c29_off_tropmod_app.webp",
     "room": "Home Office",
     "style": "Tropical Modern",
     "hotspots": [
@@ -1560,7 +1560,7 @@
   },
   {
     "id": "c30",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c30_off_japandi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c30_off_japandi_app.webp",
     "room": "Home Office",
     "style": "Japandi",
     "hotspots": [
@@ -1612,7 +1612,7 @@
   },
   {
     "id": "c31",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c31_clo_medit_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c31_clo_medit_app.webp",
     "room": "Closet",
     "style": "Mediterranean",
     "hotspots": [
@@ -1664,7 +1664,7 @@
   },
   {
     "id": "c32",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c32_clo_mtnlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c32_clo_mtnlux_app.webp",
     "room": "Closet",
     "style": "Mountain Luxe",
     "hotspots": [
@@ -1716,7 +1716,7 @@
   },
   {
     "id": "c33",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c33_clo_mcm_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c33_clo_mcm_app.webp",
     "room": "Closet",
     "style": "Mid-Century Modern",
     "hotspots": [
@@ -1768,7 +1768,7 @@
   },
   {
     "id": "c34",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c34_clo_manor_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c34_clo_manor_app.webp",
     "room": "Closet",
     "style": "Manor",
     "hotspots": [
@@ -1820,7 +1820,7 @@
   },
   {
     "id": "c35",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c35_clo_indloft_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c35_clo_indloft_app.webp",
     "room": "Closet",
     "style": "Industrial Loft",
     "hotspots": [
@@ -1861,7 +1861,7 @@
   },
   {
     "id": "c36",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c36_din_mtnlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c36_din_mtnlux_app.webp",
     "room": "Dining Room",
     "style": "Mountain Luxe",
     "hotspots": [
@@ -1913,7 +1913,7 @@
   },
   {
     "id": "c37",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c37_din_mcm_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c37_din_mcm_app.webp",
     "room": "Dining Room",
     "style": "Mid-Century Modern",
     "hotspots": [
@@ -1965,7 +1965,7 @@
   },
   {
     "id": "c38",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c38_din_manor_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c38_din_manor_app.webp",
     "room": "Dining Room",
     "style": "Manor",
     "hotspots": [
@@ -2017,7 +2017,7 @@
   },
   {
     "id": "c39",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c39_din_modlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c39_din_modlux_app.webp",
     "room": "Dining Room",
     "style": "Modern Luxe",
     "hotspots": [
@@ -2069,7 +2069,7 @@
   },
   {
     "id": "c40",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c40_din_medit_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c40_din_medit_app.webp",
     "room": "Dining Room",
     "style": "Mediterranean",
     "hotspots": [
@@ -2121,7 +2121,7 @@
   },
   {
     "id": "c41",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c41_ent_mtnlux_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c41_ent_mtnlux_app.webp",
     "room": "Entryway",
     "style": "Mountain Luxe",
     "hotspots": [
@@ -2173,7 +2173,7 @@
   },
   {
     "id": "c42",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c42_ent_medit_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c42_ent_medit_app.webp",
     "room": "Entryway",
     "style": "Mediterranean",
     "hotspots": [
@@ -2225,7 +2225,7 @@
   },
   {
     "id": "c43",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c43_ent_mcm_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c43_ent_mcm_app.webp",
     "room": "Entryway",
     "style": "Mid-Century Modern",
     "hotspots": [
@@ -2277,7 +2277,7 @@
   },
   {
     "id": "c44",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c44_ent_japandi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c44_ent_japandi_app.webp",
     "room": "Entryway",
     "style": "Japandi",
     "hotspots": [
@@ -2329,7 +2329,7 @@
   },
   {
     "id": "c45",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c45_ent_manor_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c45_ent_manor_app.webp",
     "room": "Entryway",
     "style": "Manor",
     "hotspots": [
@@ -2381,7 +2381,7 @@
   },
   {
     "id": "c46",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c46_bar_wabi_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c46_bar_wabi_app.webp",
     "room": "Bar",
     "style": "Wabi-Sabi",
     "hotspots": [
@@ -2433,7 +2433,7 @@
   },
   {
     "id": "c47",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c47_bar_artdeco_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c47_bar_artdeco_app.webp",
     "room": "Bar",
     "style": "Art Deco",
     "hotspots": [
@@ -2485,7 +2485,7 @@
   },
   {
     "id": "c48",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c48_bar_coastal_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c48_bar_coastal_app.webp",
     "room": "Bar",
     "style": "Coastal",
     "hotspots": [
@@ -2537,7 +2537,7 @@
   },
   {
     "id": "c49",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c49_bar_french_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c49_bar_french_app.webp",
     "room": "Bar",
     "style": "French Country",
     "hotspots": [
@@ -2589,7 +2589,7 @@
   },
   {
     "id": "c50",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/c50_bar_tropmod_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/c50_bar_tropmod_app.webp",
     "room": "Bar",
     "style": "Tropical Modern",
     "hotspots": [
@@ -2641,7 +2641,7 @@
   },
   {
     "id": "d01",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d01_lib_oxblood_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d01_lib_oxblood_app.webp",
     "room": "Library",
     "style": "Oxblood",
     "hotspots": [
@@ -2693,7 +2693,7 @@
   },
   {
     "id": "d02",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d02_dine_olive_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d02_dine_olive_app.webp",
     "room": "Dining Room",
     "style": "Olive",
     "hotspots": [
@@ -2745,7 +2745,7 @@
   },
   {
     "id": "d03",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d03_suite_plum_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d03_suite_plum_app.webp",
     "room": "Primary Suite",
     "style": "Plum",
     "hotspots": [
@@ -2797,7 +2797,7 @@
   },
   {
     "id": "d04",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d04_kit_indigo_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d04_kit_indigo_app.webp",
     "room": "Kitchen",
     "style": "Indigo",
     "hotspots": [
@@ -2859,7 +2859,7 @@
   },
   {
     "id": "d05",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d05_bath_teal_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d05_bath_teal_app.webp",
     "room": "Bathroom",
     "style": "Teal",
     "hotspots": [
@@ -2911,7 +2911,7 @@
   },
   {
     "id": "d06",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d06_foyer_cobalt_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d06_foyer_cobalt_app.webp",
     "room": "Foyer",
     "style": "Cobalt",
     "hotspots": [
@@ -2963,7 +2963,7 @@
   },
   {
     "id": "d07",
-    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application/d07_liv_petrol_app.png",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/d07_liv_petrol_app.webp",
     "room": "Living Room",
     "style": "Petrol",
     "hotspots": [
