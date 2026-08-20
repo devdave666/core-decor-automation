@@ -1497,8 +1497,8 @@
     "hotspots": [
       {
         "id": "c31-h1",
-        "x": 83,
-        "y": 58,
+        "x": 81,
+        "y": 42,
         "label": "Wall Mirror",
         "productName": null,
         "productUrl": null,
@@ -1507,8 +1507,8 @@
       },
       {
         "id": "c31-h2",
-        "x": 18,
-        "y": 37,
+        "x": 19,
+        "y": 30,
         "label": "Designer Handbag",
         "productName": null,
         "productUrl": null,
@@ -1517,8 +1517,8 @@
       },
       {
         "id": "c31-h3",
-        "x": 87,
-        "y": 70,
+        "x": 79,
+        "y": 55,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1527,8 +1527,8 @@
       },
       {
         "id": "c31-h4",
-        "x": 66,
-        "y": 53,
+        "x": 63,
+        "y": 41,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1545,8 +1545,8 @@
     "hotspots": [
       {
         "id": "c32-h1",
-        "x": 25,
-        "y": 72,
+        "x": 24,
+        "y": 37,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -1555,8 +1555,8 @@
       },
       {
         "id": "c32-h2",
-        "x": 83,
-        "y": 95,
+        "x": 79,
+        "y": 50,
         "label": "Leather Briefcase",
         "productName": null,
         "productUrl": null,
@@ -1565,7 +1565,7 @@
       },
       {
         "id": "c32-h3",
-        "x": 50,
+        "x": 60,
         "y": 60,
         "label": "Wood Dresser",
         "productName": null,
@@ -1594,7 +1594,7 @@
       {
         "id": "c33-h1",
         "x": 28,
-        "y": 59,
+        "y": 68,
         "label": "Throw Pillow",
         "productName": null,
         "productUrl": null,
@@ -1604,7 +1604,7 @@
       {
         "id": "c33-h2",
         "x": 38,
-        "y": 53,
+        "y": 56,
         "label": "Leather Tote Handbag",
         "productName": null,
         "productUrl": null,
@@ -1613,8 +1613,8 @@
       },
       {
         "id": "c33-h3",
-        "x": 54,
-        "y": 98,
+        "x": 53,
+        "y": 54,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -1623,8 +1623,8 @@
       },
       {
         "id": "c33-h4",
-        "x": 54,
-        "y": 82,
+        "x": 52,
+        "y": 42,
         "label": "Wall Sconce",
         "productName": null,
         "productUrl": null,
@@ -2016,7 +2016,7 @@
       {
         "id": "c42-h1",
         "x": 50,
-        "y": 18,
+        "y": 15,
         "label": "Lantern Pendant",
         "productName": null,
         "productUrl": null,
@@ -2026,7 +2026,7 @@
       {
         "id": "c42-h2",
         "x": 50,
-        "y": 75,
+        "y": 61,
         "label": "Wood Console Table",
         "productName": null,
         "productUrl": null,
@@ -2035,8 +2035,8 @@
       },
       {
         "id": "c42-h3",
-        "x": 53,
-        "y": 58,
+        "x": 52,
+        "y": 44,
         "label": "Framed Wall Art",
         "productName": null,
         "productUrl": null,
@@ -2046,7 +2046,7 @@
       {
         "id": "c42-h4",
         "x": 50,
-        "y": 98,
+        "y": 74,
         "label": "Area Rug",
         "productName": null,
         "productUrl": null,
@@ -2074,7 +2074,7 @@
       {
         "id": "c43-h2",
         "x": 50,
-        "y": 80,
+        "y": 60,
         "label": "Wood Console Credenza",
         "productName": null,
         "productUrl": null,
@@ -2083,8 +2083,8 @@
       },
       {
         "id": "c43-h3",
-        "x": 35,
-        "y": 47,
+        "x": 50,
+        "y": 39,
         "label": "Framed Abstract Art",
         "productName": null,
         "productUrl": null,
@@ -2093,8 +2093,8 @@
       },
       {
         "id": "c43-h4",
-        "x": 86,
-        "y": 62,
+        "x": 70,
+        "y": 52,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -2122,7 +2122,7 @@
       {
         "id": "c44-h2",
         "x": 50,
-        "y": 78,
+        "y": 60,
         "label": "Wood Console Table",
         "productName": null,
         "productUrl": null,
@@ -2131,8 +2131,8 @@
       },
       {
         "id": "c44-h3",
-        "x": 57,
-        "y": 47,
+        "x": 54,
+        "y": 39,
         "label": "Framed Abstract Art",
         "productName": null,
         "productUrl": null,
@@ -2141,8 +2141,8 @@
       },
       {
         "id": "c44-h4",
-        "x": 83,
-        "y": 65,
+        "x": 75,
+        "y": 52,
         "label": "Ceramic Vase",
         "productName": null,
         "productUrl": null,
@@ -2400,7 +2400,7 @@
       {
         "id": "c50-h1",
         "x": 50,
-        "y": 33,
+        "y": 29,
         "label": "Pendant Light",
         "productName": null,
         "productUrl": null,
@@ -2409,8 +2409,8 @@
       },
       {
         "id": "c50-h2",
-        "x": 47,
-        "y": 70,
+        "x": 50,
+        "y": 57,
         "label": "Wine Glasses",
         "productName": null,
         "productUrl": null,
@@ -2419,8 +2419,8 @@
       },
       {
         "id": "c50-h3",
-        "x": 77,
-        "y": 65,
+        "x": 79,
+        "y": 55,
         "label": "Glass Decanter",
         "productName": null,
         "productUrl": null,
@@ -2429,8 +2429,8 @@
       },
       {
         "id": "c50-h4",
-        "x": 22,
-        "y": 70,
+        "x": 23,
+        "y": 55,
         "label": "Potted Plant",
         "productName": null,
         "productUrl": null,
