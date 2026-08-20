@@ -249,6 +249,13 @@
   border: 2px dashed var(--ink-dim);
 }
 
+/* Linked but via an auto-generated search link, not a hand-picked
+   SiteStripe URL -- dotted border flags it as a candidate to upgrade. */
+.editor-marker.is-auto {
+  background: rgba(201, 169, 106, 0.2);
+  border: 2px dotted var(--accent);
+}
+
 .editor-marker:active {
   cursor: grabbing;
 }
@@ -384,6 +391,12 @@
 .modal-btn-flow:disabled:hover {
   background: transparent;
   color: var(--accent);
+}
+
+.modal-btn-flow-alt {
+  border-style: dashed;
+  font-size: 12px;
+  opacity: 0.85;
 }
 
 @keyframes pulse-glow {

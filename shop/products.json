@@ -21,9 +21,10 @@
         "y": 71.98705179787964,
         "label": "Bar Stools",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+boucle+fabric+counter+stool+metal+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=1594b34c1cf7c4d77ffec1ace2565b6a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black boucle fabric counter stool metal legs"
+        "searchKeywords": "black boucle fabric counter stool metal legs",
+        "auto": true
       },
       {
         "id": "c01-h3",
@@ -31,9 +32,10 @@
         "y": 56.533063479812206,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+and+black+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=0bfc22b0f6fdc231fa9c73835511d94f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass and black gooseneck kitchen faucet"
+        "searchKeywords": "brass and black gooseneck kitchen faucet",
+        "auto": true
       },
       {
         "id": "c01-h4",
@@ -41,9 +43,10 @@
         "y": 39.80509489668518,
         "label": "Cabinet Pulls",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+bar+cabinet+pulls&linkCode=ll2&tag=dev0f7d00-20&linkId=a0eb432174c866c6e15daa5574895a10&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass bar cabinet pulls"
+        "searchKeywords": "brass bar cabinet pulls",
+        "auto": true
       }
     ]
   },
@@ -69,9 +72,10 @@
         "y": 68,
         "label": "Counter Stool",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=natural+wood+round+seat+backless+counter+stool&linkCode=ll2&tag=dev0f7d00-20&linkId=80524fa99eabd1bd33664aeb6b056bec&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "natural wood round seat backless counter stool"
+        "searchKeywords": "natural wood round seat backless counter stool",
+        "auto": true
       },
       {
         "id": "c02-h3",
@@ -79,9 +83,10 @@
         "y": 47.670563517845935,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+black+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=1ed27dcc20d9eb599c1836f4e5cc3c96&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte black gooseneck kitchen faucet"
+        "searchKeywords": "matte black gooseneck kitchen faucet",
+        "auto": true
       },
       {
         "id": "c02-h4",
@@ -89,9 +94,10 @@
         "y": 63.2907211904658,
         "label": "Cabinet Pulls",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+bar+cabinet+pulls&linkCode=ll2&tag=dev0f7d00-20&linkId=2e5eab83a001dd87d0931a73c89b9942&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass bar cabinet pulls"
+        "searchKeywords": "brass bar cabinet pulls",
+        "auto": true
       }
     ]
   },
@@ -117,9 +123,10 @@
         "y": 70.3807201458061,
         "label": "Bar Stools",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+seat+black+metal+frame+bar+stool&linkCode=ll2&tag=dev0f7d00-20&linkId=8e4f67b39068ec837e61cc01ad412074&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood seat black metal frame bar stool"
+        "searchKeywords": "wood seat black metal frame bar stool",
+        "auto": true
       },
       {
         "id": "c03-h3",
@@ -127,9 +134,10 @@
         "y": 54.59439058305197,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=deb3eedb8a81c1f7a1016cea9f27a74d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass gooseneck kitchen faucet"
+        "searchKeywords": "brass gooseneck kitchen faucet",
+        "auto": true
       },
       {
         "id": "c03-h4",
@@ -137,9 +145,10 @@
         "y": 50.0523597645763,
         "label": "Cutting Board",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=round+wood+cutting+board&linkCode=ll2&tag=dev0f7d00-20&linkId=c5f35aa81c5c1cff225e8a90098553cf&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "round wood cutting board"
+        "searchKeywords": "round wood cutting board",
+        "auto": true
       },
       {
         "id": "c03-h5",
@@ -147,9 +156,10 @@
         "y": 45.565718730951446,
         "label": "Multi Tier Over The Counter Rack",
         "productName": "Multi Tier Over The Counter Rack",
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=multi+tier+over+the+counter+rack&linkCode=ll2&tag=dev0f7d00-20&linkId=87fe5be903d6d170e1e79d2aca81a21e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "multi tier over the counter rack"
+        "searchKeywords": "multi tier over the counter rack",
+        "auto": true
       },
       {
         "id": "c03-h6",
@@ -157,9 +167,10 @@
         "y": 55.42525003372324,
         "label": "Fruit Basket",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=Fruit+Basket&linkCode=ll2&tag=dev0f7d00-20&linkId=2d42ee9aaa06f5140e499922ecd0aae4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "Fruit Basket"
+        "searchKeywords": "Fruit Basket",
+        "auto": true
       }
     ]
   },
@@ -185,9 +196,10 @@
         "y": 60.74275051801936,
         "label": "Plaid Bar Stools",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+and+white+plaid+upholstered+counter+stool&linkCode=ll2&tag=dev0f7d00-20&linkId=966d020827109073cbb8b234678feae3&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black and white plaid upholstered counter stool"
+        "searchKeywords": "black and white plaid upholstered counter stool",
+        "auto": true
       },
       {
         "id": "c04-h3",
@@ -195,9 +207,10 @@
         "y": 46.064234401354206,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=7506117c6d3a63fd0ecb175a17a2a06e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass gooseneck kitchen faucet"
+        "searchKeywords": "brass gooseneck kitchen faucet",
+        "auto": true
       },
       {
         "id": "c04-h4",
@@ -205,9 +218,10 @@
         "y": 50.0523597645763,
         "label": "Cutting Boards",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=round+wood+cutting+board+set&linkCode=ll2&tag=dev0f7d00-20&linkId=59cdd7c97ae23f8e728ea1aab54a6413&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "round wood cutting board set"
+        "searchKeywords": "round wood cutting board set",
+        "auto": true
       }
     ]
   },
@@ -223,9 +237,10 @@
         "y": 65.727907222047,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=a99dde81437eaba3822fec0d6770432f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass gooseneck kitchen faucet"
+        "searchKeywords": "brass gooseneck kitchen faucet",
+        "auto": true
       },
       {
         "id": "c05-h2",
@@ -233,9 +248,10 @@
         "y": 76.41830051107186,
         "label": "Bar Stools",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+leather+counter+stool&linkCode=ll2&tag=dev0f7d00-20&linkId=62c577985e2fdac126a2f7eda4745f6b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black leather counter stool"
+        "searchKeywords": "black leather counter stool",
+        "auto": true
       },
       {
         "id": "c05-h3",
@@ -243,9 +259,10 @@
         "y": 62.01673585424259,
         "label": "Crystal Geode Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=amethyst+crystal+geode+decor+piece&linkCode=ll2&tag=dev0f7d00-20&linkId=2abef40fd1dcf1c4d0ab68c485b6fd45&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "amethyst crystal geode decor piece"
+        "searchKeywords": "amethyst crystal geode decor piece",
+        "auto": true
       },
       {
         "id": "c05-h4",
@@ -253,9 +270,10 @@
         "y": 65.45095576221111,
         "label": "Cabinet Pulls",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+black+bar+cabinet+pulls&linkCode=ll2&tag=dev0f7d00-20&linkId=5f1dc04c210a9dd31056fa4f6fd4d635&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte black bar cabinet pulls"
+        "searchKeywords": "matte black bar cabinet pulls",
+        "auto": true
       }
     ]
   },
@@ -271,9 +289,10 @@
         "y": 32.88126529589733,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=pleated+fabric+drum+pendant+light+set+of+2+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=d58a510b9d68c37cfda3d19e9fcf0d95&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "pleated fabric drum pendant light set of 2 brass"
+        "searchKeywords": "pleated fabric drum pendant light set of 2 brass",
+        "auto": true
       },
       {
         "id": "c06-h2",
@@ -281,9 +300,10 @@
         "y": 50.27392143956136,
         "label": "Wall-Mount Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+black+wall+mount+bathroom+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=d2d187a4b676414426918985052d00ec&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte black wall mount bathroom faucet"
+        "searchKeywords": "matte black wall mount bathroom faucet",
+        "auto": true
       },
       {
         "id": "c06-h3",
@@ -291,9 +311,10 @@
         "y": 51.38173488565033,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase+with+pampas+grass&linkCode=ll2&tag=dev0f7d00-20&linkId=0965ce25013a460986a673a1db1ca367&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase with pampas grass"
+        "searchKeywords": "ceramic vase with pampas grass",
+        "auto": true
       },
       {
         "id": "c06-h4",
@@ -301,9 +322,10 @@
         "y": 53.87431323766414,
         "label": "Bath Towels",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=folded+cotton+bath+towels+set&linkCode=ll2&tag=dev0f7d00-20&linkId=87bfec59bde9c80ff75b901f7e3a938c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "folded cotton bath towels set"
+        "searchKeywords": "folded cotton bath towels set",
+        "auto": true
       }
     ]
   },
@@ -319,9 +341,10 @@
         "y": 34,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+scallop+shell+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=90c15ae17c9228da0d5f985209f94dfd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass scallop shell wall sconce"
+        "searchKeywords": "brass scallop shell wall sconce",
+        "auto": true
       },
       {
         "id": "c07-h2",
@@ -329,9 +352,10 @@
         "y": 47,
         "label": "Wall Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+arched+frame+wall+mirror&linkCode=ll2&tag=dev0f7d00-20&linkId=49fb5cc16e33eb1dcbb35427ea8db79d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black arched frame wall mirror"
+        "searchKeywords": "black arched frame wall mirror",
+        "auto": true
       },
       {
         "id": "c07-h3",
@@ -339,9 +363,10 @@
         "y": 68.66361399519457,
         "label": "Soaking Tub",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=freestanding+mosaic+tile+skirt+bathtub&linkCode=ll2&tag=dev0f7d00-20&linkId=8b355720b1221490fbeea7fb202e84ad&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "freestanding mosaic tile skirt bathtub"
+        "searchKeywords": "freestanding mosaic tile skirt bathtub",
+        "auto": true
       },
       {
         "id": "c07-h4",
@@ -349,9 +374,10 @@
         "y": 58.360954271289,
         "label": "Bathroom Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+wall+mount+bathroom+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=92240ec690c4b2a1e643533f2f457f2d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass wall mount bathroom faucet"
+        "searchKeywords": "brass wall mount bathroom faucet",
+        "auto": true
       },
       {
         "id": "c07-h5",
@@ -359,9 +385,10 @@
         "y": 55.70220402914094,
         "label": "Flower Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=Flower+Vase&linkCode=ll2&tag=dev0f7d00-20&linkId=57647de94eb00b99e3f586b445e82abb&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "Flower Vase"
+        "searchKeywords": "Flower Vase",
+        "auto": true
       }
     ]
   },
@@ -377,9 +404,10 @@
         "y": 23,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+ceramic+organic+shape+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=b9f0215374a0c66e43724baa4647eadb&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte ceramic organic shape pendant light"
+        "searchKeywords": "matte ceramic organic shape pendant light",
+        "auto": true
       },
       {
         "id": "c08-h2",
@@ -387,9 +415,10 @@
         "y": 64.56470652668904,
         "label": "Bathroom Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+single+handle+bathroom+sink+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=507b101a359daedf93f0ad86d7f6a677&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass single handle bathroom sink faucet"
+        "searchKeywords": "brass single handle bathroom sink faucet",
+        "auto": true
       },
       {
         "id": "c08-h3",
@@ -397,9 +426,10 @@
         "y": 66.72494109843433,
         "label": "Amber Glass Bottles",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=amber+glass+soap+dispenser+bottle+set&linkCode=ll2&tag=dev0f7d00-20&linkId=7a72096fe99e65a4dc88427dc4c62b6f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "amber glass soap dispenser bottle set"
+        "searchKeywords": "amber glass soap dispenser bottle set",
+        "auto": true
       },
       {
         "id": "c08-h4",
@@ -407,9 +437,10 @@
         "y": 66.55876920830008,
         "label": "Crystal Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=quartz+crystal+cluster+decor&linkCode=ll2&tag=dev0f7d00-20&linkId=0fed6ae329dba2202f2ae324b3c228bb&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "quartz crystal cluster decor"
+        "searchKeywords": "quartz crystal cluster decor",
+        "auto": true
       },
       {
         "id": "c08-h5",
@@ -417,9 +448,10 @@
         "y": 61.93364990917546,
         "label": "Beige Bath Towel",
         "productName": "Beige Bath Towel",
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=Beige+Bath+Towel&linkCode=ll2&tag=dev0f7d00-20&linkId=80b877af43dbae8c1da1fa45fd37bc73&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "Beige Bath Towel"
+        "searchKeywords": "Beige Bath Towel",
+        "auto": true
       },
       {
         "id": "c08-h6",
@@ -427,9 +459,10 @@
         "y": 60.85353262330281,
         "label": "Beige Flower Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=Beige+Flower+Vase&linkCode=ll2&tag=dev0f7d00-20&linkId=97d3f9c4ee5d76fc1795199c84dd3199&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "Beige Flower Vase"
+        "searchKeywords": "Beige Flower Vase",
+        "auto": true
       }
     ]
   },
@@ -445,9 +478,10 @@
         "y": 42.076107770341196,
         "label": "Backlit Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=round+backlit+LED+bathroom+mirror+gold+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=81aa6fc6f8a08a0f4f5033a1d9aff44c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "round backlit LED bathroom mirror gold frame"
+        "searchKeywords": "round backlit LED bathroom mirror gold frame",
+        "auto": true
       },
       {
         "id": "c09-h2",
@@ -455,9 +489,10 @@
         "y": 50,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+cylinder+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=1e2e266c718e5967fac4d06a8fa031b2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black cylinder wall sconce"
+        "searchKeywords": "black cylinder wall sconce",
+        "auto": true
       },
       {
         "id": "c09-h3",
@@ -465,9 +500,10 @@
         "y": 65.06321966150998,
         "label": "Boucle Vanity Cabinet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=olive+green+boucle+upholstered+cabinet&linkCode=ll2&tag=dev0f7d00-20&linkId=812429f9e850f5f2a57317c5a49beab2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "olive green boucle upholstered cabinet"
+        "searchKeywords": "olive green boucle upholstered cabinet",
+        "auto": true
       },
       {
         "id": "c09-h4",
@@ -475,9 +511,10 @@
         "y": 54.31743658763427,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=terracotta+vase+with+eucalyptus&linkCode=ll2&tag=dev0f7d00-20&linkId=191ce185e2bb3103cff8474cff6944f9&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "terracotta vase with eucalyptus"
+        "searchKeywords": "terracotta vase with eucalyptus",
+        "auto": true
       }
     ]
   },
@@ -493,9 +530,10 @@
         "y": 42,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+cylinder+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=21f95c779742f6e5a793616067a75cac&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black cylinder wall sconce"
+        "searchKeywords": "black cylinder wall sconce",
+        "auto": true
       },
       {
         "id": "c10-h2",
@@ -503,9 +541,10 @@
         "y": 57.696266710751985,
         "label": "Bathroom Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+black+wall+mount+bathroom+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=7dc790f1696060e29c383efdafaf1074&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte black wall mount bathroom faucet"
+        "searchKeywords": "matte black wall mount bathroom faucet",
+        "auto": true
       },
       {
         "id": "c10-h3",
@@ -513,9 +552,10 @@
         "y": 55.923765704126005,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=grey+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=bd195da9e21ef576949275fd87e7edc6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "grey ceramic vase"
+        "searchKeywords": "grey ceramic vase",
+        "auto": true
       },
       {
         "id": "c10-h4",
@@ -523,9 +563,10 @@
         "y": 57.696266710751985,
         "label": "Folded Towels",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=folded+white+bath+towels&linkCode=ll2&tag=dev0f7d00-20&linkId=480e9806e72d11ad8c6b3223db7628e4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "folded white bath towels"
+        "searchKeywords": "folded white bath towels",
+        "auto": true
       }
     ]
   },
@@ -541,9 +582,10 @@
         "y": 42,
         "label": "Wall Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+rounded+rectangle+mirror+brass+towel+ring&linkCode=ll2&tag=dev0f7d00-20&linkId=cfc71ca3c28ff25fea8df657dc93487f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black rounded rectangle mirror brass towel ring"
+        "searchKeywords": "black rounded rectangle mirror brass towel ring",
+        "auto": true
       },
       {
         "id": "c11-h2",
@@ -551,9 +593,10 @@
         "y": 36.75860728604507,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+cylindrical+wall+sconce+brass+base&linkCode=ll2&tag=dev0f7d00-20&linkId=d86351a51308283ec255db211284780d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black cylindrical wall sconce brass base"
+        "searchKeywords": "black cylindrical wall sconce brass base",
+        "auto": true
       },
       {
         "id": "c11-h3",
@@ -561,9 +604,10 @@
         "y": 54.15126723308183,
         "label": "Amber Glass Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=amber+glass+vase+with+greenery&linkCode=ll2&tag=dev0f7d00-20&linkId=cefad19d2e4009a9de30926d35821c51&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "amber glass vase with greenery"
+        "searchKeywords": "amber glass vase with greenery",
+        "auto": true
       },
       {
         "id": "c11-h4",
@@ -571,9 +615,10 @@
         "y": 54.98212668375311,
         "label": "Pillar Candle",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=vanity+pillar+candle&linkCode=ll2&tag=dev0f7d00-20&linkId=09d8b1363a8fe1afb883463db5d87e34&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "vanity pillar candle"
+        "searchKeywords": "vanity pillar candle",
+        "auto": true
       }
     ]
   },
@@ -589,9 +634,10 @@
         "y": 92,
         "label": "Cabinet Pulls",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=fluted+brass+cabinet+pulls+art+deco&linkCode=ll2&tag=dev0f7d00-20&linkId=5a3b7c0b5ba86ab2732716cd81b13032&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "fluted brass cabinet pulls art deco"
+        "searchKeywords": "fluted brass cabinet pulls art deco",
+        "auto": true
       },
       {
         "id": "c12-h2",
@@ -599,9 +645,10 @@
         "y": 46.45196923426443,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+fluted+tube+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=823342b472f3f69dc5c356eef0c4f47b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass fluted tube wall sconce"
+        "searchKeywords": "brass fluted tube wall sconce",
+        "auto": true
       },
       {
         "id": "c12-h3",
@@ -609,9 +656,10 @@
         "y": 47.11665806259236,
         "label": "Brass Obelisk Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+obelisk+sculpture+decor&linkCode=ll2&tag=dev0f7d00-20&linkId=727e695ff8cd90a4fbe13917dfacdabe&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass obelisk sculpture decor"
+        "searchKeywords": "brass obelisk sculpture decor",
+        "auto": true
       },
       {
         "id": "c12-h4",
@@ -619,9 +667,10 @@
         "y": 46.28579861192109,
         "label": "Vanity Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+cross+handle+bathroom+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=47f1a654056e933f6daf93ba2fb03450&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass cross handle bathroom faucet"
+        "searchKeywords": "brass cross handle bathroom faucet",
+        "auto": true
       }
     ]
   },
@@ -637,9 +686,10 @@
         "y": 16.37485585217355,
         "label": "Lighted Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+arched+bathroom+mirror+with+light&linkCode=ll2&tag=dev0f7d00-20&linkId=d718176d20710dbee64b3390f0096bdd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass arched bathroom mirror with light"
+        "searchKeywords": "brass arched bathroom mirror with light",
+        "auto": true
       },
       {
         "id": "c13-h2",
@@ -647,9 +697,10 @@
         "y": 63.95540875100282,
         "label": "Driftwood Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=natural+driftwood+decor+piece&linkCode=ll2&tag=dev0f7d00-20&linkId=fa8e7e220694c74198c6c597107b4318&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "natural driftwood decor piece"
+        "searchKeywords": "natural driftwood decor piece",
+        "auto": true
       },
       {
         "id": "c13-h3",
@@ -657,9 +708,10 @@
         "y": 58.36095300349808,
         "label": "Glass Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+bud+vase+with+flowers&linkCode=ll2&tag=dev0f7d00-20&linkId=8092ff6fe5ae2cf2908f02fd1f210c6b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass bud vase with flowers"
+        "searchKeywords": "glass bud vase with flowers",
+        "auto": true
       },
       {
         "id": "c13-h4",
@@ -667,9 +719,10 @@
         "y": 37.035562549253676,
         "label": "Towel Ring",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+towel+ring&linkCode=ll2&tag=dev0f7d00-20&linkId=8075330dc6bee8eb8003c2b8b2d2f1da&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass towel ring"
+        "searchKeywords": "brass towel ring",
+        "auto": true
       }
     ]
   },
@@ -685,9 +738,10 @@
         "y": 42,
         "label": "Wall Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ornate+gold+baroque+wall+mirror&linkCode=ll2&tag=dev0f7d00-20&linkId=77b96bbb5c494ef50d5b064d2b7cca49&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ornate gold baroque wall mirror"
+        "searchKeywords": "ornate gold baroque wall mirror",
+        "auto": true
       },
       {
         "id": "c14-h2",
@@ -695,9 +749,10 @@
         "y": 40,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+fabric+shade+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=4d4825e5b9ffc0a97bd502d13156c504&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass fabric shade wall sconce"
+        "searchKeywords": "brass fabric shade wall sconce",
+        "auto": true
       },
       {
         "id": "c14-h3",
@@ -705,9 +760,10 @@
         "y": 53.59735924224645,
         "label": "Glass Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+vase+with+lavender+flowers&linkCode=ll2&tag=dev0f7d00-20&linkId=d157b31819b897fcabe478e470b0951f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass vase with lavender flowers"
+        "searchKeywords": "glass vase with lavender flowers",
+        "auto": true
       },
       {
         "id": "c14-h4",
@@ -715,9 +771,10 @@
         "y": 43.51626372890776,
         "label": "Towel Ring",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+towel+ring&linkCode=ll2&tag=dev0f7d00-20&linkId=db96ab27482d8fc87f1b1d2464350a8e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass towel ring"
+        "searchKeywords": "brass towel ring",
+        "auto": true
       }
     ]
   },
@@ -733,9 +790,10 @@
         "y": 46.17501650663765,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+dome+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=b6b27cd606e03248b15c882f3f7a56cd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black dome wall sconce"
+        "searchKeywords": "black dome wall sconce",
+        "auto": true
       },
       {
         "id": "c15-h2",
@@ -743,9 +801,10 @@
         "y": 38.25415429725336,
         "label": "Framed Wall Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+botanical+palm+print&linkCode=ll2&tag=dev0f7d00-20&linkId=e36b17ddaa2b658a686d0558fa040f8d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed botanical palm print"
+        "searchKeywords": "framed botanical palm print",
+        "auto": true
       },
       {
         "id": "c15-h3",
@@ -753,9 +812,10 @@
         "y": 40.69134413220726,
         "label": "Towel Ring",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+towel+ring&linkCode=ll2&tag=dev0f7d00-20&linkId=2dd285bae5c852e23a19c7c2cc9341aa&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass towel ring"
+        "searchKeywords": "brass towel ring",
+        "auto": true
       },
       {
         "id": "c15-h4",
@@ -763,9 +823,10 @@
         "y": 55.923765704126005,
         "label": "Bathroom Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+bathroom+sink+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=60a1091d916648ce2493466b02a74b5a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass bathroom sink faucet"
+        "searchKeywords": "brass bathroom sink faucet",
+        "auto": true
       }
     ]
   },
@@ -781,9 +842,10 @@
         "y": 53.32040524682875,
         "label": "Floor Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+arc+floor+lamp+black+drum+shade+marble+base&linkCode=ll2&tag=dev0f7d00-20&linkId=a04fec28448621ddc59c15abe152e97a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black arc floor lamp black drum shade marble base"
+        "searchKeywords": "black arc floor lamp black drum shade marble base",
+        "auto": true
       },
       {
         "id": "c16-h2",
@@ -791,9 +853,10 @@
         "y": 58,
         "label": "Slipcover Sofa",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=linen+slipcover+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=027548556831e25b2a68fa2307e67026&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "linen slipcover sofa"
+        "searchKeywords": "linen slipcover sofa",
+        "auto": true
       },
       {
         "id": "c16-h3",
@@ -801,9 +864,10 @@
         "y": 50.82783069818767,
         "label": "Ceramic Floor Urn",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=large+ceramic+floor+urn+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=da56f0e96f378fb9dcad686fc4d3c06b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "large ceramic floor urn vase"
+        "searchKeywords": "large ceramic floor urn vase",
+        "auto": true
       },
       {
         "id": "c16-h4",
@@ -811,9 +875,10 @@
         "y": 64.06618832070444,
         "label": "Wood Coffee Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=carved+wood+coffee+table&linkCode=ll2&tag=dev0f7d00-20&linkId=b3ae7b6c516d4cec1e40e774944cd4f9&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "carved wood coffee table"
+        "searchKeywords": "carved wood coffee table",
+        "auto": true
       }
     ]
   },
@@ -829,9 +894,10 @@
         "y": 40.46977928774492,
         "label": "Floor Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+articulating+swing+arm+floor+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=940a8e4efa39f33826b301d3469813b5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass articulating swing arm floor lamp"
+        "searchKeywords": "brass articulating swing arm floor lamp",
+        "auto": true
       },
       {
         "id": "c17-h2",
@@ -839,9 +905,10 @@
         "y": 65.94946889703205,
         "label": "Sectional Sofa",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=charcoal+grey+sectional+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=cfce7f0d88f137063453c80cb9fa8acb&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "charcoal grey sectional sofa"
+        "searchKeywords": "charcoal grey sectional sofa",
+        "auto": true
       },
       {
         "id": "c17-h3",
@@ -849,9 +916,10 @@
         "y": 49.99696744414367,
         "label": "Large Floor Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=large+ceramic+floor+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=6e816990f857dcb56d04b32855dca6c9&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "large ceramic floor vase"
+        "searchKeywords": "large ceramic floor vase",
+        "auto": true
       },
       {
         "id": "c17-h4",
@@ -859,9 +927,10 @@
         "y": 65,
         "label": "Coffee Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+and+metal+coffee+table&linkCode=ll2&tag=dev0f7d00-20&linkId=7387e86be2fba9273f43a5698999bced&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood and metal coffee table"
+        "searchKeywords": "wood and metal coffee table",
+        "auto": true
       }
     ]
   },
@@ -877,9 +946,10 @@
         "y": 23.298684185170497,
         "label": "Chandelier",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=antler+style+candle+chandelier&linkCode=ll2&tag=dev0f7d00-20&linkId=241d354a60336a588d2da38b11be33fd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "antler style candle chandelier"
+        "searchKeywords": "antler style candle chandelier",
+        "auto": true
       },
       {
         "id": "c18-h2",
@@ -887,9 +957,10 @@
         "y": 65.89408164776306,
         "label": "Plaid Sofa",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=plaid+upholstered+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=c50e3fdc5f012abff4737dcd8466d592&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "plaid upholstered sofa"
+        "searchKeywords": "plaid upholstered sofa",
+        "auto": true
       },
       {
         "id": "c18-h3",
@@ -897,9 +968,10 @@
         "y": 56.64384558509564,
         "label": "Table Lamps",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=white+drum+shade+table+lamp+set+of+2&linkCode=ll2&tag=dev0f7d00-20&linkId=5ae68a2be504066a83e4c507dd9188c6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "white drum shade table lamp set of 2"
+        "searchKeywords": "white drum shade table lamp set of 2",
+        "auto": true
       },
       {
         "id": "c18-h4",
@@ -907,9 +979,10 @@
         "y": 70.60228435637298,
         "label": "Wood Stool",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+accent+stool&linkCode=ll2&tag=dev0f7d00-20&linkId=bb20e3e314026d229f8fb0ead84e0db2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood accent stool"
+        "searchKeywords": "wood accent stool",
+        "auto": true
       }
     ]
   },
@@ -925,9 +998,10 @@
         "y": 66,
         "label": "Floor Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+mushroom+dome+floor+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=7dc994015b56ccb2b988472e0e2756e6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass mushroom dome floor lamp"
+        "searchKeywords": "brass mushroom dome floor lamp",
+        "auto": true
       },
       {
         "id": "c19-h2",
@@ -935,9 +1009,10 @@
         "y": 92,
         "label": "Boucle Sofa",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=white+boucle+upholstered+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=7647687812af92ca84b70e55fb126dfb&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "white boucle upholstered sofa"
+        "searchKeywords": "white boucle upholstered sofa",
+        "auto": true
       },
       {
         "id": "c19-h3",
@@ -945,9 +1020,10 @@
         "y": 61.51822018383982,
         "label": "Sculptural Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=organic+shape+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=acf1d47465bac8f4e56c34bb60df9a9c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "organic shape ceramic vase"
+        "searchKeywords": "organic shape ceramic vase",
+        "auto": true
       },
       {
         "id": "c19-h4",
@@ -955,9 +1031,10 @@
         "y": 70.82384603135804,
         "label": "Coffee Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+coffee+table+black+metal+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=573697eb9dc03cc375ed406f66065201&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood coffee table black metal frame"
+        "searchKeywords": "wood coffee table black metal frame",
+        "auto": true
       }
     ]
   },
@@ -973,9 +1050,10 @@
         "y": 40.248216978864406,
         "label": "Picture Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+swing+arm+picture+light&linkCode=ll2&tag=dev0f7d00-20&linkId=f4e19ac816b1798f190dd2c43c4918d2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass swing arm picture light"
+        "searchKeywords": "brass swing arm picture light",
+        "auto": true
       },
       {
         "id": "c20-h2",
@@ -983,9 +1061,10 @@
         "y": 95,
         "label": "Velvet Tufted Sofa",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=burgundy+velvet+tufted+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=0c9e24ca4af00abce158d4f3e671f1e1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "burgundy velvet tufted sofa"
+        "searchKeywords": "burgundy velvet tufted sofa",
+        "auto": true
       },
       {
         "id": "c20-h3",
@@ -993,9 +1072,10 @@
         "y": 55.868375919275195,
         "label": "Bronze Sculpture",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=bronze+figurine+sculpture&linkCode=ll2&tag=dev0f7d00-20&linkId=bc8b85333fb7679f744e963940a8444b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "bronze figurine sculpture"
+        "searchKeywords": "bronze figurine sculpture",
+        "auto": true
       },
       {
         "id": "c20-h4",
@@ -1003,9 +1083,10 @@
         "y": 73.87032983862542,
         "label": "Wood Side Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=antique+wood+side+table&linkCode=ll2&tag=dev0f7d00-20&linkId=adb80e2af316ab2a03e07d3fba445f4c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "antique wood side table"
+        "searchKeywords": "antique wood side table",
+        "auto": true
       }
     ]
   },
@@ -1021,9 +1102,10 @@
         "y": 73,
         "label": "Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=emerald+green+velvet+channel+tufted+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=627c92d3ce617040054f6818ef3cec14&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "emerald green velvet channel tufted bed frame"
+        "searchKeywords": "emerald green velvet channel tufted bed frame",
+        "auto": true
       },
       {
         "id": "c21-h2",
@@ -1031,9 +1113,10 @@
         "y": 58,
         "label": "Table Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+table+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=6112f80359023a78ef8b6526e11fe898&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome table lamp"
+        "searchKeywords": "chrome table lamp",
+        "auto": true
       },
       {
         "id": "c21-h3",
@@ -1041,9 +1124,10 @@
         "y": 59,
         "label": "Throw Pillow",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=green+velvet+throw+pillow+set&linkCode=ll2&tag=dev0f7d00-20&linkId=e8aa10d81eb5b4b06004ee23005f249f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "green velvet throw pillow set"
+        "searchKeywords": "green velvet throw pillow set",
+        "auto": true
       },
       {
         "id": "c21-h4",
@@ -1051,9 +1135,10 @@
         "y": 67,
         "label": "Marble Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=dark+marble+gold+trim+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=5e85531e9795c7338039b5eefcba1d35&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "dark marble gold trim nightstand"
+        "searchKeywords": "dark marble gold trim nightstand",
+        "auto": true
       }
     ]
   },
@@ -1069,9 +1154,10 @@
         "y": 45,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=small+brass+mini+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=deba7cb806cb3d441933470e81aff127&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "small brass mini pendant light"
+        "searchKeywords": "small brass mini pendant light",
+        "auto": true
       },
       {
         "id": "c22-h2",
@@ -1079,9 +1165,10 @@
         "y": 70,
         "label": "Platform Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=curved+travertine+plinth+platform+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=de1669cbeea9c0bb16216d104aa1465c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "curved travertine plinth platform bed frame"
+        "searchKeywords": "curved travertine plinth platform bed frame",
+        "auto": true
       },
       {
         "id": "c22-h3",
@@ -1089,9 +1176,10 @@
         "y": 60,
         "label": "Floating Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=travertine+stone+floating+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=da006354dc678091d14cc6347191caed&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "travertine stone floating nightstand"
+        "searchKeywords": "travertine stone floating nightstand",
+        "auto": true
       },
       {
         "id": "c22-h4",
@@ -1099,9 +1187,10 @@
         "y": 39,
         "label": "Decorative Sculpture",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=woven+ball+decorative+sculpture&linkCode=ll2&tag=dev0f7d00-20&linkId=0261d3c614ece97229ba96035722087d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "woven ball decorative sculpture"
+        "searchKeywords": "woven ball decorative sculpture",
+        "auto": true
       }
     ]
   },
@@ -1117,9 +1206,10 @@
         "y": 36,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+linear+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=5e2e9b2b894afe09f997c5ef5d0feab5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass linear wall sconce"
+        "searchKeywords": "brass linear wall sconce",
+        "auto": true
       },
       {
         "id": "c23-h2",
@@ -1127,9 +1217,10 @@
         "y": 68,
         "label": "Boucle Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=mustard+yellow+boucle+upholstered+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=898716d601e3835a788f6e222b17f2f9&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "mustard yellow boucle upholstered bed frame"
+        "searchKeywords": "mustard yellow boucle upholstered bed frame",
+        "auto": true
       },
       {
         "id": "c23-h3",
@@ -1137,9 +1228,10 @@
         "y": 53,
         "label": "Ceramic Sculpture",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=abstract+white+ceramic+sculpture&linkCode=ll2&tag=dev0f7d00-20&linkId=762df215136b5ad4646d2d4bb8baefc2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "abstract white ceramic sculpture"
+        "searchKeywords": "abstract white ceramic sculpture",
+        "auto": true
       },
       {
         "id": "c23-h4",
@@ -1147,9 +1239,10 @@
         "y": 58,
         "label": "Wood Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=mid+century+wood+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=9bbe1aa5df6be62155738e7d3551d43a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "mid century wood nightstand"
+        "searchKeywords": "mid century wood nightstand",
+        "auto": true
       }
     ]
   },
@@ -1165,9 +1258,10 @@
         "y": 49,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+dome+swing+arm+wall+sconce+set+of+2&linkCode=ll2&tag=dev0f7d00-20&linkId=e922aaafaf57e94cac2784d24ff07a8b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass dome swing arm wall sconce set of 2"
+        "searchKeywords": "brass dome swing arm wall sconce set of 2",
+        "auto": true
       },
       {
         "id": "c24-h2",
@@ -1175,9 +1269,10 @@
         "y": 85,
         "label": "Upholstered Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=linen+upholstered+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=f3c13cebbf051e08ff18205466117e0b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "linen upholstered bed frame"
+        "searchKeywords": "linen upholstered bed frame",
+        "auto": true
       },
       {
         "id": "c24-h3",
@@ -1185,9 +1280,10 @@
         "y": 62,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase+with+greenery&linkCode=ll2&tag=dev0f7d00-20&linkId=5d0838e680f900c0d53cfa626e7080ff&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase with greenery"
+        "searchKeywords": "ceramic vase with greenery",
+        "auto": true
       },
       {
         "id": "c24-h4",
@@ -1195,9 +1291,10 @@
         "y": 68,
         "label": "Floating Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+floating+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=64342542e140f54a9b2e457349568ac3&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood floating nightstand"
+        "searchKeywords": "wood floating nightstand",
+        "auto": true
       }
     ]
   },
@@ -1213,9 +1310,10 @@
         "y": 53,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+dome+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=a1c392f14382055aa506a25301225bd1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass dome wall sconce"
+        "searchKeywords": "brass dome wall sconce",
+        "auto": true
       },
       {
         "id": "c25-h2",
@@ -1223,9 +1321,10 @@
         "y": 74,
         "label": "Platform Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=charcoal+grey+platform+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=ad24a266529d8f15d70afd02627a21b7&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "charcoal grey platform bed frame"
+        "searchKeywords": "charcoal grey platform bed frame",
+        "auto": true
       },
       {
         "id": "c25-h3",
@@ -1233,9 +1332,10 @@
         "y": 59,
         "label": "Floating Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+wood+floating+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=434a00fe1e22c52aa227146b0aeb38ff&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black wood floating nightstand"
+        "searchKeywords": "black wood floating nightstand",
+        "auto": true
       },
       {
         "id": "c25-h4",
@@ -1243,9 +1343,10 @@
         "y": 60,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=4f7150df323f126fd96184536cc673ab&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase"
+        "searchKeywords": "ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -1261,9 +1362,10 @@
         "y": 62,
         "label": "Desk",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=industrial+black+metal+frame+desk&linkCode=ll2&tag=dev0f7d00-20&linkId=74925698d527d04914d55447520c4611&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "industrial black metal frame desk"
+        "searchKeywords": "industrial black metal frame desk",
+        "auto": true
       },
       {
         "id": "c26-h2",
@@ -1271,9 +1373,10 @@
         "y": 67,
         "label": "Leather Office Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=cognac+tan+leather+tufted+office+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=baa6898134fabba7016b9ff21d7af5c1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "cognac tan leather tufted office chair"
+        "searchKeywords": "cognac tan leather tufted office chair",
+        "auto": true
       },
       {
         "id": "c26-h3",
@@ -1281,9 +1384,10 @@
         "y": 54,
         "label": "Brass Desk Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=2abbcc63fd366de5b4c0a61632abb71d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass desk lamp"
+        "searchKeywords": "brass desk lamp",
+        "auto": true
       },
       {
         "id": "c26-h4",
@@ -1291,9 +1395,10 @@
         "y": 58,
         "label": "Leather Storage Box",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=leather+storage+box&linkCode=ll2&tag=dev0f7d00-20&linkId=4ba9bdf0230b7dabb9c4b2ff58621803&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "leather storage box"
+        "searchKeywords": "leather storage box",
+        "auto": true
       }
     ]
   },
@@ -1309,9 +1414,10 @@
         "y": 47,
         "label": "Desk Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+adjustable+articulating+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=3a0cd7a421a111c98203c782714bd622&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass adjustable articulating desk lamp"
+        "searchKeywords": "brass adjustable articulating desk lamp",
+        "auto": true
       },
       {
         "id": "c27-h2",
@@ -1319,9 +1425,10 @@
         "y": 63,
         "label": "Upholstered Desk Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=linen+upholstered+desk+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=e8f63e951226183f5bbc269377df9031&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "linen upholstered desk chair"
+        "searchKeywords": "linen upholstered desk chair",
+        "auto": true
       },
       {
         "id": "c27-h3",
@@ -1329,9 +1436,10 @@
         "y": 25,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=blue+and+white+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=6043b0b5b5fb3634a5831b3e02aa8eb8&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "blue and white ceramic vase"
+        "searchKeywords": "blue and white ceramic vase",
+        "auto": true
       },
       {
         "id": "c27-h4",
@@ -1339,9 +1447,10 @@
         "y": 55,
         "label": "Driftwood Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=natural+driftwood+decor+piece&linkCode=ll2&tag=dev0f7d00-20&linkId=81b2ab45d558b17723b7eda6440ed68d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "natural driftwood decor piece"
+        "searchKeywords": "natural driftwood decor piece",
+        "auto": true
       }
     ]
   },
@@ -1357,9 +1466,10 @@
         "y": 56,
         "label": "Desk Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+articulating+swing+arm+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=e507b2e95c931f778a21d62824ab22cc&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome articulating swing arm desk lamp"
+        "searchKeywords": "chrome articulating swing arm desk lamp",
+        "auto": true
       },
       {
         "id": "c28-h2",
@@ -1367,9 +1477,10 @@
         "y": 83,
         "label": "Marble Top Desk",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=marble+top+writing+desk&linkCode=ll2&tag=dev0f7d00-20&linkId=41f62e1521692186d40924c54f8de18f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "marble top writing desk"
+        "searchKeywords": "marble top writing desk",
+        "auto": true
       },
       {
         "id": "c28-h3",
@@ -1377,9 +1488,10 @@
         "y": 72,
         "label": "Upholstered Desk Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=cream+upholstered+desk+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=bee8ca4721f23cf36b5497c4a8e0d657&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "cream upholstered desk chair"
+        "searchKeywords": "cream upholstered desk chair",
+        "auto": true
       },
       {
         "id": "c28-h4",
@@ -1387,9 +1499,10 @@
         "y": 77,
         "label": "Metal Pen Cup",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=silver+metal+desk+organizer+cup&linkCode=ll2&tag=dev0f7d00-20&linkId=a17691a8a1782b3a724258e1011ff7fd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "silver metal desk organizer cup"
+        "searchKeywords": "silver metal desk organizer cup",
+        "auto": true
       }
     ]
   },
@@ -1405,9 +1518,10 @@
         "y": 56,
         "label": "Desk Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+articulating+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=51e34451dd8a4c8c60af5eb923eab55b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black articulating desk lamp"
+        "searchKeywords": "black articulating desk lamp",
+        "auto": true
       },
       {
         "id": "c29-h2",
@@ -1415,9 +1529,10 @@
         "y": 65,
         "label": "Cane Wood Desk",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=rattan+cane+wood+desk&linkCode=ll2&tag=dev0f7d00-20&linkId=1160d4c28e7e63d82ddfbeef65a84091&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "rattan cane wood desk"
+        "searchKeywords": "rattan cane wood desk",
+        "auto": true
       },
       {
         "id": "c29-h3",
@@ -1425,9 +1540,10 @@
         "y": 70,
         "label": "Upholstered Desk Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=grey+upholstered+desk+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=6eeeadb29d478bfddf6c9d743a9a815c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "grey upholstered desk chair"
+        "searchKeywords": "grey upholstered desk chair",
+        "auto": true
       },
       {
         "id": "c29-h4",
@@ -1435,9 +1551,10 @@
         "y": 58,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=grey+stoneware+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=f1df1f9b915758b593b7d9aac6d73671&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "grey stoneware ceramic vase"
+        "searchKeywords": "grey stoneware ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -1453,9 +1570,10 @@
         "y": 48,
         "label": "Desk Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+articulating+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=4c24659bf5380ed03e040ab9751f60ea&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass articulating desk lamp"
+        "searchKeywords": "brass articulating desk lamp",
+        "auto": true
       },
       {
         "id": "c30-h2",
@@ -1463,9 +1581,10 @@
         "y": 77,
         "label": "Pouf Ottoman",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=linen+cube+pouf+ottoman&linkCode=ll2&tag=dev0f7d00-20&linkId=5782810b00c5fb626f6973f2ae7166a4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "linen cube pouf ottoman"
+        "searchKeywords": "linen cube pouf ottoman",
+        "auto": true
       },
       {
         "id": "c30-h3",
@@ -1473,9 +1592,10 @@
         "y": 54,
         "label": "Concrete Planter",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=concrete+planter+pot&linkCode=ll2&tag=dev0f7d00-20&linkId=bdc01fed7835b16737aaf6dacb9af9ed&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "concrete planter pot"
+        "searchKeywords": "concrete planter pot",
+        "auto": true
       },
       {
         "id": "c30-h4",
@@ -1483,9 +1603,10 @@
         "y": 31,
         "label": "Floating Wall Shelf",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+floating+wall+shelf+with+brackets&linkCode=ll2&tag=dev0f7d00-20&linkId=c7ec5a5c4d4de865f2a912712a6b9f41&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood floating wall shelf with brackets"
+        "searchKeywords": "wood floating wall shelf with brackets",
+        "auto": true
       }
     ]
   },
@@ -1501,9 +1622,10 @@
         "y": 42,
         "label": "Wall Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=oval+brass+framed+wall+mirror&linkCode=ll2&tag=dev0f7d00-20&linkId=f2d5d6ccee091b540b302d2dd89fdc4a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "oval brass framed wall mirror"
+        "searchKeywords": "oval brass framed wall mirror",
+        "auto": true
       },
       {
         "id": "c31-h2",
@@ -1511,9 +1633,10 @@
         "y": 30,
         "label": "Designer Handbag",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=structured+leather+handbag&linkCode=ll2&tag=dev0f7d00-20&linkId=6bfa3fd4bfa0d6836942d840054378d2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "structured leather handbag"
+        "searchKeywords": "structured leather handbag",
+        "auto": true
       },
       {
         "id": "c31-h3",
@@ -1521,9 +1644,10 @@
         "y": 55,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase+with+olive+branch&linkCode=ll2&tag=dev0f7d00-20&linkId=a07241d50c4c743706320849116cba3e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase with olive branch"
+        "searchKeywords": "ceramic vase with olive branch",
+        "auto": true
       },
       {
         "id": "c31-h4",
@@ -1531,9 +1655,10 @@
         "y": 41,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+cone+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=212ebb274e8dc77b055a6f761b619dbf&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black cone wall sconce"
+        "searchKeywords": "black cone wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1549,9 +1674,10 @@
         "y": 37,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+drum+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=5af874a13470545ff62e4ac80b1161d5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass drum wall sconce"
+        "searchKeywords": "brass drum wall sconce",
+        "auto": true
       },
       {
         "id": "c32-h2",
@@ -1559,9 +1685,10 @@
         "y": 50,
         "label": "Leather Briefcase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=leather+briefcase+bag&linkCode=ll2&tag=dev0f7d00-20&linkId=06b07f4dcb73b6a939b722d761010e4f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "leather briefcase bag"
+        "searchKeywords": "leather briefcase bag",
+        "auto": true
       },
       {
         "id": "c32-h3",
@@ -1569,9 +1696,10 @@
         "y": 60,
         "label": "Wood Dresser",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+dresser+with+drawers&linkCode=ll2&tag=dev0f7d00-20&linkId=95c99fe97802e9664dfc36bf4d8e65b0&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood dresser with drawers"
+        "searchKeywords": "wood dresser with drawers",
+        "auto": true
       },
       {
         "id": "c32-h4",
@@ -1579,9 +1707,10 @@
         "y": 54,
         "label": "Leather Handbag",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=leather+handbag&linkCode=ll2&tag=dev0f7d00-20&linkId=c5ff00fd12e62b4e2775bc58bddcabe8&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "leather handbag"
+        "searchKeywords": "leather handbag",
+        "auto": true
       }
     ]
   },
@@ -1597,9 +1726,10 @@
         "y": 68,
         "label": "Throw Pillow",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=mustard+boucle+throw+pillow&linkCode=ll2&tag=dev0f7d00-20&linkId=59d5262fc00b633738cde91d58074e8d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "mustard boucle throw pillow"
+        "searchKeywords": "mustard boucle throw pillow",
+        "auto": true
       },
       {
         "id": "c33-h2",
@@ -1607,9 +1737,10 @@
         "y": 56,
         "label": "Leather Tote Handbag",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=leather+tote+handbag&linkCode=ll2&tag=dev0f7d00-20&linkId=10344acf4bc0d6bfb778625efde99ff4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "leather tote handbag"
+        "searchKeywords": "leather tote handbag",
+        "auto": true
       },
       {
         "id": "c33-h3",
@@ -1617,9 +1748,10 @@
         "y": 54,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase+with+flowers&linkCode=ll2&tag=dev0f7d00-20&linkId=7c562d198bcabc0c8bfb43838b68deb7&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase with flowers"
+        "searchKeywords": "ceramic vase with flowers",
+        "auto": true
       },
       {
         "id": "c33-h4",
@@ -1627,9 +1759,10 @@
         "y": 42,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=99f9960f25d3647d2d22c8dead5705ec&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass wall sconce"
+        "searchKeywords": "brass wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1645,9 +1778,10 @@
         "y": 42,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+articulating+swing+arm+wall+sconce+fabric+shade&linkCode=ll2&tag=dev0f7d00-20&linkId=aa3bbb122250a58db39aa3573d7fc7de&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black articulating swing arm wall sconce fabric shade"
+        "searchKeywords": "black articulating swing arm wall sconce fabric shade",
+        "auto": true
       },
       {
         "id": "c34-h2",
@@ -1655,9 +1789,10 @@
         "y": 58,
         "label": "Leather Handbag",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=red+leather+handbag&linkCode=ll2&tag=dev0f7d00-20&linkId=510e8a4bdd9bad8f8d0820fdeb382c8a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "red leather handbag"
+        "searchKeywords": "red leather handbag",
+        "auto": true
       },
       {
         "id": "c34-h3",
@@ -1665,9 +1800,10 @@
         "y": 19,
         "label": "Leather Briefcase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=small+leather+briefcase+bag&linkCode=ll2&tag=dev0f7d00-20&linkId=d005bff9bb2d9e02829c663f9d725019&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "small leather briefcase bag"
+        "searchKeywords": "small leather briefcase bag",
+        "auto": true
       },
       {
         "id": "c34-h4",
@@ -1675,9 +1811,10 @@
         "y": 38,
         "label": "Fabric Shade Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=cream+fabric+shade+brass+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=334a64e65447ad9b76253c1e857e540a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "cream fabric shade brass wall sconce"
+        "searchKeywords": "cream fabric shade brass wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1693,9 +1830,10 @@
         "y": 25,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+barn+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=3da96c22d4aea5a6dbdf82e816dab63c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass barn dome pendant light"
+        "searchKeywords": "brass barn dome pendant light",
+        "auto": true
       },
       {
         "id": "c35-h2",
@@ -1703,9 +1841,10 @@
         "y": 66,
         "label": "Marble Storage Cube",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+marble+storage+cube+side+table&linkCode=ll2&tag=dev0f7d00-20&linkId=120b41defaa9715b0181ff76f965b4df&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black marble storage cube side table"
+        "searchKeywords": "black marble storage cube side table",
+        "auto": true
       },
       {
         "id": "c35-h3",
@@ -1713,9 +1852,10 @@
         "y": 38,
         "label": "Clothing Rack",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+pipe+garment+clothing+rack&linkCode=ll2&tag=dev0f7d00-20&linkId=6140ddcf31bfec60557ec697883cb42b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black pipe garment clothing rack"
+        "searchKeywords": "black pipe garment clothing rack",
+        "auto": true
       }
     ]
   },
@@ -1731,9 +1871,10 @@
         "y": 42,
         "label": "Chandelier",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wagon+wheel+wrought+iron+candle+chandelier&linkCode=ll2&tag=dev0f7d00-20&linkId=10324a360a51e936f563f585ffe2d8d6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wagon wheel wrought iron candle chandelier"
+        "searchKeywords": "wagon wheel wrought iron candle chandelier",
+        "auto": true
       },
       {
         "id": "c36-h2",
@@ -1741,9 +1882,10 @@
         "y": 70,
         "label": "Plaid Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brown+plaid+upholstered+dining+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=b21ce17e113913b8a17540254887f18d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brown plaid upholstered dining chair"
+        "searchKeywords": "brown plaid upholstered dining chair",
+        "auto": true
       },
       {
         "id": "c36-h3",
@@ -1751,9 +1893,10 @@
         "y": 66,
         "label": "Round Dining Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=round+granite+stone+dining+table&linkCode=ll2&tag=dev0f7d00-20&linkId=539f88393f8b02db53393a6c42c470f0&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "round granite stone dining table"
+        "searchKeywords": "round granite stone dining table",
+        "auto": true
       },
       {
         "id": "c36-h4",
@@ -1761,9 +1904,10 @@
         "y": 48,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+fabric+shade+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=51e35cae2a15b78444f779131c2ee35f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass fabric shade wall sconce"
+        "searchKeywords": "brass fabric shade wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1779,9 +1923,10 @@
         "y": 38,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+dome+pendant+light+large&linkCode=ll2&tag=dev0f7d00-20&linkId=fb199b80622718d53e4a265d4ca72454&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass dome pendant light large"
+        "searchKeywords": "brass dome pendant light large",
+        "auto": true
       },
       {
         "id": "c37-h2",
@@ -1789,9 +1934,10 @@
         "y": 60,
         "label": "Boucle Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=olive+green+boucle+dining+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=d9871511b50c764bd2d8a6a8be44d87c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "olive green boucle dining chair"
+        "searchKeywords": "olive green boucle dining chair",
+        "auto": true
       },
       {
         "id": "c37-h3",
@@ -1799,9 +1945,10 @@
         "y": 50,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=dark+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=d63c764500df54f40cff6f3e7460f1b0&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "dark ceramic vase"
+        "searchKeywords": "dark ceramic vase",
+        "auto": true
       },
       {
         "id": "c37-h4",
@@ -1809,9 +1956,10 @@
         "y": 50,
         "label": "Terracotta Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=terracotta+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=b1c90f6ad3ee0238ce116a1918e5f498&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "terracotta ceramic vase"
+        "searchKeywords": "terracotta ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -1827,9 +1975,10 @@
         "y": 30,
         "label": "Chandelier",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+2-tier+candelabra+chandelier&linkCode=ll2&tag=dev0f7d00-20&linkId=0dff78155699e8257903953ea3f5ca60&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass 2-tier candelabra chandelier"
+        "searchKeywords": "brass 2-tier candelabra chandelier",
+        "auto": true
       },
       {
         "id": "c38-h2",
@@ -1837,9 +1986,10 @@
         "y": 55,
         "label": "Velvet Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=burgundy+velvet+dining+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=73e23bf8b04e6e5b5b3b88c881a0e870&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "burgundy velvet dining chair"
+        "searchKeywords": "burgundy velvet dining chair",
+        "auto": true
       },
       {
         "id": "c38-h3",
@@ -1847,9 +1997,10 @@
         "y": 60,
         "label": "Marble Dining Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+marble+dining+table&linkCode=ll2&tag=dev0f7d00-20&linkId=35136488cef83e73558311d3ce2c7b62&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black marble dining table"
+        "searchKeywords": "black marble dining table",
+        "auto": true
       },
       {
         "id": "c38-h4",
@@ -1857,9 +2008,10 @@
         "y": 39,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+and+brass+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=40c147a4f55bcf702cb186caa96b30f3&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black and brass wall sconce"
+        "searchKeywords": "black and brass wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1875,9 +2027,10 @@
         "y": 23,
         "label": "Chandelier",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+ring+sculptural+chandelier&linkCode=ll2&tag=dev0f7d00-20&linkId=e50e754a556d29844529e8ca4716f3bd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass ring sculptural chandelier"
+        "searchKeywords": "brass ring sculptural chandelier",
+        "auto": true
       },
       {
         "id": "c39-h2",
@@ -1885,9 +2038,10 @@
         "y": 83,
         "label": "Boucle Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=charcoal+boucle+dining+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=73e8dffca3785f6fe3bc6c4720783827&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "charcoal boucle dining chair"
+        "searchKeywords": "charcoal boucle dining chair",
+        "auto": true
       },
       {
         "id": "c39-h3",
@@ -1895,9 +2049,10 @@
         "y": 43,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+cylinder+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=399f0593159c40187adda37097f70135&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black cylinder wall sconce"
+        "searchKeywords": "black cylinder wall sconce",
+        "auto": true
       },
       {
         "id": "c39-h4",
@@ -1905,9 +2060,10 @@
         "y": 55,
         "label": "Kitchen Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+gooseneck+kitchen+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=dd563118d14ae5a6fc04e9e55439d3d1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black gooseneck kitchen faucet"
+        "searchKeywords": "black gooseneck kitchen faucet",
+        "auto": true
       }
     ]
   },
@@ -1923,9 +2079,10 @@
         "y": 29,
         "label": "Chandelier",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wrought+iron+scroll+chandelier+candle+bulb&linkCode=ll2&tag=dev0f7d00-20&linkId=85d9e6d582d40d6de5284627a8f8e4b8&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wrought iron scroll chandelier candle bulb"
+        "searchKeywords": "wrought iron scroll chandelier candle bulb",
+        "auto": true
       },
       {
         "id": "c40-h2",
@@ -1933,9 +2090,10 @@
         "y": 59,
         "label": "Wood Dining Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=reclaimed+wood+trestle+dining+table&linkCode=ll2&tag=dev0f7d00-20&linkId=aef5fa9024fafc1847847e231a51627d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "reclaimed wood trestle dining table"
+        "searchKeywords": "reclaimed wood trestle dining table",
+        "auto": true
       },
       {
         "id": "c40-h3",
@@ -1943,9 +2101,10 @@
         "y": 62,
         "label": "Wood Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+ladderback+dining+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=12018b366c18537e69c3560edc0f44d5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood ladderback dining chair"
+        "searchKeywords": "wood ladderback dining chair",
+        "auto": true
       },
       {
         "id": "c40-h4",
@@ -1953,9 +2112,10 @@
         "y": 44,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wrought+iron+candle+wall+sconce&linkCode=ll2&tag=dev0f7d00-20&linkId=8d8bb47a5b9c91d955c1668c56028aec&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wrought iron candle wall sconce"
+        "searchKeywords": "wrought iron candle wall sconce",
+        "auto": true
       }
     ]
   },
@@ -1971,9 +2131,10 @@
         "y": 27,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+barn+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=9baa3e4a6068dee379414084be096cd4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass barn dome pendant light"
+        "searchKeywords": "brass barn dome pendant light",
+        "auto": true
       },
       {
         "id": "c41-h2",
@@ -1981,9 +2142,10 @@
         "y": 43,
         "label": "Framed Landscape Print",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+and+white+framed+mountain+landscape+print&linkCode=ll2&tag=dev0f7d00-20&linkId=0e6ede42a921cdb7ebb4fb59b38f95ba&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black and white framed mountain landscape print"
+        "searchKeywords": "black and white framed mountain landscape print",
+        "auto": true
       },
       {
         "id": "c41-h3",
@@ -1991,9 +2153,10 @@
         "y": 58,
         "label": "Wood Console Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=reclaimed+wood+floating+console+cabinet&linkCode=ll2&tag=dev0f7d00-20&linkId=130c86ab632b042178d97087fc4b427b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "reclaimed wood floating console cabinet"
+        "searchKeywords": "reclaimed wood floating console cabinet",
+        "auto": true
       },
       {
         "id": "c41-h4",
@@ -2001,9 +2164,10 @@
         "y": 75,
         "label": "Area Rug",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=patterned+wool+area+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=bf8a2e5c7bfda66f3d93c8c86c3a87be&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "patterned wool area rug"
+        "searchKeywords": "patterned wool area rug",
+        "auto": true
       }
     ]
   },
@@ -2019,9 +2183,10 @@
         "y": 15,
         "label": "Lantern Pendant",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+wrought+iron+lantern+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=8357023eb17fdbd89fe0b96ddeacc25f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black wrought iron lantern pendant light"
+        "searchKeywords": "black wrought iron lantern pendant light",
+        "auto": true
       },
       {
         "id": "c42-h2",
@@ -2029,9 +2194,10 @@
         "y": 61,
         "label": "Wood Console Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=light+wood+console+table+brass+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=ad48d83c538eeae629efae45930927cf&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "light wood console table brass legs"
+        "searchKeywords": "light wood console table brass legs",
+        "auto": true
       },
       {
         "id": "c42-h3",
@@ -2039,9 +2205,10 @@
         "y": 44,
         "label": "Framed Wall Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+street+scene+art+print&linkCode=ll2&tag=dev0f7d00-20&linkId=8ede8792a690a48d56dd600921ab3d25&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed street scene art print"
+        "searchKeywords": "framed street scene art print",
+        "auto": true
       },
       {
         "id": "c42-h4",
@@ -2049,9 +2216,10 @@
         "y": 74,
         "label": "Area Rug",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=vintage+medallion+area+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=3f408f496f9113206e8fa7ce2b8ca827&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "vintage medallion area rug"
+        "searchKeywords": "vintage medallion area rug",
+        "auto": true
       }
     ]
   },
@@ -2067,9 +2235,10 @@
         "y": 32,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=40cca896bbd0dee19c509d427705c547&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black dome pendant light"
+        "searchKeywords": "black dome pendant light",
+        "auto": true
       },
       {
         "id": "c43-h2",
@@ -2077,9 +2246,10 @@
         "y": 60,
         "label": "Wood Console Credenza",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=mid+century+wood+console+credenza&linkCode=ll2&tag=dev0f7d00-20&linkId=28d7519fc566c1345973f3dc55ae5350&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "mid century wood console credenza"
+        "searchKeywords": "mid century wood console credenza",
+        "auto": true
       },
       {
         "id": "c43-h3",
@@ -2087,9 +2257,10 @@
         "y": 39,
         "label": "Framed Abstract Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+abstract+art+print&linkCode=ll2&tag=dev0f7d00-20&linkId=007431f3dadb3ed88c275212fedbbcdd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed abstract art print"
+        "searchKeywords": "framed abstract art print",
+        "auto": true
       },
       {
         "id": "c43-h4",
@@ -2097,9 +2268,10 @@
         "y": 52,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=grey+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=187a1c74a1660d7134ec201280c9a719&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "grey ceramic vase"
+        "searchKeywords": "grey ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -2115,9 +2287,10 @@
         "y": 32,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=5bbe22a0edfa02339a4b14b9f2a7a5e2&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black dome pendant light"
+        "searchKeywords": "black dome pendant light",
+        "auto": true
       },
       {
         "id": "c44-h2",
@@ -2125,9 +2298,10 @@
         "y": 60,
         "label": "Wood Console Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=light+wood+console+table+brass+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=cbdad84dd5d9485999c0dbfd440324a1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "light wood console table brass legs"
+        "searchKeywords": "light wood console table brass legs",
+        "auto": true
       },
       {
         "id": "c44-h3",
@@ -2135,9 +2309,10 @@
         "y": 39,
         "label": "Framed Abstract Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+abstract+art+print&linkCode=ll2&tag=dev0f7d00-20&linkId=21d866612922c83127d0e7c653f14b82&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed abstract art print"
+        "searchKeywords": "framed abstract art print",
+        "auto": true
       },
       {
         "id": "c44-h4",
@@ -2145,9 +2320,10 @@
         "y": 52,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=dark+textured+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=e45fb8e5ae45274a15b82f13406d88a1&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "dark textured ceramic vase"
+        "searchKeywords": "dark textured ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -2163,9 +2339,10 @@
         "y": 24,
         "label": "Lantern Pendant",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+iron+lantern+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=7a775478b94c655239dabcaaa2f07764&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black iron lantern pendant light"
+        "searchKeywords": "black iron lantern pendant light",
+        "auto": true
       },
       {
         "id": "c45-h2",
@@ -2173,9 +2350,10 @@
         "y": 73,
         "label": "Velvet Runner Rug",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=magenta+velvet+runner+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=6918bb8ba2fa943a7faac586d3b56d7b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "magenta velvet runner rug"
+        "searchKeywords": "magenta velvet runner rug",
+        "auto": true
       },
       {
         "id": "c45-h3",
@@ -2183,9 +2361,10 @@
         "y": 57,
         "label": "Wood Console Cabinet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=dark+wood+console+cabinet+brass+trim&linkCode=ll2&tag=dev0f7d00-20&linkId=44238ff6b685cc5b6deb94470daffb70&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "dark wood console cabinet brass trim"
+        "searchKeywords": "dark wood console cabinet brass trim",
+        "auto": true
       },
       {
         "id": "c45-h4",
@@ -2193,9 +2372,10 @@
         "y": 39,
         "label": "Framed Gold Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+gold+abstract+art&linkCode=ll2&tag=dev0f7d00-20&linkId=a2af2fc09a4a3c80c0bbf6a6a367659a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed gold abstract art"
+        "searchKeywords": "framed gold abstract art",
+        "auto": true
       }
     ]
   },
@@ -2211,9 +2391,10 @@
         "y": 37,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=25d674d39d596fb0a627e7f0b57e91d4&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black dome pendant light"
+        "searchKeywords": "black dome pendant light",
+        "auto": true
       },
       {
         "id": "c46-h2",
@@ -2221,9 +2402,10 @@
         "y": 54,
         "label": "Wine Glass Set",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=crystal+wine+glass+set&linkCode=ll2&tag=dev0f7d00-20&linkId=6e9dbf2ca34ce8784fb64cf4eb8975e6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "crystal wine glass set"
+        "searchKeywords": "crystal wine glass set",
+        "auto": true
       },
       {
         "id": "c46-h3",
@@ -2231,9 +2413,10 @@
         "y": 52,
         "label": "Glass Decanter",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+carafe+decanter&linkCode=ll2&tag=dev0f7d00-20&linkId=00947356904d7d8060a0e2c7bc10b2be&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass carafe decanter"
+        "searchKeywords": "glass carafe decanter",
+        "auto": true
       },
       {
         "id": "c46-h4",
@@ -2241,9 +2424,10 @@
         "y": 56,
         "label": "Wood Cheese Board",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=wood+serving+cheese+board&linkCode=ll2&tag=dev0f7d00-20&linkId=1584f0014bb7ea27be11bc9c2508e0b7&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "wood serving cheese board"
+        "searchKeywords": "wood serving cheese board",
+        "auto": true
       }
     ]
   },
@@ -2259,9 +2443,10 @@
         "y": 37,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+dome+mushroom+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=a1d1ab533b5742c3cde24a71823b393b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome dome mushroom pendant light"
+        "searchKeywords": "chrome dome mushroom pendant light",
+        "auto": true
       },
       {
         "id": "c47-h2",
@@ -2269,9 +2454,10 @@
         "y": 76,
         "label": "Velvet Accent Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=teal+velvet+tufted+accent+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=64f85462a97c00fb14c4af64c53814ba&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "teal velvet tufted accent chair"
+        "searchKeywords": "teal velvet tufted accent chair",
+        "auto": true
       },
       {
         "id": "c47-h3",
@@ -2279,9 +2465,10 @@
         "y": 54,
         "label": "Brass Obelisk Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+obelisk+sculpture+decor&linkCode=ll2&tag=dev0f7d00-20&linkId=ab537f166dcce041f6e0d9db0b8c682e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass obelisk sculpture decor"
+        "searchKeywords": "brass obelisk sculpture decor",
+        "auto": true
       },
       {
         "id": "c47-h4",
@@ -2289,9 +2476,10 @@
         "y": 51,
         "label": "Crystal Decanter",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=crystal+glass+decanter&linkCode=ll2&tag=dev0f7d00-20&linkId=8ff7a960a0fd2dccd7acb2bf7bbb6605&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "crystal glass decanter"
+        "searchKeywords": "crystal glass decanter",
+        "auto": true
       }
     ]
   },
@@ -2307,9 +2495,10 @@
         "y": 27,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+dome+barn+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=59d540fcfa10e69eaf0685e6ccff10db&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass dome barn pendant light"
+        "searchKeywords": "brass dome barn pendant light",
+        "auto": true
       },
       {
         "id": "c48-h2",
@@ -2317,9 +2506,10 @@
         "y": 51,
         "label": "Driftwood Decor",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=natural+driftwood+decor+piece&linkCode=ll2&tag=dev0f7d00-20&linkId=a538ccd2195988ac8cc75c52024871d6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "natural driftwood decor piece"
+        "searchKeywords": "natural driftwood decor piece",
+        "auto": true
       },
       {
         "id": "c48-h3",
@@ -2327,9 +2517,10 @@
         "y": 50,
         "label": "Bar Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+gooseneck+bar+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=33e0a98bd46cc0bd9d977793e26ab4e6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome gooseneck bar faucet"
+        "searchKeywords": "chrome gooseneck bar faucet",
+        "auto": true
       },
       {
         "id": "c48-h4",
@@ -2337,9 +2528,10 @@
         "y": 64,
         "label": "Cabinet Hardware",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brushed+nickel+bar+cabinet+pulls&linkCode=ll2&tag=dev0f7d00-20&linkId=99cd5287469edbd9d7d5650e9170cc13&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brushed nickel bar cabinet pulls"
+        "searchKeywords": "brushed nickel bar cabinet pulls",
+        "auto": true
       }
     ]
   },
@@ -2355,9 +2547,10 @@
         "y": 27,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=ba0aa6707b6f350c06f60311946f007e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome dome pendant light"
+        "searchKeywords": "chrome dome pendant light",
+        "auto": true
       },
       {
         "id": "c49-h2",
@@ -2365,9 +2558,10 @@
         "y": 37,
         "label": "Wine Glasses",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=crystal+wine+glass+set&linkCode=ll2&tag=dev0f7d00-20&linkId=76d4d1ab94536a32562ac22ed400d11c&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "crystal wine glass set"
+        "searchKeywords": "crystal wine glass set",
+        "auto": true
       },
       {
         "id": "c49-h3",
@@ -2375,9 +2569,10 @@
         "y": 55,
         "label": "Glass Decanter",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+carafe+decanter&linkCode=ll2&tag=dev0f7d00-20&linkId=245ab300da7ced5139e5b4131487f29b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass carafe decanter"
+        "searchKeywords": "glass carafe decanter",
+        "auto": true
       },
       {
         "id": "c49-h4",
@@ -2385,9 +2580,10 @@
         "y": 20,
         "label": "Brass Cabinet Pulls",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=fluted+brass+cabinet+pulls&linkCode=ll2&tag=dev0f7d00-20&linkId=42701b629ab603adc981c8bc704f934a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "fluted brass cabinet pulls"
+        "searchKeywords": "fluted brass cabinet pulls",
+        "auto": true
       }
     ]
   },
@@ -2403,9 +2599,10 @@
         "y": 29,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+dome+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=e524896a5484772d306e5b8f7341b2d6&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black dome pendant light"
+        "searchKeywords": "black dome pendant light",
+        "auto": true
       },
       {
         "id": "c50-h2",
@@ -2413,9 +2610,10 @@
         "y": 57,
         "label": "Wine Glasses",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=crystal+wine+glass+set&linkCode=ll2&tag=dev0f7d00-20&linkId=c8269b0da72aaead533524683f7fccd0&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "crystal wine glass set"
+        "searchKeywords": "crystal wine glass set",
+        "auto": true
       },
       {
         "id": "c50-h3",
@@ -2423,9 +2621,10 @@
         "y": 55,
         "label": "Glass Decanter",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+carafe+decanter&linkCode=ll2&tag=dev0f7d00-20&linkId=7938bb5ffacc36aaa97c1b3506af4f00&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass carafe decanter"
+        "searchKeywords": "glass carafe decanter",
+        "auto": true
       },
       {
         "id": "c50-h4",
@@ -2433,9 +2632,10 @@
         "y": 55,
         "label": "Potted Plant",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=monstera+plant+in+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=cd3169a612f46f17ab608ac2c2d4565a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "monstera plant in ceramic vase"
+        "searchKeywords": "monstera plant in ceramic vase",
+        "auto": true
       }
     ]
   },
@@ -2451,9 +2651,10 @@
         "y": 64,
         "label": "Wingback Armchair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=oxblood+burgundy+velvet+wingback+armchair&linkCode=ll2&tag=dev0f7d00-20&linkId=fdbb5864dfa00697027ba00e79261017&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "oxblood burgundy velvet wingback armchair"
+        "searchKeywords": "oxblood burgundy velvet wingback armchair",
+        "auto": true
       },
       {
         "id": "d01-h2",
@@ -2461,9 +2662,10 @@
         "y": 49,
         "label": "Table Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=white+ceramic+table+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=680dfafa6d7b10c859e00c07fe424cfd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "white ceramic table lamp"
+        "searchKeywords": "white ceramic table lamp",
+        "auto": true
       },
       {
         "id": "d01-h3",
@@ -2471,9 +2673,10 @@
         "y": 34,
         "label": "Framed Landscape Art",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=framed+landscape+oil+painting+print&linkCode=ll2&tag=dev0f7d00-20&linkId=6b31efd942537113bbe79d483e0dc9c7&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "framed landscape oil painting print"
+        "searchKeywords": "framed landscape oil painting print",
+        "auto": true
       },
       {
         "id": "d01-h4",
@@ -2481,9 +2684,10 @@
         "y": 63,
         "label": "Potted Olive Tree",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=artificial+potted+olive+tree&linkCode=ll2&tag=dev0f7d00-20&linkId=8e677c152e31a6bdf646197842101e1e&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "artificial potted olive tree"
+        "searchKeywords": "artificial potted olive tree",
+        "auto": true
       }
     ]
   },
@@ -2499,9 +2703,10 @@
         "y": 44,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=dried+pampas+grass+ceramic+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=3a8490efb523cb71b8324cd8a93e782b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "dried pampas grass ceramic vase"
+        "searchKeywords": "dried pampas grass ceramic vase",
+        "auto": true
       },
       {
         "id": "d02-h2",
@@ -2509,9 +2714,10 @@
         "y": 70,
         "label": "Wood Dining Chairs",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=curved+wood+dining+chair+cream+cushion&linkCode=ll2&tag=dev0f7d00-20&linkId=d7c6e1d23db34d552efcaf2caa93f7cf&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "curved wood dining chair cream cushion"
+        "searchKeywords": "curved wood dining chair cream cushion",
+        "auto": true
       },
       {
         "id": "d02-h3",
@@ -2519,9 +2725,10 @@
         "y": 51,
         "label": "Wood Console Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=walnut+wood+console+credenza&linkCode=ll2&tag=dev0f7d00-20&linkId=beed3d89ba9cc4880a498a20d0ff0d1b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "walnut wood console credenza"
+        "searchKeywords": "walnut wood console credenza",
+        "auto": true
       },
       {
         "id": "d02-h4",
@@ -2529,9 +2736,10 @@
         "y": 56,
         "label": "Ceramic Fruit Bowl",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+fruit+bowl&linkCode=ll2&tag=dev0f7d00-20&linkId=aec6728ad76b85a48285a49dc55430d5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic fruit bowl"
+        "searchKeywords": "ceramic fruit bowl",
+        "auto": true
       }
     ]
   },
@@ -2547,9 +2755,10 @@
         "y": 33,
         "label": "Wall Sconce",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+wall+sconce+set+of+2&linkCode=ll2&tag=dev0f7d00-20&linkId=e04b7df42ebe0f09b3bc288b8c0814bf&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass wall sconce set of 2"
+        "searchKeywords": "brass wall sconce set of 2",
+        "auto": true
       },
       {
         "id": "d03-h2",
@@ -2557,9 +2766,10 @@
         "y": 48,
         "label": "Velvet Bed Frame",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=plum+velvet+channel+tufted+bed+frame&linkCode=ll2&tag=dev0f7d00-20&linkId=bb48c1bbcbc86cb88cbb6aaa37699c47&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "plum velvet channel tufted bed frame"
+        "searchKeywords": "plum velvet channel tufted bed frame",
+        "auto": true
       },
       {
         "id": "d03-h3",
@@ -2567,9 +2777,10 @@
         "y": 49,
         "label": "Table Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=white+sculptural+base+table+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=46d6452d0d901fb45a48eee0c1cca539&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "white sculptural base table lamp"
+        "searchKeywords": "white sculptural base table lamp",
+        "auto": true
       },
       {
         "id": "d03-h4",
@@ -2577,9 +2788,10 @@
         "y": 55,
         "label": "Marble Nightstand",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=marble+top+brass+leg+nightstand&linkCode=ll2&tag=dev0f7d00-20&linkId=500c6c533566c441bc28031a53d140d8&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "marble top brass leg nightstand"
+        "searchKeywords": "marble top brass leg nightstand",
+        "auto": true
       }
     ]
   },
@@ -2595,9 +2807,10 @@
         "y": 61.30719618748282,
         "label": "Counter Stool",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=rustic+wood+counter+stool+saddle+seat&linkCode=ll2&tag=dev0f7d00-20&linkId=d64bc48ac95a058faf5a3f9f2a3337fe&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "rustic wood counter stool saddle seat"
+        "searchKeywords": "rustic wood counter stool saddle seat",
+        "auto": true
       },
       {
         "id": "d04-h2",
@@ -2605,9 +2818,10 @@
         "y": 45.40317941371513,
         "label": "Ceramic Pitcher Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+pitcher+vase+with+branches&linkCode=ll2&tag=dev0f7d00-20&linkId=b74729755c7545fffa6851e0d2bd5086&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic pitcher vase with branches"
+        "searchKeywords": "ceramic pitcher vase with branches",
+        "auto": true
       },
       {
         "id": "d04-h3",
@@ -2615,9 +2829,10 @@
         "y": 50.92773133157108,
         "label": "Ceramic Fruit Bowl",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=stone+ceramic+fruit+bowl&linkCode=ll2&tag=dev0f7d00-20&linkId=b5e294d6ea1f56e5159a6d297fb8a542&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "stone ceramic fruit bowl"
+        "searchKeywords": "stone ceramic fruit bowl",
+        "auto": true
       },
       {
         "id": "d04-h4",
@@ -2625,9 +2840,10 @@
         "y": 44.95675129844452,
         "label": "Table Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=stoneware+base+table+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=c6437b99de78633c8500888536c2365f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "stoneware base table lamp"
+        "searchKeywords": "stoneware base table lamp",
+        "auto": true
       },
       {
         "id": "d04-h5",
@@ -2653,9 +2869,10 @@
         "y": 27.880858327262175,
         "label": "Pendant Light",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+paper+lantern+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=5917984fe2146607df2ce328298a04c3&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black paper lantern pendant light"
+        "searchKeywords": "black paper lantern pendant light",
+        "auto": true
       },
       {
         "id": "d05-h2",
@@ -2663,9 +2880,10 @@
         "y": 66.05050113878923,
         "label": "Freestanding Bathtub",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+stone+freestanding+bathtub&linkCode=ll2&tag=dev0f7d00-20&linkId=2f35d6dac11acdcbeef737166584c86d&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black stone freestanding bathtub"
+        "searchKeywords": "black stone freestanding bathtub",
+        "auto": true
       },
       {
         "id": "d05-h3",
@@ -2673,9 +2891,10 @@
         "y": 60.30273197019223,
         "label": "Wall-Mount Tub Faucet",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=matte+black+wall+mount+tub+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=4f1041d4b78846d6804227cbd4b5766a&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "matte black wall mount tub faucet"
+        "searchKeywords": "matte black wall mount tub faucet",
+        "auto": true
       },
       {
         "id": "d05-h4",
@@ -2683,9 +2902,10 @@
         "y": 55.6152322895028,
         "label": "Ceramic Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=ceramic+vase+with+branches&linkCode=ll2&tag=dev0f7d00-20&linkId=eab37c600b01bd9fea99357e41971499&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "ceramic vase with branches"
+        "searchKeywords": "ceramic vase with branches",
+        "auto": true
       }
     ]
   },
@@ -2701,9 +2921,10 @@
         "y": 18,
         "label": "Lantern Pendant",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=black+wrought+iron+lantern+pendant+light&linkCode=ll2&tag=dev0f7d00-20&linkId=fe6bbb8b526c342ec641d825abb94732&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "black wrought iron lantern pendant light"
+        "searchKeywords": "black wrought iron lantern pendant light",
+        "auto": true
       },
       {
         "id": "d06-h2",
@@ -2711,9 +2932,10 @@
         "y": 26.26255529181921,
         "label": "Arched Wall Mirror",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=brass+arched+frame+wall+mirror&linkCode=ll2&tag=dev0f7d00-20&linkId=f3607cecdc9ceb3510a1e1ad96dd7658&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "brass arched frame wall mirror"
+        "searchKeywords": "brass arched frame wall mirror",
+        "auto": true
       },
       {
         "id": "d06-h3",
@@ -2721,9 +2943,10 @@
         "y": 61.75362557999573,
         "label": "Cobalt Ceramic Floor Vase",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=cobalt+blue+ceramic+floor+vase&linkCode=ll2&tag=dev0f7d00-20&linkId=3be2db0fa6d5cbdd534385f5cb72fdb5&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "cobalt blue ceramic floor vase"
+        "searchKeywords": "cobalt blue ceramic floor vase",
+        "auto": true
       },
       {
         "id": "d06-h4",
@@ -2731,9 +2954,10 @@
         "y": 53.662107848296316,
         "label": "Wood Console Table",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=carved+wood+console+table&linkCode=ll2&tag=dev0f7d00-20&linkId=bf484bcbecd2013a434784639badf93f&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "carved wood console table"
+        "searchKeywords": "carved wood console table",
+        "auto": true
       }
     ]
   },
@@ -2749,9 +2973,10 @@
         "y": 47.970142673073994,
         "label": "Table Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=glass+bubble+mushroom+table+lamp+set+of+2&linkCode=ll2&tag=dev0f7d00-20&linkId=625628ea681d4719ad4838e059133c74&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "glass bubble mushroom table lamp set of 2"
+        "searchKeywords": "glass bubble mushroom table lamp set of 2",
+        "auto": true
       },
       {
         "id": "d07-h2",
@@ -2759,9 +2984,10 @@
         "y": 66.32951727393578,
         "label": "Chrome Arc Floor Lamp",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=chrome+arc+floor+lamp+dome+shade&linkCode=ll2&tag=dev0f7d00-20&linkId=7b903a06c5afbeb8438e2e5ff1d4f750&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "chrome arc floor lamp dome shade"
+        "searchKeywords": "chrome arc floor lamp dome shade",
+        "auto": true
       },
       {
         "id": "d07-h3",
@@ -2769,9 +2995,10 @@
         "y": 61.976838999009885,
         "label": "Boucle Accent Chair",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=white+boucle+swivel+accent+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=68b290316a4a512947b6dcd3f32ada6b&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "white boucle swivel accent chair"
+        "searchKeywords": "white boucle swivel accent chair",
+        "auto": true
       },
       {
         "id": "d07-h4",
@@ -2779,9 +3006,10 @@
         "y": 51.262554014576914,
         "label": "Blue Lacquer Credenza",
         "productName": null,
-        "productUrl": null,
+        "productUrl": "https://www.amazon.com/s?k=blue+glossy+lacquer+credenza+cabinet&linkCode=ll2&tag=dev0f7d00-20&linkId=f5741cd87d8c714d790d3a2969f9b7cd&language=en_US&ref_=as_li_ss_tl",
         "marketplace": "us",
-        "searchKeywords": "blue glossy lacquer credenza cabinet"
+        "searchKeywords": "blue glossy lacquer credenza cabinet",
+        "auto": true
       }
     ]
   }

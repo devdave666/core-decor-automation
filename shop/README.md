@@ -83,6 +83,27 @@ browser.
 Don't use this page on a shared/public computer, and revoke the token from
 GitHub's settings if the device it's saved on is ever lost or compromised.
 
+### Skipping SiteStripe: generated search links
+
+Every hotspot's Amazon link needs a `tag=` parameter matching one of Dev's
+two real Associates tags (confirmed from his own SiteStripe links) —
+`dev0f7d00-20` for `.com`, `dev0f7d-20` for `.ca`. A real, commission-tagged
+link doesn't strictly require SiteStripe: **"Generate a tagged search
+link instead"** in the modal builds one straight from the search terms
+field — `https://www.amazon.<tld>/s?k=<terms>&tag=<the right tag>&...` —
+no Amazon visit needed. It's genuinely trackable, but it lands a shopper on
+search results for the terms, not one exact product listing, so it's a
+placeholder-quality link, not a curated one.
+
+Hotspots linked this way are flagged `"auto": true` in `products.json` and
+show a **dotted** marker in the editor (vs. solid for a real SiteStripe
+link, dashed for unlinked) — the visual cue for "revisit this one and swap
+in the exact product once you find it." Pasting a real SiteStripe link
+over a generated one (or vice versa via the paste/generate buttons) updates
+that flag automatically; you don't need to manage it by hand. All 228
+non-lighting hotspots across the 57 concepts were bulk-generated this way
+as a starting baseline — see llms.txt for how and when.
+
 ### Option B — edit the file directly
 
 Open `products.json`, find the concept by `id` (matches the filename prefix

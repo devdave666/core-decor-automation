@@ -2350,3 +2350,87 @@ real time, independent of whatever's happening in a chat session.
 c06 through c50 and d01-d07 still carry the original AI-drafted positions,
 not yet reviewed at this new accuracy bar -- waiting on Dev's approval of
 c01-c05 before doing the rest.
+
+## Hotspot positioning finished for all 57 concepts + auto-generated affiliate links (2026-08-20)
+
+Continuation of the previous entry's accuracy fix. Dev kept fixing concepts
+himself live through the admin page throughout this work (c01-c20 and
+d04-d07, 24 concepts total, including adding a brand-new 5th hotspot to d04
+that was still unlabeled/unlinked when this entry was written) -- his edits
+were always treated as authoritative and fetched/merged before every push,
+never overwritten. The remaining 33 concepts (c21-c50, d01-d07) were
+verified and corrected using the same render-crosshair-and-look loop,
+split across three rounds of background agents (52 -> 33 -> 7 concepts as
+scope narrowed) plus 7 done directly in this session when the last batch
+of agents ran out of runway. Every one of the 233 hotspots across all 57
+concepts is now verified against its actual photo, not estimated from a
+text description alone.
+
+**Lesson learned about background agents on this task, worth remembering
+before delegating similar long-running work again**: three separate rounds
+of agents got killed mid-run by session-limit resets and one container
+restart, and the first round lost 100% of its work (two full 17-concept
+batches) because they were instructed to write output only once at the
+very end. Fixed by requiring incremental saves (read-merge-write the output
+file every 2 concepts) in the next rounds -- when those also got cut off,
+partial progress survived and only a handful of concepts needed redoing
+instead of the whole batch. Also: agent IDs from a killed/restarted session
+are NOT resumable via SendMessage ("No transcript found") -- don't bother
+retrying resume, just relaunch fresh with narrower scope covering only
+what's confirmed missing on disk.
+
+**Reverse-engineered real affiliate links from Dev's own examples**: Dev
+provided one real SiteStripe-generated link for each marketplace --
+confirmed the tag for `.com` is `dev0f7d00-20` and for `.ca` is
+`dev0f7d-20` (two different tags, one per Associates account -- distinct
+from the tag mentioned in the earlier "Amazon Creators API" section of
+this file, which was a placeholder/example value, not this real one). His
+US example was actually malformed for this purpose (a bare
+`amazon.com?&linkCode=...` homepage link with no `/s?k=` search path,
+apparently generated via SiteStripe's generic "Get Link" without searching
+first) -- didn't copy that mistake; built proper `/s?k=<terms>` search
+links using his `.ca` example as the correct template for both
+marketplaces.
+
+Wrote a link-generator (`build_url()` in a one-off script, mirrored as
+`generateSearchLink()` in `shop/admin.js`) that builds
+`https://www.amazon.<tld>/s?k=<terms>&linkCode=ll2&tag=<real tag>&linkId=
+<random 32-hex>&ref_=as_li_ss_tl` (plus `&language=en_US` for `.com`,
+matching Dev's example). Backfilled all 228 hotspots that had
+`searchKeywords` but no `productUrl` yet -- the shop page went from a
+single linked concept (4 hotspots) to all 57 concepts live with 232/233
+hotspots linked in one pass. Confirmed via a real headless-browser render
+that the page shows all 57 cards, 232 dots, and correctly-tagged/tracked
+`href`s before pushing.
+
+These generated links are real and commission-tagged but point to search
+results, not one exact ASIN -- a deliberately lower bar than a hand-picked
+SiteStripe link. Marked with `"auto": true` on the hotspot (228 backfilled
+ones have it; Dev's 4 originally hand-linked ones don't) so the distinction
+isn't lost. Wired the same generator into the admin modal itself as an
+explicit **"Generate a tagged search link instead"** button (deliberately
+NOT an automatic fallback on every save -- that would have broken the
+existing "clear the URL field to unlink" behavior, since almost every
+hotspot has `searchKeywords` filled in). The editor's marker styling now
+has three states: solid = real curated link, dotted = auto-generated
+search link (`.is-auto`), dashed = unlinked (`.is-pending`) -- the dotted
+state is the visual todo-list for "find the real product and upgrade this
+one." The `auto` flag is tracked/cleared automatically based on which
+button last touched the URL field (paste vs. generate vs. manual edit),
+verified with a 12-check mocked test (real per-marketplace tag/host
+switching, flag set on generate, flag cleared on paste-over).
+
+One bug caught during that test-writing, not by inspection: `admin.js`'s
+first draft of `generateSearchLink()` used `encodeURIComponent()` for the
+search terms, which encodes spaces as `%20` -- inconsistent with the
+Python backfill script (`urllib.parse.quote_plus`, which uses `+`, matching
+Dev's own real link examples). Fixed to build the query string via
+`URLSearchParams` instead, which encodes spaces as `+` like the rest of
+the project. A second test failure (paste-clipboard silently not updating
+the URL field) turned out to be `navigator.clipboard = {...}` not actually
+overriding the read-only property in headless Chromium -- needs
+`Object.defineProperty(navigator, "clipboard", {value: ..., configurable:
+true})`, not a plain assignment, to mock it (the earlier admin.js test
+harness in this file's history already knew this; re-learned it the hard
+way here since a new harness was started from scratch instead of copying
+the old one forward).

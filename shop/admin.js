@@ -19,6 +19,10 @@ const BRANCH = "main";
 const TOKEN_KEY = "coredecor_shop_admin_token";
 
 const MARKET_HOSTS = { us: "www.amazon.com", ca: "www.amazon.ca" };
+// Confirmed real tags -- reverse-engineered from Dev's own SiteStripe links
+// for each marketplace (each Associates account has its own tag; a US tag
+// on an amazon.ca link, or vice versa, won't earn commission).
+const MARKET_TAGS = { us: "dev0f7d00-20", ca: "dev0f7d-20" };
 
 const tokenGate = document.getElementById("token-gate");
 const toolbar = document.getElementById("toolbar");
@@ -48,6 +52,7 @@ const marketUsBtn = document.getElementById("modal-market-us");
 const marketCaBtn = document.getElementById("modal-market-ca");
 const searchAmazonBtn = document.getElementById("modal-search-amazon");
 const pasteClipboardBtn = document.getElementById("modal-paste-clipboard");
+const generateLinkBtn = document.getElementById("modal-generate-link");
 const deleteBtn = document.getElementById("modal-delete");
 
 let currentProducts = null;
@@ -56,6 +61,19 @@ let activeHotspotId = null; // null while the modal is creating a brand-new hots
 let pendingNewHotspot = null; // { x, y } while creating, until Save
 let selectedMarket = "us";
 let visibilityListener = null;
+let urlIsGenerated = false; // true only when modal-url's current value came from "Generate a tagged search link", not a real SiteStripe paste or manual edit
+
+function generateSearchLink(keywords, market) {
+  const host = MARKET_HOSTS[market] || MARKET_HOSTS.us;
+  const tag = MARKET_TAGS[market] || MARKET_TAGS.us;
+  const linkId = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+  // URLSearchParams (not encodeURIComponent) so spaces become "+" -- matches
+  // the real SiteStripe link format Dev's own examples use, not %20.
+  const k = new URLSearchParams({ k: keywords }).toString().replace(/^k=/, "");
+  let url = `https://${host}/s?k=${k}&linkCode=ll2&tag=${tag}&linkId=${linkId}`;
+  if (market === "us") url += "&language=en_US";
+  return url + "&ref_=as_li_ss_tl";
+}
 
 function utf8ToBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
@@ -181,7 +199,7 @@ function renderMarkers() {
   const product = currentProducts.find((p) => p.id === activeProductId);
   (product.hotspots || []).forEach((hotspot, i) => {
     const marker = document.createElement("div");
-    marker.className = `editor-marker ${hotspot.productUrl ? "" : "is-pending"}`;
+    marker.className = `editor-marker ${!hotspot.productUrl ? "is-pending" : hotspot.auto ? "is-auto" : ""}`;
     marker.style.left = `${hotspot.x}%`;
     marker.style.top = `${hotspot.y}%`;
     marker.dataset.index = i + 1;
@@ -288,6 +306,9 @@ marketCaBtn.addEventListener("click", () => setMarket("ca"));
 modalSearchTerms.addEventListener("input", () => {
   searchAmazonBtn.disabled = !modalSearchTerms.value.trim();
 });
+modalUrl.addEventListener("input", () => {
+  urlIsGenerated = false; // any manual edit means it's no longer purely the generated link
+});
 
 function openModal(productId, hotspotId) {
   activeProductId = productId;
@@ -300,6 +321,7 @@ function openModal(productId, hotspotId) {
   modalSearchTerms.value = hotspot?.searchKeywords || "";
   modalName.value = hotspot?.productName || (hotspot?.searchKeywords ? titleCase(hotspot.searchKeywords) : "");
   modalUrl.value = hotspot?.productUrl || "";
+  urlIsGenerated = !!hotspot?.auto;
   setMarket(hotspot?.marketplace || "us");
   deleteBtn.hidden = !hotspot;
   modalError.hidden = true;
@@ -344,6 +366,16 @@ function handleSearchAmazon() {
   document.addEventListener("visibilitychange", visibilityListener);
 }
 
+function handleGenerateLink() {
+  const terms = modalSearchTerms.value.trim();
+  if (!terms) return;
+  modalUrl.value = generateSearchLink(terms, selectedMarket);
+  urlIsGenerated = true;
+  modalError.hidden = true;
+  modalNotice.textContent = "Generated a tagged search link — real commission tracking, but not one exact product. Swap in a SiteStripe link later if you want to be precise.";
+  modalNotice.hidden = false;
+}
+
 async function handlePasteClipboard() {
   pasteClipboardBtn.classList.remove("pulse");
   modalError.hidden = true;
@@ -355,6 +387,7 @@ async function handlePasteClipboard() {
       return;
     }
     modalUrl.value = text;
+    urlIsGenerated = false;
     const looksLikeAmazon = /amazon\.[a-z.]+|amzn\.to/i.test(text);
     const hasAmazonDomain = /amazon\.[a-z.]+/i.test(text);
     const expectedHost = MARKET_HOSTS[selectedMarket].replace(/^www\./, ""); // "amazon.com" or "amazon.ca"
@@ -416,6 +449,11 @@ async function handleSave() {
   hotspot.productName = name || null;
   hotspot.productUrl = url || null;
   hotspot.marketplace = selectedMarket;
+  if (url && urlIsGenerated) {
+    hotspot.auto = true;
+  } else {
+    delete hotspot.auto;
+  }
 
   statusLine.textContent = `Saving ${hotspot.id}...`;
   try {
@@ -506,6 +544,7 @@ document.getElementById("modal-save").addEventListener("click", handleSave);
 deleteBtn.addEventListener("click", handleDelete);
 searchAmazonBtn.addEventListener("click", handleSearchAmazon);
 pasteClipboardBtn.addEventListener("click", handlePasteClipboard);
+generateLinkBtn.addEventListener("click", handleGenerateLink);
 modalBackdrop.addEventListener("click", (e) => {
   if (e.target === modalBackdrop) closeModal();
 });
