@@ -1,0 +1,66 @@
+name: Publish Existing Video to Facebook
+
+# One-off recovery tool: publishes an ALREADY-HOSTED video (one that went out on
+# Instagram/TikTok/YouTube but not Facebook -- e.g. from a skip_facebook_api test
+# run, or a genuine transient Facebook failure that stopped the main pipeline
+# before it reached TikTok/YouTube) straight to the Facebook Page via the same
+# proven publish_to_facebook() used everywhere else. Does NOT touch any rotation
+# counters (template/caption/concept-offset) and does NOT generate new content --
+# it only takes a video_url + caption that already exist and completes the one
+# missing platform. Not on a schedule; workflow_dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: "Public URL of the already-hosted video (e.g. the raw.githubusercontent.com media/reels/... URL from the run that skipped Facebook)"
+        required: true
+        type: string
+      caption:
+        description: "Exact caption that was used for that post on the other platforms"
+        required: true
+        type: string
+      expected_duration_s:
+        description: "Video duration in seconds, for the post-publish truncation check (ffprobe -show_entries format=duration). Leave blank to skip that check."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish-to-facebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Publish to Facebook
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          VIDEO_URL: ${{ github.event.inputs.video_url }}
+          CAPTION: ${{ github.event.inputs.caption }}
+          EXPECTED_DURATION_S: ${{ github.event.inputs.expected_duration_s }}
+        run: |
+          python -c "
+          import os
+          import core_decor_reel_pipeline as core
+
+          duration = os.environ.get('EXPECTED_DURATION_S') or None
+          duration = float(duration) if duration else None
+
+          fb_id = core.publish_to_facebook(
+              os.environ['VIDEO_URL'],
+              os.environ['CAPTION'],
+              expected_duration_s=duration,
+          )
+          print(f'Published to Facebook: video_id={fb_id}')
+          "
