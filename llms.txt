@@ -2526,3 +2526,73 @@ pairs, zero malformed (non-2-tuple or empty-string) entries, YAML itself
 parsed and re-checked for the correct cron string and that
 `workflow_dispatch` survived the edit (it's a sibling of `schedule:` under
 `on:`, not nested inside it — easy indentation mistake to introduce here).
+
+## Facebook "reach" investigation: root cause was follower count, not publishing method (2026-08-20/21)
+
+Dev suspected Meta was throttling reach on API-published Facebook posts
+specifically, based on a hunch after enabling Instagram's "auto-share to
+Facebook" setting. Investigated with real API calls against real
+production data rather than guessing or trusting docs alone (Meta's own
+Page/video Insights metrics are in active flux -- a batch was deprecated
+June 15 2026 with limited warning, so doc summaries found via search were
+treated as a starting point to verify against the live API, not as
+ground truth).
+
+**Step 1 — tested the actual premise**: confirmed via Meta's official
+Content Publishing docs (fetched directly, not from memory) that the
+Graph API's `/media`/`/media_publish` endpoints have no documented
+relationship to Instagram's native "Share to Facebook" toggle at all --
+that feature is part of the Instagram app's own publish flow, not exposed
+to or triggered by the Graph API. A real test (published to Instagram
+only via `SKIP_FACEBOOK_API`, see the workflow entry above) confirmed
+this empirically: the post never appeared on Facebook. So "does the
+native cross-post work for API content" has a clean answer: no, it
+doesn't exist as a path at all, regardless of the toggle.
+
+**Step 2 — checked whether API-published Reels get throttled reach
+specifically, using real numbers**: pulled 7 real Facebook video_ids from
+the last 6 days of production `daily-reel.yml` runs (extracted from
+Actions run logs via `gh run view --log`, not guessed) plus the day's two
+test posts, and queried `/{video_id}/video_insights` for each. Every
+single one returned `{"data": []}` -- no error, just empty, uniformly,
+including a video from 6 days earlier that had a full week to accumulate
+views. That uniformity (not varying by post age or content) was the tell
+that something more fundamental than per-post throttling was going on.
+
+Ruled out the two live hypotheses methodically rather than picking one:
+tried single-metric requests (isolating whether one bad metric name in a
+batched request was silently zeroing the whole response -- it wasn't),
+confirmed the video IDs themselves resolve fine via basic `/{video_id}
+?fields=id,length,status` calls (so it's not a bad-ID problem), and
+discovered along the way that the post-level `/{post_id}/insights` edge
+hard-errors for Reels post_ids specifically (`(#12) singular statuses API
+is deprecated for versions v2.4 and higher` -- a known Graph API quirk:
+Reels post_ids don't behave like classic Page post_ids for this edge, so
+that path is a dead end for this content type regardless of anything
+else).
+
+**Root cause, confirmed directly**: `GET /{page_id}?fields=fan_count,
+followers_count` returned **10 and 10**. The Core Decor Facebook Page has
+10 followers. Meta suppresses Page/video Insights data below a documented
+minimum audience threshold (100+ likes for standard Page Insights,
+consistent with the uniformly-empty video_insights results regardless of
+post age). This fully explains the empty insights data on its own, with
+no need to invoke throttling, API-vs-native publishing, or anything
+Reels-specific -- a page with 10 followers has almost no organic reach
+on ANY platform through ANY publishing method. The original "is the API
+being throttled" question was chasing the wrong variable; the real
+constraint is that the Facebook Page's own audience is essentially
+unbuilt, disconnected from whatever audience Instagram/TikTok/YouTube
+have. Growing Facebook reach here is an audience-building problem, not a
+pipeline or publishing-method bug -- no code fix addresses it.
+
+Three small reusable diagnostic/recovery workflows came out of this,
+all `workflow_dispatch`-only (never scheduled), safe to keep:
+- `publish-existing-to-facebook.yml` -- publish an already-hosted
+  video+caption to Facebook directly, for recovering a post that's
+  missing from FB without regenerating content or touching rotation
+  counters.
+- `check-facebook-video-insights.yml` -- pull real video_insights /
+  post-level insights / basic fields for given video_id(s)/post_id(s).
+- `check-facebook-page-followers.yml` -- pull the Page's own fan_count/
+  followers_count directly.
