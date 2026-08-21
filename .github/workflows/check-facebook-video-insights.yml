@@ -1,0 +1,59 @@
+name: Check Facebook Video Insights
+
+# Diagnostic tool, not a scheduled pipeline step: pulls real Graph API video_insights
+# for one or more Facebook video_ids (comma-separated), so reach/distribution can be
+# judged from actual numbers instead of guessing. Requests a broad metric list and
+# lets the API itself report which ones are valid/deprecated for this app version --
+# Meta deprecates Page/video Insights metrics without much warning (a batch went out
+# June 15 2026), so asking the API directly beats trusting any doc summary.
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_ids:
+        description: "Comma-separated Facebook video_ids to check (not post_ids)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  check-insights:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query video_insights for each video_id
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          VIDEO_IDS: ${{ github.event.inputs.video_ids }}
+        run: |
+          python3 -c "
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+
+          token = os.environ['META_SYSTEM_USER_TOKEN']
+          video_ids = [v.strip() for v in os.environ['VIDEO_IDS'].split(',') if v.strip()]
+          metrics = ','.join([
+              'total_video_views',
+              'total_video_views_unique',
+              'total_video_impressions',
+              'total_video_avg_time_watched',
+              'total_video_complete_views',
+              'total_video_view_total_time',
+          ])
+
+          for vid in video_ids:
+              url = f'https://graph.facebook.com/v23.0/{vid}/video_insights?' + urllib.parse.urlencode({
+                  'metric': metrics, 'access_token': token,
+              })
+              try:
+                  with urllib.request.urlopen(url, timeout=30) as r:
+                      body = json.loads(r.read())
+              except urllib.error.HTTPError as e:
+                  body = json.loads(e.read())
+              print(f'=== video_id {vid} ===')
+              print(json.dumps(body, indent=2))
+              print()
+          "
