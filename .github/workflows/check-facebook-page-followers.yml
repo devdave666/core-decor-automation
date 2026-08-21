@@ -1,0 +1,18 @@
+name: Check Facebook Page Follower Count
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query page fan/follower count
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+        run: |
+          curl -s "https://graph.facebook.com/v23.0/${META_PAGE_ID}?fields=id,name,fan_count,followers_count,link&access_token=${META_SYSTEM_USER_TOKEN}"
