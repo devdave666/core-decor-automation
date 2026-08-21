@@ -1238,7 +1238,18 @@ def run_pipeline():
         caption, caption_idx = get_next_caption_and_index(repo_root)
 
         ig_id = publish_to_instagram(public_url, caption)
-        fb_id = publish_to_facebook(public_url, caption, expected_duration_s=duration)
+        # Opt-in escape hatch for A/B-testing whether Meta throttles reach on
+        # API-published Facebook posts vs. Instagram's own native auto-cross-
+        # post. Off by default (SKIP_FACEBOOK_API unset on every scheduled
+        # run) -- only skips the direct call on a manual dispatch that sets
+        # it explicitly. Facebook still gets the post either way, just via
+        # IG's cross-post setting instead of our API route when skipped.
+        skip_facebook_api = os.environ.get("SKIP_FACEBOOK_API", "false").lower() == "true"
+        if skip_facebook_api:
+            log.info("SKIP_FACEBOOK_API=true -- letting Instagram's auto-cross-post reach Facebook instead of publish_to_facebook()")
+            fb_id = None
+        else:
+            fb_id = publish_to_facebook(public_url, caption, expected_duration_s=duration)
         tiktok_id = publish_to_buffer(public_url, caption, os.environ["BUFFER_TIKTOK_CHANNEL_ID"], "tiktok")
         yt_id = publish_to_buffer(public_url, caption, os.environ["BUFFER_YOUTUBE_CHANNEL_ID"], "youtube",
                                     youtube_title=caption.split("\n")[0][:100])

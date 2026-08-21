@@ -5,7 +5,20 @@ on:
     # 14:00 UTC daily — adjust to whatever posting time actually performs best once
     # there's enough data to know; this is a placeholder, not a researched choice.
     - cron: "0 14 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      skip_facebook_api:
+        description: >-
+          Skip the direct Facebook Graph API publish for this run, so Facebook
+          only gets the post via Instagram's own auto-cross-post setting (not
+          our API route). For A/B-testing whether Meta is throttling
+          API-published reach vs. native cross-posted reach. Defaults to
+          false so the scheduled cron trigger (which never sets this input)
+          always behaves exactly as before -- this only takes effect on a
+          manual run where it's explicitly set to true.
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -47,4 +60,5 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
           BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
           BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          SKIP_FACEBOOK_API: ${{ github.event.inputs.skip_facebook_api || 'false' }}
         run: python core_decor_reel_pipeline.py
