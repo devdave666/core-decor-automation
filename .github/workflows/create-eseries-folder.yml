@@ -1,0 +1,41 @@
+name: Create E-Series Reference Folder
+
+# One-off setup step: creates a Drive folder (nested under the existing "Interior
+# Design Reels" root, same as Template Reels) for Dev to upload example viral reels
+# into, for the new e-series format-copying content type. Uses the SAME OAuth
+# credentials already powering drive_upload.py's template-reel fetching -- no new
+# Drive auth needed. workflow_dispatch only, run once.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  create-folder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Create the reference-reels folder
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+        run: |
+          python3 -c "
+          from drive_upload import get_or_create_folder, ROOT_FOLDER_ID
+
+          folder_id = get_or_create_folder('E-Series Reference Reels', ROOT_FOLDER_ID)
+          print(f'folder_id={folder_id}')
+          print(f'link=https://drive.google.com/drive/folders/{folder_id}')
+          "
