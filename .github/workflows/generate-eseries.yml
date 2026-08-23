@@ -20,6 +20,10 @@ on:
         description: "Space-separated room keys to generate (blank = all rooms in the set)"
         required: false
         type: string
+      model:
+        description: "Override the model id (blank = default, gemini-2.5-flash-image)"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -47,7 +51,14 @@ jobs:
         run: pip install google-genai pillow
 
       - name: Generate
-        run: python3 concept_tools/generate_eseries.py "${{ github.event.inputs.set_id }}" ${{ github.event.inputs.rooms }}
+        env:
+          MODEL_OVERRIDE: ${{ github.event.inputs.model }}
+        run: |
+          if [ -n "$MODEL_OVERRIDE" ]; then
+            python3 concept_tools/generate_eseries.py "${{ github.event.inputs.set_id }}" ${{ github.event.inputs.rooms }} --model "$MODEL_OVERRIDE"
+          else
+            python3 concept_tools/generate_eseries.py "${{ github.event.inputs.set_id }}" ${{ github.event.inputs.rooms }}
+          fi
 
       - name: Upload generated images as a build artifact
         uses: actions/upload-artifact@v4

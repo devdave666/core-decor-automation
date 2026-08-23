@@ -141,16 +141,16 @@ def build_room_prompt(room, palette_sentence):
     )
 
 
-def generate_room(client, set_id, room_key):
+def generate_room(client, set_id, room_key, model=MODEL):
     from google.genai import types
 
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
     prompt = build_room_prompt(room, set_data["palette_sentence"])
 
-    print(f"--- generating {room['stem']} ---")
+    print(f"--- generating {room['stem']} with {model} ---")
     response = client.models.generate_content(
-        model=MODEL,
+        model=model,
         contents=prompt,
         config=types.GenerateContentConfig(
             # image_size default is 1K -- confirmed the actual cause of the
@@ -181,12 +181,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("set_id", choices=list(ESERIES_SETS.keys()))
     parser.add_argument("rooms", nargs="*", help="room keys to generate (default: all rooms in the set)")
+    parser.add_argument("--model", default=MODEL, help=f"override the model id (default: {MODEL})")
     args = parser.parse_args()
 
     room_keys = args.rooms or list(ESERIES_SETS[args.set_id]["rooms"].keys())
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
     for room_key in room_keys:
-        generate_room(client, args.set_id, room_key)
+        generate_room(client, args.set_id, room_key, model=args.model)
 
 
 if __name__ == "__main__":
