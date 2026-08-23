@@ -2596,3 +2596,94 @@ all `workflow_dispatch`-only (never scheduled), safe to keep:
   post-level insights / basic fields for given video_id(s)/post_id(s).
 - `check-facebook-page-followers.yml` -- pull the Page's own fan_count/
   followers_count directly.
+
+## Vertex AI Imagen setup for the new e-series (2026-08-22) -- gcloud commands Dev needs to run
+
+Dev is setting up Google's Imagen (via Vertex AI) for a new "e-series" content
+type that copies the format of viral reels he'll upload to a new Drive folder
+("E-Series Reference Reels", nested under ROOT_FOLDER_ID -- see
+create-eseries-folder.yml). Chose Google's models specifically for the $300
+new-GCP-account trial credit.
+
+**Critical gotcha confirmed via a live web check, not assumed**: the $300 credit
+covers Vertex AI/Imagen (billed through an actual GCP billing account) but
+explicitly does NOT cover the separate Gemini Developer API (an AI Studio key) --
+Google carved that out on purpose. Getting this wrong means burning real money
+on a key type the promo credit doesn't touch. Also: the "Vertex AI" console
+itself was renamed/folded into "Gemini Enterprise" as of a May 2026 rebrand --
+same underlying service, different name, worth knowing before hunting for a
+UI that no longer exists under its old name.
+
+Dev pasted setup advice from elsewhere that got two real things wrong and
+missed one step entirely:
+- Called `generate_content()` with a Claude model (`claude-3-5-sonnet@...`) --
+  Claude IS available via Vertex Model Garden, but that's irrelevant here;
+  image generation needs `generate_images()` with an Imagen model instead.
+- Used a bare `genai.Client()` with no arguments, which defaults to the
+  Gemini Developer API (not covered by the credit) rather than Vertex AI
+  billing. Needs `genai.Client(vertexai=True, project=..., location=...)`.
+- The 4 gcloud commands it gave only set up Workload Identity Federation
+  *authentication* (letting the GitHub Actions OIDC token impersonate the
+  service account) -- never granted that service account actual *permission*
+  to call Vertex AI. Without a 5th command granting `roles/aiplatform.user`,
+  every real request would 403 even after auth succeeds.
+
+The WIF approach itself (no static service-account key, short-lived tokens via
+`google-github-actions/auth@v2`) is correct and current -- kept that part,
+fixed the rest. `.github/workflows/test-vertex-imagen.yml` is the corrected,
+ready-to-run connectivity test (workflow_dispatch only, generates one
+throwaway image as a build artifact, not wired into any content pipeline).
+
+**Dev's real GCP project details** (from what he already ran/received):
+project_id `project-58f4f689-36b9-406b-bfa`, project_number `584573644858`.
+Already baked into test-vertex-imagen.yml's `workload_identity_provider` and
+`service_account` fields.
+
+**Exact commands Dev needs to run in Cloud Shell** (his own GCP identity required
+-- Claude has no gcloud CLI access in this sandbox and couldn't run these even
+if it did, since IAM changes need the project owner's own credentials):
+
+```bash
+PROJECT_ID="project-58f4f689-36b9-406b-bfa"
+PROJECT_NUMBER="584573644858"
+REPO="devdave666/core-decor-automation"
+
+# 1. Workload Identity Pool
+gcloud iam workload-identity-pools create "github-pool" \
+  --project="$PROJECT_ID" --location="global" \
+  --display-name="GitHub Actions Pool"
+
+# 2. OIDC Provider for GitHub
+gcloud iam workload-identity-pools providers create-oidc "github-provider" \
+  --project="$PROJECT_ID" --location="global" \
+  --workload-identity-pool="github-pool" \
+  --display-name="GitHub Actions Provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+  --issuer-uri="https://token.actions.githubusercontent.com"
+
+# 3. Service account (if vertex-ai-runner doesn't already exist)
+gcloud iam service-accounts create "vertex-ai-runner" \
+  --project="$PROJECT_ID" --display-name="Vertex AI Runner for GitHub Actions"
+
+# 4. Let this specific GitHub repo impersonate the service account
+gcloud iam service-accounts add-iam-policy-binding \
+  "vertex-ai-runner@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --project="$PROJECT_ID" --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-pool/attribute.repository/${REPO}"
+
+# 5. THE MISSING STEP -- actually grant Vertex AI access (without this, auth
+#    succeeds but every real Imagen call 403s)
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:vertex-ai-runner@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/aiplatform.user"
+```
+
+Once run, Dev triggers `test-vertex-imagen.yml` via workflow_dispatch himself
+(or asks Claude to). Success = a real generated image in the run's build
+artifacts. Only once that's confirmed working should any actual e-series
+generation script get built against this -- no point designing the real
+pipeline against an untested auth chain.
+
+**Still blocked on**: (1) Dev running the 5 commands above, (2) Dev uploading
+example viral reels to the new Drive folder for format analysis. Neither
+happened yet as of this entry.
