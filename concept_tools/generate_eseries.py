@@ -272,18 +272,201 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Dev's feedback after e1-02/e1-03: both read as "bright" despite e1-02
+    # being warm rather than sunny -- wanted genuinely dark/moody sets too,
+    # and pointed back at the reference reels for it. Re-reviewing reel (4)'s
+    # OTHER frames (only its bright kitchen was sampled the first time) found
+    # exactly that: the same reel also shows a dramatically dark kitchen --
+    # near-black cabinetry, brass hardware, marble, dark wood beams, captioned
+    # "This is why cabinet color matters" (a bright-vs-dark cabinet-color
+    # comparison, not a single mood). That dark frame is this set's real
+    # grounding, not an invented mood. Cross-checked against real current
+    # trend data (WebSearch, not assumed) -- "moody organic modern" (dark
+    # wood, earthy deep tones, warm dramatic lighting) is confirmed as a real
+    # live 2026 trend, not a guess at what might work.
+    "e1-04": {
+        "source_type": "Type 1 - firstchair (reel 4, dark cabinet frame)",
+        "style_slug": "darkmoody",
+        "palette_sentence": (
+            "a dramatic dark palette carried through every room: deep "
+            "near-black painted cabinetry and millwork, white and grey "
+            "veined marble surfaces, aged warm brass fixtures and "
+            "hardware, dark stained oak ceiling beams and flooring, and "
+            "deep bottle-green and espresso-brown textiles."
+        ),
+        "light_sentence": (
+            " Photographed at night with only the room's own warm brass "
+            "fixtures lit: the dark cabinetry and beams recede into "
+            "near-black shadow while the marble surfaces, brass hardware "
+            "and any glazed cabinet interiors catch and hold the warm "
+            "lamplight, creating strong, deliberate pools of warm light "
+            "against deep darkness. Contrast is high and dramatic, "
+            "shadows are rich near-black rather than grey, and the few "
+            "lit surfaces glow. Moody, dramatic, editorial and confident "
+            "rather than cozy."
+        ),
+        "rooms": {
+            "kit": {
+                "stem": "e1-04_kit_darkmoody",
+                "room": "a residential kitchen",
+                "style": "dramatic dark modern interior with traditional "
+                          "millwork profiles",
+                "styling": (
+                    "a large island with a marble countertop and dark "
+                    "cabinetry, a glass-front upper cabinet with lit "
+                    "interior shelving showing white ceramics, a copper "
+                    "pan hung near the range, a potted olive branch on "
+                    "the island, and a patterned wool runner rug on the "
+                    "floor."
+                ),
+                "fixtures": (
+                    "two brass dome pendant lights with white glass "
+                    "diffusers over the island, and a brass wall sconce "
+                    "beside the range hood."
+                ),
+            },
+            "bed": {
+                "stem": "e1-04_bed_darkmoody",
+                "room": "a residential primary bedroom",
+                "style": "dramatic dark modern interior with traditional "
+                          "millwork profiles",
+                "styling": (
+                    "a dark upholstered bed with deep bottle-green velvet "
+                    "bedding and layered cushions, a pair of marble-top "
+                    "nightstands, a single large abstract artwork above "
+                    "the headboard, a small potted plant, and a dark wool "
+                    "rug underfoot."
+                ),
+                "fixtures": (
+                    "a pair of brass swing-arm wall sconces flanking the "
+                    "bed in place of table lamps, and a single small "
+                    "brass flush ceiling fixture."
+                ),
+            },
+        },
+    },
+
+    # The "special" reel Dev asked for: opens on the EXTERIOR of the home,
+    # then moves inside -- a real, recognized house-tour structure (real
+    # estate / "come inside my home" content), confirmed via WebSearch as a
+    # live current format, not assumed. Structurally different enough
+    # (exterior shot has no interior three-quarter/walkway rules to obey)
+    # that it needs its own composition handling -- see build_exterior_prompt
+    # and the "is_exterior" flag below. Palette leans into the warm-neutral
+    # "quiet luxury" trend confirmed in the same research pass (Pantone's
+    # Mocha Mousse-adjacent warm neutrals), distinct from both e1-01/e1-02's
+    # earthy/vintage tones and e1-04's dark drama.
+    "e1-05": {
+        "source_type": "Type 1 - firstchair (general house-tour structure, not one specific reel)",
+        "style_slug": "quietluxury",
+        "palette_sentence": (
+            "a warm quiet-luxury neutral palette carried through every "
+            "space, indoors and out: warm greige limestone and render, "
+            "natural walnut millwork and doors, soft warm white walls, "
+            "aged brass fixtures and hardware, and natural linen and "
+            "boucle textiles."
+        ),
+        "light_sentence": (
+            " Photographed at golden hour, sun low in the sky: warm "
+            "directional late-day light rakes across every surface, "
+            "throwing long soft shadows and catching texture in the "
+            "limestone, render and brass. Colours are warm and rich "
+            "without being dark -- warm highlights, soft warm shadow, "
+            "never flat midday light and never night-time lamplight. "
+            "Inviting, elevated and unmistakably golden hour throughout."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e1-05_ext_quietluxury",
+                "room": "the front exterior facade of a residential home",
+                "style": "warm modern architectural exterior with quiet "
+                          "luxury detailing",
+                "styling": (
+                    "a wide walnut front door with brass hardware, "
+                    "black-framed windows, low manicured boxwood hedges "
+                    "either side of the entry path, a pair of large "
+                    "stone planters with olive trees flanking the door, "
+                    "and a honed stone front walkway."
+                ),
+                "fixtures": (
+                    "a pair of brass lantern wall sconces flanking the "
+                    "front door."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e1-05_ent_quietluxury",
+                "room": "a residential entry foyer, just inside the front door",
+                "style": "warm quiet-luxury interior with natural materials",
+                "styling": (
+                    "a narrow walnut console table with a stone bowl for "
+                    "keys, a large round mirror in a brass frame above "
+                    "it, a tall potted olive tree in the corner, a woven "
+                    "jute runner rug, and a single piece of framed line-"
+                    "art on the wall."
+                ),
+                "fixtures": (
+                    "a single sculptural brass pendant light hung in the "
+                    "entry, and concealed cove lighting along the ceiling "
+                    "perimeter."
+                ),
+            },
+            "liv": {
+                "stem": "e1-05_liv_quietluxury",
+                "room": "a residential living room adjoining the entry",
+                "style": "warm quiet-luxury interior with natural materials",
+                "styling": (
+                    "a deep linen-upholstered sofa with boucle cushions, "
+                    "a honed limestone coffee table, a single large "
+                    "abstract canvas in warm neutral tones, a sculptural "
+                    "ceramic vessel, a stack of art books, and a thick "
+                    "wool rug in warm ivory."
+                ),
+                "fixtures": (
+                    "a pair of brass floor lamps flanking the sofa, and "
+                    "concealed cove lighting along the ceiling perimeter."
+                ),
+            },
+        },
+    },
 }
 
 
+# COMPOSITION and SPATIAL_RULE (imported above) are written specifically for
+# interior three-quarter room views -- "no wide-angle distortion," "clear
+# walkways," interior depth-layering language that doesn't map onto a
+# building facade. e1-05's "ext" room is the first exterior shot this
+# generator has ever needed, so it gets its own composition/spatial language
+# rather than forcing the interior rules onto a house front.
+EXTERIOR_COMPOSITION = (
+    " Shot from the front walkway at a slight three-quarter angle to the "
+    "facade, eye-level, as if a person had just arrived at the front door. "
+    "Full building facade in frame with some sky and surrounding "
+    "landscaping visible. Natural lens perspective, no fisheye or "
+    "wide-angle distortion, no drone or elevated angle."
+)
+EXTERIOR_SPATIAL_RULE = (
+    " The architecture must be geometrically coherent: walls, rooflines, "
+    "windows and the front door align and read as a single real "
+    "buildable structure, with no floating or interpenetrating elements. "
+    "Landscaping stays clear of the front door and walkway."
+)
+
+
 def build_room_prompt(room, palette_sentence, light_sentence=None):
+    is_exterior = room.get("is_exterior", False)
+    shot_label = "Exterior photograph" if is_exterior else "Interior photograph"
+    composition = EXTERIOR_COMPOSITION if is_exterior else COMPOSITION
+    spatial_rule = EXTERIOR_SPATIAL_RULE if is_exterior else SPATIAL_RULE
     return (
-        f"Interior photograph of {room['room']}, {room['style']}."
+        f"{shot_label} of {room['room']}, {room['style']}."
         f" The space is built from exactly this palette, which is the "
         f"defining feature of the room and must be clearly visible: "
         f"{palette_sentence}"
         + (light_sentence or ROOM_LIGHT)
-        + COMPOSITION
-        + SPATIAL_RULE
+        + composition
+        + spatial_rule
         + f" Furnished and dressed with: {room['styling']}"
         + STYLING_RULE
         + f" The room's own light fittings are: {room['fixtures']}"
