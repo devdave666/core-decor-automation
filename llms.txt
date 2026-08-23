@@ -3254,3 +3254,78 @@ interior shots reinforcing the house-tour flow. Committed to
 `upload-eseries-to-drive.yml` under "E-Series Generated Output/e1-04" and
 "/e1-05". **Awaiting Dev's approval before any further batch**, same
 checkpoint pattern Dev has now established twice.
+
+## E-Series: "old money" is now the default look, per Dev's real reference reels (2026-08-23)
+
+Dev approved e1-04/e1-05 but called the e-series overall "dull and boring"
+and asked for genuine "old money" wow factor, "not too bright" -- and this
+time sent two real reference videos rather than a mood word, explicitly:
+"for next few generations only stick to this." Downloaded both via a new
+one-off `download-drive-files.yml` (fetches specific Drive file IDs, not a
+whole folder -- existing tooling only handled folder listing) and sampled
+frames locally with the ffmpeg already installed on this machine, rather
+than guessing at the look from Dev's description alone.
+
+**What the references actually show, not assumed:** both are "ANB
+Architecture Studio" branded kitchen-design reels. Reel 1: a "MATERIAL
+PALETTE" branding montage -- swatch cards (charcoal plaster/black marble/
+walnut/aged brass; warm ivory/cream marble/walnut/brass; slate/walnut/cream
+marble/brass; deep maroon/olive green/walnut/cream quartz -- each combo used
+in ONE finished kitchen, not layered together) intercut with the finished
+kitchens: every one built around a dramatic waterfall-edge stone island,
+2-3 slim cylindrical aged-brass pendants at staggered heights, dark walnut
+cabinetry, glass-front upper cabinets with their own interior lighting,
+warm layered ambient light (never sun-bright, never night-dark). Reel 2: a
+heritage/English-country-manor kitchen -- antique double-dome brass
+pendant, dramatic veined-marble waterfall island on a dark oak base, woven
+rush counter stools, brass bridge faucet, hung copper pans, a gilt-framed
+oil landscape painting, a stoneware jug with foraged olive branches, linen
+café curtains, soft diffused daylight. **Both genuinely sparse on
+styling** -- 2-3 objects per shot -- which is itself a likely real reason
+the earlier e-series sets read as "trying too hard": density was reading
+as effort, not luxury, compared to these.
+
+**New mechanism added, not just a new set:** `styling_restraint_sentence`,
+an optional per-set field in `concept_tools/generate_eseries.py` appended
+after `STYLING_RULE` in `build_room_prompt()` -- added because
+`STYLING_RULE` alone (shared with the a-d series, "a small number of
+larger, well-spaced pieces") reads looser than what these references
+actually show. e1-06's version caps styling at "two or three objects in
+the whole frame."
+
+**e1-06 ("oldmoney") built and iterated on a real defect, not shipped on
+the first try:** dark walnut cabinetry/millwork, dramatically veined
+cream-and-grey waterfall marble, aged brass, warm soft-plaster walls; warm
+layered ambient light_sentence (pendant glow + under-cabinet + cove light,
+moderate exposure throughout, explicitly neither sun-bright nor
+night-dark) written from what the references show rather than reusing
+`ROOM_LIGHT`'s blue-hour treatment, since neither reference shows blue
+dusk at the windows.
+
+**First kitchen test render had two real, visible defects, caught by eye
+before committing anything:** (1) the palette_sentence's own vague
+"occasional deep bottle-green or oxblood accents used sparingly" clause
+got rendered as a whole out-of-palette green cabinet run, not a small
+accent -- root cause was the word "sparingly" giving the model no concrete
+scale to work with, and the accent detail wasn't even load-bearing (my own
+addition, not a specific thing either reference showed), so it was
+dropped entirely rather than reworded. (2) An unscripted second table with
+its own citrus bowl appeared disconnected in the extreme foreground --
+root cause: the kitchen's styling text never stated the island was the
+room's only furniture, so the model invented one to satisfy COMPOSITION's
+generic "a piece of furniture in the near foreground" clause. Fixed by
+adding an explicit, affirmative statement to the kitchen's own styling
+text that the island is "the sole piece of furniture standing in the
+room." Regenerated once: both defects gone, confirmed by eye -- single
+consistent palette, no orphaned objects, island genuinely reads as the
+"wow factor" hero the reference material shows. Dining room generated
+fresh afterward (gilt-framed oil landscape, brass linear chandelier,
+walnut table, stoneware jug with olive branches) and reads as the same
+house as the kitchen through a shared archway -- no separate fix needed.
+
+Both images committed to `assets/application_eseries/`, uploaded to Drive
+under "E-Series Generated Output/e1-06". **Awaiting Dev's approval.**
+Per Dev's "for next few generations" instruction, e1-06's palette/light/
+restraint approach (not e1-01..e1-05's) is the direction any NEW e-series
+set should default to until Dev says otherwise -- this is a standing
+style change, not a one-off set alongside the others.
