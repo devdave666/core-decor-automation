@@ -3000,3 +3000,54 @@ as `concept_review/` for the c/d-series before anything gets promoted).
   types.GenerateVideosSource(...)` form before this becomes load-bearing in
   any real pipeline; not urgent while this stays a proof of concept, but don't
   let it linger once this gets built out for real.
+
+## Why e-series images look lower quality than FLUX -- root cause confirmed (2026-08-23)
+
+Dev asked directly why the Gemini-generated e-series images looked lower
+quality than the a-d series' FLUX output. Answered with real measurements
+and real API tests, not a general "different model" hand-wave:
+
+**Real, measurable resolution gap**: FLUX room shots render at 1088x1920
+(~2.1MP, `ROOM_W`/`ROOM_H` in `generate_concept.py`). The e-series test
+image came back 768x1344 (~1.03MP) -- roughly half the pixel count. That
+alone is a real, sufficient explanation for looking softer at the same
+display size, before any discussion of model "quality" as a vibe.
+
+**Tried the documented fix, it didn't work**: `image_size="4K"` is a real,
+correctly-named field -- confirmed by introspecting `types.ImageConfig`'s
+actual Pydantic schema directly in a throwaway workflow rather than trust
+another secondhand doc summary (worth doing after `image_size` from search
+results turned out to come with invented `client.interactions.create()`
+syntax that doesn't match this SDK at all). The field accepts `1K`/`2K`/`4K`,
+default `1K`. Requesting `4K` produced a byte-identical 768x1344 output to
+the default -- silently ignored, not erroring, meaning `gemini-2.5-flash-
+image` doesn't actually honor this control despite the SDK accepting it.
+
+**Checked for a higher-tier model rather than assume none exists**: the
+publisher-model catalog scanned earlier (see the "confirmed working end-to-
+end" entry above) had returned 20 image-related models, but the discovery
+script stopped at the first one that worked (`gemini-2.5-flash-image`) and
+never tried the rest. Went back and checked what else was in that list:
+`gemini-3-pro-image`, `gemini-3.1-flash-image`, `gemini-3.1-flash-image-
+preview`, `gemini-3.1-flash-lite-image` were all present. Tried the two
+most likely candidates for real (`gemini-3-pro-image`, the actual "Pro"
+tier closer to FLUX's positioning; `gemini-3.1-flash-image`) -- both 404
+with "not found or your project does not have access to it." These exist
+in Google's global catalog but this specific trial project isn't allowlisted
+for the Gemini 3 image family. `gemini-3-pro-image` most likely being where
+`image_size` actually does something -- the docs phrase that was fetched
+earlier said "Gemini 3 image models," not Gemini 2.5 -- but unconfirmed
+since it's inaccessible from this account right now.
+
+**Bottom line, stated plainly rather than softened**: `gemini-2.5-flash-
+image` is the only generative image model this GCP account currently has
+real access to, and it appears hard-capped around ~1MP output regardless
+of requested config -- a genuine model/tier limitation, not something more
+prompt tuning or parameter guessing fixes from this side. Options going
+forward: (1) accept it -- may matter less in a heavily-compressed fast-cut
+Reel than as a full-size still image; (2) post-process upscale (sharper-
+looking, not more real detail); (3) request/wait for Gemini 3 image family
+access on this GCP project; (4) fall back to FLUX for e-series too,
+trading away the promo-credit cost rationale. Left `--model` override
+capability in `generate_eseries.py`/`generate-eseries.yml` specifically so
+testing Gemini 3 later (once/if access clears) needs zero new code.
