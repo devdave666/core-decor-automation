@@ -26,6 +26,15 @@ problems in v1, both fixed here:
    one adjacent, smaller step -- see generate_veo_clips.py for the clip side of
    this change.
 
+3. **Fixing #1 wasn't actually enough -- real generated Veo clips still came
+   back letterboxed.** gemini-2.5-flash-image's aspect_ratio="9:16" returns
+   768x1344 (ratio 0.5714), which is close to but not identical to Veo's own
+   real output canvas of 720x1280 (ratio 0.5625, confirmed via ffprobe on a
+   generated clip). Veo pads that small mismatch with black bars instead of
+   cropping to fill. Fixed by center-cropping every source frame to exactly
+   720x1280 (`VEO_CANVAS`) via `ImageOps.fit` immediately after generation, so
+   the mismatch never reaches Veo at all.
+
 Generated with gemini-2.5-flash-image on Vertex AI -- the model this project
 already confirmed working end-to-end for the e-series (see llms.txt), not BFL
 FLUX (that's the c/d-series' own tool, concept_tools/generate_concept.py, and
@@ -53,11 +62,22 @@ from pathlib import Path
 from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
-from PIL import Image
+from PIL import Image, ImageOps
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "gemini-2.5-flash-image"
+
+# Veo's actual output canvas for aspect_ratio="9:16" (confirmed via ffprobe on
+# a real generated clip). gemini-2.5-flash-image's own aspect_ratio="9:16"
+# config returns 768x1344 (ratio 0.5714), which is CLOSE to but not exactly
+# 720x1280 (0.5625) -- close enough that it looked fine as a still image, but
+# Veo's image-conditioned generation doesn't crop-to-fill that mismatch, it
+# pads it, so every real generated clip came back letterboxed even though the
+# video container itself was correctly 720x1280. Exact-cropping every source
+# frame to Veo's own canvas size before it ever reaches Veo removes the
+# mismatch at the source instead of trying to fix it after generation.
+VEO_CANVAS = (720, 1280)
 MAX_RETRIES = 5
 RETRY_BASE_DELAY_S = 20
 
@@ -182,7 +202,11 @@ def _first_image(response):
         for part in candidate.content.parts:
             inline = getattr(part, "inline_data", None)
             if inline and getattr(inline, "data", None):
-                return Image.open(BytesIO(inline.data))
+                img = Image.open(BytesIO(inline.data)).convert("RGB")
+                # Center-crop to Veo's exact canvas ratio right away, so every
+                # downstream chained edit is already working from an
+                # exact-ratio reference image, not just the final save.
+                return ImageOps.fit(img, VEO_CANVAS, method=Image.LANCZOS, centering=(0.5, 0.5))
     raise RuntimeError(f"No inline image data in response: {response!r}"[:1000])
 
 
