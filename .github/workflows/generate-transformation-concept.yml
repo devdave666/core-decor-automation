@@ -1,0 +1,57 @@
+name: Generate Transformation Concept Frames
+
+# Asset prep for the new transformation-reel format (see transformation_reel/
+# and llms.txt) -- generates the before/mid/after image trio for one concept via
+# gemini-2.5-flash-image on Vertex AI. Same WIF auth already proven for Imagen
+# and Veo connectivity tests.
+#
+# workflow_dispatch ONLY, matching every other paid-generation workflow in this
+# repo (generate-concept.yml, edit-room.yml) -- image generation costs real
+# money per call and must never fire on a timer.
+#
+# Uploads the three images as a build artifact for human review rather than
+# committing them directly -- same staging discipline as concept_review/ for
+# the c/d-series: nothing gets promoted into a real pipeline unopened.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: "Concept key from transformation_reel/generate_concept_frames.py's CONCEPTS dict"
+        required: true
+        default: "t01"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai pillow
+
+      - name: Generate before/mid/after frames
+        run: python3 transformation_reel/generate_concept_frames.py "${{ inputs.concept }}" concept_output
+
+      - name: Upload frames as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: transformation-concept-${{ inputs.concept }}
+          path: concept_output/*.png
+          if-no-files-found: error
