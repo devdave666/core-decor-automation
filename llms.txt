@@ -3462,4 +3462,83 @@ All 10 images reviewed by eye, confirmed genuinely diverse in mood/color/
 material while island shape, stool count/style, pendant arrangement,
 sink/faucet position, range/hood and beverage fridge stayed consistent
 throughout. Committed to `assets/application_eseries/`, uploaded to Drive
-under "E-Series Generated Output/e1-08". **Awaiting Dev's approval.**
+under "E-Series Generated Output/e1-08".
+
+## E-Series: e1-09 -- TRUE reference-image editing, superseding e1-08's approach for reels (2026-08-23, same session)
+
+Dev's reaction to e1-08, after liking the images themselves: "it kinda
+defeated the purpose of what i was trying to do... isn't there a way to
+keep reference photo consistent throughout generation and have ai model
+basically reimage that photo with new materials... I wanted to keep all
+these photo in one very fast frame changing reel to show different
+applications while structure stays the same." e1-08's description-only
+consistency (repeating identical text 10x) was visibly looser than what a
+fast-cut structural-consistency reel actually needs -- close, not
+identical, framing/proportions across generations.
+
+**The fix needed no new input from Dev at all.** Gemini 2.5 Flash Image
+supports true image-conditioning -- a real photo passed directly in
+`contents=[prompt, image]`, the exact mechanism
+`transformation_reel/generate_concept_frames.py` already uses for its
+before/mid/after chain (documented above). The blocker earlier wasn't the
+model, it was that Dev's ORIGINAL pasted photo existed only as something
+visible in the chat, not a file this script could use. But e1-08's own
+generated images are real files already committed to this repo --
+`e1-08_var01_ebonyblack_app.png` became the locked pixel reference, and
+every other variation is now a genuine edit of THAT photo, not a
+redescription of a room.
+
+**Mechanism**: new set-level `"base_image"` key in `ESERIES_SETS`.
+`generate_room()` branches on its presence: if set, loads that image via
+PIL and calls the model with `build_reference_edit_prompt()` (an EDIT
+instruction -- "re-render this exact reference photograph with new
+materials... keeping every structural element identical: camera angle,
+island shape/size/position, sink/faucet, stool count/placement, pendant
+positions, cabinetry/appliance layout, window/door positions...") plus
+the image itself as content, instead of `build_room_prompt()`'s
+from-scratch text description.
+
+**Confirmed genuinely tighter by eye, not just in theory**: var02 was
+generated first as a single test (identical palette/light content to
+e1-08's own var02, for a fair side-by-side) and came out with camera
+framing, island position and even the incidental console-table sculpture
+prop matching var01 almost exactly -- a level of consistency e1-08's
+looser description-only approach never hit. One real gap found in that
+same test: the edit introduced a NEW window (absent from the var01 base)
+to satisfy a "blue hour through the window" light instruction, because
+window/door position wasn't yet in the locked-structure list. Fixed by
+adding it explicitly before generating the rest.
+
+**Two real bugs hit and fixed while generating the remaining 8:**
+1. Same 429 RESOURCE_EXHAUSTED class as documented above, but this time
+   the retry itself surfaced a NEW failure mode never seen before: after
+   a successful retry, the model sometimes responds with only
+   acknowledgment TEXT ("Absolutely, I can re-render that... Here is the
+   updated image:") and no actual image part -- `finish_reason=STOP`, no
+   error raised, so the old code raised `RuntimeError` treating it as
+   fatal. Observed specifically on image-EDIT calls under retry/quota
+   pressure, not on the earlier text-only e1-08 batch. Not a permanent
+   block -- retrying the identical call has produced a real image every
+   time this was seen. Fixed by adding `_response_has_image()` and
+   retrying (shorter 5s delay, distinct from the 429 backoff) whenever a
+   response has no image data, not just on hard 429 errors.
+2. The `if: always()` fix from the entry above (originally added for the
+   e1-08 429 incident) proved its worth for real this time: the batch
+   failed partway through (var02-var05 succeeded, var06 hit the new
+   text-only-response bug), but all 4 already-generated images survived
+   in the artifact instead of being thrown away, confirmed by downloading
+   and checking before re-running just the missing ones.
+
+**All 9 edited variations (var02-var10) plus var01 itself (duplicated
+under the e1-09 naming so the full 10-frame reel sequence lives together
+in one place) reviewed by eye**: camera framing, island shape, stool
+count/style/position, pendant placement and the incidental console-table
+sculpture prop stay essentially identical across all 10 -- a materially
+tighter match than e1-08. Committed to `assets/application_eseries/`,
+uploaded to Drive under "E-Series Generated Output/e1-09". **This is now
+the technique to use whenever Dev wants a fast-cut/structural-consistency
+reel from a fixed reference photo -- e1-08's description-only approach
+stays useful for general application-photo variety where near-identical
+framing isn't the point, but e1-09's image-editing approach is what
+"same structure, different materials, for a reel" specifically needs
+going forward.** Awaiting Dev's approval on this final set.
