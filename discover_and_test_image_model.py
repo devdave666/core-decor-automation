@@ -1,42 +1,23 @@
 """
 One-off diagnostic for test-vertex-imagen.yml. Two guessed Vertex AI image model
 names (imagen-4.0-generate-001, gemini-2.5-flash-image-preview) both 404'd in
-real runs against this project -- see llms.txt for the full history. Rather than
-guess a third name from search results, this queries Vertex's own publisher-model
-catalog for this exact project/region, filters for anything image-related, and
-tries generate_content() against each candidate until one actually returns image
+real runs against this project -- see llms.txt for the full history. A first
+attempt at listing the catalog via a hand-rolled google.auth credential refresh
+also failed (a separate scope issue, unrelated to Vertex access itself -- the
+genai client's own auth was already proven working by that point, since it had
+reached the real API and gotten real 404s, not auth errors).
+
+Fixed by reusing the SAME already-authenticated genai client to list models
+instead of building a second parallel auth path: client.models.list(config=
+{'query_base': True}) returns Vertex's base/publisher models, not just
+project-tuned ones. Filters for anything image-related, then tries
+generate_content() against each candidate until one actually returns image
 bytes. Not part of any content pipeline -- throwaway connectivity/discovery tool.
 """
-import google.auth
-import google.auth.transport.requests
-import requests
 from google import genai
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
-
-
-def list_image_model_candidates(headers):
-    url = f"https://{LOCATION}-aiplatform.googleapis.com/v1/publishers/google/models"
-    candidates = []
-    page_token = None
-    while True:
-        params = {"pageSize": 1000}
-        if page_token:
-            params["pageToken"] = page_token
-        r = requests.get(url, headers=headers, params=params, timeout=30)
-        if r.status_code != 200:
-            print(f"Model list call failed: {r.status_code} {r.text[:500]}")
-            break
-        body = r.json()
-        for m in body.get("publisherModels", body.get("models", [])):
-            name = m.get("name", "")
-            if "image" in name.lower() or "imagen" in name.lower():
-                candidates.append(name)
-        page_token = body.get("nextPageToken")
-        if not page_token:
-            break
-    return candidates
 
 
 def try_generate(client, model_id):
@@ -64,20 +45,22 @@ def try_generate(client, model_id):
 
 
 def main():
-    creds, _ = google.auth.default()
-    creds.refresh(google.auth.transport.requests.Request())
-    headers = {"Authorization": f"Bearer {creds.token}"}
+    client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
-    candidates = list_image_model_candidates(headers)
-    print(f"Found {len(candidates)} image-related publisher models:")
+    print("Listing base/publisher models via client.models.list(query_base=True)...")
+    candidates = []
+    for m in client.models.list(config={"query_base": True}):
+        name = getattr(m, "name", "") or ""
+        if "image" in name.lower() or "imagen" in name.lower():
+            candidates.append(name)
+
+    print(f"Found {len(candidates)} image-related base models:")
     for c in candidates:
         print(f"  {c}")
 
     if not candidates:
-        print("No image-related publisher models found via the catalog listing -- stopping here rather than guessing blind.")
+        print("No image-related base models found via the listing -- stopping here rather than guessing blind.")
         raise SystemExit(1)
-
-    client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
     for model_path in candidates:
         model_id = model_path.split("/")[-1]

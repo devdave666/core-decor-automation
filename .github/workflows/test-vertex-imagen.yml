@@ -43,7 +43,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install google-genai google-auth requests
+        run: pip install google-genai
 
       - name: List available publisher image models, then try each until one works
         run: python3 discover_and_test_image_model.py
