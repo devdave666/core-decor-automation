@@ -1,0 +1,59 @@
+name: Analyze E-Series Reference Reels
+
+# Downloads example viral reels from a given Drive folder and extracts what's
+# needed to actually understand their format -- real cut timing (reusing the
+# SAME extract_template_cut_timestamps() the main pipeline/Dolly Reel/Hot Takes
+# already use, not a new guess at beat detection), basic video metadata via
+# ffprobe, and a handful of representative frames per video -- so the format
+# can be studied by eye instead of guessed from a filename/folder name alone.
+# Uploads everything as a build artifact. Read-only against Drive; doesn't
+# touch any content pipeline or rotation state.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder_id:
+        description: "Drive folder ID containing the reference reels"
+        required: true
+        type: string
+      frames_per_video:
+        description: "How many evenly-spaced frames to extract per video"
+        required: false
+        type: string
+        default: "8"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install librosa moviepy requests numpy
+
+      - name: Download reels and extract cut timing + frames
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          FOLDER_ID: ${{ github.event.inputs.folder_id }}
+          FRAMES_PER_VIDEO: ${{ github.event.inputs.frames_per_video }}
+        run: python3 analyze_reference_reels.py
+
+      - name: Upload analysis output
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-reel-analysis
+          path: analysis_output/
+          if-no-files-found: error
