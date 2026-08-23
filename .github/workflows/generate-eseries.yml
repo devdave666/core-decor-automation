@@ -1,0 +1,57 @@
+name: Generate E-Series Concept
+
+# Generates application-photo room images for an e-series themed set via
+# Google's gemini-2.5-flash-image (Vertex AI, WIF auth -- no static key). See
+# concept_tools/generate_eseries.py for the format this copies (a themed
+# multi-room set, analyzed from real "Type 1 - firstchair" reference reels).
+#
+# Manual only -- no schedule. Costs real (trial-credit) money per image and
+# is a deliberate act, same reasoning as generate-concept.yml for the a-d
+# series.
+
+on:
+  workflow_dispatch:
+    inputs:
+      set_id:
+        description: "E-series set id (e.g. e1-01)"
+        required: true
+        default: "e1-01"
+      rooms:
+        description: "Space-separated room keys to generate (blank = all rooms in the set)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  id-token: write  # required for WIF's OIDC token exchange
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai
+
+      - name: Generate
+        run: python3 concept_tools/generate_eseries.py "${{ github.event.inputs.set_id }}" ${{ github.event.inputs.rooms }}
+
+      - name: Upload generated images as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eseries-output
+          path: assets/application_eseries/*.png
+          if-no-files-found: error
