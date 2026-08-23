@@ -46,16 +46,20 @@ that chronological order -- generate_veo_clips.py consumes them as an ordered
 STAGES list, not the old fixed 3-name set.
 """
 import sys
+import time
 from io import BytesIO
 from pathlib import Path
 
 from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types
 from PIL import Image
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "gemini-2.5-flash-image"
+MAX_RETRIES = 5
+RETRY_BASE_DELAY_S = 20
 
 IMAGE_CONFIG = types.GenerateContentConfig(
     image_config=types.ImageConfig(aspect_ratio="9:16")
@@ -85,9 +89,7 @@ def generate_after(client, concept):
         f"people."
     )
     print("--- generating AFTER ---")
-    response = client.models.generate_content(
-        model=MODEL, contents=[prompt], config=IMAGE_CONFIG
-    )
+    response = _generate_with_retry(client, [prompt])
     return _first_image(response)
 
 
@@ -103,9 +105,7 @@ def generate_before(client, after_image):
         "windows and doorway positions identical to the reference image."
     )
     print("--- generating BEFORE (edited from AFTER) ---")
-    response = client.models.generate_content(
-        model=MODEL, contents=[prompt, after_image], config=IMAGE_CONFIG
-    )
+    response = _generate_with_retry(client, [prompt, after_image])
     return _first_image(response)
 
 
@@ -149,10 +149,32 @@ def generate_intermediate(client, stage_name, prev_image, after_image):
         "positions identical to both reference images."
     )
     print(f"--- generating {stage_name.upper()} (edited from previous stage) ---")
-    response = client.models.generate_content(
-        model=MODEL, contents=[prompt, prev_image, after_image], config=IMAGE_CONFIG
-    )
+    response = _generate_with_retry(client, [prompt, prev_image, after_image])
     return _first_image(response)
+
+
+def _generate_with_retry(client, contents):
+    # Five chained calls in quick succession tripped this project's per-minute
+    # quota for gemini-2.5-flash-image on the very first v2 run (a real 429
+    # RESOURCE_EXHAUSTED after just 2 calls, not a permission or config
+    # problem) -- widening from 3 to 5 keyframes made this the first time
+    # enough calls landed close enough together to hit it. Simple exponential
+    # backoff, since this is a transient rate limit, not a hard failure.
+    for attempt in range(MAX_RETRIES):
+        try:
+            return client.models.generate_content(
+                model=MODEL, contents=contents, config=IMAGE_CONFIG
+            )
+        except genai_errors.ClientError as e:
+            # Attribute name for the HTTP status on this exception isn't
+            # nailed down across SDK versions -- check the rendered message
+            # instead of guessing a field name that might not exist.
+            is_rate_limit = "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e)
+            if not is_rate_limit or attempt == MAX_RETRIES - 1:
+                raise
+            delay = RETRY_BASE_DELAY_S * (2 ** attempt)
+            print(f"  429 rate-limited, retrying in {delay}s (attempt {attempt + 1}/{MAX_RETRIES})...")
+            time.sleep(delay)
 
 
 def _first_image(response):
