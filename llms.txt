@@ -2687,3 +2687,46 @@ pipeline against an untested auth chain.
 **Still blocked on**: (1) Dev running the 5 commands above, (2) Dev uploading
 example viral reels to the new Drive folder for format analysis. Neither
 happened yet as of this entry.
+
+## WIF setup, continued: attribute-condition now required + Dev wants single point of contact (2026-08-22)
+
+Dev ran the 5 commands from the entry above in his own Cloud Shell (his own
+identity required -- confirmed this is a hard boundary, not something to
+route around: Claude has no gcloud CLI in this sandbox, and IAM-Admin-level
+project changes need the project owner's own credentials, which handing to
+Claude would defeat the actual point of using WIF over a static key).
+
+Results: pool created successfully. Service account creation "failed"
+harmlessly (`vertex-ai-runner` already existed from an earlier attempt --
+not a real problem, nothing to redo). Both IAM bindings (workloadIdentityUser
+on the service account, aiplatform.user on the project) succeeded and are
+confirmed live via the real `gcloud` output Dev pasted back, not assumed.
+
+Only the OIDC provider creation failed: `INVALID_ARGUMENT: The attribute
+condition must reference one of the provider's claims`. Root cause confirmed
+via search, not guessed: recent `gcloud` versions require an explicit
+`--attribute-condition` flag on GitHub Actions WIF providers -- a real
+Google security tightening (prevents an unscoped trust boundary from being
+created by accident), not a mistake in the original advice's command syntax
+itself, just a missing flag that's become mandatory. Fix: add
+`--attribute-condition="assertion.repository == 'devdave666/core-decor-automation'"`
+(references the same `assertion.repository` claim already present in
+`--attribute-mapping`) -- this also happens to be the more secure version
+of what was being built anyway, scoping trust to exactly this one repo
+rather than leaving it open.
+
+**Standing feedback, worth remembering for future sessions on this project**:
+Dev pushed back on being handed multi-step instruction sets to execute and
+self-debug -- said explicitly "you need to be my single point of contact."
+For anything Claude technically CAN execute (workflow_dispatch triggers,
+reading logs, diagnosing failures), Claude should own it end-to-end rather
+than making Dev the hands-and-eyes. The one hard exception is genuine
+IAM-Admin-on-Dev's-own-GCP-project actions -- those need Dev's own identity
+by design, and no amount of tooling changes that. When a step like that is
+unavoidable, the right move is: give exactly ONE corrected command (not a
+batch to debug), explain clearly why it's Dev's hands only for that one
+step, and then take back full ownership of every step after it.
+
+Status: waiting on Dev to run the corrected provider command above, then
+Claude triggers test-vertex-imagen.yml directly and reports the real result
+-- no further instructions to Dev needed for that part.
