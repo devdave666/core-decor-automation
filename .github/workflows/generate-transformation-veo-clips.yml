@@ -1,0 +1,71 @@
+name: Generate Transformation Reel (Veo)
+
+# Takes the before/mid/after frames from a prior generate-transformation-
+# concept.yml run and generates the actual transformation reel via Veo 3.1
+# (veo-3.1-generate-001, confirmed working in this project -- see llms.txt).
+# Two chained 8s first/last-frame generations with native ASMR-style audio,
+# concatenated into one ~15-16s video.
+#
+# REAL MONEY: Veo audio-on generation runs roughly $0.75/s on Vertex AI, so two
+# 8s clips is on the order of $10-12 per run. workflow_dispatch only, same
+# discipline as every other paid-generation workflow here -- never on a timer,
+# and this one specifically should not be re-run casually given the cost.
+#
+# Takes the source frames as a run ID to download from rather than requiring
+# them to be committed -- this format is still experimental (see
+# transformation_reel/), nothing is promoted into the repo's real assets yet.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: "Concept key, must match the frames artifact name suffix"
+        required: true
+        default: "t01"
+      frames_run_id:
+        description: "Run ID of the generate-transformation-concept.yml run whose artifact has the frames"
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read  # needed to download another run's artifact
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download concept frames from the prior run
+        uses: actions/download-artifact@v4
+        with:
+          name: transformation-concept-${{ inputs.concept }}
+          path: concept_output
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.frames_run_id }}
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai
+
+      - name: Generate the two Veo clips and concatenate
+        run: python3 transformation_reel/generate_veo_clips.py "${{ inputs.concept }}" concept_output veo_output
+
+      - name: Upload the final reel and intermediate clips
+        uses: actions/upload-artifact@v4
+        with:
+          name: transformation-reel-${{ inputs.concept }}
+          path: veo_output/*.mp4
+          if-no-files-found: error
