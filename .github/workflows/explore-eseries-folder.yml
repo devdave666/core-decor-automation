@@ -1,0 +1,77 @@
+name: Explore E-Series Reference Folder
+
+# One-off diagnostic: lists the contents of a given Drive folder (files AND
+# subfolders, one level of subfolder recursion) so the actual structure Dev
+# uploaded can be seen before deciding on any naming convention or analysis
+# approach -- not guessed from the folder link alone.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder_id:
+        description: "Drive folder ID to explore"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: List folder contents (files + one level of subfolders)
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          ROOT_FOLDER_ID: ${{ github.event.inputs.folder_id }}
+        run: |
+          python3 -c "
+          import os
+          from drive_upload import _get_access_token
+          import requests
+
+          token = _get_access_token()
+          headers = {'Authorization': f'Bearer {token}'}
+
+          def list_children(folder_id):
+              r = requests.get(
+                  'https://www.googleapis.com/drive/v3/files',
+                  params={'q': f\"'{folder_id}' in parents and trashed = false\",
+                          'fields': 'files(id,name,mimeType,size)', 'pageSize': 200},
+                  headers=headers, timeout=30,
+              )
+              r.raise_for_status()
+              return sorted(r.json().get('files', []), key=lambda f: f['name'])
+
+          root_id = os.environ['ROOT_FOLDER_ID']
+          root_name_r = requests.get(f'https://www.googleapis.com/drive/v3/files/{root_id}',
+                                       params={'fields': 'name'}, headers=headers, timeout=30)
+          print(f\"Root folder: {root_name_r.json().get('name', '?')} ({root_id})\")
+          print()
+
+          children = list_children(root_id)
+          for item in children:
+              is_folder = item['mimeType'] == 'application/vnd.google-apps.folder'
+              size = item.get('size')
+              size_str = f'{int(size)/1024/1024:.1f} MB' if size else ''
+              print(f\"{'[FOLDER]' if is_folder else '[file]  '} {item['name']}  {size_str}  (id={item['id']}, mimeType={item['mimeType']})\")
+              if is_folder:
+                  sub = list_children(item['id'])
+                  for s in sub:
+                      s_is_folder = s['mimeType'] == 'application/vnd.google-apps.folder'
+                      s_size = s.get('size')
+                      s_size_str = f'{int(s_size)/1024/1024:.1f} MB' if s_size else ''
+                      print(f\"    {'[FOLDER]' if s_is_folder else '[file]  '} {s['name']}  {s_size_str}  (id={s['id']}, mimeType={s['mimeType']})\")
+          "
