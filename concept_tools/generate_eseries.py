@@ -65,6 +65,50 @@ MODEL = "gemini-2.5-flash-image"
 
 OUT_DIR = Path(__file__).resolve().parent.parent / "assets" / "application_eseries"
 
+# Dev pasted one exact real photo (an "ANB Architecture Studio" kitchen render,
+# same source studio as the e1-06/e1-07 reference reels -- not a new source)
+# and asked for 10 images that vary mood/light/colour/material while staying
+# "structurally consistent" with it. There is no true image-conditioning path
+# available here (the pasted photo exists only as something Claude can SEE in
+# the conversation, not as a file this generator can hand to the model as an
+# input image), so structural consistency is achieved the same way every
+# other multi-room set in this file achieves consistency across images: by
+# repeating an identical, detailed description verbatim across every
+# variation. This constant is that fixed description, transcribed directly
+# from close inspection of Dev's actual pasted photo (island shape/position,
+# stool count and style, pendant count and placement, cabinetry run,
+# appliances, backsplash position) -- not invented or approximated from a
+# generic "kitchen" idea. Every e1-08 room below unpacks this dict and then
+# only overrides palette_sentence/light_sentence, so architecture/layout text
+# never has to be retyped -- and can't drift out of sync -- across all 10.
+KITCHEN_STRUCTURE = {
+    "room": (
+        "a residential kitchen, photographed from a fixed eye-level "
+        "three-quarter angle across a long rectangular waterfall-edge "
+        "island toward the range wall beyond it"
+    ),
+    "style": (
+        "a modern kitchen with a floor-to-ceiling cabinetry run and a "
+        "built-in beverage fridge along the back-left wall, and an "
+        "extractor hood centred over the range against a tiled backsplash"
+    ),
+    "styling": (
+        "the exact same architecture and layout in every image: a long "
+        "rectangular island with a waterfall-edge countertop and a "
+        "built-in sink with a gooseneck faucet at its near end, four "
+        "backless round stools with ring footrests lined along the "
+        "island's front side, a run of full-height cabinetry and a "
+        "built-in glass-front beverage fridge at the far end of the back "
+        "wall, a range and hood centred against the tiled backsplash, "
+        "open shelving beside the range holding a few small objects and "
+        "a potted plant, and a low bowl of fruit on the island counter."
+    ),
+    "fixtures": (
+        "three pendant lights hung at staggered heights over the "
+        "island, suspended on thin rods from the ceiling."
+    ),
+}
+
 # First test set only -- ONE room generated and reviewed before committing to
 # the rest, same discipline used for the Vertex AI connection test itself.
 # "Earthy tones" chosen deliberately: 2 of the 3 Type-1 reference reels used
@@ -628,6 +672,209 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Dev pasted one exact real ANB Architecture Studio kitchen photo and
+    # asked for 10 variations -- "different moods, lights, colors and
+    # materials... structurally it must stay consistent." All 10 share
+    # KITCHEN_STRUCTURE verbatim (see that constant's own comment for why:
+    # no real image-conditioning path exists here, so repeated identical
+    # description is how structure stays locked). Kept every variation
+    # within the still-active "night only, mood interior lights" standing
+    # instruction from the e1-07 entry above -- this request adds variety
+    # on top of that rule, it doesn't cancel it, so none of the 10 revert to
+    # daylight. Diversity instead comes from varying WHICH warm source reads
+    # as the mood-setter (brass pendant only, pendant + candlelight, pendant
+    # + a warm counter lamp) and a genuinely wide material/colour spread --
+    # near-black, oxblood, bottle-green, navy, taupe, pewter, plum -- so the
+    # 10 read as real alternatives, not ten shades of the same room.
+    "e1-08": {
+        "source_type": "Dev-pasted exact photo (ANB Architecture Studio kitchen, same source as e1-06/e1-07) + 'generate 10 variations' request (2026-08-23)",
+        "style_slug": "variations",
+        "rooms": {
+            "var01": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var01_ebonyblack",
+                "palette_sentence": (
+                    "near-black ebonized cabinetry, a dramatic black "
+                    "marble waterfall island with fine white veining, "
+                    "aged brass fixtures and hardware, and a black-and-"
+                    "cream patterned tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, well after dark, lit only "
+                    "by the three warm brass pendants over the island: "
+                    "the near-black cabinetry and island recede into "
+                    "rich shadow, while the marble veining and brass "
+                    "hardware catch the warm pooled light. High, "
+                    "dramatic contrast, real near-black shadow depth, "
+                    "no daylight anywhere in frame."
+                ),
+            },
+            "var02": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var02_walnutblue",
+                "palette_sentence": (
+                    "deep walnut cabinetry, a honed warm travertine "
+                    "waterfall island, aged brass fixtures, and a warm "
+                    "cream zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at blue hour just after sunset: "
+                    "through the window the sky is deep cool blue "
+                    "twilight, while the three warm brass pendants light "
+                    "the island in warm golden pools. The contrast "
+                    "between warm interior light and cool blue dusk is "
+                    "the defining quality of the image; shadows are deep "
+                    "and softly blue-tinted."
+                ),
+            },
+            "var03": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var03_oxbloodmarble",
+                "palette_sentence": (
+                    "oxblood-lacquered cabinetry, a dark emperador "
+                    "marble waterfall island with warm brown veining, "
+                    "aged brass fixtures, and a dark red-brown tile "
+                    "backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night: the three brass pendants "
+                    "over the island glow warm gold, joined by the "
+                    "flicker of a small cluster of candles on the "
+                    "island counter. Rich, jewel-toned and intimate, "
+                    "deep near-black shadow beyond the lit pools, no "
+                    "daylight in frame."
+                ),
+            },
+            "var04": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var04_bottlegreen",
+                "palette_sentence": (
+                    "bottle-green painted cabinetry, a black soapstone "
+                    "waterfall island, aged brass fixtures, and a dark "
+                    "green zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island and a warm glow "
+                    "spilling in from an unseen fireplace off to one "
+                    "side: rich, deep green cabinetry holds real colour "
+                    "even in shadow, brass and soapstone catch the "
+                    "pooled warm light. Moody and dramatic, no daylight "
+                    "anywhere in frame."
+                ),
+            },
+            "var05": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var05_charcoalcalacatta",
+                "palette_sentence": (
+                    "charcoal-blue cabinetry, a dramatic white Calacatta "
+                    "marble waterfall island with bold grey veining, "
+                    "aged brass fixtures, and a white marble-slab "
+                    "backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: the pale marble "
+                    "island glows warmly under the pendant light while "
+                    "the charcoal-blue cabinetry recedes into near-black "
+                    "shadow around it, a strong light-island-in-dark-"
+                    "room contrast. No daylight anywhere in frame."
+                ),
+            },
+            "var06": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var06_espressolimestone",
+                "palette_sentence": (
+                    "espresso-stained oak cabinetry, a warm taupe "
+                    "honed-limestone waterfall island, aged brass "
+                    "fixtures, and a warm taupe tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night: the three brass pendants "
+                    "over the island are joined by a small warm table "
+                    "lamp glowing on the counter near the range, giving "
+                    "a softer, more domestic lamp-lit mood than a "
+                    "pendant-only room. Warm and intimate, real shadow "
+                    "depth away from the lit sources, no daylight in "
+                    "frame."
+                ),
+            },
+            "var07": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var07_inknavy",
+                "palette_sentence": (
+                    "ink-navy cabinetry, a dark green marble waterfall "
+                    "island with fine gold-white veining, aged brass "
+                    "fixtures, and a navy zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit by the three warm "
+                    "brass pendants over the island plus a thin warm "
+                    "glow of under-cabinet lighting along the back "
+                    "counter: the navy cabinetry holds a deep, rich "
+                    "colour rather than reading as black, marble veining "
+                    "catches the light. Moody and dramatic, no daylight "
+                    "anywhere in frame."
+                ),
+            },
+            "var08": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var08_mahoganybasalt",
+                "palette_sentence": (
+                    "dark mahogany cabinetry, a honed grey basalt "
+                    "waterfall island, aged brass fixtures, and a dark "
+                    "grey tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: warm light pools "
+                    "on the basalt and brass while the mahogany "
+                    "cabinetry deepens into rich near-black shadow. "
+                    "Confidently dark and dramatic, no daylight anywhere "
+                    "in frame."
+                ),
+            },
+            "var09": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var09_nero_marquina",
+                "palette_sentence": (
+                    "aged pewter-grey cabinetry, a dramatic Nero "
+                    "Marquina black marble waterfall island with bold "
+                    "white veining, aged brass fixtures, and a black "
+                    "marble-slab backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit by the three warm "
+                    "brass pendants over the island plus a small cluster "
+                    "of lit candles grouped on the island counter beside "
+                    "the fruit bowl: the bold white marble veining "
+                    "catches every point of light against deep near-"
+                    "black shadow elsewhere in the room. Dramatic and "
+                    "editorial, no daylight anywhere in frame."
+                ),
+            },
+            "var10": {
+                **KITCHEN_STRUCTURE,
+                "stem": "e1-08_var10_plumtaupe",
+                "palette_sentence": (
+                    "deep plum-brown cabinetry, a warm rose-taupe honed "
+                    "stone waterfall island, aged brass fixtures, and a "
+                    "warm taupe tile backsplash, with a woven wool "
+                    "runner rug tucked beneath the stools for a soft "
+                    "fabric note."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: warm plum and rose-"
+                    "taupe tones glow softly under the pooled pendant "
+                    "light, shadows keep real depth and colour rather "
+                    "than going flat black. Warm, rich and intimate, no "
+                    "daylight anywhere in frame."
+                ),
+            },
+        },
+    },
 }
 
 
@@ -710,7 +957,9 @@ def generate_room(client, set_id, room_key, model=MODEL):
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
     prompt = build_room_prompt(
-        room, set_data["palette_sentence"], set_data.get("light_sentence"),
+        room,
+        room.get("palette_sentence", set_data.get("palette_sentence")),
+        room.get("light_sentence", set_data.get("light_sentence")),
         set_data.get("styling_restraint_sentence"),
     )
 
