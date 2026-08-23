@@ -63,6 +63,16 @@ PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "gemini-2.5-flash-image"
 
+# e1-08's first real multi-variation batch hit a 429 RESOURCE_EXHAUSTED after
+# just 2-3 calls -- the SDK's own short built-in retry (tenacity, ~24s) wasn't
+# enough, and running two generate-eseries.yml instances concurrently against
+# this trial project's shared per-minute quota made it worse. Same class of
+# bug already hit and fixed once in transformation_reel/generate_concept_frames.py
+# -- reusing that fix here rather than re-discovering it: patient exponential
+# backoff for a transient rate limit, not a hard failure.
+MAX_RETRIES = 5
+RETRY_BASE_DELAY_S = 20
+
 OUT_DIR = Path(__file__).resolve().parent.parent / "assets" / "application_eseries"
 
 # Dev pasted one exact real photo (an "ANB Architecture Studio" kitchen render,
@@ -951,9 +961,30 @@ def upscale_and_sharpen(image_bytes):
     return out.getvalue()
 
 
-def generate_room(client, set_id, room_key, model=MODEL):
+def _generate_with_retry(client, model, prompt):
+    import time
+    from google.genai import errors as genai_errors
     from google.genai import types
 
+    for attempt in range(MAX_RETRIES):
+        try:
+            return client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    image_config=types.ImageConfig(aspect_ratio="9:16"),
+                ),
+            )
+        except genai_errors.ClientError as e:
+            is_rate_limit = "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e)
+            if not is_rate_limit or attempt == MAX_RETRIES - 1:
+                raise
+            delay = RETRY_BASE_DELAY_S * (2 ** attempt)
+            print(f"  429 rate-limited, retrying in {delay}s (attempt {attempt + 1}/{MAX_RETRIES})...")
+            time.sleep(delay)
+
+
+def generate_room(client, set_id, room_key, model=MODEL):
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
     prompt = build_room_prompt(
@@ -964,13 +995,7 @@ def generate_room(client, set_id, room_key, model=MODEL):
     )
 
     print(f"--- generating {room['stem']} with {model} ---")
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            image_config=types.ImageConfig(aspect_ratio="9:16"),
-        ),
-    )
+    response = _generate_with_retry(client, model, prompt)
 
     for candidate in response.candidates:
         for part in candidate.content.parts:
