@@ -58,14 +58,22 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install google-genai
+        run: |
+          pip install google-genai
+          sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Generate the two Veo clips and concatenate
         run: python3 transformation_reel/generate_veo_clips.py "${{ inputs.concept }}" concept_output veo_output
 
+      # if: always() -- the two Veo generations are the expensive, slow part
+      # (~$10-12, a couple minutes each). A failure in the cheap local ffmpeg
+      # concat step (as happened on the first real run here -- ffmpeg wasn't on
+      # the runner) must not throw that spend away silently; upload whatever
+      # clips exist even if concatenation itself failed.
       - name: Upload the final reel and intermediate clips
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: transformation-reel-${{ inputs.concept }}
           path: veo_output/*.mp4
-          if-no-files-found: error
+          if-no-files-found: warn
