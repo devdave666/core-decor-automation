@@ -885,6 +885,39 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # True reference-image editing, not description-only regeneration -- see
+    # build_reference_edit_prompt's comment above for why this exists. Uses
+    # e1-08_var01 (already committed to this repo) as the locked pixel
+    # reference for every variation, rather than describing the room from
+    # scratch each time. ONE test room only for now (var02, reusing the exact
+    # same palette/light content as e1-08's own var02) so the two methods can
+    # be compared directly on identical material content before deciding
+    # whether to redo the remaining 9 this way.
+    "e1-09": {
+        "source_type": "True image-edit of e1-08_var01 (Dev asked for tighter structural consistency for a fast-cut reel)",
+        "style_slug": "referenceedit",
+        "base_image": "e1-08_var01_ebonyblack_app.png",
+        "rooms": {
+            "var02": {
+                "stem": "e1-09_var02_walnutblue",
+                "palette_sentence": (
+                    "deep walnut cabinetry, a honed warm travertine "
+                    "waterfall island, aged brass fixtures, and a warm "
+                    "cream zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at blue hour just after sunset: "
+                    "through the window the sky is deep cool blue "
+                    "twilight, while the three warm brass pendants light "
+                    "the island in warm golden pools. The contrast "
+                    "between warm interior light and cool blue dusk is "
+                    "the defining quality of the image; shadows are deep "
+                    "and softly blue-tinted."
+                ),
+            },
+        },
+    },
 }
 
 
@@ -984,18 +1017,62 @@ def _generate_with_retry(client, model, prompt):
             time.sleep(delay)
 
 
+# e1-08 achieved structural consistency across 10 variations purely through
+# repeated identical DESCRIPTION (KITCHEN_STRUCTURE) -- the only option
+# available at the time, since Dev's pasted reference photo existed only as
+# something visible in the conversation, not a file this script could use.
+# Dev's follow-up made clear that wasn't tight enough for the actual goal (a
+# fast-cut reel where the SAME structure needs to read as literally the same
+# photo, not a close re-draw) and asked for true reference-image editing
+# instead. That IS available now with zero new input needed from Dev: Gemini
+# accepts a real image directly in `contents=[prompt, image]` (the exact
+# mechanism transformation_reel/generate_concept_frames.py already uses for
+# its before/mid/after chain), and e1-08's own generated images are already
+# committed to this repo -- so one of THEM can be the locked pixel reference,
+# with the model asked to re-render it in new materials rather than redraw
+# the room from a text description each time. This is a strictly tighter
+# consistency guarantee: the model is editing real pixels, not resampling
+# from prose.
+def build_reference_edit_prompt(palette_sentence, light_sentence):
+    return (
+        "Re-render this exact reference photograph with new materials, "
+        "colours and lighting, while keeping every structural element "
+        "identical: the same camera angle and framing, the same island "
+        "shape, size and position, the same sink and faucet placement, "
+        "the same number and placement of stools, the same pendant light "
+        "fixtures and their positions, the same cabinetry layout, "
+        "appliances and their positions, and the same overall room "
+        "proportions and geometry. Only the materials, colours and "
+        "lighting mood should change. The new materials and colours are: "
+        f"{palette_sentence}"
+        + (light_sentence or "")
+        + QUALITY_ROOM + NO_TEXT
+    )
+
+
 def generate_room(client, set_id, room_key, model=MODEL):
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
-    prompt = build_room_prompt(
-        room,
-        room.get("palette_sentence", set_data.get("palette_sentence")),
-        room.get("light_sentence", set_data.get("light_sentence")),
-        set_data.get("styling_restraint_sentence"),
-    )
 
-    print(f"--- generating {room['stem']} with {model} ---")
-    response = _generate_with_retry(client, model, prompt)
+    if "base_image" in set_data:
+        from PIL import Image as PILImage
+
+        base_path = OUT_DIR / set_data["base_image"]
+        base_image = PILImage.open(base_path)
+        prompt = build_reference_edit_prompt(
+            room["palette_sentence"], room.get("light_sentence"),
+        )
+        print(f"--- generating {room['stem']} (image-edited from {base_path.name}) with {model} ---")
+        response = _generate_with_retry(client, model, [prompt, base_image])
+    else:
+        prompt = build_room_prompt(
+            room,
+            room.get("palette_sentence", set_data.get("palette_sentence")),
+            room.get("light_sentence", set_data.get("light_sentence")),
+            set_data.get("styling_restraint_sentence"),
+        )
+        print(f"--- generating {room['stem']} with {model} ---")
+        response = _generate_with_retry(client, model, prompt)
 
     for candidate in response.candidates:
         for part in candidate.content.parts:
