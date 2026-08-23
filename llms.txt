@@ -3385,7 +3385,81 @@ lamp, a decanter and stacked books on a side table -- reads as a genuinely
 striking, furnished, dark "old money meets modern" room, confirmed by eye.
 
 Both images committed to `assets/application_eseries/`, uploaded to Drive
-under "E-Series Generated Output/e1-07". **Awaiting Dev's approval.**
-**e1-07, not e1-06, is now the standing default direction for any new
-e-series set** -- e1-06's brighter, sparser approach is superseded, not a
-parallel option to keep drawing from.
+under "E-Series Generated Output/e1-07". **e1-07, not e1-06, is now the
+standing default direction for any new e-series set** -- e1-06's
+brighter, sparser approach is superseded, not a parallel option to keep
+drawing from.
+
+## E-Series: e1-08, a new format -- 10 material/mood variations of one fixed room (2026-08-23, same session)
+
+Dev pasted one exact real photo (an ANB Architecture Studio kitchen render,
+same source studio as the e1-06/e1-07 reference reels) and asked for 10
+images that vary mood/light/colour/material while staying "structurally
+consistent" with it -- a genuinely new request shape, not another themed
+set: one ROOM, many material treatments, rather than one palette across
+many rooms.
+
+**No true image-conditioning path was available for this.** The pasted
+photo exists only as something Claude can see directly in the
+conversation, not as a file `generate_eseries.py` (running in a separate
+GitHub Actions job) can hand to the model as an input image. Structural
+consistency was achieved the same way every other multi-room set in this
+file already achieves it: one detailed description written from close
+inspection of the actual photo (island shape/position, sink and faucet,
+four backless stools with brass ring footrests, three staggered brass
+pendants, cabinetry run, beverage fridge, range and hood, backsplash
+position), repeated byte-identical across all 10 variations via a new
+shared `KITCHEN_STRUCTURE` dict (added above `ESERIES_SETS`) unpacked
+into each room with `**KITCHEN_STRUCTURE`. This is a real, disclosed
+limitation, not a claim of pixel-perfect reproduction -- worth remembering
+if Dev ever asks for this again and true image-conditioning becomes
+available (Gemini does support it; the blocker here was getting Dev's
+pasted bytes into the CI job, not the model).
+
+**Mechanism change**: `generate_room()` now resolves `palette_sentence`/
+`light_sentence` per-ROOM first, falling back to set-level -- backward
+compatible with every existing set (none of them set room-level
+overrides), needed here since e1-08's 10 rooms each need their own
+distinct palette/light rather than one shared per-set value like every
+set before it.
+
+**All 10 variations stayed within the still-active "night only, mood
+interior lights" standing instruction from the e1-07 entry above** --
+read this request as adding variety on top of that rule, not cancelling
+it, so none of the 10 revert to daylight. Diversity came from varying
+which warm source reads as the mood-setter (pendant-only, pendant+
+candles, pendant+a warm counter lamp, pendant+fireplace glow) and a
+genuinely wide material/colour spread: near-black marble, walnut+blue-
+hour-dusk, oxblood+dark emperador marble, bottle-green+black soapstone,
+charcoal-blue+white Calacatta (light-island-in-dark-room contrast),
+espresso oak+taupe limestone, ink-navy+dark green marble, mahogany+grey
+basalt, pewter+Nero Marquina black marble, and deep plum+rose-taupe
+stone with a runner rug for a fabric note.
+
+**Real bug hit and fixed before the successful run**: launched two
+`generate-eseries.yml` instances concurrently (4-5 rooms each) to save
+wall-clock time -- both hit `429 RESOURCE_EXHAUSTED` on Vertex AI within
+seconds, after only 2-3 successful calls between them. Root cause: this
+trial project's per-minute quota for `gemini-2.5-flash-image` is shared
+across concurrent runs, and the SDK's own built-in retry (~24s via
+tenacity) wasn't patient enough for real quota exhaustion, only transient
+blips. **Worse**: `generate-eseries.yml`'s artifact-upload step only ran
+on job success, so the 2 images that DID generate and get paid for before
+the failure were thrown away with nothing to show for the spend -- the
+exact same bug class already hit and fixed once for `transformation_reel`
+(documented above, the ffmpeg-missing incident). Fixed both, not just
+patched around this one run: (1) added the same exponential-backoff retry
+`transformation_reel/generate_concept_frames.py` already uses
+(`MAX_RETRIES=5`, `RETRY_BASE_DELAY_S=20`, retries only on 429/
+RESOURCE_EXHAUSTED, reused verbatim as `_generate_with_retry()` in
+`generate_eseries.py` rather than rediscovering the fix) and (2) added
+`if: always()` to `generate-eseries.yml`'s upload-artifact step so any
+already-generated images survive a later failure in the same run.
+Re-ran all 9 remaining variations sequentially in ONE workflow run
+(not concurrent instances) and all 9 succeeded cleanly.
+
+All 10 images reviewed by eye, confirmed genuinely diverse in mood/color/
+material while island shape, stool count/style, pendant arrangement,
+sink/faucet position, range/hood and beverage fridge stayed consistent
+throughout. Committed to `assets/application_eseries/`, uploaded to Drive
+under "E-Series Generated Output/e1-08". **Awaiting Dev's approval.**
