@@ -466,11 +466,11 @@ ESERIES_SETS = {
         "style_slug": "oldmoney",
         "palette_sentence": (
             "a rich, restrained old-money palette carried through every "
-            "room: dark walnut cabinetry and millwork, dramatically veined "
-            "cream-and-grey marble with waterfall-edge surfaces, aged "
-            "unlacquered brass fixtures and hardware, and warm soft-plaster "
-            "walls in warm neutral tones, with occasional deep bottle-green "
-            "or oxblood accents used sparingly."
+            "room, and ONLY this palette -- no other cabinet or wall "
+            "colour appears anywhere in the room: dark walnut cabinetry "
+            "and millwork, dramatically veined cream-and-grey marble with "
+            "waterfall-edge surfaces, aged unlacquered brass fixtures and "
+            "hardware, and warm soft-plaster walls in warm neutral tones."
         ),
         "light_sentence": (
             " Photographed under warm, layered ambient interior lighting: "
@@ -498,9 +498,12 @@ ESERIES_SETS = {
                 "style": "old-money modern interior with heritage detailing",
                 "styling": (
                     "a dramatic waterfall-edge island in richly veined "
-                    "cream marble, a glass-front upper cabinet with lit "
-                    "interior shelving showing glassware, and a low wooden "
-                    "bowl of citrus fruit on the island."
+                    "cream marble -- the sole piece of furniture standing "
+                    "in the room, filling the near and middle ground with "
+                    "cabinetry and appliances forming the background -- a "
+                    "glass-front upper cabinet with lit interior shelving "
+                    "showing glassware, and a low wooden bowl of citrus "
+                    "fruit on the island."
                 ),
                 "fixtures": (
                     "three slim cylindrical aged-brass pendant lights hung "
