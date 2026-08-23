@@ -35,6 +35,17 @@ problems in v1, both fixed here:
    720x1280 (`VEO_CANVAS`) via `ImageOps.fit` immediately after generation, so
    the mismatch never reaches Veo at all.
 
+v3 (2026-08-23), prepared for FUTURE runs only -- not yet generated against.
+Dev asked for more transformation "wow factor": `generate_before()` escalated
+from a mild "unfinished construction site" to genuine abandoned-building decay
+(collapsed ceiling section, water staining, crumbled plaster down to bare lath,
+a cracked window pane, rubble, mold) while deliberately keeping the window
+wall and fireplace opening recognizable -- those are the anchors the whole
+chain depends on to still read as the same room. `demo`'s description was
+updated to match (early cleanup now deals with rubble and a tarped ceiling,
+not just dust). See generate_veo_clips.py's own v3 header for the paired
+model-tier and audio-prompting changes.
+
 Generated with gemini-2.5-flash-image on Vertex AI -- the model this project
 already confirmed working end-to-end for the e-series (see llms.txt), not BFL
 FLUX (that's the c/d-series' own tool, concept_tools/generate_concept.py, and
@@ -114,15 +125,33 @@ def generate_after(client, concept):
 
 
 def generate_before(client, after_image):
+    # v3: pushed dramatically further into decay than v1/v2's "derelict
+    # construction site" -- Dev asked for more transformation "wow factor,"
+    # and a mildly unfinished room reads as a small step from the finished
+    # one, not a dramatic one. Escalated toward genuine abandoned-building
+    # decay while still keeping the window wall and fireplace opening
+    # recognizable -- those are the anchors the whole 5-image chain and every
+    # Veo clip depend on for reading as the SAME space; wreck everything
+    # else, not those.
     prompt = (
         "Show this exact same room, same camera angle, same architecture, same "
-        "windows and doorways -- but stripped down to a derelict, unfinished "
-        "construction state: bare subfloor or cracked original flooring, patchy "
-        "plaster and peeling old paint on the walls, no furniture, no styling, "
-        "exposed conduit or wiring in one place, dust sheets, a single bare "
-        "work-light or harsh fluorescent tube instead of the finished lighting. "
+        "window wall and fireplace opening position -- but in a state of severe "
+        "abandonment and decay, far beyond an ordinary construction site: a "
+        "section of the ceiling has collapsed, exposing damaged joists and "
+        "hanging insulation; large dark water stains bloom across the walls and "
+        "ceiling; plaster has crumbled away in big sheets revealing bare lath "
+        "and brick beneath; one window pane is cracked with a spiderweb "
+        "fracture; a pile of broken rubble, splintered wood and torn drywall "
+        "sits heaped in a corner; rusted exposed pipework and dangling wires "
+        "hang from the damaged ceiling; the floor is stained, cracked and "
+        "littered with debris and dead leaves blown in from outside; faint mold "
+        "staining creeps up one wall. Dim, grim natural light through the "
+        "grimy, cracked window wall is the only illumination -- no work-lights, "
+        "no fixtures. This should read as genuinely shocking neglect, the kind "
+        "of 'before' that makes the finished room feel like a magic trick. "
         f"{SPATIAL_RULE} No people. No text. Keep the room's proportions, "
-        "windows and doorway positions identical to the reference image."
+        "window wall and fireplace position identical to the reference image "
+        "so the space is still clearly recognizable as the same room."
     )
     print("--- generating BEFORE (edited from AFTER) ---")
     response = _generate_with_retry(client, [prompt, after_image])
@@ -135,11 +164,14 @@ def generate_before(client, after_image):
 # amount of visible progress, not another big jump.
 INTERMEDIATE_STEPS = {
     "demo": (
-        "one or two human tradespeople doing early demolition/prep work: "
-        "clearing debris into a bin, sweeping dust, starting to strip a section "
-        "of wall. Still mostly bare and unfinished, but visibly less derelict "
-        "than the first reference -- debris being actively removed, not just "
-        "sitting there. Tools and a debris bin present."
+        "one or two human tradespeople doing heavy early cleanup: hauling "
+        "broken rubble and splintered wood into a debris bin, sweeping up "
+        "collapsed plaster and dead leaves, a tarp now covering the damaged "
+        "section of ceiling overhead. The worst hazards (the rubble pile, the "
+        "exposed damaged joists) are visibly being dealt with, but the room is "
+        "still rough, stained and largely stripped -- this is the START of "
+        "recovery from severe decay, not a finished demo. Tools, a debris bin "
+        "and a shop light present."
     ),
     "framing": (
         "two or three human tradespeople actively installing: one laying new "

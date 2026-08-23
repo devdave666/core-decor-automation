@@ -3051,3 +3051,108 @@ access on this GCP project; (4) fall back to FLUX for e-series too,
 trading away the promo-credit cost rationale. Left `--model` override
 capability in `generate_eseries.py`/`generate-eseries.yml` specifically so
 testing Gemini 3 later (once/if access clears) needs zero new code.
+
+## Transformation Reel: v2 fixes (real runs) + v3 prep for future runs (2026-08-23)
+
+Continuation of the "Transformation Reel" entry above (t01, Veo-generated
+before/mid/after). Two more real, run-and-verified iterations happened after
+Dev reviewed the first output, then a third round of changes was made and
+**deliberately left un-run** per Dev's explicit instruction ("do not create
+anything right now ... for future reels only").
+
+**v2, three real bugs found by Dev watching the actual output, all fixed and
+re-verified against real generated video:**
+
+1. **Workers looked sped up.** Root cause was literal: the v1 motion prompt
+   said "time-lapse-style," which is exactly the effect it produced. Fixed by
+   removing that phrase everywhere and adding explicit real-time/not-sped-up
+   language, plus widening from 3 keyframes (before/mid/after, 2x8s clips) to
+   5 keyframes (before/demo/framing/finishing/after, 4x4s clips) so each Veo
+   generation only has to bridge one small step instead of a large jump --
+   compounds with the prompt fix.
+2. **Aspect ratio was wrong, and it took TWO fixes to actually resolve.**
+   First finding: `gemini-2.5-flash-image` needs `GenerateContentConfig(
+   image_config=ImageConfig(aspect_ratio=...))` as a real config param --
+   requesting "vertical 9:16" in prompt TEXT alone (v1's approach) does
+   nothing. Fixed that, regenerated, and the STILL images came back properly
+   portrait (768x1344) -- but the real generated VEO CLIPS still came back
+   letterboxed. Second finding, confirmed by extracting real video frames and
+   checking pixel dimensions with PIL (not assumed): 768x1344 (ratio 0.5714)
+   is close to but NOT identical to Veo's own real output canvas of 720x1280
+   (ratio 0.5625, confirmed via ffprobe on a generated clip) -- Veo pads that
+   small mismatch with black bars rather than cropping to fill. Fixed by
+   center-cropping every source frame to exactly 720x1280 via `ImageOps.fit`
+   immediately after generation (`VEO_CANVAS` in `generate_concept_frames.py`),
+   so the mismatch never reaches Veo. Confirmed genuinely fixed by re-checking
+   pixel content of a newly generated real clip -- full-bleed, no black bars,
+   on every sampled frame.
+3. **Wrong tier/cost for iterating on visuals.** Switched from
+   `veo-3.1-generate-001` (Standard, audio-on, ~$0.75/s) to
+   `veo-3.1-lite-generate-001` (audio off, ~$0.05/s) specifically to make the
+   above two rounds of iteration cheap while the VISUALS were still being
+   fixed -- not a permanent decision, see v3 below.
+
+Also hit and fixed along the way: a 429 RESOURCE_EXHAUSTED on
+`gemini-2.5-flash-image` after widening to 5 chained calls per concept
+(exponential backoff added, `MAX_RETRIES=5`), and a missing `pillow` install
+in `generate-transformation-veo-clips.yml` (needed transitively --
+`generate_veo_clips.py` now imports `STAGES` from `generate_concept_frames.py`,
+which imports PIL at module level; same class of bug the e-series build above
+already hit once for the same reason).
+
+**Real cost across v1 + v2**: roughly $26 total for this whole exploration
+(v1's ~$24 on Standard tier including one run whose paid clips were lost to
+the ffmpeg-missing bug documented in the earlier entry, plus ~$1.60 for v2's
+Lite-tier iteration). **Final v2 result, confirmed by Dev watching it**: a
+clean 16.0s, 720x1280, no-black-bars reel with natural-paced worker motion --
+approved as the visual baseline to build on, not yet approved as a finished
+format.
+
+**v3 -- prepared for FUTURE runs, explicitly NOT generated yet.** Dev gave
+three directions for what comes next, all implemented in code but
+deliberately left un-triggered:
+
+1. **Model tier: switch to `veo-3.1-fast-generate-001` for all future runs**,
+   with audio back ON. Researched (not assumed) that Fast genuinely supports
+   native audio generation, unlike some cheaper tiers -- real cost estimate
+   researched at ~$0.10-0.15/s, so ~$1.60-$2.40 for a 16s (4x4s) reel, still
+   5-7x cheaper than v1's Standard tier while getting real audio back.
+2. **ASMR audio, done properly this time.** v1's approach was a single vague
+   prose paragraph ("ASMR-style renovation sound design") appended to every
+   prompt -- gave the model nothing concrete to render. Researched Google
+   Cloud's own official "Ultimate prompting guide for Veo 3.1" (2026) and
+   adopted its documented audio cue syntax instead: `SFX: ...` for discrete
+   sound effects (the scrape of a dustpan, a paint tin lid popping, the
+   crinkle of plastic wrap being pulled off furniture) and `Ambient noise:
+   ...` for background atmosphere, one specific set per clip rather than one
+   generic paragraph reused everywhere. Also adopted the guide's five-part
+   prompt structure -- Cinematography + Subject + Action + Context + Style/
+   Ambiance -- with explicit camera language ("Static locked-off shot") now
+   stated up front rather than implied.
+3. **More transformation "wow factor."** `generate_before()` escalated from a
+   mild "unfinished construction site" (v1/v2) to genuine abandoned-building
+   decay: collapsed ceiling section with exposed joists, large water stains,
+   plaster crumbled to bare lath, a cracked window pane, a rubble pile, mold.
+   Deliberately kept the window wall and fireplace opening recognizable
+   throughout -- those are the anchors the whole 5-image chain depends on to
+   still read as the same room; everything else was fair game to wreck.
+   `demo`'s description was updated to match (early cleanup now deals with
+   rubble and a tarped ceiling, not just dust).
+
+**Other Veo 3.1 prompting findings from the same research, not yet applied
+but worth knowing for later**: dialogue goes in quotes attached to a speaker
+(not needed here -- no dialogue in this format); negative framing should be
+avoided in favor of affirmative description (same rule already established
+for BFL FLUX elsewhere in this repo, now confirmed to also hold for Veo, not
+just BFL); "timestamp prompting" (`[00:00-00:02] ... [00:02-00:04] ...` within
+a single prompt) can direct a full multi-beat sequence in ONE generation
+call rather than chaining several -- not used here since the 5-keyframe/
+4-clip structure already solves the same pacing problem a different way, but
+worth considering if this format's clip count ever needs to shrink for cost
+reasons.
+
+**Status: code is ready, nothing has been generated against it.** The next
+real run against `veo-3.1-fast-generate-001` with the new audio cues and the
+escalated `before` prompt is what will actually validate all three v3 changes
+-- don't assume any of them work as described until that run happens and gets
+reviewed the same way v1 and v2 were.

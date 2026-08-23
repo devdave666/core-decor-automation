@@ -3,38 +3,47 @@ Generates the actual transformation reel from the 5-stage frames produced by
 generate_concept_frames.py. See transformation_reel/ and llms.txt for why this
 is a new, standalone content type -- not wired into any publishing pipeline yet.
 
-v2, revised after reviewing the first real t01 output with Dev. Three real
-problems in v1, all fixed here:
+v3, prepared for FUTURE runs per Dev's direction (2026-08-23) -- NOT run for
+real against this version yet. Two changes from the v2 output Dev reviewed:
 
-1. **Wrong tier for the job.** v1 used veo-3.1-generate-001 (standard) with
-   generate_audio=True, at ~$0.75/s -- $12 for a 16s reel. Dev doesn't want
-   native audio at all (ASMR sound is a separate, later decision, not
-   something to keep paying Veo's audio premium for while still iterating on
-   the VISUALS). Switched to veo-3.1-lite-generate-001, audio off. Confirmed
-   present in this project's catalog (see llms.txt / discover_and_test_video_
-   model.py output) but not yet load-tested with image+last_frame conditioning
-   specifically -- if Lite rejects that combination, that's a real finding to
-   report, not to work around silently.
+1. **Model tier: veo-3.1-lite-generate-001 -> veo-3.1-fast-generate-001,
+   audio back ON.** v2 dropped to Lite/no-audio specifically to cut cost while
+   iterating on the visuals (aspect ratio, motion pacing) -- that job is done
+   now. Fast is the tier Dev asked for going forward: real native audio
+   support (confirmed -- Fast is NOT audio-limited the way Lite is) at
+   roughly $0.10-0.15/s vs Standard's $0.75/s, i.e. still ~5-7x cheaper than
+   v1's tier while getting the ASMR audio v1 had and v2 deliberately gave up.
+   Real cost estimate for 4 clips x 4s: roughly $1.60-$2.40 for a 16s reel
+   (vs. v1's ~$12 on Standard, and v2's ~$0.80 on Lite/no-audio).
 
-2. **Workers looked sped up.** v1's motion prompts literally said
-   "time-lapse-style" -- that's not a Veo rendering quirk, that's this
-   project's own prompt asking for exactly the effect Dev didn't want. Removed
-   entirely; every motion prompt below now explicitly asks for real-time,
-   naturally-paced human movement instead.
+2. **Prompts rewritten to Google's own documented Veo 3.1 structure**, not
+   this project's earlier prose-paragraph style. Researched via Google Cloud's
+   official "Ultimate prompting guide for Veo 3.1" (2026). Key changes:
+   - Five-part template per clip: [Cinematography] + [Subject] + [Action] +
+     [Context] + [Style & Ambiance] -- camera/shot language now stated
+     explicitly (e.g. "Static locked-off medium-wide shot") instead of being
+     an afterthought.
+   - Audio is now cued with the documented syntax instead of a single prose
+     paragraph bolted onto every prompt: `SFX: ...` for discrete sound
+     effects, `Ambient noise: ...` for background atmosphere. This is what
+     "add ASMR if possible" actually means in Veo's own prompting model --
+     close, specific, tactile SFX cues (the scrape of a trowel, the snap of a
+     paint tin lid) read as ASMR-adjacent; a vague "ASMR-style audio" prose
+     instruction (what v1 used) does not give the model anything concrete to
+     render.
+   - Negative framing removed in favor of affirmative description, per the
+     same guide's own "avoid: no man-made structures / better: a desolate
+     landscape with no buildings" example -- consistent with the identical
+     rule already established for BFL FLUX prompting elsewhere in this repo
+     (see llms.txt), now confirmed to also hold for Veo.
 
-3. **Too much narrative distance per clip compounded #2.** Going from bare
-   derelict to half-finished in one 8s clip forces the model to compress a lot
-   of visual change into a short window, which reads as speed even without an
-   explicit time-lapse instruction. generate_concept_frames.py now produces 5
-   keyframes (before/demo/framing/finishing/after) instead of 3, so each of
-   the 4 clips below only has to bridge ONE small step, and each clip is
-   shorter (4s instead of 8s) -- "add more frames and generate smaller clips"
-   per Dev's own diagnosis.
+See generate_concept_frames.py's own v3 header for the third change Dev asked
+for -- a much more dramatically derelict "before" stage for more transformation
+"wow factor."
 
-4 clips x 4s = 16s total, matching the original target length. Concatenated
-with ffmpeg for the final video, same re-encode-not-stream-copy approach as
-v1 (two independent Veo generations aren't guaranteed to share encoding
-params).
+4 clips x 4s = 16s total. Concatenated with ffmpeg (re-encode, not stream-copy
+-- two independent Veo generations aren't guaranteed to share encoding params).
+Concat now handles an audio stream again (a=1), unlike v2's video-only concat.
 
 Usage: python transformation_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{before,demo,framing,finishing,after}.png
@@ -53,35 +62,61 @@ from generate_concept_frames import STAGES
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
-MODEL = "veo-3.1-lite-generate-001"
+MODEL = "veo-3.1-fast-generate-001"
 CLIP_DURATION_S = 4
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
 
-REALTIME_NOTE = (
-    "Real-time, naturally-paced human movement -- NOT a time-lapse, NOT sped "
-    "up. Static camera."
-)
+# Appended to every clip's Cinematography clause. Real-time pacing is still
+# the fix from v2 (workers looked sped up when this was missing) -- kept
+# explicit rather than assumed just because clips are short now.
+CAMERA_BASE = "Static locked-off shot, real-time pacing, not a time-lapse."
 
-# One motion prompt per adjacent stage pair, in STAGES order. Each describes
-# only the SMALL step between those two specific frames, not the whole arc --
-# that's the fix for both the pacing and the sped-up-motion problems above.
+# One entry per adjacent stage pair, in STAGES order. Each follows Google's
+# own five-part structure: Cinematography + Subject + Action + Context +
+# Style/Ambiance, with audio cued via SFX:/Ambient noise: rather than prose.
+# Each clip only covers the SMALL step between its two specific frames (the
+# v2 fix for motion compression) -- kept in v3.
 TRANSITIONS = {
     ("before", "demo"): (
-        "Workers begin clearing the room: sweeping debris, carrying a small "
-        f"pile of rubble to a bin, starting to strip a section of wall. {REALTIME_NOTE}"
+        f"{CAMERA_BASE} Two tradespeople in work clothes clear debris from a "
+        "derelict high-rise living room: one sweeps broken plaster into a "
+        "dustpan, the other carries a bucket of rubble toward a debris bin. "
+        "Pale morning light through a floor-to-ceiling window wall, exposed "
+        "damaged walls and ceiling around them. "
+        "SFX: the scrape of a dustpan on concrete, chunks of rubble thudding "
+        "into a plastic bin, dust brushing off gloved hands. "
+        "Ambient noise: faint wind against the glass, distant city hum far "
+        "below."
     ),
     ("demo", "framing"): (
-        "Workers install new flooring boards and apply a base coat of paint or "
-        f"plaster near the fireplace, materials staged on drop cloths. {REALTIME_NOTE}"
+        f"{CAMERA_BASE} A tradesperson kneels fitting new flooring boards "
+        "edge to edge while another rolls primer onto a repaired wall near "
+        "the fireplace, paint tins and boxed materials staged on a drop "
+        "cloth. "
+        "SFX: the soft click of a flooring board snapping into place, the "
+        "wet roll of a paint roller against the wall, a paint tin lid "
+        "popping open. "
+        "Ambient noise: quiet room tone, the occasional creak of a knee on "
+        "the drop cloth."
     ),
     ("framing", "finishing"): (
-        "Workers carry in and position a piece of furniture, hang a light "
-        f"fixture, wipe down a newly finished surface. {REALTIME_NOTE}"
+        f"{CAMERA_BASE} A tradesperson carries in an armchair and sets it "
+        "down carefully beside a plastic-wrapped sofa, then another hangs a "
+        "framed piece of art above the finished fireplace mantel. "
+        "SFX: the soft thud of upholstered furniture legs meeting the floor, "
+        "the crinkle of protective plastic wrap, a light tap as the frame is "
+        "leveled against the wall. "
+        "Ambient noise: quiet room tone, warm and settled."
     ),
     ("finishing", "after"): (
-        "Workers place final decor items, step back, and leave the frame, "
-        f"revealing the completed, styled room. {REALTIME_NOTE}"
+        f"{CAMERA_BASE} A tradesperson lifts the protective plastic off the "
+        "sofa in one smooth pull and steps out of frame, leaving the room "
+        "fully finished, lamps glowing warm against the dusk skyline through "
+        "the window wall. "
+        "SFX: the crisp rustle and pull of plastic sheeting coming free, "
+        "soft footsteps receding. "
+        "Ambient noise: warm quiet, the faint crackle of the lit fireplace."
     ),
 }
 
@@ -98,7 +133,7 @@ def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_p
         config=types.GenerateVideosConfig(
             aspect_ratio="9:16",
             duration_seconds=CLIP_DURATION_S,
-            generate_audio=False,
+            generate_audio=True,
             last_frame=end_image,
             number_of_videos=1,
         ),
@@ -127,16 +162,16 @@ def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_p
 
 def concatenate(clip_paths, out_path):
     # Re-encode via the concat FILTER, not stream-copy via the concat demuxer --
-    # see v1's own header/llms.txt for why. No audio streams now (generate_audio
-    # =False), so the filter graph only needs to concat video.
+    # see v1's own header/llms.txt for why. Audio streams are back (generate_
+    # audio=True again in v3), so the filter graph concats both video and audio.
     cmd = ["ffmpeg", "-y"]
     for p in clip_paths:
         cmd += ["-i", str(p)]
     n = len(clip_paths)
-    filter_inputs = "".join(f"[{i}:v:0]" for i in range(n))
+    filter_inputs = "".join(f"[{i}:v:0][{i}:a:0]" for i in range(n))
     cmd += [
-        "-filter_complex", f"{filter_inputs}concat=n={n}:v=1:a=0[v]",
-        "-map", "[v]",
+        "-filter_complex", f"{filter_inputs}concat=n={n}:v=1:a=1[v][a]",
+        "-map", "[v]", "-map", "[a]",
         str(out_path),
     ]
     subprocess.run(cmd, check=True)
