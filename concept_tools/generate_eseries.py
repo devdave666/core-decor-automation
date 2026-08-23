@@ -430,6 +430,101 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Dev's feedback after approving e1-04/e1-05: everything so far reads as
+    # "dull and boring," wants genuine "old money" wow factor, "not too
+    # bright," and sent two real reference reels ("ANB Architecture Studio"
+    # branded) to define it -- not a vague mood word this time, an actual
+    # visual target. Reel 1: a "MATERIAL PALETTE" branding montage (charcoal
+    # plaster/black marble/walnut/aged brass; warm ivory/cream marble/walnut/
+    # brass; slate/walnut/cream marble/brass; deep maroon/olive/walnut/cream
+    # quartz swatch cards) intercut with the finished kitchens those
+    # palettes describe: every one built around a dramatic waterfall-edge
+    # stone island, 2-3 slim cylindrical aged-brass pendants in a row, dark
+    # walnut cabinetry, glass-front upper cabinets with their own interior
+    # lighting, warm layered ambient light (never sun-bright, never night-
+    # dark). Reel 2: a heritage/English-country-manor kitchen -- antique
+    # double-dome brass pendant, dramatic veined-marble waterfall island on
+    # a dark oak base, woven rush counter stools, brass bridge faucet, hung
+    # copper pans, a gilt-framed oil landscape painting, a stoneware jug
+    # with foraged olive branches, linen café curtains, soft diffused
+    # daylight. Both genuinely restrained on STYLING -- 2-3 objects per
+    # shot, not the 5-6-item lists this file had been writing -- which is
+    # itself a big part of why the earlier sets read as "trying hard" by
+    # comparison: density was reading as effort, not luxury. `light_sentence`
+    # here is written from what both references actually show (warm layered
+    # ambient -- pendant glow, under-cabinet light, soft daylight -- kept
+    # moderate throughout), not from ROOM_LIGHT's blue-hour treatment, since
+    # neither reference shows blue dusk at the windows. New
+    # `styling_restraint_sentence` mechanism added specifically to enforce
+    # the 2-3-object cap despite STYLING_RULE alone reading looser than that.
+    # Dev said this direction holds "for next few generations," not just
+    # this one set -- treat as the new default look until told otherwise,
+    # not a one-off.
+    "e1-06": {
+        "source_type": "Dev-provided reference (ANB Architecture Studio kitchen reels, not Type 1/2)",
+        "style_slug": "oldmoney",
+        "palette_sentence": (
+            "a rich, restrained old-money palette carried through every "
+            "room: dark walnut cabinetry and millwork, dramatically veined "
+            "cream-and-grey marble with waterfall-edge surfaces, aged "
+            "unlacquered brass fixtures and hardware, and warm soft-plaster "
+            "walls in warm neutral tones, with occasional deep bottle-green "
+            "or oxblood accents used sparingly."
+        ),
+        "light_sentence": (
+            " Photographed under warm, layered ambient interior lighting: "
+            "glowing brass pendant fixtures, warm under-cabinet lighting "
+            "and soft cove light combine with gentle, diffused daylight "
+            "through the windows. Exposure stays moderate and warm "
+            "throughout the whole frame -- rich and inviting rather than "
+            "sun-bright, and never dim or night-dark. Every material's "
+            "true warm tone and texture -- marble veining, brass patina, "
+            "walnut grain -- reads clearly and accurately. Elegant, "
+            "editorial and quietly confident, like a shoot for an "
+            "interiors magazine rather than a real-estate listing."
+        ),
+        "styling_restraint_sentence": (
+            " Styling is deliberately spare -- at most two or three objects "
+            "in the whole frame, chosen for quality over quantity, with "
+            "large areas of clear counter, floor and wall left open. The "
+            "architecture and materials themselves, not dense decor, are "
+            "what create the impression of quiet wealth."
+        ),
+        "rooms": {
+            "kit": {
+                "stem": "e1-06_kit_oldmoney",
+                "room": "a residential kitchen",
+                "style": "old-money modern interior with heritage detailing",
+                "styling": (
+                    "a dramatic waterfall-edge island in richly veined "
+                    "cream marble, a glass-front upper cabinet with lit "
+                    "interior shelving showing glassware, and a low wooden "
+                    "bowl of citrus fruit on the island."
+                ),
+                "fixtures": (
+                    "three slim cylindrical aged-brass pendant lights hung "
+                    "in a row over the island."
+                ),
+            },
+            "din": {
+                "stem": "e1-06_din_oldmoney",
+                "room": "a residential dining room adjoining the kitchen",
+                "style": "old-money modern interior with heritage detailing",
+                "styling": (
+                    "a long dark walnut dining table, a single large "
+                    "gilt-framed oil landscape painting on the wall, and a "
+                    "stoneware jug with a few foraged olive branches on "
+                    "the table."
+                ),
+                "fixtures": (
+                    "a slim brass picture light above the painting, and an "
+                    "aged-brass chandelier with clean cylindrical arms "
+                    "hung low over the table."
+                ),
+            },
+        },
+    },
 }
 
 
@@ -454,7 +549,7 @@ EXTERIOR_SPATIAL_RULE = (
 )
 
 
-def build_room_prompt(room, palette_sentence, light_sentence=None):
+def build_room_prompt(room, palette_sentence, light_sentence=None, styling_restraint_sentence=None):
     is_exterior = room.get("is_exterior", False)
     shot_label = "Exterior photograph" if is_exterior else "Interior photograph"
     composition = EXTERIOR_COMPOSITION if is_exterior else COMPOSITION
@@ -469,6 +564,7 @@ def build_room_prompt(room, palette_sentence, light_sentence=None):
         + spatial_rule
         + f" Furnished and dressed with: {room['styling']}"
         + STYLING_RULE
+        + (styling_restraint_sentence or "")
         + f" The room's own light fittings are: {room['fixtures']}"
         + QUALITY_ROOM + NO_TEXT
     )
@@ -510,7 +606,10 @@ def generate_room(client, set_id, room_key, model=MODEL):
 
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
-    prompt = build_room_prompt(room, set_data["palette_sentence"], set_data.get("light_sentence"))
+    prompt = build_room_prompt(
+        room, set_data["palette_sentence"], set_data.get("light_sentence"),
+        set_data.get("styling_restraint_sentence"),
+    )
 
     print(f"--- generating {room['stem']} with {model} ---")
     response = client.models.generate_content(
