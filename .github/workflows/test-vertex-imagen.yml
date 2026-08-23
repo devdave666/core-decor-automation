@@ -1,0 +1,70 @@
+name: Test Vertex AI Imagen Connection
+
+# One-off connectivity test for the new e-series image generation path (Google's
+# Imagen via Vertex AI, authenticated with Workload Identity Federation -- no
+# static key ever stored). Generates ONE throwaway test image to confirm the WIF
+# setup + Imagen access actually works end-to-end before anything real depends on
+# it. Not wired into any content pipeline yet.
+#
+# Requires the Workload Identity Pool/Provider and the vertex-ai-runner service
+# account (with roles/aiplatform.user granted) to already exist in the GCP
+# project -- see llms.txt for the exact gcloud commands. This workflow only
+# handles the GitHub Actions side.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write  # required for WIF's OIDC token exchange
+
+jobs:
+  test-imagen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the Google Gen AI SDK
+        run: pip install google-genai
+
+      - name: Generate one test image via Imagen on Vertex AI
+        run: |
+          python3 -c "
+          from google import genai
+          from google.genai import types
+
+          # vertexai=True + project/location routes through Vertex AI billing
+          # (the $300 trial credit) -- NOT the separate Gemini Developer API,
+          # which the credit explicitly does not cover.
+          client = genai.Client(
+              vertexai=True,
+              project='project-58f4f689-36b9-406b-bfa',
+              location='us-central1',
+          )
+
+          response = client.models.generate_images(
+              model='imagen-4.0-generate-001',
+              prompt='A minimalist modern living room interior, soft natural light, photorealistic, 9:16 vertical composition',
+              config=types.GenerateImagesConfig(number_of_images=1),
+          )
+
+          for i, img in enumerate(response.generated_images):
+              img.image.save(f'test_output_{i}.png')
+              print(f'Saved test_output_{i}.png -- Imagen + WIF connection confirmed working.')
+          "
+
+      - name: Upload the test image as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imagen-test-output
+          path: test_output_*.png
