@@ -3156,3 +3156,101 @@ real run against `veo-3.1-fast-generate-001` with the new audio cues and the
 escalated `before` prompt is what will actually validate all three v3 changes
 -- don't assume any of them work as described until that run happens and gets
 reviewed the same way v1 and v2 were.
+
+## E-Series: upscale adopted as standard, naming fixed, e1-02/e1-03/e1-04/e1-05 (2026-08-22/23)
+
+Catching this file up on three real commits that shipped without an llms.txt
+update at the time (`552a828`, `175b9c1`, plus today's `e73ef32` + the image
+commit after it) -- a gap against the standing "update llms.txt every run"
+rule, worth flagging rather than quietly backfilling. Consolidating all of it
+here in one entry since it's one continuous thread.
+
+**Upscale+sharpen adopted as the permanent pipeline step.** Following the
+"why lower quality" investigation above, Dev asked to see the upscale
+comparison applied to already-generated images before deciding, reviewed it,
+and confirmed: "wait this all happened with code, that looks amazing, we
+will follow this route." Wired into `generate_room()` itself in
+`concept_tools/generate_eseries.py` (`upscale_and_sharpen()`) -- Lanczos
+resize from 768x1344 up to FLUX's own 1088x1920, plus a mild
+`ImageFilter.UnsharpMask`, both from Pillow. Dev then asked directly whether
+this consumed any AI credits: confirmed no -- it's pure local CPU image
+processing on bytes already returned by the one paid Gemini call, zero
+additional API calls, zero additional cost. `image_size="4K"` was dropped
+from the generation request since it's confirmed to have zero effect on this
+model. e1-01's three files were replaced with their upscaled versions.
+
+**Naming convention fixed after Dev uploaded more reference reels.** More
+"Type 1 - firstchair" reels revealed real style/mood diversity even within
+one type (different color grades, wildly different cut pacing -- one video a
+32-cut flash-montage in 7.4s). Dev pointed out e1-01's filenames
+(`e1-01_liv_app.png`) didn't self-document which images share a style well
+enough to "match similar images together to make a reel" once multiple
+sets/moods exist. Fixed: every set now carries a required top-level
+`style_slug`, and room file stems follow `{set_id}_{room}_{style_slug}`,
+matching the a-d series' own `{concept}_{room}_{stylename}` pattern exactly
+(e.g. `d01_lib_oxblood`). e1-01's 3 committed files were renamed to match.
+Also added a per-set `light_sentence` override (`build_room_prompt` falls
+back to `ROOM_LIGHT` when absent) so new sets can capture genuinely
+different lighting moods instead of every set forcing Dev's established
+blue-hour treatment -- e1-01 itself is unaffected (no override set).
+
+**e1-02 ("warmvintage", from reel 6) and e1-03 ("sagecoastal", from reel 4)
+generated, upscaled, uploaded to Drive, and approved by Dev** ("I approve").
+e1-02: soft warm hazy vintage-film grade, Spanish-colonial-leaning styling
+(carved walnut/mahogany, terracotta tile, checkerboard textiles), living
+room + entry hallway. e1-03: bright Mediterranean-coastal daylight (sage
+cabinetry, travertine, brass), kitchen + dining room.
+
+**Dev's next feedback: all sets so far read as too bright, wanted real
+dark/moody variety plus a special exterior-to-interior "house tour" set,
+grounded in actual research rather than invention** -- exact ask: "why are
+all images so bright... add such to the mix too, also create one that shows
+one exterior and rest interior for a special kinda reel that's kinda gives
+whole house tour... research online and see what kinda theme and mood I am
+looking for and whats going viral currently on tiktok and instagram."
+
+Handled by going back through PREVIOUSLY-DOWNLOADED but not-yet-reviewed
+reference frames (from the earlier `analyze_reference_reels.py` run) rather
+than inventing a dark mood from scratch: reel 4 -- the same reel e1-03's
+bright sage kitchen came from -- has a second, genuinely dark frame later in
+the same video (near-black cabinetry, brass hardware, marble, dark wood
+beams), captioned "This is why cabinet color matters" (the reel is a
+bright-vs-dark cabinet-color comparison, not one single mood; only its
+bright half had been sampled into e1-03). Reel 5 shows the same dark
+cabinet-kitchen mood again. That real frame is e1-04's actual grounding.
+Cross-checked against two live WebSearches (not assumed): "moody organic
+modern" (dark wood, earthy deep tones, warm dramatic lighting) confirmed as
+a real current 2026 trend; house-tour/room-flow content confirmed as a
+recognized popular reel format, supporting the exterior->interior structure
+Dev asked for.
+
+**e1-04 ("darkmoody")**: kitchen + primary bedroom, deep near-black
+cabinetry/millwork, marble, aged brass, dark oak beams, photographed at
+night lit only by the room's own warm brass fixtures -- high-contrast,
+near-black shadow with deliberate warm light pools, dramatic rather than
+cozy.
+
+**e1-05 ("quietluxury")**: the exterior->interior house-tour set -- front
+exterior facade, entry foyer, living room, warm-neutral "quiet luxury"
+palette (greige limestone/render, walnut, aged brass, linen/boucle),
+golden-hour directional light throughout. Required new prompt-composition
+handling: `COMPOSITION`/`SPATIAL_RULE` (imported from `generate_concept.py`)
+are written specifically for interior three-quarter room views and don't
+fit a building facade. Added `EXTERIOR_COMPOSITION`/`EXTERIOR_SPATIAL_RULE`
+constants and a per-room `is_exterior` flag; `build_room_prompt()` now
+branches on it (`Exterior photograph of...` vs `Interior photograph of...`,
+different composition/spatial language). This is the first exterior shot
+this generator has ever produced.
+
+Both sets generated one test room first (kit for e1-04, ext for e1-05),
+reviewed by eye before generating the rest -- same discipline as every prior
+e-series batch. All 5 images (e1-04: kit, bed; e1-05: ext, ent, liv)
+confirmed clean by eye: e1-04 genuinely dark and dramatic (not just "less
+bright"), e1-05's exterior geometrically coherent (no floating/
+interpenetrating architecture) and its entry/living room continue the same
+warm walnut palette as the exterior, with a staircase visible in both
+interior shots reinforcing the house-tour flow. Committed to
+`assets/application_eseries/`, uploaded to Drive via
+`upload-eseries-to-drive.yml` under "E-Series Generated Output/e1-04" and
+"/e1-05". **Awaiting Dev's approval before any further batch**, same
+checkpoint pattern Dev has now established twice.
