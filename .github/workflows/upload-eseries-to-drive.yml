@@ -14,6 +14,10 @@ on:
         description: "E-series set id whose images to upload (e.g. e1-01)"
         required: true
         default: "e1-01"
+      subdir:
+        description: "Optional subfolder under assets/application_eseries/ to upload from instead (e.g. upscaled_test)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -38,6 +42,7 @@ jobs:
           GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
           SET_ID: ${{ github.event.inputs.set_id }}
+          SUBDIR: ${{ github.event.inputs.subdir }}
         run: |
           python3 -c "
           import os
@@ -45,12 +50,15 @@ jobs:
           from drive_upload import get_or_create_folder, upload_file, ROOT_FOLDER_ID
 
           set_id = os.environ['SET_ID']
+          subdir = os.environ.get('SUBDIR', '').strip()
           output_root = get_or_create_folder('E-Series Generated Output', ROOT_FOLDER_ID)
           set_folder = get_or_create_folder(set_id, output_root)
+          if subdir:
+              set_folder = get_or_create_folder(subdir, set_folder)
           print(f'Set folder: https://drive.google.com/drive/folders/{set_folder}')
           print()
 
-          src_dir = Path('assets/application_eseries')
+          src_dir = Path('assets/application_eseries') / subdir
           matches = sorted(src_dir.glob(f'{set_id}_*.png'))
           if not matches:
               print(f'No files matching {set_id}_*.png found in {src_dir}')
