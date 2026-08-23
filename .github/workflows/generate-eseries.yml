@@ -44,7 +44,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install google-genai
+        run: pip install google-genai pillow
 
       - name: Generate
         run: python3 concept_tools/generate_eseries.py "${{ github.event.inputs.set_id }}" ${{ github.event.inputs.rooms }}
