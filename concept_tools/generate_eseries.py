@@ -153,7 +153,12 @@ def generate_room(client, set_id, room_key):
         model=MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(
-            image_config=types.ImageConfig(aspect_ratio="9:16"),
+            # image_size default is 1K -- confirmed the actual cause of the
+            # first test set looking soft next to FLUX's 1088x1920 output.
+            # 4K requested here; if this field name/value is wrong the API
+            # error will say so directly, same as every other guess this
+            # model needed verifying for real rather than trusting docs.
+            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
         ),
     )
 
