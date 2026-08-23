@@ -3541,4 +3541,56 @@ reel from a fixed reference photo -- e1-08's description-only approach
 stays useful for general application-photo variety where near-identical
 framing isn't the point, but e1-09's image-editing approach is what
 "same structure, different materials, for a reel" specifically needs
-going forward.** Awaiting Dev's approval on this final set.
+going forward.**
+
+## E-Series: e1-09 grown to 20 frames, grounded in real 2026 material trend research (2026-08-23, same session)
+
+Dev's reaction to the 10-frame e1-09 reel: "love it, add more themes (even
+lighter), more materials, and more lighting variations and create more
+variants of same application photo, research all materials that can be
+used in a kitchen, different stones, different tiles, colors textures
+wallpapers and create 10 more variants" -- then confirmed mid-turn
+("to this same image concept not a new one") that these are more edits of
+the SAME base reference photo (`e1-08_var01_ebonyblack_app.png`), not a
+new room/concept.
+
+**Real research done first, not invented from the existing material
+list**: two WebSearches on 2026 kitchen countertop and backsplash trend
+reporting. Findings that shaped the 10 new variants: quartzite (especially
+Taj Mahal veining) is the standout 2026 stone trend; terrazzo is back via
+resin variants; granite is trending toward leathered/honed flowing
+veining rather than small speckle; backsplashes are moving toward blue
+tones, dusky pink, buttery yellow, sage/olive, full-slab-matching-the-
+island, and wallpaper-style treatments; herringbone (white marble or
+matte black/charcoal) is a major pattern.
+
+**"(even lighter)" read as genuinely brighter/paler material tone plus a
+brighter interior-lit key**, not a reversion to daylight -- the standing
+"night only, mood interior lights" rule from the e1-07 entry wasn't
+rescinded, so all 10 new frames stay interior-lit, no daylight. var11-16
+skew light (white quartzite, sage+Carrara marble, pale terrazzo, sky-blue
+zellige, dusky pink, buttery yellow), var17/19/20 keep the dramatic dark
+end going since "more themes" was additive not a replacement (leathered
+navy granite, matte charcoal herringbone -- the darkest frame in the
+whole 20 -- emerald + full-slab Calacatta marble), and var18 uses an
+actual botanical-print wallpaper backsplash per Dev's explicit word
+rather than another tile treatment. Lighting itself was deliberately
+varied across the batch too, from var11 (brightest, nearly every fixture
+on, minimal shadow) down to var19 (darkest, single dramatic pendant
+pool) -- the "more lighting variations" part of the ask.
+
+**All 10 generated as true reference-image edits of the same base photo**
+(same mechanism as the first 10 -- see the entry above), tested one first
+(var11, the brightest, to confirm the "lighter" direction actually reads
+right) before batching the remaining 9. All 10 confirmed by eye:
+structure (island shape, stool count/style/position, pendant placement,
+even the incidental console-table sculpture prop) stays consistent with
+the base reference and the rest of the set, exactly like the first batch.
+No new bugs hit this time -- the 429 backoff and text-only-response retry
+fixed in the entry above held up cleanly across all 9 remaining
+generations.
+
+`e1-09` now has 20 total frames (`var01` base + `var02`-`var20`
+edits). Committed to `assets/application_eseries/`, re-uploaded to Drive
+under "E-Series Generated Output/e1-09" (same folder, now containing all
+20). **Awaiting Dev's approval.**
