@@ -1,10 +1,14 @@
-name: Test Vertex AI Imagen Connection
+name: Test Vertex AI Image Generation Connection
 
 # One-off connectivity test for the new e-series image generation path (Google's
-# Imagen via Vertex AI, authenticated with Workload Identity Federation -- no
-# static key ever stored). Generates ONE throwaway test image to confirm the WIF
-# setup + Imagen access actually works end-to-end before anything real depends on
-# it. Not wired into any content pipeline yet.
+# image generation via Vertex AI, authenticated with Workload Identity Federation
+# -- no static key ever stored). Generates ONE throwaway test image to confirm
+# the WIF setup + model access actually works end-to-end before anything real
+# depends on it. Not wired into any content pipeline yet.
+#
+# Uses Gemini 2.5 Flash Image ("nano banana"), not Imagen -- Imagen's
+# generate_images() models were confirmed retired via a real 404 from this exact
+# workflow (see llms.txt), not assumed from docs.
 #
 # Requires the Workload Identity Pool/Provider and the vertex-ai-runner service
 # account (with roles/aiplatform.user granted) to already exist in the GCP
@@ -37,7 +41,7 @@ jobs:
       - name: Install the Google Gen AI SDK
         run: pip install google-genai
 
-      - name: Generate one test image via Imagen on Vertex AI
+      - name: Generate one test image via Gemini 2.5 Flash Image on Vertex AI
         run: |
           python3 -c "
           from google import genai
@@ -45,22 +49,46 @@ jobs:
 
           # vertexai=True + project/location routes through Vertex AI billing
           # (the $300 trial credit) -- NOT the separate Gemini Developer API,
-          # which the credit explicitly does not cover.
+          # which the credit explicitly does not cover. No api_key passed --
+          # WIF/ADC picks up credentials automatically from
+          # GOOGLE_APPLICATION_CREDENTIALS, set by the auth step above.
           client = genai.Client(
               vertexai=True,
               project='project-58f4f689-36b9-406b-bfa',
               location='us-central1',
           )
 
-          response = client.models.generate_images(
-              model='imagen-4.0-generate-001',
-              prompt='A minimalist modern living room interior, soft natural light, photorealistic, 9:16 vertical composition',
-              config=types.GenerateImagesConfig(number_of_images=1),
+          # Imagen models (generate_images()) were retired -- the 404 from the
+          # first attempt confirmed this directly against the real API, not
+          # assumed. Current model is Gemini 2.5 Flash Image ('nano banana'),
+          # called via generate_content() like any other Gemini model, not a
+          # dedicated image method.
+          response = client.models.generate_content(
+              model='gemini-2.5-flash-image-preview',
+              contents='A minimalist modern living room interior, soft natural light, photorealistic, 9:16 vertical composition',
           )
 
-          for i, img in enumerate(response.generated_images):
-              img.image.save(f'test_output_{i}.png')
-              print(f'Saved test_output_{i}.png -- Imagen + WIF connection confirmed working.')
+          # Defensive extraction: the exact response shape for an image-bearing
+          # part isn't confirmed yet for this SDK version, so try the standard
+          # inline_data path but ALSO dump the raw structure either way -- if
+          # the standard path is wrong, this run's log has the real shape
+          # instead of needing another guess.
+          saved = False
+          for candidate in response.candidates:
+              for part in candidate.content.parts:
+                  inline = getattr(part, 'inline_data', None)
+                  if inline and getattr(inline, 'data', None):
+                      with open('test_output_0.png', 'wb') as f:
+                          f.write(inline.data)
+                      print('Saved test_output_0.png via inline_data -- confirmed working.')
+                      saved = True
+                  elif getattr(part, 'text', None):
+                      print(f'Text part in response: {part.text[:200]}')
+
+          if not saved:
+              print('!! Could not find image data via the expected inline_data path.')
+              print('Raw response for diagnosis:')
+              print(repr(response))
           "
 
       - name: Upload the test image as a build artifact
@@ -68,3 +96,4 @@ jobs:
         with:
           name: imagen-test-output
           path: test_output_*.png
+          if-no-files-found: warn
