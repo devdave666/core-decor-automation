@@ -3324,8 +3324,68 @@ walnut table, stoneware jug with olive branches) and reads as the same
 house as the kitchen through a shared archway -- no separate fix needed.
 
 Both images committed to `assets/application_eseries/`, uploaded to Drive
-under "E-Series Generated Output/e1-06". **Awaiting Dev's approval.**
-Per Dev's "for next few generations" instruction, e1-06's palette/light/
-restraint approach (not e1-01..e1-05's) is the direction any NEW e-series
-set should default to until Dev says otherwise -- this is a standing
-style change, not a one-off set alongside the others.
+under "E-Series Generated Output/e1-06". Per Dev's "for next few
+generations" instruction, e1-06's palette/light/restraint approach was
+treated as the new default direction for future sets -- **but see the
+entry immediately below: it was corrected again within the same session,
+one round of real feedback in.**
+
+## E-Series: e1-06 overcorrected -- e1-07 is now the standing default (2026-08-23, same session)
+
+Dev's reaction to e1-06: "still very bright and no furniture, feels
+empty!! Tell you what for next few generations, I want night only
+application photos, I want mood interior lights, I want darker shades and
+darker materials, I want use of stone and tiles alongside wood and colors
+and fabrics, I want old money aesthetics that meet modern decor." Two
+real, specific corrections, not a vague "try again":
+
+1. **`styling_restraint_sentence` (added for e1-06) overcorrected into
+   emptiness.** Capping styling at 2-3 objects, combined with the
+   kitchen's "island is the sole piece of furniture" fix from the
+   defect-fix entry above, meant e1-06's rooms genuinely had only one
+   piece of furniture in frame. Restraint had tipped into bare. e1-07
+   drops `styling_restraint_sentence` entirely and writes genuinely
+   furnished styling lists again, back to e1-01's density (5-6 real
+   pieces: seating, rugs, side tables, layered objects) -- but keeps
+   e1-06's real material/hardware language (walnut, marble, aged brass)
+   since brightness and emptiness were the actual complaints, not the
+   materials.
+2. **Full lighting reversal: night-only, "mood interior lights," "darker
+   shades and darker materials," for "next few generations"** -- a
+   standing instruction the same way e1-06's restraint was, not a
+   per-set choice. Reused e1-04's already-proven real night-photography
+   language (only the room's own warm brass fixtures lit, near-black
+   shadow, dramatic warm pools) as the base for genuinely dark rather
+   than reinventing night lighting from scratch -- e1-04 is the only
+   set in this file that had already been validated as reading as
+   authentically dark and dramatic, not just "moodier."
+
+**New material instruction, not previously asked for**: "stone and tiles
+alongside wood and colors and fabrics" -- read as deliberately mixing MORE
+material categories per room than any earlier set (dark stone waterfall
+surfaces AND patterned tile AND wood AND jewel-tone fabric together, not
+one or two dominant materials each set). **"Old money aesthetics that meet
+modern decor"** read as: keep the heritage MATERIALS/hardware vocabulary
+(marble, brass, walnut) but give furniture clean modern silhouettes rather
+than reel 2's literal antique country pieces (turned legs, rush seats) --
+a fusion, not a reversion to e1-02's Spanish-colonial antique styling.
+
+**e1-07 ("nightluxe"): kitchen + living room, both generated once each,
+no defect-fix round needed this time** (unlike e1-06's two-pass kitchen).
+Kitchen: dark soapstone-look waterfall island, patterned olive zellige
+tile backsplash, a built-in banquette with bottle-green velvet cushions
+and a round side table (real seating furniture, directly answering "no
+furniture"), glass-front cabinet glowing with lit glassware, aged-brass
+staggered pendants, kilim runner rug. Confirmed genuinely dark and
+furnished by eye, not just "less bright." Living room: deep olive velvet
+tufted sofa, oxblood/cream pillows, two leather-and-brass armchairs, a
+marble fireplace surround with a gilt-framed painting above it, a
+five-arm brass-and-glass chandelier, layered patterned rug, a brass floor
+lamp, a decanter and stacked books on a side table -- reads as a genuinely
+striking, furnished, dark "old money meets modern" room, confirmed by eye.
+
+Both images committed to `assets/application_eseries/`, uploaded to Drive
+under "E-Series Generated Output/e1-07". **Awaiting Dev's approval.**
+**e1-07, not e1-06, is now the standing default direction for any new
+e-series set** -- e1-06's brighter, sparser approach is superseded, not a
+parallel option to keep drawing from.
