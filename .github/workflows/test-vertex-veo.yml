@@ -1,0 +1,51 @@
+name: Test Vertex AI Veo Video Generation Connection
+
+# Connectivity test for Veo (video generation) on the same Vertex AI project
+# already proven for Imagen/gemini-2.5-flash-image (see test-vertex-imagen.yml
+# and llms.txt). Same WIF auth, same service account, same roles/aiplatform.user
+# grant -- Veo is just another model on the same Vertex Generative AI API
+# surface, so no new IAM should be needed. Confirms that assumption for real
+# rather than assuming it holds.
+#
+# Deliberately minimal and cheap: 4 seconds, no audio, one candidate model tried
+# at a time until one works. This is a connectivity/model-ID check, not the real
+# transformation-reel generation -- see discover_and_test_video_model.py's own
+# header for why keeping this cheap matters. Not wired into any content pipeline.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write  # required for WIF's OIDC token exchange
+
+jobs:
+  test-veo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai
+
+      - name: List available Veo models, then try each until one produces a video
+        run: python3 discover_and_test_video_model.py
+
+      - name: Upload the test video as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: veo-test-output
+          path: test_output_video.mp4
+          if-no-files-found: warn
