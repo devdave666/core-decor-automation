@@ -1059,6 +1059,209 @@ ESERIES_SETS = {
                     "daylight anywhere in frame."
                 ),
             },
+
+            # Second batch (var11-var20). Dev's reaction to var02-var10:
+            # "love it, add more themes (even lighter), more materials, and "
+            # more lighting variations... research all materials that can be "
+            # used in a kitchen, different stones, different tiles, colors "
+            # textures wallpapers" -- and confirmed mid-turn these are more
+            # edits of the SAME base photo, not a new concept. Grounded in
+            # two real WebSearches (2026 kitchen countertop/backsplash trend
+            # reporting, not invented) rather than reusing the same
+            # brainstormed material list: quartzite (esp. Taj Mahal veining)
+            # is the standout 2026 stone trend; terrazzo is back (resin
+            # variants); granite is trending toward leathered/honed flowing
+            # veining rather than small speckle; backsplashes are moving
+            # toward blue tones, dusky pink, buttery yellow, sage/olive,
+            # full-slab-matching-the-counter, and wallpaper-style treatments;
+            # herringbone (white marble OR matte black/charcoal) is a major
+            # pattern. "(even lighter)" read as genuinely brighter/paler
+            # material palettes and a brighter interior-lit key -- var11-16
+            # skew light, var17/19/20 keep the dramatic dark end going
+            # ("more themes" is additive, not a replacement), var18 uses
+            # actual wallpaper per Dev's explicit word. Every one still
+            # stays within the standing "night only, mood interior lights"
+            # rule (interior artificial light throughout, no daylight) since
+            # Dev didn't rescind that -- "lighter" is read as brightness/
+            # material tone within that rule, not a reversion to daylight.
+            # Lighting itself is varied deliberately across the whole set,
+            # from var11 (brightest, almost every fixture blazing) down to
+            # var19 (darkest, single dramatic pendant-only pool) -- the
+            # "more lighting variations" part of the ask.
+            "var11": {
+                "stem": "e1-09_var11_whitequartzite",
+                "palette_sentence": (
+                    "warm white shaker cabinetry, a dramatic Taj Mahal "
+                    "quartzite waterfall island with soft golden-beige "
+                    "veining, a white marble herringbone tile backsplash, "
+                    "and aged brass fixtures and hardware."
+                ),
+                "light_sentence": (
+                    " Photographed at night with every light in the room "
+                    "switched on and bright: the three brass pendants over "
+                    "the island blaze warm and bright, joined by strong "
+                    "warm under-cabinet lighting and ceiling downlights, "
+                    "so the room reads bright, fresh and airy rather than "
+                    "moody -- minimal shadow, soft even illumination "
+                    "throughout, the white cabinetry and pale quartzite "
+                    "glowing warmly. Crisp, clean and inviting, the "
+                    "lightest and brightest room in the collection so "
+                    "far, though still lit entirely by the room's own "
+                    "warm fixtures rather than daylight."
+                ),
+            },
+            "var12": {
+                "stem": "e1-09_var12_sagecarrara",
+                "palette_sentence": (
+                    "soft sage-green shaker cabinetry, a honed white "
+                    "Carrara marble waterfall island with fine grey "
+                    "veining, a white marble herringbone tile backsplash, "
+                    "and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, warmly and brightly lit: the "
+                    "three brass pendants over the island plus warm "
+                    "under-cabinet lighting keep the room bright and "
+                    "even, sage green and white marble both reading true "
+                    "and fresh rather than shadowed. Airy, calm and "
+                    "clean, no daylight in frame."
+                ),
+            },
+            "var13": {
+                "stem": "e1-09_var13_terrazzo",
+                "palette_sentence": (
+                    "warm white shaker cabinetry, a pale resin terrazzo "
+                    "waterfall island flecked with soft rust, ochre and "
+                    "grey chips, a colourful mosaic tile backsplash "
+                    "echoing the terrazzo flecks, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, brightly and evenly lit: the "
+                    "three brass pendants over the island plus warm "
+                    "ceiling downlights keep the whole room bright, the "
+                    "terrazzo flecks and mosaic colours reading clearly "
+                    "and cheerfully rather than muted by shadow. Playful, "
+                    "fresh and lively, no daylight in frame."
+                ),
+            },
+            "var14": {
+                "stem": "e1-09_var14_skyblue",
+                "palette_sentence": (
+                    "warm white shaker cabinetry, a honed white quartzite "
+                    "waterfall island with soft grey veining, a sky-blue "
+                    "zellige tile backsplash, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, warmly and evenly lit: the "
+                    "three brass pendants over the island keep the room "
+                    "bright, the sky-blue zellige holding its true colour "
+                    "clearly rather than reading dark or muddy. Crisp, "
+                    "fresh and inviting, no daylight in frame."
+                ),
+            },
+            "var15": {
+                "stem": "e1-09_var15_duskypink",
+                "palette_sentence": (
+                    "dusky pink shaker cabinetry, a honed white marble "
+                    "waterfall island with soft pink-toned veining, a "
+                    "pink-veined marble slab backsplash, and aged brass "
+                    "fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, softly and warmly lit: the "
+                    "three brass pendants over the island cast a gentle "
+                    "even warm glow, the dusky pink tones reading soft "
+                    "and true rather than shadowed or muddy. Warm, "
+                    "romantic and inviting, no daylight in frame."
+                ),
+            },
+            "var16": {
+                "stem": "e1-09_var16_butteryyellow",
+                "palette_sentence": (
+                    "buttery yellow shaker cabinetry, a honed warm "
+                    "travertine waterfall island, a cream fluted tile "
+                    "backsplash, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, warmly and brightly lit: the "
+                    "three brass pendants over the island plus warm "
+                    "under-cabinet lighting keep the room bright and "
+                    "cheerful, the buttery yellow cabinetry glowing warm "
+                    "and true. Sunny, welcoming and fresh despite being "
+                    "lit entirely by the room's own fixtures, no daylight "
+                    "in frame."
+                ),
+            },
+            "var17": {
+                "stem": "e1-09_var17_leatherednavy",
+                "palette_sentence": (
+                    "deep navy shaker cabinetry, a leathered dark granite "
+                    "waterfall island with flowing pale grey veining, a "
+                    "geometric encaustic cement tile backsplash in navy "
+                    "and cream, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: the navy cabinetry "
+                    "and leathered granite hold deep, rich colour in "
+                    "shadow while the pendant light pools on the island "
+                    "and cement tile pattern. Moody and dramatic, no "
+                    "daylight anywhere in frame."
+                ),
+            },
+            "var18": {
+                "stem": "e1-09_var18_wallpaper",
+                "palette_sentence": (
+                    "soft sage-green shaker cabinetry, a honed soapstone "
+                    "waterfall island in soft blue-grey, a botanical-print "
+                    "wallpaper panel on the wall above the counter in "
+                    "place of tile, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, warmly and softly lit: the "
+                    "three brass pendants over the island cast an even "
+                    "warm glow across the room, the wallpaper's botanical "
+                    "print and soapstone's soft colour both reading "
+                    "clearly. Cosy, characterful and calm, no daylight in "
+                    "frame."
+                ),
+            },
+            "var19": {
+                "stem": "e1-09_var19_mattecharcoal",
+                "palette_sentence": (
+                    "matte black shaker cabinetry, a leathered dark "
+                    "granite waterfall island, a matte charcoal ceramic "
+                    "herringbone tile backsplash, and aged brass fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: the matte black "
+                    "cabinetry and charcoal herringbone recede into deep "
+                    "near-black shadow while the pendant light pools "
+                    "sharply on the island and brass hardware. The "
+                    "darkest and most dramatic room in the collection, no "
+                    "daylight anywhere in frame."
+                ),
+            },
+            "var20": {
+                "stem": "e1-09_var20_emeraldcalacatta",
+                "palette_sentence": (
+                    "deep emerald-green shaker cabinetry, a dramatic "
+                    "white Calacatta marble waterfall island with bold "
+                    "grey veining, a full-slab white Calacatta marble "
+                    "backsplash matching the island, and aged brass "
+                    "fixtures."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit by the three warm brass "
+                    "pendants over the island: the emerald cabinetry "
+                    "holds deep, rich colour while the pale marble "
+                    "glows warmly under the pendant light, a strong "
+                    "light-marble-against-dark-cabinetry contrast. Rich, "
+                    "jewel-toned and dramatic, no daylight anywhere in "
+                    "frame."
+                ),
+            },
         },
     },
 }
