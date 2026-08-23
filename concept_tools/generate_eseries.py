@@ -20,18 +20,30 @@ NO_TEXT are hard-won, measured-and-iterated constants; not duplicating them
 here) but swaps materials_sentence + bands for a single palette_sentence
 shared across every room in a set, since palette cohesion IS the format.
 
-Lighting direction (ROOM_LIGHT, also reused) is Dev's own established,
-validated house style (warm-lamps-against-blue-hour, see generate_concept.py's
-extensive tuning notes) -- the reference reels themselves lean daytime-lit,
-but matching Dev's own visual identity is the "creative twist" applied on top
-of the borrowed format, not a mismatch to fix.
+Lighting direction defaults to ROOM_LIGHT (Dev's own established, validated
+house style -- warm-lamps-against-blue-hour, see generate_concept.py's
+extensive tuning notes), used as-is for e1-01. Once more reference reels were
+uploaded, real diversity showed up even within "Type 1" -- not just palette,
+but genuinely different color grades/moods (a warm, soft, hazy vintage-film
+grade in one reel vs. e1-01's moody blue-hour treatment) and different cut
+pacing (some reels average ~1-2s/cut, one is a 32-cut flash-montage in 7.4s).
+Dev explicitly asked to capture some of that mood variety rather than force
+every set into the same lighting treatment, so sets after e1-01 can supply
+their own `light_sentence` to override ROOM_LIGHT -- see build_room_prompt.
 
 Naming: concept set ids are `e{type}-{set:02d}` (e.g. "e1-01" = e-series,
 Type 1 format, first themed set) so the source viral-reel type is legible
 directly from the id, not just from a manifest -- per Dev's instruction to
 "name appropriately so type matches in actual reel video in future." Room
-files within a set follow the existing room-abbreviation convention (liv,
-din, off, bath, kit, bed...).
+FILES within a set additionally carry a style slug, matching the a-d
+series' own `{concept}_{room}_{stylename}` convention exactly (e.g.
+`d01_lib_oxblood`) -- e1-01 was missing this at first (`e1-01_liv_app.png`,
+no style name) and got corrected once Dev pointed out that with multiple
+sets/moods now in play, filenames need to self-document which ones share a
+style well enough to "match similar images together" into one reel, not
+just which numbered set they belong to. Every set now carries a top-level
+`style_slug` used to build each room's `stem` as
+`{set_id}_{room}_{style_slug}`.
 
 Uses Google's gemini-2.5-flash-image via Vertex AI (confirmed working end-to-
 end, see discover_and_test_image_model.py and llms.txt), NOT Black Forest
@@ -61,6 +73,7 @@ OUT_DIR = Path(__file__).resolve().parent.parent / "assets" / "application_eseri
 ESERIES_SETS = {
     "e1-01": {
         "source_type": "Type 1 - firstchair",
+        "style_slug": "earthymoody",
         "palette_sentence": (
             "a cohesive earthy palette carried through every room: warm burnt-"
             "terracotta plaster walls, deep olive velvet upholstery, dark walnut "
@@ -69,7 +82,7 @@ ESERIES_SETS = {
         ),
         "rooms": {
             "liv": {
-                "stem": "e1-01_liv",
+                "stem": "e1-01_liv_earthymoody",
                 "room": "a residential living room",
                 "style": "warm organic modern interior with soft rounded forms",
                 "styling": (
@@ -86,7 +99,7 @@ ESERIES_SETS = {
                 ),
             },
             "din": {
-                "stem": "e1-01_din",
+                "stem": "e1-01_din_earthymoody",
                 "room": "a residential dining room",
                 "style": "warm organic modern interior with soft rounded forms",
                 "styling": (
@@ -104,7 +117,7 @@ ESERIES_SETS = {
                 ),
             },
             "off": {
-                "stem": "e1-01_off",
+                "stem": "e1-01_off_earthymoody",
                 "room": "a residential home office and reading nook",
                 "style": "warm organic modern interior with soft rounded forms",
                 "styling": (
@@ -122,16 +135,153 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Analyzed from a second reference reel (also captioned around "earthy
+    # tones," same hook family as e1-01, but a genuinely different color
+    # grade and pace -- soft, warm, hazy, almost vintage-film, and cut MUCH
+    # faster: 32 cuts in 7.4s vs. e1-01 source's ~1-2s/cut). Mediterranean/
+    # Spanish-colonial leaning styling (dark carved wood, terracotta,
+    # checkerboard textiles) rather than e1-01's organic-modern furniture
+    # language, since that's what the reference itself showed.
+    "e1-02": {
+        "source_type": "Type 1 - firstchair (reel 6)",
+        "style_slug": "warmvintage",
+        "palette_sentence": (
+            "a warm, sun-faded palette carried through every room: pale "
+            "limewashed plaster walls, dark carved walnut and mahogany "
+            "furniture and doors, terracotta tile flooring, aged brass "
+            "fixtures and hardware, and antique wool textiles in muted "
+            "cream, olive and rust tones."
+        ),
+        "light_sentence": (
+            " Photographed in soft, warm, hazy late-afternoon light with a "
+            "gentle vintage film quality: diffused golden sun filters in "
+            "through the windows and settles evenly across the room rather "
+            "than casting hard shafts, with a fine soft-focus warmth to the "
+            "air itself. Colours are gently sun-faded and warm rather than "
+            "vivid, contrast is soft rather than dramatic, and shadows are "
+            "pale and warm rather than deep or cool. A light, dreamy film "
+            "grain sits over the whole image. Nostalgic, sun-warmed and "
+            "quietly romantic, closer to an old photograph left in the sun "
+            "than a crisp modern architectural shoot."
+        ),
+        "rooms": {
+            "liv": {
+                "stem": "e1-02_liv_warmvintage",
+                "room": "a residential living room",
+                "style": "warm Spanish-colonial-influenced interior with "
+                          "carved wood and hand-plastered walls",
+                "styling": (
+                    "a worn brown leather sofa with woven wool cushions, a "
+                    "round hammered-brass coffee table, a large ink line-"
+                    "drawing portrait in a gilt frame with its own picture "
+                    "light, built-in plaster shelving lined with books and "
+                    "a small terracotta urn, a potted olive branch in a "
+                    "brass vessel, and a worn antique wool rug in faded "
+                    "cream and rust."
+                ),
+                "fixtures": (
+                    "a scalloped brass ceiling flush mount, a slim brass "
+                    "picture light above the artwork, and a pair of brass "
+                    "wall sconces flanking the shelving."
+                ),
+            },
+            "ent": {
+                "stem": "e1-02_ent_warmvintage",
+                "room": "a residential entry hallway",
+                "style": "warm Spanish-colonial-influenced interior with "
+                          "carved wood and hand-plastered walls",
+                "styling": (
+                    "a carved dark walnut console table with a hammered "
+                    "brass table lamp and a stack of books, a large woven "
+                    "textile hanging on the wall, a terracotta floor "
+                    "runner rug in a bold checkerboard pattern, a pair of "
+                    "framed botanical prints, and a tall stoneware urn "
+                    "with a dried branch beside an arched doorway."
+                ),
+                "fixtures": (
+                    "a row of small brass pendant lights hung along the "
+                    "hallway ceiling, spaced evenly down its length."
+                ),
+            },
+        },
+    },
+
+    # Analyzed from a third reference reel: bright, sunny, Mediterranean-
+    # coastal mood -- the opposite end of the lighting spectrum from e1-01/
+    # e1-02, driven by real daylight rather than lamps or haze. Sage green
+    # cabinetry + travertine + brass + woven natural textures, all lit by
+    # strong warm sun rather than any artificial source.
+    "e1-03": {
+        "source_type": "Type 1 - firstchair (reel 4)",
+        "style_slug": "sagecoastal",
+        "palette_sentence": (
+            "a bright Mediterranean coastal palette carried through every "
+            "room: sage green painted cabinetry and millwork, warm "
+            "honed travertine and limestone surfaces, aged brass fixtures "
+            "and hardware, natural white oak flooring, and woven rush and "
+            "linen textiles."
+        ),
+        "light_sentence": (
+            " Photographed in bright, warm midday sunlight streaming "
+            "directly through large windows: strong golden sunbeams fall "
+            "across the floor and surfaces in clearly defined warm pools, "
+            "with crisp bright highlights where the light lands and cool "
+            "soft shadow everywhere else, full of real contrast. The room "
+            "reads as sun-drenched, airy and alive rather than moody -- "
+            "high real daylight, clean and warm, with the greenery outside "
+            "the window visible and sunlit. Fresh, breezy and optimistic, "
+            "like a coastal home at the height of a warm afternoon."
+        ),
+        "rooms": {
+            "kit": {
+                "stem": "e1-03_kit_sagecoastal",
+                "room": "a residential kitchen",
+                "style": "bright Mediterranean coastal interior with warm "
+                          "natural materials",
+                "styling": (
+                    "a large honed travertine island with two woven rush "
+                    "counter stools, open wood shelving lined with ceramic "
+                    "bowls and ceramic jugs, a wood cutting board leaning "
+                    "against the backsplash, a bowl of citrus fruit on the "
+                    "island, a small potted herb plant on the windowsill, "
+                    "and sheer linen curtains beside a large window."
+                ),
+                "fixtures": (
+                    "two brass fluted pendant lights hung over the island, "
+                    "and a brass gooseneck pot-filler faucet above the "
+                    "range."
+                ),
+            },
+            "din": {
+                "stem": "e1-03_din_sagecoastal",
+                "room": "a residential dining room adjoining the kitchen",
+                "style": "bright Mediterranean coastal interior with warm "
+                          "natural materials",
+                "styling": (
+                    "a round white oak dining table with woven rush-seat "
+                    "dining chairs, a stoneware pitcher with a handful of "
+                    "dried wildflowers on the table, a large woven wall "
+                    "hanging, an open shelf with stacked ceramic plates, "
+                    "and a natural jute rug underfoot."
+                ),
+                "fixtures": (
+                    "a single large woven rattan pendant light centred "
+                    "over the table."
+                ),
+            },
+        },
+    },
 }
 
 
-def build_room_prompt(room, palette_sentence):
+def build_room_prompt(room, palette_sentence, light_sentence=None):
     return (
         f"Interior photograph of {room['room']}, {room['style']}."
         f" The space is built from exactly this palette, which is the "
         f"defining feature of the room and must be clearly visible: "
         f"{palette_sentence}"
-        + ROOM_LIGHT
+        + (light_sentence or ROOM_LIGHT)
         + COMPOSITION
         + SPATIAL_RULE
         + f" Furnished and dressed with: {room['styling']}"
@@ -177,7 +327,7 @@ def generate_room(client, set_id, room_key, model=MODEL):
 
     set_data = ESERIES_SETS[set_id]
     room = set_data["rooms"][room_key]
-    prompt = build_room_prompt(room, set_data["palette_sentence"])
+    prompt = build_room_prompt(room, set_data["palette_sentence"], set_data.get("light_sentence"))
 
     print(f"--- generating {room['stem']} with {model} ---")
     response = client.models.generate_content(
