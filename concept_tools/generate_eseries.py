@@ -890,10 +890,16 @@ ESERIES_SETS = {
     # build_reference_edit_prompt's comment above for why this exists. Uses
     # e1-08_var01 (already committed to this repo) as the locked pixel
     # reference for every variation, rather than describing the room from
-    # scratch each time. ONE test room only for now (var02, reusing the exact
-    # same palette/light content as e1-08's own var02) so the two methods can
-    # be compared directly on identical material content before deciding
-    # whether to redo the remaining 9 this way.
+    # scratch each time. var02 was generated FIRST as a single test (reusing
+    # e1-08 var02's exact palette/light content, for a direct apples-to-
+    # apples comparison against the description-only version) and confirmed
+    # visibly tighter -- island position, stool layout, pendant placement
+    # and even the incidental console-table object all matched the var01
+    # reference almost exactly, vs. e1-08's looser per-generation drift. The
+    # rest (var03-var10) reuse the remaining e1-08 palette/light content
+    # verbatim -- same 9 moods/materials, this time genuinely reimagining
+    # the same photo instead of redrawing it from description each time.
+    # (var01 itself has no entry here -- it IS the base reference image.)
     "e1-09": {
         "source_type": "True image-edit of e1-08_var01 (Dev asked for tighter structural consistency for a fast-cut reel)",
         "style_slug": "referenceedit",
@@ -914,6 +920,143 @@ ESERIES_SETS = {
                     "between warm interior light and cool blue dusk is "
                     "the defining quality of the image; shadows are deep "
                     "and softly blue-tinted."
+                ),
+            },
+            "var03": {
+                "stem": "e1-09_var03_oxbloodmarble",
+                "palette_sentence": (
+                    "oxblood-lacquered cabinetry, a dark emperador "
+                    "marble waterfall island with warm brown veining, "
+                    "aged brass fixtures, and a dark red-brown tile "
+                    "backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night: the three brass pendants "
+                    "over the island glow warm gold, joined by the "
+                    "flicker of a small cluster of candles on the "
+                    "island counter. Rich, jewel-toned and intimate, "
+                    "deep near-black shadow beyond the lit pools, no "
+                    "daylight in frame."
+                ),
+            },
+            "var04": {
+                "stem": "e1-09_var04_bottlegreen",
+                "palette_sentence": (
+                    "bottle-green painted cabinetry, a black soapstone "
+                    "waterfall island, aged brass fixtures, and a dark "
+                    "green zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island and a warm glow "
+                    "spilling in from an unseen fireplace off to one "
+                    "side: rich, deep green cabinetry holds real colour "
+                    "even in shadow, brass and soapstone catch the "
+                    "pooled warm light. Moody and dramatic, no daylight "
+                    "anywhere in frame."
+                ),
+            },
+            "var05": {
+                "stem": "e1-09_var05_charcoalcalacatta",
+                "palette_sentence": (
+                    "charcoal-blue cabinetry, a dramatic white Calacatta "
+                    "marble waterfall island with bold grey veining, "
+                    "aged brass fixtures, and a white marble-slab "
+                    "backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: the pale marble "
+                    "island glows warmly under the pendant light while "
+                    "the charcoal-blue cabinetry recedes into near-black "
+                    "shadow around it, a strong light-island-in-dark-"
+                    "room contrast. No daylight anywhere in frame."
+                ),
+            },
+            "var06": {
+                "stem": "e1-09_var06_espressolimestone",
+                "palette_sentence": (
+                    "espresso-stained oak cabinetry, a warm taupe "
+                    "honed-limestone waterfall island, aged brass "
+                    "fixtures, and a warm taupe tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night: the three brass pendants "
+                    "over the island are joined by a small warm table "
+                    "lamp glowing on the counter near the range, giving "
+                    "a softer, more domestic lamp-lit mood than a "
+                    "pendant-only room. Warm and intimate, real shadow "
+                    "depth away from the lit sources, no daylight in "
+                    "frame."
+                ),
+            },
+            "var07": {
+                "stem": "e1-09_var07_inknavy",
+                "palette_sentence": (
+                    "ink-navy cabinetry, a dark green marble waterfall "
+                    "island with fine gold-white veining, aged brass "
+                    "fixtures, and a navy zellige tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit by the three warm "
+                    "brass pendants over the island plus a thin warm "
+                    "glow of under-cabinet lighting along the back "
+                    "counter: the navy cabinetry holds a deep, rich "
+                    "colour rather than reading as black, marble veining "
+                    "catches the light. Moody and dramatic, no daylight "
+                    "anywhere in frame."
+                ),
+            },
+            "var08": {
+                "stem": "e1-09_var08_mahoganybasalt",
+                "palette_sentence": (
+                    "dark mahogany cabinetry, a honed grey basalt "
+                    "waterfall island, aged brass fixtures, and a dark "
+                    "grey tile backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: warm light pools "
+                    "on the basalt and brass while the mahogany "
+                    "cabinetry deepens into rich near-black shadow. "
+                    "Confidently dark and dramatic, no daylight anywhere "
+                    "in frame."
+                ),
+            },
+            "var09": {
+                "stem": "e1-09_var09_nero_marquina",
+                "palette_sentence": (
+                    "aged pewter-grey cabinetry, a dramatic Nero "
+                    "Marquina black marble waterfall island with bold "
+                    "white veining, aged brass fixtures, and a black "
+                    "marble-slab backsplash."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit by the three warm "
+                    "brass pendants over the island plus a small cluster "
+                    "of lit candles grouped on the island counter beside "
+                    "the fruit bowl: the bold white marble veining "
+                    "catches every point of light against deep near-"
+                    "black shadow elsewhere in the room. Dramatic and "
+                    "editorial, no daylight anywhere in frame."
+                ),
+            },
+            "var10": {
+                "stem": "e1-09_var10_plumtaupe",
+                "palette_sentence": (
+                    "deep plum-brown cabinetry, a warm rose-taupe honed "
+                    "stone waterfall island, aged brass fixtures, and a "
+                    "warm taupe tile backsplash, with a woven wool "
+                    "runner rug tucked beneath the stools for a soft "
+                    "fabric note."
+                ),
+                "light_sentence": (
+                    " Photographed at night, lit only by the three warm "
+                    "brass pendants over the island: warm plum and rose-"
+                    "taupe tones glow softly under the pooled pendant "
+                    "light, shadows keep real depth and colour rather "
+                    "than going flat black. Warm, rich and intimate, no "
+                    "daylight anywhere in frame."
                 ),
             },
         },
@@ -1041,9 +1184,11 @@ def build_reference_edit_prompt(palette_sentence, light_sentence):
         "shape, size and position, the same sink and faucet placement, "
         "the same number and placement of stools, the same pendant light "
         "fixtures and their positions, the same cabinetry layout, "
-        "appliances and their positions, and the same overall room "
-        "proportions and geometry. Only the materials, colours and "
-        "lighting mood should change. The new materials and colours are: "
+        "appliances and their positions, the same windows and doors in "
+        "their exact positions (add no new windows or doors and remove "
+        "none), and the same overall room proportions and geometry. Only "
+        "the materials, colours and lighting mood should change. The new "
+        "materials and colours are: "
         f"{palette_sentence}"
         + (light_sentence or "")
         + QUALITY_ROOM + NO_TEXT
