@@ -2778,3 +2778,90 @@ generation script gets built -- once reels are analyzed and a concrete
 format/prompt approach is proposed, `gemini-2.5-flash-image` via
 `generate_content()` (same pattern as `discover_and_test_image_model.py`,
 not `generate_images()`/Imagen) is what that script should call.
+
+## E-Series: first themed set generated and validated (2026-08-22/23)
+
+Dev uploaded real reference reels (a Drive folder literally named "Type 1 -
+firstchair", 3 real mp4s) and asked for format analysis followed directly by
+generation -- application photos only for now, swatches deferred to a later
+decision, and asked that concept naming make the source "type" legible in
+future actual reel videos, not just in a manifest.
+
+**Format analysis, not guessed from the name alone**: downloaded all 3
+reference videos and ran them through `extract_template_cut_timestamps()` --
+the SAME scene-detection already trusted for the main pipeline/Dolly Reel/
+Hot Takes, not a new method -- plus ffprobe metadata and 8 evenly-spaced
+frames per video (`analyze_reference_reels.py`, a new reusable diagnostic
+workflow). All 3: 720x1280 (9:16), 30fps, ~9-11s, AAC audio, 4-9 hard cuts
+each at roughly 1-2s per segment (video 2 was cleanly 2.0s per cut, videos 1
+and 3 closer to 1.1-1.3s). Frames confirmed the actual format: a rapid-cut
+montage through SEVERAL DIFFERENT ROOMS of one home, all sharing ONE
+cohesive material/colour palette, with a SINGLE static caption overlaid for
+the entire reel naming the theme/hook ("homes with earthy tones>", "what I
+mean when I say I love earthy tones:", "proof the 1960s built homes
+better"). Structurally different from every existing content type here --
+one THEMED SET of rooms per concept, not one room per concept, because
+palette cohesion across rooms is the entire hook.
+
+**Naming decided and applied**: `e{type}-{set:02d}` (e.g. `e1-01` = e-series,
+Type 1 format, first themed set) so the source viral-reel type is legible
+directly from the concept id itself. Room files within a set keep the
+existing room-abbreviation convention (`e1-01_liv_app.png`,
+`e1-01_din_app.png`, `e1-01_off_app.png`). Future "Type 2" (Dev's own words:
+"actually has multiple concepts of reels" within it) gets `e2-01`, `e2-02`,
+etc. once its own reference folder is analyzed.
+
+**Generator built**: `concept_tools/generate_eseries.py`, run via
+`.github/workflows/generate-eseries.yml` (workflow_dispatch, WIF-authenticated,
+same pattern as the Vertex AI connectivity test). Deliberately reuses the
+hard-tuned `COMPOSITION`/`STYLING_RULE`/`SPATIAL_RULE`/`QUALITY_ROOM`/
+`NO_TEXT`/`ROOM_LIGHT` constants from `generate_concept.py` rather than
+duplicating that prompt-engineering work -- `ROOM_LIGHT` in particular is
+Dev's own validated house lighting style (warm-lamps-against-blue-hour, see
+the extensive measured-luminance tuning notes already in `generate_concept.py`),
+kept deliberately even though the reference reels themselves lean more
+daytime-lit -- matching Dev's own established visual identity is the
+"creative twist" applied on top of the borrowed format, not a mismatch to
+fix. Swapped per-room `materials_sentence`+`bands` for one `palette_sentence`
+shared across every room in a themed set, since palette cohesion IS the
+format here.
+
+Uses `gemini-2.5-flash-image` (confirmed model from the entries above),
+requesting `types.GenerateContentConfig(image_config=types.ImageConfig(
+aspect_ratio="9:16"))` -- unverified guess at this exact config shape going
+in, confirmed to have SOME real effect (output came back 768x1344, portrait,
+vs. the earlier no-config test's more square output) though not landing on
+an exact 9:16 ratio. Close enough to use as-is; revisit if a later SDK
+version exposes a cleaner way to hit the exact ratio.
+
+**First set (`e1-01`, "earthy tones" -- burnt terracotta plaster, olive
+velvet, walnut/smoked oak, aged brass, cream boucle/linen) generated and
+reviewed by eye, not just "the script ran"**: living room, dining room,
+home office, all at `assets/application_eseries/`. Confirmed genuinely
+cohesive across all three -- same palette, same blue-hour-plus-warm-lamps
+mood, same camera height/composition -- reads as one real home, which is
+the entire point of this format. Checked each for the same geometry
+failure modes flagged in the d06 postmortem (interpenetrating solids,
+blocked walkways) -- clean in all three. `pillow` had to be added to the
+generation workflow's dependencies (missed on the first run:
+`generate_concept.py` imports PIL at module level for its own swatch/OCR
+tooling, which generate_eseries.py pulls in just for the prompt constants).
+
+**Deliberately NOT yet built**: the actual reel video assembly (cutting
+these room photos to the analyzed cut-timing pattern, adding the
+persistent single-caption overlay). Dev asked for "application reels ...
+after analysis" -- read as "build reels using application photos, no
+swatches," not "stop at still images" -- but going further without
+showing the still images first risked compounding a wrong assumption
+across a whole video-assembly build. Waiting on Dev's sign-off on this
+first set's visual style before building that piece, which would reuse
+`build_hot_take()`'s general shape (beat-synced montage, static text
+overlay) from `hot_takes_pipeline.py` as its starting point, adapted for
+a single persistent caption instead of a two-line reveal, and application
+images that don't repeat the way Hot Takes' rotating single-photo pool
+does.
+
+Only 1 of Dev's 2 example reel "types" is uploaded/analyzed so far (Type 1).
+Type 2 ("multiple concepts of reels" per Dev, not yet uploaded) will need
+its own `analyze_reference_reels.py` pass and its own `e2-*` naming once it
+arrives.
