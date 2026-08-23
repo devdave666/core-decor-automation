@@ -2,13 +2,15 @@ name: Test Vertex AI Image Generation Connection
 
 # One-off connectivity test for the new e-series image generation path (Google's
 # image generation via Vertex AI, authenticated with Workload Identity Federation
-# -- no static key ever stored). Generates ONE throwaway test image to confirm
-# the WIF setup + model access actually works end-to-end before anything real
-# depends on it. Not wired into any content pipeline yet.
+# -- no static key ever stored). Confirms the WIF setup + model access actually
+# works end-to-end before anything real depends on it. Not wired into any
+# content pipeline yet.
 #
-# Uses Gemini 2.5 Flash Image ("nano banana"), not Imagen -- Imagen's
-# generate_images() models were confirmed retired via a real 404 from this exact
-# workflow (see llms.txt), not assumed from docs.
+# Two guessed model names (imagen-4.0-generate-001, gemini-2.5-flash-image-preview)
+# both 404'd in real runs -- see llms.txt. Rather than guess a third time, this
+# queries Vertex's own publisher-model catalog for this exact project/region,
+# filters for anything image-related, and tries each candidate until one
+# actually produces an image. Ground truth instead of another guess.
 #
 # Requires the Workload Identity Pool/Provider and the vertex-ai-runner service
 # account (with roles/aiplatform.user granted) to already exist in the GCP
@@ -38,58 +40,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install the Google Gen AI SDK
-        run: pip install google-genai
+      - name: Install dependencies
+        run: pip install google-genai google-auth requests
 
-      - name: Generate one test image via Gemini 2.5 Flash Image on Vertex AI
-        run: |
-          python3 -c "
-          from google import genai
-          from google.genai import types
-
-          # vertexai=True + project/location routes through Vertex AI billing
-          # (the $300 trial credit) -- NOT the separate Gemini Developer API,
-          # which the credit explicitly does not cover. No api_key passed --
-          # WIF/ADC picks up credentials automatically from
-          # GOOGLE_APPLICATION_CREDENTIALS, set by the auth step above.
-          client = genai.Client(
-              vertexai=True,
-              project='project-58f4f689-36b9-406b-bfa',
-              location='us-central1',
-          )
-
-          # Imagen models (generate_images()) were retired -- the 404 from the
-          # first attempt confirmed this directly against the real API, not
-          # assumed. Current model is Gemini 2.5 Flash Image ('nano banana'),
-          # called via generate_content() like any other Gemini model, not a
-          # dedicated image method.
-          response = client.models.generate_content(
-              model='gemini-2.5-flash-image-preview',
-              contents='A minimalist modern living room interior, soft natural light, photorealistic, 9:16 vertical composition',
-          )
-
-          # Defensive extraction: the exact response shape for an image-bearing
-          # part isn't confirmed yet for this SDK version, so try the standard
-          # inline_data path but ALSO dump the raw structure either way -- if
-          # the standard path is wrong, this run's log has the real shape
-          # instead of needing another guess.
-          saved = False
-          for candidate in response.candidates:
-              for part in candidate.content.parts:
-                  inline = getattr(part, 'inline_data', None)
-                  if inline and getattr(inline, 'data', None):
-                      with open('test_output_0.png', 'wb') as f:
-                          f.write(inline.data)
-                      print('Saved test_output_0.png via inline_data -- confirmed working.')
-                      saved = True
-                  elif getattr(part, 'text', None):
-                      print(f'Text part in response: {part.text[:200]}')
-
-          if not saved:
-              print('!! Could not find image data via the expected inline_data path.')
-              print('Raw response for diagnosis:')
-              print(repr(response))
-          "
+      - name: List available publisher image models, then try each until one works
+        run: python3 discover_and_test_image_model.py
 
       - name: Upload the test image as a build artifact
         uses: actions/upload-artifact@v4
