@@ -18,6 +18,14 @@ on:
         description: "Optional subfolder under assets/application_eseries/ to upload from instead (e.g. upscaled_test)"
         required: false
         type: string
+      drive_folder_name:
+        description: "Optional Drive subfolder name override (default: set_id). Used for the e2-* grand-house sets, where Dev wants the Drive folder named by architecture type (e.g. 'Gothic') rather than the internal set id."
+        required: false
+        type: string
+      parent_folder_name:
+        description: "Optional Drive parent folder name override (default: 'E-Series Generated Output')"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -43,6 +51,8 @@ jobs:
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
           SET_ID: ${{ github.event.inputs.set_id }}
           SUBDIR: ${{ github.event.inputs.subdir }}
+          DRIVE_FOLDER_NAME: ${{ github.event.inputs.drive_folder_name }}
+          PARENT_FOLDER_NAME: ${{ github.event.inputs.parent_folder_name }}
         run: |
           python3 -c "
           import os
@@ -51,8 +61,10 @@ jobs:
 
           set_id = os.environ['SET_ID']
           subdir = os.environ.get('SUBDIR', '').strip()
-          output_root = get_or_create_folder('E-Series Generated Output', ROOT_FOLDER_ID)
-          set_folder = get_or_create_folder(set_id, output_root)
+          drive_folder_name = os.environ.get('DRIVE_FOLDER_NAME', '').strip() or set_id
+          parent_folder_name = os.environ.get('PARENT_FOLDER_NAME', '').strip() or 'E-Series Generated Output'
+          output_root = get_or_create_folder(parent_folder_name, ROOT_FOLDER_ID)
+          set_folder = get_or_create_folder(drive_folder_name, output_root)
           if subdir:
               set_folder = get_or_create_folder(subdir, set_folder)
           print(f'Set folder: https://drive.google.com/drive/folders/{set_folder}')

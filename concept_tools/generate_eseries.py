@@ -119,6 +119,26 @@ KITCHEN_STRUCTURE = {
     ),
 }
 
+# Fixed room catalog for the "Type 2 - Grandeur" architecture-type houses
+# (see the e2-01 entry far below for the full rationale). Dev wants the
+# SAME set of room types across every future architecture type, so a reel
+# can be cut either as "one house, all its rooms" or "one room type across
+# every architecture style" -- defined once here, at module level like
+# KITCHEN_STRUCTURE above, so every e2-* house references the identical
+# room keys/labels rather than each house silently drifting.
+GRAND_HOUSE_ROOMS = {
+    "ext":  "the front exterior facade of a grand luxury residence",
+    "ent":  "a grand entry foyer with a sweeping staircase, just inside the front door",
+    "liv":  "a grand double-height living room",
+    "din":  "a formal dining room",
+    "kit":  "a grand luxury kitchen",
+    "bed":  "a primary bedroom suite",
+    "bath": "a primary spa bathroom",
+    "off":  "a home library and office",
+    "thr":  "a home theatre and wellness lounge",
+    "pool": "an outdoor pool terrace at the rear of the residence",
+}
+
 # First test set only -- ONE room generated and reviewed before committing to
 # the rest, same discipline used for the Vertex AI connection test itself.
 # "Earthy tones" chosen deliberately: 2 of the 3 Type-1 reference reels used
@@ -1261,6 +1281,276 @@ ESERIES_SETS = {
                     "jewel-toned and dramatic, no daylight anywhere in "
                     "frame."
                 ),
+            },
+        },
+    },
+
+    # Dev uploaded 21 real reference photos to a Drive folder literally named
+    # "Type 2 - Grandeur" -- this IS the "Type 2" reference material flagged as
+    # "not yet uploaded" back in the e1-01 entries, now arrived. Confirms `e2-*`
+    # is the correct id prefix per this file's own naming rule (source viral-
+    # reel/reference "type" legible directly from the concept id).
+    #
+    # The 21 photos are real luxury-real-estate/interior photography, not a
+    # single consistent architectural style -- reviewed all of them rather than
+    # guessing the mood from a folder name. Consistent threads across nearly
+    # all 21: double-height ceilings, monumental sculptural lighting (crystal
+    # chandeliers, wrought-iron-and-crystal fixtures, sculptural ring pendants),
+    # book-matched marble feature walls and waterfall islands, rich velvet
+    # upholstery in deep jewel tones, warm cove/under-shelf LED lighting
+    # integrated into stone, floor-to-ceiling glass with skyline or garden
+    # views, indoor-outdoor pool connection, linear gas fireplaces, and dramatic
+    # warm night photography throughout (not one daylight shot in the set).
+    # Full room catalog visible across the 21: exterior facade + pool/backyard,
+    # grand entry with a sweeping staircase, living/great room (several
+    # variants), formal dining room, kitchen, primary bedroom, primary
+    # bathroom, outdoor terrace/balcony, and a home theatre/wellness lounge
+    # with a plunge pool. This is the real basis for GRAND_HOUSE_ROOMS below,
+    # not an invented list.
+    #
+    # Dev's own words: "these photos I want to be of grandeur, lavish luxury,
+    # rich color palette, premium materials" -- read as: apply the SCALE,
+    # DRAMA and MATERIAL RICHNESS the reference photos actually show (not
+    # their specific contemporary architectural vocabulary) to a chosen
+    # ARCHITECTURAL STYLE, starting with Gothic per Dev's own example. This is
+    # the same "borrow the format, apply Core Decor's own twist" principle the
+    # whole e-series was built on from the start, just at house scale now.
+    #
+    # STRUCTURAL REQUIREMENT, distinct from every set above: Dev explicitly
+    # wants the SAME set of room types to exist for EVERY future architecture
+    # type, specifically so a reel can be cut either as "one house, all its
+    # rooms" (interior+exterior of a single style) OR "one room type across
+    # every architecture style" (e.g. every style's living room back to back).
+    # That only works if room keys and their basic identity stay fixed across
+    # styles. GRAND_HOUSE_ROOMS (defined near the top of this file, above
+    # ESERIES_SETS) is that fixed catalog -- the SAME 10 keys will be reused
+    # for every future architecture type (e2-02, e2-03, ...), each time
+    # re-styled for that style's own architectural language but keeping the
+    # same room, in the same position in the sequence.
+
+    # Dev's example architecture type: Gothic. Fuses real Gothic Revival
+    # architectural vocabulary (pointed arches, ribbed vaults, stone tracery,
+    # wrought iron, stained glass, buttresses) with the reference photos'
+    # actual scale/drama language (monumental sculptural chandeliers, warm cove
+    # lighting worked into the stone itself, book-matched dark marble, deep
+    # jewel-toned velvet, dramatic warm night photography, modern-luxury
+    # amenities like a waterfall kitchen island and a plunge-pool wellness
+    # lounge) -- a real, recognizable "Gothic Revival billionaire mansion"
+    # aesthetic, not either extreme alone. Every room reuses the SAME
+    # palette_sentence/light_sentence for cross-room cohesion, exactly like
+# every earlier e-series set.
+    "e2-01": {
+        "source_type": "Type 2 - Grandeur (Dev's own real reference photos, architecture type: Gothic)",
+        "style_slug": "gothic",
+        "drive_folder_name": "Gothic",
+        "palette_sentence": (
+            "a rich Gothic Revival palette carried through every room: deep "
+            "charcoal and honey-toned limestone, dark rift-cut oak millwork "
+            "and beams, wrought iron detailing, aged brass and bronze "
+            "fixtures, richly veined dark emperador marble, and deep "
+            "jewel-toned velvet upholstery in oxblood, emerald and sapphire, "
+            "with jewel-coloured stained glass introducing accents of "
+            "colour throughout."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by monumental wrought-iron-and-"
+            "crystal chandeliers, warm uplighting that traces the stone "
+            "ribbing and tracery, and the warm glow of candlelight: every "
+            "space reads soaring, dramatic and richly warm, with deep "
+            "shadow climbing into the vaulted heights above the lit zones. "
+            "Stained glass and jewel-toned velvet catch and hold the warm "
+            "light vividly. Grand, cathedral-like and opulent, never flat "
+            "or evenly lit -- light falls in deliberate dramatic pools "
+            "exactly as it would in a real Gothic hall, no daylight "
+            "anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-01_ext_gothic",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "Gothic Revival architecture: pointed-arch windows "
+                          "with stone tracery, a steep slate roof, "
+                          "buttresses and dark stone walls",
+                "styling": (
+                    "a massive pointed-arch entry door with wrought-iron "
+                    "strap hinges, tall leaded and stained-glass windows "
+                    "with carved stone tracery, dark stone cladding, "
+                    "clipped yew hedges and climbing ivy flanking the "
+                    "entry, and a stone path leading to the door."
+                ),
+                "fixtures": (
+                    "a pair of monumental wrought-iron lantern sconces "
+                    "flanking the entry door, and uplighting tracing the "
+                    "stone facade and window tracery."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-01_ent_gothic",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "Gothic Revival interior with soaring ribbed "
+                          "vaults and pointed arches",
+                "styling": (
+                    "a sweeping stone staircase with a wrought-iron "
+                    "balustrade curving up to a gallery landing, a soaring "
+                    "ribbed-vault ceiling overhead, a towering stained-"
+                    "glass window on the landing, a large woven tapestry "
+                    "wall hanging, a grand console table with a large urn "
+                    "of fresh flowers, and a dark stone floor with a "
+                    "richly patterned runner rug."
+                ),
+                "fixtures": (
+                    "a monumental wrought-iron-and-crystal chandelier hung "
+                    "from the vaulted ceiling, and wrought-iron wall "
+                    "sconces lining the staircase."
+                ),
+            },
+            "liv": {
+                "stem": "e2-01_liv_gothic",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "Gothic Revival interior with soaring ribbed "
+                          "vaults and pointed arches",
+                "styling": (
+                    "a deep oxblood velvet sectional and a pair of emerald "
+                    "velvet armchairs arranged around a monumental carved "
+                    "stone fireplace, a huge pointed-arch window with "
+                    "stone tracery overlooking the grounds, dark rift-oak "
+                    "wall panelling, a large dark abstract painting in an "
+                    "ornate frame, and a thick jewel-toned patterned rug "
+                    "over dark stone flooring."
+                ),
+                "fixtures": (
+                    "a monumental wrought-iron-and-crystal chandelier hung "
+                    "from the ribbed-vault ceiling, and wrought-iron wall "
+                    "sconces flanking the fireplace."
+                ),
+            },
+            "din": {
+                "stem": "e2-01_din_gothic",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "Gothic Revival interior with soaring ribbed "
+                          "vaults and pointed arches",
+                "styling": (
+                    "a long dark rift-oak dining table set for a formal "
+                    "dinner with fine glassware and candlesticks, richly "
+                    "upholstered emerald velvet dining chairs with dark "
+                    "wood frames, a tall arched leaded-glass window, dark "
+                    "wood wall panelling hung with one large tapestry, and "
+                    "a carved stone sideboard."
+                ),
+                "fixtures": (
+                    "a wrought-iron chandelier with candle-style bulbs hung "
+                    "low over the table, and wrought-iron wall sconces "
+                    "along the panelled walls."
+                ),
+            },
+            "kit": {
+                "stem": "e2-01_kit_gothic",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "Gothic Revival architecture fused with a modern "
+                          "luxury kitchen",
+                "styling": (
+                    "a massive waterfall-edge island in richly veined dark "
+                    "emperador marble beneath an exposed dark oak beam "
+                    "ceiling, integrated dark cabinetry with wrought-iron "
+                    "hardware, a large arched leaded-glass window over the "
+                    "sink, a glass-front cabinet with lit interior "
+                    "shelving, and a low bowl of fruit on the island."
+                ),
+                "fixtures": (
+                    "three wrought-iron-and-glass pendant lights hung over "
+                    "the island, and warm under-cabinet lighting."
+                ),
+            },
+            "bed": {
+                "stem": "e2-01_bed_gothic",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "Gothic Revival interior with soaring ribbed "
+                          "vaults and pointed arches",
+                "styling": (
+                    "a dark wood four-poster bed with wrought-iron "
+                    "detailing and deep sapphire velvet bedding, a tall "
+                    "arched window dressed with heavy velvet drapery, a "
+                    "carved stone fireplace, a pair of dark wood "
+                    "nightstands, and a richly patterned rug over dark "
+                    "wood flooring."
+                ),
+                "fixtures": (
+                    "a wrought-iron-and-crystal chandelier hung from the "
+                    "vaulted ceiling, and a pair of wrought-iron wall "
+                    "sconces flanking the bed."
+                ),
+            },
+            "bath": {
+                "stem": "e2-01_bath_gothic",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "Gothic Revival architecture fused with a modern "
+                          "spa bathroom",
+                "styling": (
+                    "a freestanding dark stone soaking tub beneath a tall "
+                    "arched leaded-glass window, a rainfall shower set "
+                    "into a vaulted stone alcove, dark stone walls and "
+                    "flooring, a dark stone vanity with a carved stone "
+                    "vessel sink, and a wrought-iron towel rail."
+                ),
+                "fixtures": (
+                    "a wrought-iron-and-glass pendant light over the tub, "
+                    "and warm recessed lighting tracing the vaulted stone "
+                    "ceiling."
+                ),
+            },
+            "off": {
+                "stem": "e2-01_off_gothic",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "Gothic Revival interior with soaring ribbed "
+                          "vaults and pointed arches",
+                "styling": (
+                    "floor-to-ceiling dark oak bookshelves lining the "
+                    "walls, a carved dark wood writing desk with a leather "
+                    "chair, a pair of oxblood leather armchairs beside a "
+                    "carved stone fireplace, a tall arched window, and a "
+                    "richly patterned rug over dark wood flooring."
+                ),
+                "fixtures": (
+                    "a wrought-iron chandelier hung from the ribbed-vault "
+                    "ceiling, and a pair of wrought-iron reading lamps "
+                    "beside the armchairs."
+                ),
+            },
+            "thr": {
+                "stem": "e2-01_thr_gothic",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "Gothic Revival architecture fused with a modern "
+                          "sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with deep jewel-toned velvet "
+                    "seating arranged around a large discreetly-framed "
+                    "screen, dark stone vaulted walls, a stone-set plunge "
+                    "pool along one side of the room, potted greenery, and "
+                    "a low stone table with candles."
+                ),
+                "fixtures": (
+                    "a dimmed wrought-iron chandelier, and warm recessed "
+                    "lighting tracing the vaulted stone ceiling."
+                ),
+            },
+            "pool": {
+                "stem": "e2-01_pool_gothic",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "Gothic Revival architecture: a stone arcade of "
+                          "pointed arches framing the terrace",
+                "styling": (
+                    "a lit pool bordered by dark stone paving, a stone "
+                    "arcade of pointed Gothic arches running along one "
+                    "side, manicured clipped hedges and climbing ivy, a "
+                    "stone loggia with outdoor seating, and wrought-iron "
+                    "lanterns along the pool edge."
+                ),
+                "fixtures": (
+                    "wrought-iron lanterns lining the pool edge and "
+                    "arcade, and underwater pool lighting."
+                ),
+                "is_exterior": True,
             },
         },
     },
