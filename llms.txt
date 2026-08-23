@@ -2730,3 +2730,51 @@ step, and then take back full ownership of every step after it.
 Status: waiting on Dev to run the corrected provider command above, then
 Claude triggers test-vertex-imagen.yml directly and reports the real result
 -- no further instructions to Dev needed for that part.
+
+## Vertex AI image generation: confirmed working end-to-end (2026-08-22/23)
+
+Continuation of the entries above. After the WIF attribute-condition fix, the
+connectivity test still failed twice more -- each time a real, informative
+failure, not noise:
+
+1. `imagen-4.0-generate-001` -> 404. Root cause: Imagen's `generate_images()`
+   models were retired (a real platform change, confirmed by the error itself,
+   not assumed).
+2. `gemini-2.5-flash-image-preview` -> 404. Turned out to be a wrong guess at
+   the exact identifier, not a real access problem -- see below.
+3. A manual `google.auth.default()` + `creds.refresh()` attempt to list the
+   real catalog (to stop guessing model names blind) failed with a DIFFERENT
+   error: `Unable to acquire impersonated credentials ... INVALID_ARGUMENT`
+   -- an IAM impersonation scope issue in that specific hand-rolled auth path,
+   unrelated to Vertex/Imagen access itself (the genai client's own auth had
+   already proven working by this point, since attempts 1-2 got real 404s
+   from the real API, not auth errors). Fixed by reusing the SAME
+   already-authenticated `genai.Client` to list models instead of building a
+   second parallel credential path: `client.models.list(config=
+   {'query_base': True})`.
+
+**Confirmed working, real generated image downloaded and visually verified**:
+model `gemini-2.5-flash-image` (no `-preview` suffix -- that suffix was the
+actual bug in attempt 2, not a retired/inaccessible model). The project's
+publisher-model catalog returns ~20 models matching "image" in the name, but
+most are non-generative (imageclassification-*, imagesegmentation-*,
+imageobjectdetection-*, automl-vision-*, imagewatermarkdetector) and correctly
+fail with 400s when asked to generate_content. `discover_and_test_image_model.py`
+now tries `gemini-2.5-flash-image` first (confirmed fast path) before falling
+back to the full discovered list, so a normal run doesn't burn through ~13
+irrelevant candidates first.
+
+WIF auth, IAM permissions (`roles/aiplatform.user`), and Vertex AI billing
+routing (via `vertexai=True` + project/location, not the separate Gemini
+Developer API) are now all confirmed working end-to-end via a real image
+successfully generated and downloaded from a real GitHub Actions run --
+not just "auth succeeded," a full round trip verified by eye.
+
+**Still blocked on**: Dev uploading example viral reels to the "E-Series
+Reference Reels" Drive folder for format analysis (see the entry above with
+the folder link). The Google Cloud / image-generation side is now fully
+ready and does not need any further setup before the real e-series
+generation script gets built -- once reels are analyzed and a concrete
+format/prompt approach is proposed, `gemini-2.5-flash-image` via
+`generate_content()` (same pattern as `discover_and_test_image_model.py`,
+not `generate_images()`/Imagen) is what that script should call.

@@ -13,11 +13,20 @@ instead of building a second parallel auth path: client.models.list(config=
 project-tuned ones. Filters for anything image-related, then tries
 generate_content() against each candidate until one actually returns image
 bytes. Not part of any content pipeline -- throwaway connectivity/discovery tool.
+
+CONFIRMED WORKING (2026-08-22, real generated image verified): gemini-2.5-flash-
+image, no "-preview" suffix -- that suffix was the actual bug in the second
+attempt, not a missing/retired model. Tried first below so a normal run skips
+straight past the ~13 unrelated classification/detection/segmentation models
+this project's catalog also returns for any name containing "image". Falls back
+to trying the rest of the discovered list if that specific model ever stops
+working, so this stays useful if Google renames/replaces it again later.
 """
 from google import genai
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
+KNOWN_WORKING_MODEL = "gemini-2.5-flash-image"
 
 
 def try_generate(client, model_id):
@@ -62,8 +71,12 @@ def main():
         print("No image-related base models found via the listing -- stopping here rather than guessing blind.")
         raise SystemExit(1)
 
-    for model_path in candidates:
-        model_id = model_path.split("/")[-1]
+    model_ids = [c.split("/")[-1] for c in candidates]
+    if KNOWN_WORKING_MODEL in model_ids:
+        model_ids.remove(KNOWN_WORKING_MODEL)
+        model_ids.insert(0, KNOWN_WORKING_MODEL)
+
+    for model_id in model_ids:
         if try_generate(client, model_id):
             return
     print("No candidate model produced an image.")
