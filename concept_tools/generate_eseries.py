@@ -141,6 +141,37 @@ def build_room_prompt(room, palette_sentence):
     )
 
 
+def upscale_and_sharpen(image_bytes):
+    """
+    gemini-2.5-flash-image outputs ~768x1344 (~1.03MP) regardless of the
+    documented image_size="4K" config -- confirmed via a real request that
+    field is silently ignored on this model (see llms.txt). FLUX's room
+    shots render at ROOM_W x ROOM_H (1088x1920, ~2.1MP), so without this
+    step every e-series image reads visibly softer next to the a-d series
+    at the same display size, not because of a "different model look" but
+    a real ~2x pixel-count gap.
+
+    Lanczos resize to the exact FLUX target dimensions (apples-to-apples
+    pixel count) plus a mild unsharp mask to restore the apparent edge
+    crispness resampling softens. Reviewed against the original by eye
+    before adopting this as the standard step -- genuinely sharper,
+    no visible halos or artifacts. This does NOT add real detail the
+    model didn't generate; it's a deliberate, disclosed trade-off, not a
+    claim of higher fidelity. Revisit if Gemini 3 image model access ever
+    clears on this GCP project (see llms.txt) -- that may make this step
+    unnecessary rather than just improved.
+    """
+    from io import BytesIO
+    from PIL import Image, ImageFilter
+
+    img = Image.open(BytesIO(image_bytes)).convert("RGB")
+    upscaled = img.resize((ROOM_W, ROOM_H), Image.LANCZOS)
+    sharpened = upscaled.filter(ImageFilter.UnsharpMask(radius=2, percent=120, threshold=3))
+    out = BytesIO()
+    sharpened.save(out, format="PNG")
+    return out.getvalue()
+
+
 def generate_room(client, set_id, room_key, model=MODEL):
     from google.genai import types
 
@@ -153,12 +184,7 @@ def generate_room(client, set_id, room_key, model=MODEL):
         model=model,
         contents=prompt,
         config=types.GenerateContentConfig(
-            # image_size default is 1K -- confirmed the actual cause of the
-            # first test set looking soft next to FLUX's 1088x1920 output.
-            # 4K requested here; if this field name/value is wrong the API
-            # error will say so directly, same as every other guess this
-            # model needed verifying for real rather than trusting docs.
-            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
+            image_config=types.ImageConfig(aspect_ratio="9:16"),
         ),
     )
 
@@ -168,8 +194,8 @@ def generate_room(client, set_id, room_key, model=MODEL):
             if inline and getattr(inline, "data", None):
                 OUT_DIR.mkdir(parents=True, exist_ok=True)
                 out_path = OUT_DIR / f"{room['stem']}_app.png"
-                out_path.write_bytes(inline.data)
-                print(f"  saved {out_path}")
+                out_path.write_bytes(upscale_and_sharpen(inline.data))
+                print(f"  saved {out_path} (upscaled to {ROOM_W}x{ROOM_H})")
                 return out_path
     raise RuntimeError(f"No image data in response for {room['stem']}: {response!r}"[:1000])
 
