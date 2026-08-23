@@ -1137,6 +1137,15 @@ def upscale_and_sharpen(image_bytes):
     return out.getvalue()
 
 
+def _response_has_image(response):
+    for candidate in response.candidates:
+        for part in candidate.content.parts:
+            inline = getattr(part, "inline_data", None)
+            if inline and getattr(inline, "data", None):
+                return True
+    return False
+
+
 def _generate_with_retry(client, model, prompt):
     import time
     from google.genai import errors as genai_errors
@@ -1144,7 +1153,7 @@ def _generate_with_retry(client, model, prompt):
 
     for attempt in range(MAX_RETRIES):
         try:
-            return client.models.generate_content(
+            response = client.models.generate_content(
                 model=model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -1158,6 +1167,20 @@ def _generate_with_retry(client, model, prompt):
             delay = RETRY_BASE_DELAY_S * (2 ** attempt)
             print(f"  429 rate-limited, retrying in {delay}s (attempt {attempt + 1}/{MAX_RETRIES})...")
             time.sleep(delay)
+            continue
+
+        if _response_has_image(response):
+            return response
+        # Real observed quirk under retry/quota pressure (image-edit calls
+        # specifically, see llms.txt): the model sometimes replies with only
+        # acknowledgment text ("Here is the updated image:") and no actual
+        # image part, finish_reason STOP, no error raised. Not a hard
+        # failure -- retrying the identical call has produced a real image
+        # on the next attempt every time this has been observed so far.
+        if attempt == MAX_RETRIES - 1:
+            return response
+        print(f"  no image in response (model replied with text only), retrying (attempt {attempt + 1}/{MAX_RETRIES})...")
+        time.sleep(5)
 
 
 # e1-08 achieved structural consistency across 10 variations purely through
