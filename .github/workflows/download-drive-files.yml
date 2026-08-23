@@ -1,0 +1,68 @@
+name: Download Drive Files by ID
+
+# One-off tool to fetch specific Drive files by ID as a build artifact, so
+# reference images Dev links directly (not inside a known folder) can be
+# reviewed. Read-only against Drive; not part of any content pipeline.
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_ids:
+        description: "Space-separated Drive file IDs to download"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Download files
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          FILE_IDS: ${{ github.event.inputs.file_ids }}
+        run: |
+          python3 -c "
+          import os
+          from pathlib import Path
+          from drive_upload import download_file, _get_access_token
+          import requests
+
+          out_dir = Path('downloaded_files')
+          out_dir.mkdir(exist_ok=True)
+
+          token = _get_access_token()
+          headers = {'Authorization': f'Bearer {token}'}
+
+          for file_id in os.environ['FILE_IDS'].split():
+              meta = requests.get(
+                  f'https://www.googleapis.com/drive/v3/files/{file_id}',
+                  headers=headers, params={'fields': 'id,name,mimeType'},
+              ).json()
+              name = meta.get('name', file_id)
+              print(f'{file_id} -> {name} ({meta.get(\"mimeType\")})')
+              dest = out_dir / name
+              download_file(file_id, dest)
+              print(f'  saved {dest} ({dest.stat().st_size} bytes)')
+          "
+
+      - name: Upload as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-drive-files
+          path: downloaded_files/
+          if-no-files-found: error
