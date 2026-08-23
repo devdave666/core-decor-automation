@@ -528,6 +528,106 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # e1-06 SUPERSEDED after one round of real feedback, not left standing as
+    # a parallel option: Dev's reaction was "still very bright and no
+    # furniture, feels empty!!" The `styling_restraint_sentence` mechanism
+    # (2-3 objects, added for e1-06) overcorrected -- restraint read as
+    # emptiness once there was only ever one piece of furniture (the island)
+    # in frame. e1-07 drops that mechanism entirely and writes genuinely
+    # furnished styling lists again (seating, rugs, layered textiles), same
+    # density as e1-01, but keeps e1-06's real material/hardware language
+    # (walnut, marble, aged brass) rather than throwing that part out too --
+    # only brightness and furniture density were the actual complaints.
+    #
+    # Also a full lighting reversal: Dev explicitly asked for NIGHT-ONLY
+    # application photos with "mood interior lights" and "darker shades and
+    # darker materials" for "next few generations" -- not a per-set choice
+    # this time, a standing instruction the same way e1-06's restraint was.
+    # Reuses e1-04's real night-photography language (only the room's own
+    # warm fixtures lit, near-black shadow, dramatic brass pools) as the
+    # proven base for "genuinely dark, not just moodier," rather than
+    # reinventing night lighting from scratch. New material instruction --
+    # "stone and tiles alongside wood and colors and fabrics" -- means this
+    # palette deliberately mixes MORE material categories per room than any
+    # earlier set: dark stone AND patterned tile AND wood AND jewel-tone
+    # fabric together, not one or two dominant materials.
+    #
+    # "Old money aesthetics that meet modern decor" is read as: keep the
+    # heritage MATERIALS and hardware language (marble, brass, walnut, oil
+    # painting) but give furniture clean modern silhouettes rather than
+    # reel 2's literal antique country pieces (turned legs, rush seats) --
+    # a fusion, not a reversion to e1-02's Spanish-colonial antique styling.
+    "e1-07": {
+        "source_type": "Dev-provided reference (ANB Architecture Studio reels) + Dev's night/furnished-density feedback (2026-08-23)",
+        "style_slug": "nightluxe",
+        "palette_sentence": (
+            "a dark, richly layered old-money-meets-modern palette carried "
+            "through every room: deep ebonized and dark walnut wood, "
+            "dramatic dark stone waterfall surfaces (soapstone or dark "
+            "emperador marble) alongside warm cream marble accents, "
+            "patterned olive zellige tile, aged brass fixtures and "
+            "hardware, and deep jewel-toned velvet and leather upholstery "
+            "in bottle-green, oxblood and ink-navy."
+        ),
+        "light_sentence": (
+            " Photographed at night, well after dark, with only the "
+            "room's own warm brass fixtures and lamps lit: darkness fills "
+            "the room outside each fixture's reach, and the dark wood, "
+            "dark stone and deep-toned fabric recede into rich near-black "
+            "shadow. Warm brass pools of light fall across the lit "
+            "surfaces -- marble veining, tile glaze, leather, brass "
+            "hardware -- catching their real texture and colour clearly. "
+            "Contrast is high and dramatic, shadows keep real near-black "
+            "depth rather than going flat or grey, and windows are dark "
+            "with only the room's own light spilling into the glass. "
+            "Intimate, moody and confidently dark rather than dim or "
+            "underlit -- no daylight and no blue dusk anywhere in frame."
+        ),
+        "rooms": {
+            "kit": {
+                "stem": "e1-07_kit_nightluxe",
+                "room": "a residential kitchen",
+                "style": "dark old-money-meets-modern interior with clean "
+                          "contemporary cabinetry lines",
+                "styling": (
+                    "a dramatic waterfall-edge island in dark soapstone-"
+                    "look stone, a patterned olive zellige tile backsplash, "
+                    "a built-in banquette in the corner with bottle-green "
+                    "velvet cushions beside a small round dark-wood table, "
+                    "a glass-front upper cabinet with lit interior "
+                    "shelving showing glassware, a stack of leather-bound "
+                    "cookbooks and a small potted olive branch on the "
+                    "island, and a woven wool runner rug on the floor."
+                ),
+                "fixtures": (
+                    "three slim cylindrical aged-brass pendant lights hung "
+                    "at staggered heights over the island, and a single "
+                    "brass wall sconce above the banquette."
+                ),
+            },
+            "liv": {
+                "stem": "e1-07_liv_nightluxe",
+                "room": "a residential living room",
+                "style": "dark old-money-meets-modern interior with clean "
+                          "contemporary furniture silhouettes",
+                "styling": (
+                    "a deep bottle-green velvet sofa with oxblood leather "
+                    "and cream boucle cushions, a dark stone coffee table "
+                    "with slim brass legs, a pair of leather-and-brass "
+                    "armchairs, a single large abstract painting in dark "
+                    "rich tones, a thick patterned wool rug layered over "
+                    "dark oak flooring, and a brass floor lamp beside the "
+                    "sofa."
+                ),
+                "fixtures": (
+                    "a low-hung aged-brass and smoked-glass chandelier "
+                    "over the seating area, and a pair of brass wall "
+                    "sconces flanking the artwork."
+                ),
+            },
+        },
+    },
 }
 
 
