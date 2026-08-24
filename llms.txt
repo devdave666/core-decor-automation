@@ -3696,8 +3696,67 @@ internal `e2-01` id, and this is a genuinely separate content type from
 the numbered E-Series output tree.
 
 All 10 images committed to `assets/application_eseries/`, uploaded to
-Drive under "Grand Houses Generated Output/Gothic". **Awaiting Dev's
-approval before any second architecture type.** The next house (whichever
-style Dev picks) reuses `GRAND_HOUSE_ROOMS` and the same `e2-*`/
-`is_exterior` machinery -- only the palette_sentence/light_sentence and
-per-room styling need to be newly designed each time, not the structure.
+Drive under "Grand Houses Generated Output/Gothic".
+
+## Grand Houses: e2-01 approved with two standing corrections; e2-02 (Art Deco) rejected for "too much shine"; e2-03 (Modern Organic) is the fix (2026-08-24)
+
+Dev approved e2-01 (Gothic) but added two standing corrections for every
+future house, not just a one-off note: (1) a "modern twist" -- TVs and
+LED light-strip mood lighting worked in deliberately from now on: and (2)
+an explicit efficiency ask -- "you are using up the limits way too fast
+... we have a lot of work to do together" -- to cut down on tool-call/
+turn overhead given how much work is still ahead. Saved as a real feedback
+memory (`core-decor-reduce-tool-call-overhead`), not just applied
+silently: chain shell commands (trigger -> poll -> download -> grep-for-
+links) into fewer round trips, and skip the exterior-alone-then-continue
+test round once a technique has already proven reliable across many
+rooms -- e2-01's 10 rooms all came out clean on the first try, so e2-02
+and e2-03 were both generated as ONE batch of all 10 rooms per house,
+still fully reviewed by eye before committing, just without a separate
+single-room validation round trip first.
+
+**e2-02 ("Art Deco"), house #2**: picked deliberately because Art Deco's
+real historical vocabulary already leans on dramatic indirect/cove
+lighting and bold geometric fixtures, so LED strips read as a genuine
+continuation of the style rather than a bolted-on modern intrusion --
+and TVs were set flush into lacquered sunburst-motif feature walls in the
+living room, bedroom, office and theatre lounge. All 10 rooms generated
+and reviewed, genuinely stunning individually (a real flush-mounted TV
+in a black lacquer sunburst wall, LED strips tracing every stepped cove
+and stair tread, a sunken plunge-pool lounge with a terrazzo-edged step
+lit in LED) -- **but Dev's reaction, given mid-review before any Drive
+upload, was "too much shine."** Read as a real, specific critique of the
+lacquer/mirror/polished-brass/glossy-terrazzo material language itself,
+not a rejection of Art Deco as a style or of the grand-house direction.
+**e2-02 was therefore NOT committed or uploaded to Drive** -- it stays in
+`concept_tools/generate_eseries.py` as a design reference only, in case a
+toned-down (less glossy) Art Deco pass is ever wanted later, but is not a
+published house.
+
+**e2-03 ("Modern Organic"), house #3, built as the direct correction**:
+Dev's instruction for the replacement palette was explicit -- "earthy
+tones, high-end wood, stone and leather." Built as the deliberate
+material OPPOSITE of e2-02: raw-sawn white oak and walnut, honed natural
+stone, saddle-tan and chocolate leather, blackened bronze (never polished
+brass/chrome), woven wool/linen/jute -- and critically, both the
+`palette_sentence` AND `light_sentence` explicitly EXCLUDE every
+reflective surface by name ("no polished marble, no lacquer, no mirrored
+surfaces and no glossy or polished metal anywhere" / "no glossy or
+reflective surface anywhere to catch or scatter the light ... no
+daylight, no crystal, no polished brass and no mirror anywhere in
+frame") rather than just omitting shine by default -- since "too much
+shine" was a specific, correctable defect, not a vague dislike, it got a
+specific, explicit fix. TVs stayed in per the modern-twist rule, now set
+flush into stone fireplace surrounds and walnut panelling instead of
+lacquer.
+
+All 10 rooms generated in one batch and reviewed: a warm, grounded,
+genuinely matte mountain-modern luxury house throughout -- cedar-and-
+stone exterior with deep timber overhangs, a floating walnut staircase,
+stacked-stone fireplaces with flush-mounted TVs in the living room and
+primary bedroom, an indoor plunge pool beside a sunken leather lounge in
+the theatre/wellness room, and a timber-and-stone loggia opening onto the
+rear pool. Zero lacquer, mirror or polished metal anywhere across all 10
+-- confirmed by eye, not assumed. Committed to `assets/application_eseries/`,
+uploaded to Drive under "Grand Houses Generated Output/Modern Organic".
+**Awaiting Dev's approval before any fourth architecture type.**
