@@ -2258,6 +2258,225 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # House #5. Dev approved e2-04 but flagged the grand-house palette had
+    # drifted too pale/beige overall (esp. e2-03's oat/cream leaning) and
+    # sent 6 real reference photos of what "rich earth tones" actually
+    # means: saturated sage-green cabinetry against terracotta plaster,
+    # deep chocolate-brown painted paneling, charcoal-navy walls, warm
+    # cedar/oak wood, and live plants throughout -- SATURATED and PAINTED
+    # wall colour, not just natural wood/stone tone. Named "English
+    # Country" since that's the closest recognizable architecture-type
+    # match for deep painted panelling + antique-leaning furniture +
+    # herringbone floors + terracotta + abundant greenery shown in the
+    # references, keeping this house inside the same "architecture type"
+    # framing as the others rather than treating it as a bare palette swap.
+    "e2-05": {
+        "source_type": "Dev-provided reference photos (rich earth tones: sage/terracotta/chocolate/charcoal), architecture type: English Country",
+        "style_slug": "englishcountry",
+        "drive_folder_name": "English Country",
+        "palette_sentence": (
+            "a rich, saturated earth-tone palette carried through every "
+            "room: deep sage-green and chocolate-brown painted "
+            "millwork and wall panelling, warm terracotta plaster and "
+            "tile, warm cedar and oak wood, aged brass fixtures, and "
+            "cream boucle and linen upholstery for contrast against the "
+            "deep painted walls, with abundant live potted greenery "
+            "throughout."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by warm brass fixtures and "
+            "woven-shade pendant lights: the deep sage, chocolate and "
+            "terracotta walls hold real saturated colour even in low "
+            "light rather than reading as neutral or grey, while cream "
+            "upholstery and warm wood catch the light and glow. Rich, "
+            "warm and layered, with real colour depth in every shadow. "
+            "No daylight, and no pale, washed-out or beige-neutral wall "
+            "anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-05_ext_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "English Country architecture: a warm brick "
+                          "and render facade with a steep tiled roof "
+                          "and deep-set mullioned windows",
+                "styling": (
+                    "a chocolate-brown front door with aged-brass "
+                    "hardware, warm terracotta brick and render "
+                    "cladding, deep-set mullioned windows, climbing "
+                    "greenery and potted topiary flanking the entry, "
+                    "and a warm stone path."
+                ),
+                "fixtures": (
+                    "a pair of aged-brass lantern sconces flanking the "
+                    "door, and warm uplighting on the brick facade."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-05_ent_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "English Country interior with deep painted "
+                          "panelling and herringbone floors",
+                "styling": (
+                    "a chocolate-brown painted staircase with a warm "
+                    "wood handrail, herringbone oak flooring, deep "
+                    "sage-green wainscoting, an antique console table "
+                    "with a large urn of foraged branches, and abundant "
+                    "potted greenery."
+                ),
+                "fixtures": (
+                    "a woven-shade brass pendant light, and aged-brass "
+                    "wall sconces."
+                ),
+            },
+            "liv": {
+                "stem": "e2-05_liv_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "English Country interior with deep painted "
+                          "panelling and herringbone floors",
+                "styling": (
+                    "a deep chocolate-brown painted wall behind a cream "
+                    "boucle sectional with rust and clay-toned cushions, "
+                    "a round warm-wood coffee table, a large flat-"
+                    "screen TV mounted flush into a cedar wood panel, "
+                    "abundant potted greenery, and herringbone oak "
+                    "flooring with a warm jute rug."
+                ),
+                "fixtures": (
+                    "a sculptural woven-and-brass chandelier, and warm "
+                    "recessed lighting."
+                ),
+            },
+            "din": {
+                "stem": "e2-05_din_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "English Country interior with deep painted "
+                          "panelling and herringbone floors",
+                "styling": (
+                    "a round warm-wood dining table with cream "
+                    "upholstered dining chairs, deep chocolate-brown "
+                    "painted wall panelling, a pair of aged-brass wall "
+                    "sconces either side of a large ceramic vessel, and "
+                    "a warm patterned rug over herringbone flooring."
+                ),
+                "fixtures": (
+                    "an aged-brass chandelier hung low over the table, "
+                    "and aged-brass wall sconces along the panelled "
+                    "walls."
+                ),
+            },
+            "kit": {
+                "stem": "e2-05_kit_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "English Country architecture fused with a "
+                          "modern luxury kitchen",
+                "styling": (
+                    "deep sage-green cabinetry against a warm "
+                    "terracotta plaster backsplash, a honed warm-stone "
+                    "waterfall island, open wood shelving lined with "
+                    "ceramics and abundant potted herbs and trailing "
+                    "greenery, exposed cedar ceiling beams, and a low "
+                    "bowl of fruit on the island."
+                ),
+                "fixtures": (
+                    "a pair of woven-shade brass pendant lights hung "
+                    "over the island, and warm under-shelf lighting."
+                ),
+            },
+            "bed": {
+                "stem": "e2-05_bed_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "English Country interior with deep painted "
+                          "panelling and herringbone floors",
+                "styling": (
+                    "a warm-wood bed with a cream linen headboard "
+                    "against a deep charcoal-navy painted wall, a large "
+                    "flat-screen TV mounted flush into a wood panel "
+                    "opposite the bed, a pair of warm-wood nightstands, "
+                    "abundant potted greenery, and herringbone oak "
+                    "flooring with a warm patterned rug."
+                ),
+                "fixtures": (
+                    "a pair of aged-brass wall sconces flanking the "
+                    "bed, and a woven-shade pendant light."
+                ),
+            },
+            "bath": {
+                "stem": "e2-05_bath_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "English Country architecture fused with a "
+                          "modern spa bathroom",
+                "styling": (
+                    "a freestanding stone soaking tub against a deep "
+                    "sage-green painted wall, a rainfall shower behind "
+                    "fluted glass, a warm-wood vanity with a stone "
+                    "vessel sink, terracotta floor tile, and potted "
+                    "greenery."
+                ),
+                "fixtures": (
+                    "a woven-shade brass pendant light over the tub, "
+                    "and warm recessed lighting."
+                ),
+            },
+            "off": {
+                "stem": "e2-05_off_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "English Country interior with deep painted "
+                          "panelling and herringbone floors",
+                "styling": (
+                    "floor-to-ceiling warm-wood bookshelves against a "
+                    "deep chocolate-brown painted wall, a warm-wood "
+                    "writing desk with a cream upholstered chair, a "
+                    "large flat-screen TV mounted flush into the "
+                    "shelving, abundant potted greenery, and "
+                    "herringbone flooring with a warm patterned rug."
+                ),
+                "fixtures": (
+                    "a woven-shade brass pendant light, and a pair of "
+                    "aged-brass reading lamps."
+                ),
+            },
+            "thr": {
+                "stem": "e2-05_thr_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "English Country architecture fused with a "
+                          "modern sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with cream boucle seating "
+                    "against a deep charcoal-navy painted wall, a large "
+                    "flat-screen TV mounted flush into a cedar wood "
+                    "panel, a terracotta-tiled plunge pool along one "
+                    "side of the room, and abundant potted greenery."
+                ),
+                "fixtures": (
+                    "a dimmed sculptural woven-and-brass chandelier, "
+                    "and warm recessed lighting tracing the sunken "
+                    "lounge's steps."
+                ),
+            },
+            "pool": {
+                "stem": "e2-05_pool_englishcountry",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "English Country architecture: a warm brick "
+                          "loggia with deep-set arched openings",
+                "styling": (
+                    "a lit pool bordered by warm terracotta paving, a "
+                    "brick loggia with arched openings running along "
+                    "one side, potted topiary and abundant climbing "
+                    "greenery, and aged-brass lanterns along the pool "
+                    "edge."
+                ),
+                "fixtures": (
+                    "aged-brass lanterns lining the pool edge and "
+                    "loggia, warm uplighting on the brick arches, and "
+                    "underwater pool lighting."
+                ),
+                "is_exterior": True,
+            },
+        },
+    },
 }
 
 
