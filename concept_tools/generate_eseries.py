@@ -2034,6 +2034,230 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # House #4. Dev approved e2-03 and confirmed e2-02 (Art Deco) is worth
+    # keeping despite its material critique, so both are now published.
+    # Picked French Chateau for genuine contrast against all three houses
+    # so far: Gothic (dark stone/wrought iron), Art Deco (glossy black
+    # lacquer/geometric), Modern Organic (raw matte wood/stone/leather) --
+    # French Chateau brings a warm pale limestone and gilt material
+    # language none of the first three touched, while staying genuinely
+    # grand per the "Type 2 - Grandeur" mandate. Kept the "modern twist"
+    # rule (TVs, LED mood lighting) and the no-shine lesson from e2-02 in
+    # mind even though gilt/brass are period-authentic here -- kept gilt
+    # and brass DELIBERATELY MATTE/AGED rather than mirror-polished, so
+    # the room reads opulent through colour and detail, not through glare.
+    "e2-04": {
+        "source_type": "Type 2 - Grandeur (Dev's real reference photos, architecture type: French Chateau)",
+        "style_slug": "frenchchateau",
+        "drive_folder_name": "French Chateau",
+        "palette_sentence": (
+            "a warm French Chateau palette carried through every room: "
+            "pale honed Burgundy limestone and warm plaster walls, "
+            "richly grained French oak millwork and herringbone "
+            "parquet flooring, aged (not mirror-polished) gilt and "
+            "brass detailing, and silk damask and velvet upholstery in "
+            "dove grey, dusty rose and antique gold."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by warm crystal-and-gilt "
+            "chandeliers, warm LED strip lighting tracing cove and "
+            "picture-rail mouldings for a modern layer of glow, and the "
+            "soft flicker of candlelight: the gilt and brass read aged "
+            "and softly warm rather than mirror-bright, and every "
+            "surface glows gently rather than glaring. Elegant, "
+            "refined and softly opulent, with deep warm shadow in the "
+            "corners of each room. No daylight anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-04_ext_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "French Chateau architecture: a symmetrical "
+                          "pale limestone facade with a steep slate "
+                          "mansard roof and tall French windows",
+                "styling": (
+                    "a pair of tall arched French doors with aged "
+                    "bronze hardware, symmetrical rows of tall shuttered "
+                    "windows in pale limestone surrounds, a steep grey "
+                    "slate mansard roof with copper-topped dormers, "
+                    "clipped topiary in stone urns flanking the entry, "
+                    "and a graveled forecourt with a central fountain."
+                ),
+                "fixtures": (
+                    "a pair of aged-bronze lantern sconces flanking the "
+                    "entry doors, and warm uplighting on the limestone "
+                    "facade."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-04_ent_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "French Chateau interior with tall panelled "
+                          "walls and ornate plaster mouldings",
+                "styling": (
+                    "a sweeping curved limestone staircase with an "
+                    "aged wrought-iron and brass balustrade, herringbone "
+                    "parquet flooring, tall boiserie wall panelling "
+                    "painted in soft dove grey, a large gilt-framed "
+                    "mirror, and a round marble-topped console table "
+                    "with a large urn of fresh flowers."
+                ),
+                "fixtures": (
+                    "a grand crystal-and-gilt chandelier hung from the "
+                    "ornate plaster ceiling medallion, and aged-brass "
+                    "wall sconces lining the staircase."
+                ),
+            },
+            "liv": {
+                "stem": "e2-04_liv_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "French Chateau interior with tall panelled "
+                          "walls and ornate plaster mouldings",
+                "styling": (
+                    "a pair of dove-grey silk damask sofas and a dusty-"
+                    "rose velvet armchair arranged around a carved "
+                    "limestone fireplace, a large flat-screen TV "
+                    "mounted flush into a boiserie panel above a "
+                    "media console, tall French windows dressed with "
+                    "silk drapery, an antique gilt mirror over the "
+                    "mantel, and herringbone parquet flooring with a "
+                    "silk rug."
+                ),
+                "fixtures": (
+                    "a grand crystal-and-gilt chandelier, and aged-"
+                    "brass wall sconces flanking the fireplace."
+                ),
+            },
+            "din": {
+                "stem": "e2-04_din_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "French Chateau interior with tall panelled "
+                          "walls and ornate plaster mouldings",
+                "styling": (
+                    "a long French oak dining table set for a formal "
+                    "dinner with fine crystal and candlesticks, dove-"
+                    "grey silk-upholstered dining chairs with gilt "
+                    "frames, tall boiserie panelling, a large gilt-"
+                    "framed painting, and herringbone parquet flooring."
+                ),
+                "fixtures": (
+                    "a grand crystal-and-gilt chandelier hung low over "
+                    "the table, and aged-brass wall sconces along the "
+                    "panelled walls."
+                ),
+            },
+            "kit": {
+                "stem": "e2-04_kit_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "French Chateau architecture fused with a "
+                          "modern luxury kitchen",
+                "styling": (
+                    "a massive waterfall-edge island in pale honed "
+                    "limestone, French oak cabinetry with aged-brass "
+                    "hardware, a glass-front cabinet with lit interior "
+                    "shelving, and a low bowl of fruit on the island."
+                ),
+                "fixtures": (
+                    "three aged-brass pendant lights with fluted glass "
+                    "shades hung over the island, and warm under-"
+                    "cabinet lighting."
+                ),
+            },
+            "bed": {
+                "stem": "e2-04_bed_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "French Chateau interior with tall panelled "
+                          "walls and ornate plaster mouldings",
+                "styling": (
+                    "a tall upholstered dove-grey silk headboard with "
+                    "an ornate gilt frame, a large flat-screen TV "
+                    "mounted flush into a boiserie panel opposite the "
+                    "bed, a pair of French oak nightstands, tall silk-"
+                    "draped windows, and herringbone parquet flooring "
+                    "with a silk rug."
+                ),
+                "fixtures": (
+                    "a pair of aged-brass wall sconces flanking the "
+                    "bed, and a small crystal-and-gilt chandelier."
+                ),
+            },
+            "bath": {
+                "stem": "e2-04_bath_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "French Chateau architecture fused with a "
+                          "modern spa bathroom",
+                "styling": (
+                    "a freestanding pale limestone soaking tub beneath "
+                    "a tall shuttered window, a rainfall shower behind "
+                    "fluted glass, a marble-topped vanity with an aged-"
+                    "brass framed mirror, and pale limestone walls and "
+                    "flooring."
+                ),
+                "fixtures": (
+                    "an aged-brass and fluted-glass pendant light over "
+                    "the tub, and warm recessed lighting."
+                ),
+            },
+            "off": {
+                "stem": "e2-04_off_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "French Chateau interior with tall panelled "
+                          "walls and ornate plaster mouldings",
+                "styling": (
+                    "floor-to-ceiling French oak bookshelves with gilt "
+                    "trim lining the walls, a carved French oak writing "
+                    "desk with a dove-grey silk chair, a pair of dusty-"
+                    "rose velvet armchairs beside a carved limestone "
+                    "fireplace, a large flat-screen TV mounted flush "
+                    "into a boiserie panel beside the shelving, and "
+                    "herringbone parquet flooring with a silk rug."
+                ),
+                "fixtures": (
+                    "a small crystal-and-gilt chandelier, and a pair of "
+                    "aged-brass reading lamps beside the armchairs."
+                ),
+            },
+            "thr": {
+                "stem": "e2-04_thr_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "French Chateau architecture fused with a "
+                          "modern sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with dove-grey silk velvet "
+                    "seating arranged around a large flat-screen TV set "
+                    "flush into a boiserie feature wall, a limestone-"
+                    "edged plunge pool along one side of the room, and "
+                    "a low marble-topped table with candles."
+                ),
+                "fixtures": (
+                    "a dimmed crystal-and-gilt chandelier, and warm LED "
+                    "strip lighting tracing the sunken lounge's steps "
+                    "and the pool's limestone edge."
+                ),
+            },
+            "pool": {
+                "stem": "e2-04_pool_frenchchateau",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "French Chateau architecture: a limestone "
+                          "loggia with arched openings framing the "
+                          "terrace",
+                "styling": (
+                    "a lit pool bordered by pale limestone paving, a "
+                    "limestone loggia with arched openings running "
+                    "along one side, clipped topiary in stone urns, "
+                    "and aged-brass lanterns along the pool edge."
+                ),
+                "fixtures": (
+                    "aged-brass lanterns lining the pool edge and "
+                    "loggia, warm uplighting on the limestone arches, "
+                    "and underwater pool lighting."
+                ),
+                "is_exterior": True,
+            },
+        },
+    },
 }
 
 
