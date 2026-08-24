@@ -1800,6 +1800,240 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Dev's reaction to e2-02 (Art Deco): "too much shine" -- a real
+    # critique of the lacquer/mirror/polished-brass/glossy-terrazzo
+    # material language, not a rejection of the whole grand-house
+    # direction. e2-02 was therefore NOT committed/uploaded to Drive --
+    # left in code as a design reference only, in case a toned-down pass
+    # is ever wanted, but not published as a finished house. Dev's
+    # instruction for the next house was explicit and specific: "earthy
+    # tones, high-end wood, stone and leather." Named this style "Modern
+    # Organic" -- warm minimalist architecture built from raw-sawn wood,
+    # honed natural stone and leather, deliberately the material opposite
+    # of e2-02: every reflective/glossy surface (lacquer, mirror, polished
+    # brass/chrome, glossy terrazzo) is explicitly excluded from both the
+    # palette and the light_sentence this time, not just omitted by
+    # omission, since "too much shine" was a specific, correctable defect
+    # rather than a vague dislike.
+    "e2-03": {
+        "source_type": "Type 2 - Grandeur (Dev's real reference photos, architecture type: Modern Organic, per Dev's explicit 'earthy tones, high-end wood, stone and leather' + no-shine correction after e2-02)",
+        "style_slug": "modernorganic",
+        "drive_folder_name": "Modern Organic",
+        "palette_sentence": (
+            "a warm earthy palette carried through every room: raw-sawn "
+            "white oak and walnut millwork and beams, honed grey "
+            "limestone and split-face natural stone, saddle-tan and "
+            "chocolate leather upholstery, warm hand-troweled plaster "
+            "walls, and blackened bronze fixtures and hardware, with "
+            "woven wool, linen and jute textiles adding texture -- no "
+            "polished marble, no lacquer, no mirrored surfaces and no "
+            "glossy or polished metal anywhere."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by warm, soft, indirect light: "
+            "linen-shaded lamps, a lit fireplace, and recessed warm-"
+            "dimmed downlights, with no glossy or reflective surface "
+            "anywhere to catch or scatter the light -- every material "
+            "reads matte and textural, absorbing the warm light rather "
+            "than throwing it back. Shadows are soft and deep rather "
+            "than sparkling, and the whole space feels grounded, "
+            "tactile and quietly warm rather than glamorous or shiny. "
+            "No daylight, no crystal, no polished brass and no mirror "
+            "anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-03_ext_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "modern organic architecture: a board-formed "
+                          "concrete and split-face stone base, deep "
+                          "timber roof overhangs, and expansive glass",
+                "styling": (
+                    "a wide pivoting walnut front door with blackened "
+                    "bronze hardware, a stacked natural stone facade, "
+                    "deep overhanging eaves supported by exposed timber "
+                    "beams, native grasses and boulders landscaping the "
+                    "entry, and a honed stone path."
+                ),
+                "fixtures": (
+                    "a pair of blackened-bronze lantern sconces "
+                    "flanking the door, and warm uplighting on the "
+                    "stone facade and timber beams."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-03_ent_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "modern organic interior with exposed timber "
+                          "beams and natural stone",
+                "styling": (
+                    "a floating walnut staircase with a blackened steel "
+                    "and rope balustrade, a two-storey split-face stone "
+                    "feature wall, a large woven wall hanging, a "
+                    "console table in raw walnut with a stone-and-"
+                    "bronze bowl, and a wide-plank white oak floor with "
+                    "a natural wool runner."
+                ),
+                "fixtures": (
+                    "a sculptural woven-rattan-and-bronze pendant light "
+                    "hung from the beamed ceiling, and blackened bronze "
+                    "wall sconces."
+                ),
+            },
+            "liv": {
+                "stem": "e2-03_liv_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "modern organic interior with exposed timber "
+                          "beams and natural stone",
+                "styling": (
+                    "a deep saddle-tan leather sectional and a pair of "
+                    "chocolate leather armchairs arranged around a raw "
+                    "stone fireplace, a large flat-screen TV mounted "
+                    "flush into a walnut-and-stone feature wall, "
+                    "exposed timber ceiling beams, a huge expanse of "
+                    "glass looking onto the grounds, and a thick wool "
+                    "rug over wide-plank white oak flooring."
+                ),
+                "fixtures": (
+                    "a sculptural blackened-bronze and woven-rattan "
+                    "chandelier, and warm dimmed recessed lighting "
+                    "tracing the exposed beams."
+                ),
+            },
+            "din": {
+                "stem": "e2-03_din_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "modern organic interior with exposed timber "
+                          "beams and natural stone",
+                "styling": (
+                    "a long live-edge walnut dining table with saddle-"
+                    "tan leather-and-oak dining chairs, a split-face "
+                    "stone feature wall, a large woven wall hanging, "
+                    "and a wide-plank white oak floor with a natural "
+                    "jute rug."
+                ),
+                "fixtures": (
+                    "a row of blackened-bronze pendant lights with "
+                    "linen shades hung low over the table, and warm "
+                    "recessed lighting tracing the beamed ceiling."
+                ),
+            },
+            "kit": {
+                "stem": "e2-03_kit_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "modern organic architecture fused with a "
+                          "modern luxury kitchen",
+                "styling": (
+                    "a massive waterfall-edge island in honed grey "
+                    "limestone, raw white oak cabinetry with blackened "
+                    "bronze hardware, open walnut shelving with stacked "
+                    "ceramics, and a low stone bowl of fruit on the "
+                    "island."
+                ),
+                "fixtures": (
+                    "three blackened-bronze pendant lights with linen "
+                    "shades hung over the island, and warm under-"
+                    "cabinet lighting."
+                ),
+            },
+            "bed": {
+                "stem": "e2-03_bed_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "modern organic interior with exposed timber "
+                          "beams and natural stone",
+                "styling": (
+                    "a low walnut platform bed with saddle-tan leather "
+                    "headboard panelling, a large flat-screen TV "
+                    "mounted flush into a stone feature wall opposite "
+                    "the bed, a pair of raw walnut nightstands, a "
+                    "stacked-stone fireplace, and a thick wool rug over "
+                    "wide-plank white oak flooring."
+                ),
+                "fixtures": (
+                    "a pair of blackened-bronze wall sconces flanking "
+                    "the bed, and warm recessed lighting tracing the "
+                    "beamed ceiling."
+                ),
+            },
+            "bath": {
+                "stem": "e2-03_bath_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "modern organic architecture fused with a "
+                          "modern spa bathroom",
+                "styling": (
+                    "a freestanding honed-stone soaking tub beneath a "
+                    "large window, a rainfall shower behind a wide "
+                    "sheet of textured glass, a raw walnut vanity with "
+                    "a hand-carved stone vessel sink, and split-face "
+                    "stone walls."
+                ),
+                "fixtures": (
+                    "a woven-rattan-and-bronze pendant light over the "
+                    "tub, and warm recessed lighting tracing the stone "
+                    "ceiling."
+                ),
+            },
+            "off": {
+                "stem": "e2-03_off_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "modern organic interior with exposed timber "
+                          "beams and natural stone",
+                "styling": (
+                    "floor-to-ceiling raw walnut bookshelves lining the "
+                    "walls, a live-edge walnut writing desk with a "
+                    "saddle-tan leather chair, a pair of chocolate "
+                    "leather armchairs beside a stacked-stone fireplace, "
+                    "a large flat-screen TV mounted flush into a walnut "
+                    "panel beside the shelving, and a wool rug over "
+                    "wide-plank white oak flooring."
+                ),
+                "fixtures": (
+                    "a sculptural blackened-bronze chandelier, and warm "
+                    "recessed lighting tracing every shelf edge."
+                ),
+            },
+            "thr": {
+                "stem": "e2-03_thr_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "modern organic architecture fused with a "
+                          "modern sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with deep saddle-tan leather "
+                    "seating arranged around a large flat-screen TV set "
+                    "flush into a stacked-stone feature wall, a honed-"
+                    "stone-edged plunge pool along one side of the "
+                    "room, exposed timber ceiling beams, and a low raw "
+                    "walnut table."
+                ),
+                "fixtures": (
+                    "a dimmed sculptural blackened-bronze chandelier, "
+                    "and warm recessed lighting tracing the sunken "
+                    "lounge's steps and the pool's stone edge."
+                ),
+            },
+            "pool": {
+                "stem": "e2-03_pool_modernorganic",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "modern organic architecture: a timber-and-"
+                          "stone loggia with deep overhanging eaves",
+                "styling": (
+                    "a lit pool bordered by honed natural stone paving, "
+                    "a timber-and-stone loggia with deep overhanging "
+                    "eaves running along one side, native grasses and "
+                    "boulder landscaping, and blackened-bronze lanterns "
+                    "along the pool edge."
+                ),
+                "fixtures": (
+                    "blackened-bronze lanterns lining the pool edge and "
+                    "loggia, warm uplighting on the timber beams, and "
+                    "underwater pool lighting."
+                ),
+                "is_exterior": True,
+            },
+        },
+    },
 }
 
 
