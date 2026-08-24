@@ -3759,4 +3759,25 @@ the theatre/wellness room, and a timber-and-stone loggia opening onto the
 rear pool. Zero lacquer, mirror or polished metal anywhere across all 10
 -- confirmed by eye, not assumed. Committed to `assets/application_eseries/`,
 uploaded to Drive under "Grand Houses Generated Output/Modern Organic".
-**Awaiting Dev's approval before any fourth architecture type.**
+Approved. Dev also had e2-02 (Art Deco) uploaded manually and wants it
+kept as a usable asset despite the shine critique -- committed +
+published via our pipeline too, under ".../Art Deco", for consistency.
+
+**e2-04 ("French Chateau"), house #4**: warm honed limestone, gilt and
+brass kept deliberately aged/matte (not mirror-polished) applying the
+e2-02 shine lesson even though gilt is period-authentic here, silk
+damask, herringbone parquet. All 10 rooms generated in one batch,
+reviewed, clean -- committed and uploaded under
+".../French Chateau". Awaiting approval.
+
+**Operational change, 2026-08-24, Dev's own words**: heavy session-limit
+usage prompted a explicit new operating mode -- headless/suppressed
+script output, minimal file reads (targeted grep/tail only), no
+unnecessary subagents, strict response brevity, proactively flag if
+context should be /compact'd. **One exception negotiated, not silently
+accepted**: Dev's ask included "never view generated images," which
+would remove the only mechanism that has actually caught every real
+defect this session (e1-06's stray cabinet + orphaned table, e1-09's
+injected window, the e2-02 "too much shine" call). Proposed spot-
+checking 2-3 of 10 rooms per house instead of all 10, rather than zero,
+pending Dev's confirmation either way.
