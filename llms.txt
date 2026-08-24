@@ -3593,4 +3593,111 @@ generations.
 `e1-09` now has 20 total frames (`var01` base + `var02`-`var20`
 edits). Committed to `assets/application_eseries/`, re-uploaded to Drive
 under "E-Series Generated Output/e1-09" (same folder, now containing all
-20). **Awaiting Dev's approval.**
+20).
+
+## New content direction: "Type 2 - Grandeur" grand-luxury houses by architecture type (2026-08-24)
+
+Dev's long-mentioned "Type 2" reference material finally arrived: a Drive
+folder literally named "Type 2 - Grandeur" (21 real photos, not videos).
+Dev's ask: build grand-luxury houses organized by ARCHITECTURE TYPE
+(Gothic given as the first example) -- one Drive folder per style, one
+exterior photo, and every interior room a grand luxury house might have,
+all in one consistent style/design/aesthetic. Critically, Dev wants the
+SAME set of room types to exist across every future architecture type,
+specifically so a reel can later be cut either as "one house, all its
+rooms" (interior+exterior of a single style) or "one room type across
+every architecture style" (e.g. every style's living room back to back)
+-- that only works if room keys stay fixed across styles, not invented
+fresh per house.
+
+**Reviewed all 21 reference photos before designing anything**, downloaded
+via the existing `explore-eseries-folder.yml` + `download-drive-files.yml`
+workflows (confirms this Drive folder really is the "Type 2" material
+flagged as not-yet-uploaded in the e1-01 entries -- `e2-*` is therefore
+the correct id prefix per this file's own naming rule). The 21 photos are
+real luxury-real-estate/interior photography, consistent threads across
+nearly all of them regardless of specific style: double-height ceilings,
+monumental sculptural lighting (crystal chandeliers, wrought-iron-and-
+crystal fixtures, sculptural ring pendants), book-matched marble feature
+walls and waterfall islands, deep jewel-toned velvet upholstery, warm
+cove/under-shelf LED lighting integrated into stone, floor-to-ceiling
+glass with skyline or garden views, indoor-outdoor pool connection,
+linear gas fireplaces, and dramatic warm night photography throughout --
+not one daylight shot in the whole set. Full room catalog visible across
+the 21: exterior facade + backyard/pool, grand entry with a sweeping
+staircase, living/great room, formal dining room, kitchen, primary
+bedroom, primary bathroom, outdoor terrace/balcony, and a home theatre/
+wellness lounge with a plunge pool. This is the real, non-invented basis
+for the fixed room catalog.
+
+**`GRAND_HOUSE_ROOMS`** (`concept_tools/generate_eseries.py`, defined at
+module level alongside `KITCHEN_STRUCTURE`, above `ESERIES_SETS` so every
+e2-* house can reference it): 10 fixed room keys --
+`ext`/`ent`/`liv`/`din`/`kit`/`bed`/`bath`/`off`/`thr`/`pool` -- each with
+a generic English label reused verbatim across every future architecture
+type. `off` (home library/office) and `thr` (theatre/wellness lounge)
+weren't both explicitly separate in every reference photo but are
+standard grand-house amenities and consistent with what the 21 photos
+collectively show; the other 8 keys map directly to real photos in the
+set.
+
+**Interpreting Dev's "grandeur, lavish luxury, rich color palette, premium
+materials" instruction**: apply the SCALE, DRAMA and MATERIAL RICHNESS the
+reference photos actually show (not their specific contemporary
+architectural vocabulary) to whichever architecture style is chosen --
+the same "borrow the format, apply Core Decor's own creative twist"
+principle the whole e-series was built on from day one, just at house
+scale now. Not a literal copy of the reference photos' contemporary
+aesthetic.
+
+**e2-01 ("gothic"), the first house**: fuses real Gothic Revival
+architectural vocabulary (pointed arches, ribbed vaults, stone tracery,
+wrought iron, stained glass, buttresses) with the reference photos' own
+scale/drama language (monumental chandeliers, warm cove lighting worked
+into the stone, book-matched dark marble, deep jewel-toned velvet,
+dramatic warm night photography, modern-luxury amenities like a waterfall
+kitchen island and a sunken plunge-pool wellness lounge) -- a real,
+recognizable "Gothic Revival billionaire mansion," not a costume-Gothic
+pastiche and not a generic contemporary-luxury house with pointed windows
+bolted on. All 10 rooms share one `palette_sentence`/`light_sentence` for
+cross-room cohesion, same mechanism as every earlier e-series set.
+`generate_room()`'s existing `is_exterior` branch (added originally for
+e1-05's exterior shot) is reused as-is for the `ext` and `pool` rooms
+(the rear terrace is exterior too, framed by a Gothic stone arcade).
+
+**Exterior generated and reviewed FIRST, alone, per Dev's own instruction
+that it sets the whole house's visual identity** before the 9 interior
+rooms were generated -- same test-first discipline as every prior e-series
+batch. Confirmed by eye: a genuinely grand Gothic Revival facade (pointed-
+arch stone doorway with wrought-iron strap hinges, a dramatic tri-lancet
+stained-glass window with tracery above the door, half-timbered upper
+storeys, stained-glass dormers, ivy on dark stone, clipped boxwood hedges,
+warm lantern sconces) at night, no geometry issues. All 9 remaining rooms
+then generated in one batch and reviewed: consistently coherent as one
+real house -- soaring ribbed-vault ceilings, the same curved stone
+staircase style, matching stained glass, matching dark oak panelling and
+wrought iron throughout, no interpenetrating furniture, no orphaned
+objects, no text artifacts. The theatre/wellness lounge (a sunken plunge
+pool built directly into a vaulted Gothic hall, oxblood velvet sectional,
+a large screen, a spiral stair to a gallery) and the rear pool terrace (a
+real stone arcade of pointed arches opening onto a lit lap pool at night,
+chandeliers visible glowing inside the arcade) came out especially
+strong -- genuine "modern amenity fused with Gothic architecture," not
+either extreme alone.
+
+**New Drive organization, distinct from the e-series tree**: extended
+`upload-eseries-to-drive.yml` with optional `drive_folder_name` and
+`parent_folder_name` inputs (default to `set_id` and "E-Series Generated
+Output" respectively, so every earlier e1-* upload call is unaffected).
+e2-01 was uploaded with `drive_folder_name=Gothic`,
+`parent_folder_name="Grand Houses Generated Output"` -- Dev explicitly
+wants the Drive folder named by architecture type ("Gothic"), not by the
+internal `e2-01` id, and this is a genuinely separate content type from
+the numbered E-Series output tree.
+
+All 10 images committed to `assets/application_eseries/`, uploaded to
+Drive under "Grand Houses Generated Output/Gothic". **Awaiting Dev's
+approval before any second architecture type.** The next house (whichever
+style Dev picks) reuses `GRAND_HOUSE_ROOMS` and the same `e2-*`/
+`is_exterior` machinery -- only the palette_sentence/light_sentence and
+per-room styling need to be newly designed each time, not the structure.
