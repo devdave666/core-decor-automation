@@ -1554,6 +1554,252 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # Dev approved e2-01 (Gothic) but asked for a "modern twist" on every
+    # house from here on: TVs and LED light-strip mood lighting worked in
+    # deliberately, not left out the way a period-accurate restoration
+    # would. e2-02 picks Art Deco specifically because it pairs naturally
+    # with that ask rather than fighting it -- Deco's own real historical
+    # vocabulary already leans on dramatic indirect/cove lighting and bold
+    # geometric light fixtures, so LED strip lighting reads as a genuine
+    # continuation of the style, not a bolted-on modern intrusion the way
+    # it might in, say, a strict Gothic restoration. TVs are integrated
+    # into feature walls (lacquer panelling, a sunburst-motif surround)
+    # rather than just placed, for the same reason.
+    #
+    # Per Dev's efficiency note ("you are using up the limits way too
+    # fast"), this house was generated in ONE batch of all 10 rooms rather
+    # than the exterior-alone-then-continue test round Gothic used --
+    # the underlying technique (plain text-to-image room prompts, same
+    # COMPOSITION/SPATIAL_RULE/STYLING_RULE machinery) has now proven
+    # reliable across e2-01's 10 rooms with zero defects needing a retry,
+    # so a second single-room validation pass wasn't a good use of a full
+    # extra round trip. Still reviewed every image by eye before
+    # committing/uploading -- that discipline doesn't change, only the
+    # number of tool round trips to get there.
+    "e2-02": {
+        "source_type": "Type 2 - Grandeur (Dev's real reference photos, architecture type: Art Deco, 'modern twist' -- TVs + LED mood lighting)",
+        "style_slug": "artdeco",
+        "drive_folder_name": "Art Deco",
+        "palette_sentence": (
+            "a rich Art Deco palette carried through every room: black "
+            "lacquer and dark walnut millwork with bold geometric inlay, "
+            "polished brass and chrome fixtures and trim, richly veined "
+            "black-and-gold marble and bold terrazzo, and deep jewel-"
+            "toned velvet upholstery in emerald, sapphire and gold, with "
+            "mirrored and lacquered surfaces catching the light."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by geometric brass-and-glass "
+            "fixtures, warm LED light strips traced along coves, "
+            "stepped ceiling profiles, shelf edges and stair treads, "
+            "and the warm glow of table lamps: every space reads sleek, "
+            "glamorous and dramatically lit, with crisp warm light "
+            "tracing every geometric line of the architecture itself. "
+            "Mirrored and lacquered surfaces catch and multiply the "
+            "light. Sleek, confident and theatrical, never flat or "
+            "evenly lit -- light is used architecturally, tracing every "
+            "stepped or fluted edge, no daylight anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-02_ext_artdeco",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "Art Deco architecture: a stepped, symmetrical "
+                          "facade with fluted stone piers and bold "
+                          "geometric relief ornament",
+                "styling": (
+                    "a pair of black lacquer entry doors with a "
+                    "geometric sunburst motif in brass, fluted stone "
+                    "piers flanking the entry, tall banded steel-framed "
+                    "windows, clipped geometric hedging in a symmetrical "
+                    "pattern, and a black-and-white terrazzo entry path."
+                ),
+                "fixtures": (
+                    "a pair of geometric brass-and-glass lantern "
+                    "sconces flanking the entry, and warm LED strip "
+                    "lighting tracing the stepped facade's relief "
+                    "ornament."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-02_ent_artdeco",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "Art Deco interior with bold geometric "
+                          "millwork and stepped profiles",
+                "styling": (
+                    "a curved black lacquer staircase with a polished "
+                    "brass and glass balustrade, a black-and-gold "
+                    "terrazzo floor laid in a radiating geometric "
+                    "pattern, a large sunburst-motif mirrored wall "
+                    "panel, a pair of tall potted palms, and a console "
+                    "table in lacquered walnut with brass legs."
+                ),
+                "fixtures": (
+                    "a monumental geometric brass-and-glass chandelier "
+                    "hung from the stepped ceiling, and warm LED strip "
+                    "lighting tracing the ceiling's stepped profile and "
+                    "every stair tread."
+                ),
+            },
+            "liv": {
+                "stem": "e2-02_liv_artdeco",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "Art Deco interior with bold geometric "
+                          "millwork and stepped profiles",
+                "styling": (
+                    "a curved emerald velvet sectional and a pair of "
+                    "sapphire velvet armchairs arranged around a black "
+                    "marble fireplace with a bold geometric surround, a "
+                    "large flat-screen TV mounted flush into a black "
+                    "lacquer feature wall with a brass sunburst inlay "
+                    "surround, a black-and-gold terrazzo coffee table, "
+                    "and a bold geometric-patterned rug over dark "
+                    "walnut flooring."
+                ),
+                "fixtures": (
+                    "a sculptural brass-and-glass chandelier with a "
+                    "stepped geometric silhouette, and warm LED strip "
+                    "lighting tracing the stepped cove ceiling and the "
+                    "TV feature wall's brass inlay."
+                ),
+            },
+            "din": {
+                "stem": "e2-02_din_artdeco",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "Art Deco interior with bold geometric "
+                          "millwork and stepped profiles",
+                "styling": (
+                    "a long black lacquer dining table with a bold "
+                    "brass inlay border, richly upholstered emerald "
+                    "velvet dining chairs with brass frames, a "
+                    "mirrored and lacquered sideboard, a large "
+                    "geometric mirrored wall panel, and a "
+                    "black-and-gold rug in a radiating sunburst pattern."
+                ),
+                "fixtures": (
+                    "a stepped geometric brass-and-glass chandelier "
+                    "hung low over the table, and warm LED strip "
+                    "lighting tracing the stepped ceiling cove."
+                ),
+            },
+            "kit": {
+                "stem": "e2-02_kit_artdeco",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "Art Deco architecture fused with a modern "
+                          "luxury kitchen",
+                "styling": (
+                    "a massive waterfall-edge island in bold "
+                    "black-and-gold veined marble, glossy black lacquer "
+                    "cabinetry with brass geometric hardware, a "
+                    "mirrored glass-front cabinet with lit interior "
+                    "shelving, and a low bowl of fruit on the island."
+                ),
+                "fixtures": (
+                    "three geometric brass-and-glass pendant lights "
+                    "hung over the island, and warm LED strip lighting "
+                    "tracing the underside of the upper cabinetry."
+                ),
+            },
+            "bed": {
+                "stem": "e2-02_bed_artdeco",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "Art Deco interior with bold geometric "
+                          "millwork and stepped profiles",
+                "styling": (
+                    "a black lacquer bed with a tall stepped and "
+                    "channel-tufted sapphire velvet headboard, a large "
+                    "flat-screen TV mounted flush into a lacquered "
+                    "feature wall opposite the bed, a pair of mirrored "
+                    "nightstands with brass legs, and a bold geometric "
+                    "rug over dark walnut flooring."
+                ),
+                "fixtures": (
+                    "a pair of geometric brass wall sconces flanking "
+                    "the bed, and warm LED strip lighting tracing the "
+                    "stepped cove ceiling and the underside of the "
+                    "floating nightstands."
+                ),
+            },
+            "bath": {
+                "stem": "e2-02_bath_artdeco",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "Art Deco architecture fused with a modern "
+                          "spa bathroom",
+                "styling": (
+                    "a freestanding black lacquer soaking tub on a "
+                    "stepped black-and-gold marble platform, a "
+                    "rainfall shower behind fluted glass, a mirrored "
+                    "vanity wall with a brass-framed vessel sink, and "
+                    "black-and-white geometric floor tile."
+                ),
+                "fixtures": (
+                    "a geometric brass-and-glass pendant light over "
+                    "the tub, and warm LED strip lighting tracing the "
+                    "tub platform's steps and the vanity mirror's edge."
+                ),
+            },
+            "off": {
+                "stem": "e2-02_off_artdeco",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "Art Deco interior with bold geometric "
+                          "millwork and stepped profiles",
+                "styling": (
+                    "floor-to-ceiling black lacquer bookshelves with "
+                    "brass trim lining the walls, a black lacquer "
+                    "writing desk with a brass-framed leather chair, a "
+                    "pair of emerald velvet armchairs, a large "
+                    "flat-screen TV mounted flush into a lacquer panel "
+                    "beside the shelving, and a bold geometric rug over "
+                    "dark walnut flooring."
+                ),
+                "fixtures": (
+                    "a stepped geometric brass chandelier, and warm "
+                    "LED strip lighting tracing every shelf edge."
+                ),
+            },
+            "thr": {
+                "stem": "e2-02_thr_artdeco",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "Art Deco architecture fused with a modern "
+                          "sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with curved emerald velvet "
+                    "seating arranged around a large flat-screen TV set "
+                    "flush into a black lacquer and brass sunburst "
+                    "feature wall, a black-and-gold terrazzo-edged "
+                    "plunge pool along one side of the room, and a low "
+                    "black lacquer table with a brass tray of glasses."
+                ),
+                "fixtures": (
+                    "a dimmed geometric brass-and-glass chandelier, "
+                    "and warm LED strip lighting tracing the sunken "
+                    "lounge's steps and the pool's terrazzo edge."
+                ),
+            },
+            "pool": {
+                "stem": "e2-02_pool_artdeco",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "Art Deco architecture: a stepped colonnade "
+                          "of fluted piers framing the terrace",
+                "styling": (
+                    "a lit pool bordered by black-and-white geometric "
+                    "terrazzo paving, a stepped colonnade of fluted "
+                    "stone piers running along one side, clipped "
+                    "geometric hedging, and brass-and-glass lanterns "
+                    "along the pool edge."
+                ),
+                "fixtures": (
+                    "geometric brass-and-glass lanterns lining the "
+                    "pool edge and colonnade, warm LED strip lighting "
+                    "tracing the colonnade's stepped profile, and "
+                    "underwater pool lighting."
+                ),
+                "is_exterior": True,
+            },
+        },
+    },
 }
 
 
