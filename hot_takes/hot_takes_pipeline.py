@@ -37,7 +37,14 @@ log = logging.getLogger("hot_takes")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
 HERE = Path(__file__).resolve().parent
-APPLICATION_DIR = HERE.parent / "assets" / "application"
+# Two source folders, not one: assets/application holds the c/d-series swatch+
+# application PAIRS (also consumed by the main reveal pipeline, which needs that
+# pairing) — assets/application_eseries holds the e-series "Grand Houses" room
+# photos, which have no swatch counterpart at all. Hot Takes doesn't pair
+# anything (single photo, no reveal), so it's the only pipeline that can use the
+# e-series output as-is; folding both into one pool here is how those otherwise-
+# unwired application-only photos actually reach a live, scheduled reel.
+APPLICATION_DIRS = [HERE.parent / "assets" / "application", HERE.parent / "assets" / "application_eseries"]
 APPLICATION_INDEX_FILE = "hot_takes/application_index.txt"
 OPINION_INDEX_FILE = "hot_takes/opinion_index.txt"
 CAPTION_INDEX_FILE = "hot_takes/caption_index.txt"
@@ -180,9 +187,9 @@ def run_pipeline():
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
 
-        images = sorted(APPLICATION_DIR.glob("*.png"))
+        images = sorted(p for d in APPLICATION_DIRS for p in d.glob("*.png"))
         if not images:
-            raise core.PipelineError(f"No application images found in {APPLICATION_DIR}")
+            raise core.PipelineError(f"No application images found in {APPLICATION_DIRS}")
 
         op_idx = core._read_counter(repo_root, OPINION_INDEX_FILE, default=0) % len(OPINIONS)
         opinion_pair = OPINIONS[op_idx]

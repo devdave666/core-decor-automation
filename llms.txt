@@ -3781,3 +3781,61 @@ defect this session (e1-06's stray cabinet + orphaned table, e1-09's
 injected window, the e2-02 "too much shine" call). Proposed spot-
 checking 2-3 of 10 rooms per house instead of all 10, rather than zero,
 pending Dev's confirmation either way.
+
+**e2-05 ("English Country"), house #5**: Dev's own reference photos this
+time (rich earth tones: sage/terracotta/chocolate/charcoal), corrected
+mid-build for a bland/beige drift the first pass showed -- deep sage-green
+and chocolate-brown painted millwork, warm terracotta plaster and tile,
+aged brass, cream boucle/linen for contrast, abundant live potted
+greenery. All 10 rooms generated in one batch, reviewed, saturation
+corrected. Committed to `assets/application_eseries/`, uploaded to Drive
+under "Grand Houses Generated Output/English Country".
+
+**e2-06 ("Mediterranean Revival"), house #6**: Dev asked for "different
+colors" -- vivid cobalt-blue and teal zellige tile, warm ochre and
+terracotta plaster, whitewashed and warm-wood millwork, aged brass,
+abundant potted greenery. All 10 rooms generated, committed to
+`assets/application_eseries/`, uploaded to Drive under "Grand Houses
+Generated Output/Mediterranean Revival".
+
+## Grand Houses wired into Hot Takes -- the "application only" photos now live in a scheduled reel (2026-08-25)
+
+Every e-series room photo committed to `assets/application_eseries/` (106
+images across e1-01 through e1-09 and e2-01 through e2-06) had been
+generated, reviewed and uploaded to Drive but never actually reached a
+published reel -- the dedicated e-series video-assembly pipeline floated
+in the "Deliberately NOT yet built" note above was never started, so
+these sat as Drive-only artefacts. Dev asked directly to plug "these
+application only photos" into "application only reels with hot takes
+format" -- read as: use the format that already exists for this, not
+build the planned-but-never-started one.
+
+**Why Hot Takes specifically, not the main swatch+reveal pipeline**:
+`core_decor_reel_pipeline.py` requires matched swatch/application PAIRS
+(that's the entire reveal mechanic) and the e-series has no swatch
+counterpart at all -- these are full room photographs, not material
+swatch crops. Hot Takes (`hot_takes/hot_takes_pipeline.py`) holds ONE
+application photo per segment with no pairing requirement whatsoever, so
+it's the only existing pipeline the e-series output can enter without
+building anything new.
+
+**Change**: `hot_takes_pipeline.py`'s single `APPLICATION_DIR` became
+`APPLICATION_DIRS`, a list of both `assets/application` (the original
+c/d-series swatch-paired pool) and `assets/application_eseries` (the
+e-series Grand Houses pool) -- `run_pipeline()`'s image glob now walks
+both folders into one sorted pool instead of one. No other logic
+changed: `application_index.txt`'s existing counter still wraps via
+`% len(images)`, so the stored index (39) stays valid against the new,
+larger pool (57 -> 163 images) without needing a reset. Every image
+already committed to `assets/application_eseries/` is, by this
+project's own convention, already reviewed/approved (rejected sets like
+the original glossy e2-02 pass were never committed) -- so the full 106
+went in, not a hand-picked subset.
+
+Nothing else changed: Hot Takes' own rotating counters (opinion,
+caption, template) are untouched, the main swatch+reveal pipeline is
+untouched (still reads only `assets/application`, still requires
+pairing), and no workflow/schedule file needed edits since
+`APPLICATION_DIR`/`APPLICATION_DIRS` was always Python-hardcoded, never
+an env var. Takes effect on the next scheduled Hot Takes run (18:00 UTC
+daily) with no manual trigger needed.
