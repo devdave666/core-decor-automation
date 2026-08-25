@@ -2477,6 +2477,212 @@ ESERIES_SETS = {
             },
         },
     },
+
+    # House #6. Dev approved e2-05, asked for "different colors" next --
+    # a genuinely new colour family, not another earth-tone variant.
+    # e2-01..e2-05 covered charcoal/oxblood/emerald (Gothic), black/gold
+    # (Deco), oat/taupe (Organic), pale limestone/rose (Chateau), sage/
+    # terracotta/chocolate (English Country) -- none of them touched blue.
+    # Mediterranean Revival: deep cobalt and teal against warm ochre and
+    # terracotta zellige, ties genuinely different colour into a real,
+    # recognizable architecture type rather than a bare palette swap.
+    "e2-06": {
+        "source_type": "Dev's 'different colors' request, architecture type: Mediterranean Revival",
+        "style_slug": "mediterranean",
+        "drive_folder_name": "Mediterranean Revival",
+        "palette_sentence": (
+            "a vivid Mediterranean palette carried through every room: "
+            "deep cobalt-blue and teal zellige tile, warm ochre and "
+            "terracotta plaster walls, whitewashed and warm-wood "
+            "millwork, aged brass fixtures, and cream linen upholstery "
+            "for contrast, with abundant potted greenery throughout."
+        ),
+        "light_sentence": (
+            " Photographed at night, lit by warm brass lanterns and "
+            "woven-shade pendant lights: the cobalt, teal and ochre "
+            "hold deep saturated colour even in low light, whitewashed "
+            "walls glow softly warm, and brass catches the light in "
+            "small warm points. Vivid, warm and richly coloured, no "
+            "daylight and no pale washed-out wall anywhere in frame."
+        ),
+        "rooms": {
+            "ext": {
+                "stem": "e2-06_ext_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["ext"],
+                "style": "Mediterranean Revival architecture: a "
+                          "whitewashed stucco facade with a terracotta "
+                          "tile roof and arched openings",
+                "styling": (
+                    "a deep cobalt-blue arched front door with aged-"
+                    "brass hardware, whitewashed stucco walls, a "
+                    "terracotta tile roof, wrought-iron balconettes, "
+                    "potted olive trees and climbing bougainvillea "
+                    "flanking the entry, and a terracotta-tiled path."
+                ),
+                "fixtures": (
+                    "a pair of aged-brass lantern sconces flanking the "
+                    "door, and warm uplighting on the stucco facade."
+                ),
+                "is_exterior": True,
+            },
+            "ent": {
+                "stem": "e2-06_ent_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["ent"],
+                "style": "Mediterranean Revival interior with arched "
+                          "openings and zellige tile",
+                "styling": (
+                    "a whitewashed curved staircase with a wrought-iron "
+                    "balustrade, a cobalt-and-white zellige tiled "
+                    "floor, an arched doorway, a large woven wall "
+                    "hanging, and abundant potted greenery."
+                ),
+                "fixtures": (
+                    "a sculptural brass-and-glass lantern pendant, and "
+                    "aged-brass wall sconces."
+                ),
+            },
+            "liv": {
+                "stem": "e2-06_liv_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["liv"],
+                "style": "Mediterranean Revival interior with arched "
+                          "openings and zellige tile",
+                "styling": (
+                    "a cream linen sectional against a deep teal "
+                    "plastered wall, an arched niche with a large flat-"
+                    "screen TV mounted flush into whitewashed "
+                    "millwork, a terracotta tile floor, abundant potted "
+                    "greenery, and a woven jute rug."
+                ),
+                "fixtures": (
+                    "a sculptural woven-and-brass chandelier, and "
+                    "aged-brass wall sconces."
+                ),
+            },
+            "din": {
+                "stem": "e2-06_din_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["din"],
+                "style": "Mediterranean Revival interior with arched "
+                          "openings and zellige tile",
+                "styling": (
+                    "a long warm-wood dining table with cream linen "
+                    "dining chairs, a deep cobalt zellige tile feature "
+                    "wall, an arched window, and a terracotta tile "
+                    "floor with a woven rug."
+                ),
+                "fixtures": (
+                    "a wrought-iron-and-brass chandelier hung low over "
+                    "the table, and aged-brass wall sconces."
+                ),
+            },
+            "kit": {
+                "stem": "e2-06_kit_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["kit"],
+                "style": "Mediterranean Revival architecture fused "
+                          "with a modern luxury kitchen",
+                "styling": (
+                    "a deep cobalt-blue cabinetry run against a "
+                    "cobalt-and-white zellige tile backsplash, a warm "
+                    "honed-stone waterfall island, open wood shelving "
+                    "with ceramics and trailing greenery, exposed "
+                    "wood-beam ceiling, and a low bowl of citrus fruit "
+                    "on the island."
+                ),
+                "fixtures": (
+                    "a pair of woven-shade brass pendant lights hung "
+                    "over the island, and warm under-shelf lighting."
+                ),
+            },
+            "bed": {
+                "stem": "e2-06_bed_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["bed"],
+                "style": "Mediterranean Revival interior with arched "
+                          "openings and zellige tile",
+                "styling": (
+                    "a warm-wood bed with cream linen bedding against "
+                    "a deep teal plastered wall, an arched window "
+                    "with linen drapery, a large flat-screen TV mounted "
+                    "flush into whitewashed millwork opposite the bed, "
+                    "and a woven rug over terracotta tile flooring."
+                ),
+                "fixtures": (
+                    "a pair of aged-brass wall sconces flanking the "
+                    "bed, and a woven-shade pendant light."
+                ),
+            },
+            "bath": {
+                "stem": "e2-06_bath_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["bath"],
+                "style": "Mediterranean Revival architecture fused "
+                          "with a modern spa bathroom",
+                "styling": (
+                    "a freestanding stone soaking tub against a "
+                    "cobalt-and-white zellige tiled wall, a rainfall "
+                    "shower behind fluted glass, a whitewashed wood "
+                    "vanity with a stone vessel sink, and terracotta "
+                    "floor tile with potted greenery."
+                ),
+                "fixtures": (
+                    "a woven-shade brass pendant light over the tub, "
+                    "and warm recessed lighting."
+                ),
+            },
+            "off": {
+                "stem": "e2-06_off_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["off"],
+                "style": "Mediterranean Revival interior with arched "
+                          "openings and zellige tile",
+                "styling": (
+                    "floor-to-ceiling whitewashed wood bookshelves "
+                    "against a deep ochre plastered wall, a warm-wood "
+                    "writing desk with a cream linen chair, a large "
+                    "flat-screen TV mounted flush into the shelving, "
+                    "and a woven rug over terracotta tile flooring."
+                ),
+                "fixtures": (
+                    "a woven-shade brass pendant light, and a pair of "
+                    "aged-brass reading lamps."
+                ),
+            },
+            "thr": {
+                "stem": "e2-06_thr_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["thr"],
+                "style": "Mediterranean Revival architecture fused "
+                          "with a modern sunken media lounge",
+                "styling": (
+                    "a sunken lounge area with cream linen seating "
+                    "against a deep cobalt zellige feature wall, a "
+                    "large flat-screen TV mounted flush into "
+                    "whitewashed millwork, a terracotta-tiled plunge "
+                    "pool along one side of the room, and potted "
+                    "greenery."
+                ),
+                "fixtures": (
+                    "a dimmed sculptural woven-and-brass chandelier, "
+                    "and warm recessed lighting tracing the sunken "
+                    "lounge's steps."
+                ),
+            },
+            "pool": {
+                "stem": "e2-06_pool_mediterranean",
+                "room": GRAND_HOUSE_ROOMS["pool"],
+                "style": "Mediterranean Revival architecture: a "
+                          "whitewashed arched loggia",
+                "styling": (
+                    "a lit pool bordered by cobalt-and-white zellige "
+                    "tile, a whitewashed arched loggia running along "
+                    "one side, potted olive trees and climbing "
+                    "bougainvillea, and aged-brass lanterns along the "
+                    "pool edge."
+                ),
+                "fixtures": (
+                    "aged-brass lanterns lining the pool edge and "
+                    "loggia, warm uplighting on the whitewashed "
+                    "arches, and underwater pool lighting."
+                ),
+                "is_exterior": True,
+            },
+        },
+    },
 }
 
 
