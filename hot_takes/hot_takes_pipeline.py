@@ -3,10 +3,11 @@
 swatch+application reveal format in core_decor_reel_pipeline.py (untouched by this
 file — nothing here imports anything that would change its behavior).
 
-Format: ONE application photo held for the full duration, with a two-line "They: /
-Me:" meme-text reveal — no swatches, no multi-image cuts. Deliberately simpler than
-the reveal format: this is a hook-driven, opinion-led style, not a material-
-education one, so it doesn't need cut-timing extraction or scene detection at all.
+Format: application photos cut on the beat, each one Ken Burns push-in rather than
+a static hold (see build_hot_take()'s docstring), with a two-line "They: / Me:"
+meme-text reveal sitting static on top of the whole sequence — no swatches, no
+swatch/application pairing. Deliberately simpler than the reveal format: this is a
+hook-driven, opinion-led style, not a material-education one.
 
 Deliberately reuses, rather than reimplements, everything that isn't specific to
 this format: Drive template fetching (for audio only, not timing), Meta/Buffer
@@ -88,8 +89,16 @@ def build_hot_take(application_images, opinion_pair, audio_wav_path, boundaries,
     exactly len(boundaries)-1 images — the caller selects those from the rotating
     pool before calling this, since it needs to know the segment count (from
     compute_segment_boundaries) before it knows how many images to slice.
+
+    Each background segment gets a Ken Burns push-in (core.render_pushin_clip)
+    instead of a static hold — same plain ffmpeg zoompan technique Dolly Reel
+    validated with zero geometric artifacts against two depth-based prototypes
+    that both distorted straight lines. Rendered as real mp4 segments on disk
+    (not a moviepy-native resize-over-time) specifically to reuse that already-
+    proven ffmpeg logic rather than re-deriving the same x/y-anchor centering
+    math a second time in moviepy's own coordinate system.
     """
-    from moviepy import ImageClip, AudioFileClip, CompositeVideoClip
+    from moviepy import ImageClip, AudioFileClip, CompositeVideoClip, VideoFileClip
 
     duration = boundaries[-1]
     # ffprobe (core.get_audio_duration_seconds, used upstream to build `boundaries`)
@@ -111,19 +120,17 @@ def build_hot_take(application_images, opinion_pair, audio_wav_path, boundaries,
             f"list, got {len(application_images)}"
         )
 
-    bg_clips = []
-    for i in range(n_segments):
-        seg_start, seg_end = boundaries[i], boundaries[i + 1]
-        seg_duration = max(seg_end - seg_start, 1 / FPS)
-        clip = ImageClip(str(application_images[i]))
-        scale = max(W / clip.w, H / clip.h)
-        clip = clip.resized(scale)
-        clip = clip.cropped(x_center=clip.w / 2, y_center=clip.h / 2, width=W, height=H)
-        clip = clip.with_duration(seg_duration).with_start(seg_start)
-        bg_clips.append(clip)
-
     setup, punchline = opinion_pair
     with tempfile.TemporaryDirectory() as tmp:
+        bg_clips = []
+        for i in range(n_segments):
+            seg_start, seg_end = boundaries[i], boundaries[i + 1]
+            seg_duration = max(seg_end - seg_start, 1 / FPS)
+            seg_video_path = Path(tmp) / f"bg_segment_{i:03d}.mp4"
+            core.render_pushin_clip(application_images[i], seg_duration, seg_video_path, W, H, fps=FPS)
+            clip = VideoFileClip(str(seg_video_path)).with_duration(seg_duration).with_start(seg_start)
+            bg_clips.append(clip)
+
         setup_path, punch_path = render_text_block(setup, punchline, tmp)
         gradient_path = render_gradient(tmp)
 

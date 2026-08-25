@@ -86,6 +86,58 @@ def _run_ffmpeg(args, description):
         raise PipelineError(f"ffmpeg step failed: {description}")
 
 
+def render_pushin_clip(image_path, duration, output_path, width, height, fps=30,
+                        zoom_rate_per_second=0.07, max_zoom=1.5):
+    """
+    Plain Ken Burns push-in via ffmpeg's zoompan filter -- no depth model, no
+    parallax. Originally built and validated for Dolly Reel; promoted here once
+    Hot Takes became a second consumer of the exact same technique, rather than
+    duplicating ffmpeg-flag logic that's already had one real bug fixed in it
+    (see the x/y note below). Two depth-based prototypes were tried first
+    (concept_tools/_test_parallax.py, _test_layered_parallax.py) and both
+    introduced visible geometric artifacts (bent lines / ghosting) that this
+    plain center-zoom has none of -- see dolly_reel/dolly_reel_pipeline.py's
+    module docstring for the full comparison.
+
+    `force_original_aspect_ratio=increase` + `crop` before the zoompan, not a
+    bare `scale=W:H`, because source images across this project's asset
+    folders aren't all identically-proportioned (assets/application is
+    1072-1080px wide at 1920 tall depending on series; assets/application_eseries
+    ranges up to 1088 -- all close to 9:16 but not pixel-identical). A bare
+    scale would stretch whichever dimension doesn't match; this cover-fits
+    then center-crops instead, matching what a static ImageClip resize+crop
+    would have done, before any zoom is applied on top.
+
+    Then scales the source 3x before zoompan (supersampling) so the crop
+    window doesn't visibly soften at the most-zoomed-in frame.
+
+    x/y MUST be set explicitly -- zoompan defaults both to 0, which anchors
+    the crop window at the source's top-left corner rather than its center.
+    A real live run confirmed this exactly: every clip read as drifting
+    toward the bottom-right instead of pushing straight into the middle,
+    because the top-left corner stayed pinned in place while the rest of
+    the frame grew and was pushed outward around it. The centered formula --
+    x='iw/2-(iw/zoom/2)', y='ih/2-(ih/zoom/2)' -- keeps the crop window
+    centered on the source at every zoom level instead.
+    """
+    target_zoom = min(1.0 + zoom_rate_per_second * duration, max_zoom)
+    n_frames = max(round(duration * fps), 1)
+    increment = (target_zoom - 1.0) / n_frames
+
+    _run_ffmpeg(
+        ["-framerate", str(fps), "-loop", "1", "-i", str(image_path),
+         "-vf", f"scale={width * 3}:{height * 3}:force_original_aspect_ratio=increase,"
+                f"crop={width * 3}:{height * 3},"
+                f"zoompan=z='min(zoom+{increment},{target_zoom})':"
+                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+                f"d={n_frames}:s={width}x{height}:fps={fps}",
+         "-frames:v", str(n_frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
+         str(output_path)],
+        f"push-in clip for {Path(image_path).name} ({duration:.2f}s, target zoom {target_zoom:.2f})",
+    )
+    return output_path
+
+
 # ---------------------------------------------------------------------------
 # STAGE 1 — Ingest & audio mastering
 # ---------------------------------------------------------------------------

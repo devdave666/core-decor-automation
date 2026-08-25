@@ -3839,3 +3839,58 @@ pairing), and no workflow/schedule file needed edits since
 `APPLICATION_DIR`/`APPLICATION_DIRS` was always Python-hardcoded, never
 an env var. Takes effect on the next scheduled Hot Takes run (18:00 UTC
 daily) with no manual trigger needed.
+
+## Hot Takes: Ken Burns push-in added, Dolly Reel's zoompan logic promoted to core (2026-08-25)
+
+Dev asked for the same zoom-in motion already built for Dolly Reel to
+apply to Hot Takes too, plus a real published run using both this edit
+and the newly-wired e-series photos above.
+
+**`core_decor_reel_pipeline.render_pushin_clip()`** is the old
+`dolly_reel_pipeline._pushin_clip()` (plain ffmpeg zoompan push-in, no
+depth model -- see that module's docstring for the two rejected
+depth-based parallax prototypes and why) promoted to core and
+parameterized on `width`/`height`/`fps`/zoom rate/max zoom instead of
+Dolly Reel's module-level constants, since Hot Takes needed the exact
+same technique at a different frame size (1080x1920 vs Dolly Reel's
+1072x1920). `dolly_reel_pipeline._pushin_clip()` is now a thin wrapper
+calling the shared function -- behavior unchanged there, just no longer
+a second copy of ffmpeg flags that already had one real bug fixed in
+them (the x/y-anchor centering issue documented in the original
+docstring).
+
+**One real correctness gap fixed during the promotion, benefiting both
+callers**: the original filter used a bare `scale=W*3:H*3`, which
+silently stretches whichever dimension doesn't match the source image's
+own aspect ratio. Checked actual asset widths at the same 1920px
+height: `assets/application` ranges 1072-1080px wide depending on
+series, `assets/application_eseries` up to 1088px -- all close to 9:16
+but not pixel-identical, so the bare scale was quietly distorting
+images by up to ~1.5%, undetected because Dolly Reel's own images
+happened to be close enough not to look wrong. Fixed by cover-fitting
+with `force_original_aspect_ratio=increase` + a center `crop` before
+the zoompan, matching what the static ImageClip resize+crop it replaces
+already did correctly.
+
+**`hot_takes_pipeline.build_hot_take()`**: each background segment now
+renders as a real push-in mp4 via `core.render_pushin_clip()` (into the
+function's existing `tempfile.TemporaryDirectory`) and loads back in as
+a moviepy `VideoFileClip`, instead of a static `ImageClip` resize+crop.
+Deliberately rendered as real ffmpeg segments on disk rather than a
+moviepy-native `resized(lambda t: ...)` animation -- moviepy 2.x's
+`Resize` effect does support a time-function scale factor, checked
+directly against the installed package, but reusing the already-proven
+ffmpeg x/y-centering math beat re-deriving the same formula a second
+time in moviepy's coordinate system for a second implementation to
+maintain. The static two-line text overlay and gradient are untouched
+-- only the background motion changed.
+
+**Verified locally before publishing**: `render_pushin_clip()` run
+directly against a real `assets/application_eseries` image confirmed
+1080x1920 output, correct frame count/duration via ffprobe, and no
+aspect distortion. `build_hot_take()` run end-to-end with 3 real
+application images (one from `assets/application`, two from
+`assets/application_eseries`) and a synthetic silent audio track
+produced a real mp4 that passed `core.validate_reel_for_meta()`
+(1080x1920, h264/aac, correct duration) -- the same check the live
+pipeline runs before ever calling a Meta API.

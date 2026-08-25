@@ -112,40 +112,13 @@ def compute_segment_boundaries(template_cut_timestamps, duration, min_segment_s=
 
 
 def _pushin_clip(image_path, duration, output_path):
-    """
-    Plain Ken Burns push-in via ffmpeg's zoompan filter -- no depth model, no
-    parallax. See this module's docstring for why: two depth-based prototypes
-    were tested and both introduced visible geometric artifacts that this
-    approach has none of.
-
-    Scales the source 3x before zoompan (supersampling) so the crop window
-    doesn't visibly soften at the most-zoomed-in frame -- same technique
-    validated in the throwaway comparison test.
-
-    x/y MUST be set explicitly -- zoompan defaults both to 0, which anchors
-    the crop window at the source's top-left corner rather than its center.
-    A real live run confirmed this exactly: every clip read as drifting
-    toward the bottom-right instead of pushing straight into the middle,
-    because the top-left corner stayed pinned in place while the rest of
-    the frame grew and was pushed outward around it. The standard centered
-    formula -- x='iw/2-(iw/zoom/2)', y='ih/2-(ih/zoom/2)' -- keeps the crop
-    window centered on the source at every zoom level instead.
-    """
-    target_zoom = min(1.0 + ZOOM_RATE_PER_SECOND * duration, MAX_ZOOM)
-    n_frames = max(round(duration * FPS), 1)
-    increment = (target_zoom - 1.0) / n_frames
-
-    core._run_ffmpeg(
-        ["-framerate", str(FPS), "-loop", "1", "-i", str(image_path),
-         "-vf", f"scale={W * 3}:{H * 3},"
-                f"zoompan=z='min(zoom+{increment},{target_zoom})':"
-                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
-                f"d={n_frames}:s={W}x{H}:fps={FPS}",
-         "-frames:v", str(n_frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
-         str(output_path)],
-        f"push-in clip for {Path(image_path).name} ({duration:.2f}s, target zoom {target_zoom:.2f})",
-    )
-    return output_path
+    """Thin wrapper around core.render_pushin_clip with this module's fixed
+    W/H/FPS/zoom constants -- the actual ffmpeg zoompan logic (and the
+    x/y-anchor bug history behind it) now lives in core_decor_reel_pipeline.py,
+    shared with Hot Takes, which became a second consumer of this exact
+    technique."""
+    return core.render_pushin_clip(image_path, duration, output_path, W, H, fps=FPS,
+                                    zoom_rate_per_second=ZOOM_RATE_PER_SECOND, max_zoom=MAX_ZOOM)
 
 
 def _fetch_template_for_audio(repo_root, output_dir):
