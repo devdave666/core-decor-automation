@@ -1,0 +1,56 @@
+name: Publish Existing Video to TikTok
+
+# One-off recovery/cross-post tool, sibling to publish-existing-to-facebook.yml:
+# publishes an ALREADY-HOSTED video to TikTok via Buffer, using the same
+# proven publish_to_buffer() used everywhere else. Does NOT touch any
+# rotation counters and does NOT generate new content. Not on a schedule;
+# workflow_dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: "Public URL of the already-hosted video (e.g. a raw.githubusercontent.com media/... URL)"
+        required: true
+        type: string
+      caption:
+        description: "Exact caption to use for this post"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish-to-tiktok:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Publish to TikTok via Buffer
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          VIDEO_URL: ${{ github.event.inputs.video_url }}
+          CAPTION: ${{ github.event.inputs.caption }}
+        run: |
+          python -c "
+          import os
+          import core_decor_reel_pipeline as core
+
+          post_id = core.publish_to_buffer(
+              os.environ['VIDEO_URL'],
+              os.environ['CAPTION'],
+              os.environ['BUFFER_TIKTOK_CHANNEL_ID'],
+              'tiktok',
+          )
+          print(f'Published to TikTok: post_id={post_id}')
+          "
