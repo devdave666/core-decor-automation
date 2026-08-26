@@ -41,14 +41,59 @@ See generate_concept_frames.py's own v3 header for the third change Dev asked
 for -- a much more dramatically derelict "before" stage for more transformation
 "wow factor."
 
-4 clips x 4s = 16s total. Concatenated with ffmpeg (re-encode, not stream-copy
--- two independent Veo generations aren't guaranteed to share encoding params).
-Concat now handles an audio stream again (a=1), unlike v2's video-only concat.
+v4 (2026-08-26), two hardening fixes learned from a sibling project's Veo work
+on this same account, applied before this pipeline's first real run:
+
+1. **generate_videos submission itself now retries on 429**, not just the
+   polling loop. The sibling project confirmed this project's ~2-concurrent-
+   job cap throws RESOURCE_EXHAUSTED synchronously at submission time, before
+   there's even an operation to poll -- a bare `client.models.generate_videos`
+   call would crash the whole run on the very first transient rate limit.
+   Same backoff shape already used in generate_concept_frames.py.
+2. **ffmpeg concat output now pins pix_fmt/profile/level/faststart.** Without
+   these, ffmpeg picks its own defaults (observed as yuv444p on the sibling
+   project), which plays fine on most platforms but Windows' built-in player
+   rejects outright as "unsupported encoding settings." Forcing yuv420p +
+   High profile + level 4.0 is the standard broadly-compatible target.
+
+Also v4: a fifth "hero reveal" clip -- a slow push-in on the finished `after`
+still, appended after the 4 Veo clips -- for a stronger scroll-stopping final
+beat than a flat static hold on the last Veo frame. Built via this project's
+own `render_pushin_clip` (core_decor_reel_pipeline.py, already validated on
+Hot Takes and Dolly Reel), NOT by asking Veo for a camera move: the sibling
+project found Veo's own camera-motion instructions unreliable even for simple
+moves, and its recommendation was to isolate any hard camera move as its own
+generation rather than blend it into a Veo shot. A deterministic ffmpeg
+zoompan on a still costs nothing and can't hallucinate, so it's the safer way
+to get that final push. Silent (`_mux_silent_audio`) so it concatenates
+cleanly against the Veo clips' real audio tracks.
+
+4 Veo clips x 4s + 1 push-in x 2.5s = 18.5s total. Concatenated with ffmpeg
+(re-encode, not stream-copy -- independent sources aren't guaranteed to share
+encoding params). Concat handles an audio stream (a=1); the hero clip's is
+silence.
+
+v4.1 (2026-08-26), after Dev flagged real t01 output: some surfaces (paint,
+flooring) were visibly changing without the tradesperson touching them --
+Veo filling the gap between two frames that differ in many places at once by
+drifting changes across the whole room rather than confining them to the
+worker's hands. Two fixes, both applied to every clip:
+1. `STATIC_RULE`, appended to each Action clause -- affirmative ("everything
+   the tradesperson ISN'T touching stays static"), not inline negative
+   language, consistent with this file's own established rule against
+   negative prompt framing.
+2. `negative_prompt` on GenerateVideosConfig -- the real structured lever for
+   negative prompting Veo actually exposes (confirmed against the installed
+   SDK's pydantic model fields), separate from the prose prompt. There is no
+   JSON-structured prompt input for this API (checked generate_videos' real
+   signature -- prompt is a plain string), so this field is the closest
+   equivalent available.
 
 Usage: python transformation_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{before,demo,framing,finishing,after}.png
-(from generate_concept_frames.py). Writes <out_dir>/<concept_id>_clip_a..d.mp4
-and the concatenated <out_dir>/<concept_id>_transformation.mp4.
+(from generate_concept_frames.py). Writes <out_dir>/<concept_id>_clip_a..d.mp4,
+<out_dir>/<concept_id>_clip_e_reveal.mp4, and the concatenated
+<out_dir>/<concept_id>_transformation.mp4.
 """
 import subprocess
 import sys
@@ -56,21 +101,59 @@ import time
 from pathlib import Path
 
 from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types
 
-from generate_concept_frames import STAGES
+from generate_concept_frames import STAGES, VEO_CANVAS
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
 CLIP_DURATION_S = 4
+HERO_REVEAL_DURATION_S = 2.5
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
+MAX_SUBMIT_RETRIES = 5
+SUBMIT_RETRY_BASE_DELAY_S = 20
 
 # Appended to every clip's Cinematography clause. Real-time pacing is still
 # the fix from v2 (workers looked sped up when this was missing) -- kept
 # explicit rather than assumed just because clips are short now.
 CAMERA_BASE = "Static locked-off shot, real-time pacing, not a time-lapse."
+
+# v4 addition: the real t01 run showed surfaces changing (paint, flooring)
+# with no visible tradesperson touching them -- the two reference frames just
+# differ in a lot of places at once, and Veo was filling that gap by drifting
+# material changes across the whole room instead of confining them to the
+# worker's hands. Affirmative framing per this project's own established rule
+# (see this file's v3 header -- negative instructions inside the PROMPT text
+# itself read poorly to Veo, same finding as BFL FLUX elsewhere in this repo).
+# Appended to every clip's Action clause, right after the specific action
+# description, so "everything else stays still" is anchored to a concrete
+# subject rather than floating as a generic disclaimer.
+STATIC_RULE = (
+    "Every other surface, wall, and object in the frame that the tradesperson "
+    "is not directly touching stays completely static and unchanged from the "
+    "previous frame -- material and color only change exactly where their "
+    "hands are working."
+)
+
+# The actual "negative prompting" lever for Veo: a dedicated config field
+# (GenerateVideosConfig.negative_prompt), separate from the main prompt, not
+# inline negative language inside it -- confirmed via the installed SDK's own
+# pydantic model fields, not assumed. There is no JSON-structured prompt input
+# for this API (generate_videos' prompt argument is a plain string; checked
+# the SDK's real method signature before assuming otherwise), so this field is
+# the closest real equivalent to "JSON prompting" available here.
+NEGATIVE_PROMPT = (
+    "spontaneous or unexplained changes to walls, flooring, or furniture the "
+    "tradesperson is not physically touching, objects instantly appearing or "
+    "disappearing, materials changing with no visible cause, time-lapse or "
+    "sped-up motion, teleporting props"
+)
 
 # One entry per adjacent stage pair, in STAGES order. Each follows Google's
 # own five-part structure: Cinematography + Subject + Action + Context +
@@ -82,8 +165,8 @@ TRANSITIONS = {
         f"{CAMERA_BASE} Two tradespeople in work clothes clear debris from a "
         "derelict high-rise living room: one sweeps broken plaster into a "
         "dustpan, the other carries a bucket of rubble toward a debris bin. "
-        "Pale morning light through a floor-to-ceiling window wall, exposed "
-        "damaged walls and ceiling around them. "
+        f"{STATIC_RULE} Pale morning light through a floor-to-ceiling window "
+        "wall, exposed damaged walls and ceiling around them. "
         "SFX: the scrape of a dustpan on concrete, chunks of rubble thudding "
         "into a plastic bin, dust brushing off gloved hands. "
         "Ambient noise: faint wind against the glass, distant city hum far "
@@ -93,7 +176,7 @@ TRANSITIONS = {
         f"{CAMERA_BASE} A tradesperson kneels fitting new flooring boards "
         "edge to edge while another rolls primer onto a repaired wall near "
         "the fireplace, paint tins and boxed materials staged on a drop "
-        "cloth. "
+        f"cloth. {STATIC_RULE} "
         "SFX: the soft click of a flooring board snapping into place, the "
         "wet roll of a paint roller against the wall, a paint tin lid "
         "popping open. "
@@ -103,7 +186,7 @@ TRANSITIONS = {
     ("framing", "finishing"): (
         f"{CAMERA_BASE} A tradesperson carries in an armchair and sets it "
         "down carefully beside a plastic-wrapped sofa, then another hangs a "
-        "framed piece of art above the finished fireplace mantel. "
+        f"framed piece of art above the finished fireplace mantel. {STATIC_RULE} "
         "SFX: the soft thud of upholstered furniture legs meeting the floor, "
         "the crinkle of protective plastic wrap, a light tap as the frame is "
         "leveled against the wall. "
@@ -113,7 +196,7 @@ TRANSITIONS = {
         f"{CAMERA_BASE} A tradesperson lifts the protective plastic off the "
         "sofa in one smooth pull and steps out of frame, leaving the room "
         "fully finished, lamps glowing warm against the dusk skyline through "
-        "the window wall. "
+        f"the window wall. {STATIC_RULE} "
         "SFX: the crisp rustle and pull of plastic sheeting coming free, "
         "soft footsteps receding. "
         "Ambient noise: warm quiet, the faint crackle of the lit fireplace."
@@ -121,23 +204,40 @@ TRANSITIONS = {
 }
 
 
+def _submit_with_retry(client, start_image, end_image, motion_prompt):
+    # A 429 here is thrown synchronously at submission, before there's even
+    # an operation to poll -- this project's concurrent-Veo-job cap makes
+    # that a real, expected transient failure, not an edge case.
+    for attempt in range(MAX_SUBMIT_RETRIES):
+        try:
+            return client.models.generate_videos(
+                model=MODEL,
+                prompt=motion_prompt,
+                image=start_image,
+                config=types.GenerateVideosConfig(
+                    aspect_ratio="9:16",
+                    duration_seconds=CLIP_DURATION_S,
+                    generate_audio=True,
+                    last_frame=end_image,
+                    number_of_videos=1,
+                    negative_prompt=NEGATIVE_PROMPT,
+                ),
+            )
+        except genai_errors.ClientError as e:
+            is_rate_limit = "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e)
+            if not is_rate_limit or attempt == MAX_SUBMIT_RETRIES - 1:
+                raise
+            delay = SUBMIT_RETRY_BASE_DELAY_S * (2 ** attempt)
+            print(f"  429 rate-limited on submit, retrying in {delay}s (attempt {attempt + 1}/{MAX_SUBMIT_RETRIES})...")
+            time.sleep(delay)
+
+
 def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_path):
     print(f"--- generating clip: {out_path.name} ---")
     start_image = types.Image.from_file(location=str(start_image_path))
     end_image = types.Image.from_file(location=str(end_image_path))
 
-    operation = client.models.generate_videos(
-        model=MODEL,
-        prompt=motion_prompt,
-        image=start_image,
-        config=types.GenerateVideosConfig(
-            aspect_ratio="9:16",
-            duration_seconds=CLIP_DURATION_S,
-            generate_audio=True,
-            last_frame=end_image,
-            number_of_videos=1,
-        ),
-    )
+    operation = _submit_with_retry(client, start_image, end_image, motion_prompt)
 
     waited = 0
     while not operation.done:
@@ -160,6 +260,35 @@ def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_p
     print(f"  saved {out_path} ({len(video_bytes)} bytes)")
 
 
+def _mux_silent_audio(video_path, out_path):
+    # concat's filter graph below expects every input to have an audio
+    # stream ([i:a:0]) -- the push-in clip is video-only straight out of
+    # ffmpeg's zoompan filter, so give it a silent AAC track truncated to
+    # its own length (-shortest) rather than special-casing concat for a
+    # mixed audio/no-audio input list.
+    subprocess.run(
+        ["ffmpeg", "-y", "-i", str(video_path),
+         "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+         "-shortest", "-c:v", "copy", "-c:a", "aac",
+         str(out_path)],
+        check=True,
+    )
+    return out_path
+
+
+def generate_hero_reveal(after_image_path, out_path):
+    print(f"--- generating hero reveal push-in: {out_path.name} ---")
+    silent_path = out_path.with_suffix(".silent.mp4")
+    render_pushin_clip(
+        after_image_path, HERO_REVEAL_DURATION_S, silent_path,
+        width=VEO_CANVAS[0], height=VEO_CANVAS[1],
+    )
+    _mux_silent_audio(silent_path, out_path)
+    silent_path.unlink()
+    print(f"  saved {out_path}")
+    return out_path
+
+
 def concatenate(clip_paths, out_path):
     # Re-encode via the concat FILTER, not stream-copy via the concat demuxer --
     # see v1's own header/llms.txt for why. Audio streams are back (generate_
@@ -172,6 +301,11 @@ def concatenate(clip_paths, out_path):
     cmd += [
         "-filter_complex", f"{filter_inputs}concat=n={n}:v=1:a=1[v][a]",
         "-map", "[v]", "-map", "[a]",
+        # Pinned explicitly -- ffmpeg's own default pix_fmt choice (observed
+        # as yuv444p) plays fine on most platforms but Windows' built-in
+        # player rejects it outright as "unsupported encoding settings."
+        "-pix_fmt", "yuv420p", "-profile:v", "high", "-level", "4.0",
+        "-movflags", "+faststart",
         str(out_path),
     ]
     subprocess.run(cmd, check=True)
@@ -207,6 +341,10 @@ def main():
             clip_path,
         )
         clip_paths.append(clip_path)
+
+    hero_path = out_dir / f"{concept_id}_clip_e_reveal.mp4"
+    generate_hero_reveal(frame_paths["after"], hero_path)
+    clip_paths.append(hero_path)
 
     final = out_dir / f"{concept_id}_transformation.mp4"
     concatenate(clip_paths, final)
