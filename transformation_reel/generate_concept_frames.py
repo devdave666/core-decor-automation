@@ -60,6 +60,26 @@ Veo's first/last-frame conditioning to read as one continuous space rather than
 different rooms. A fresh independent generation for each state would not
 guarantee that; editing the same source image forward does.
 
+v4 (2026-08-26), after Dev reviewed the real t01 v3/v4 run and approved it:
+asked for the next concept to push further at BOTH ends -- more beat-down/
+dirty at `before`, more luxurious at `after`. Two changes:
+
+1. `generate_before()`'s shared decay prompt (applies to every concept, not
+   just one) escalated again: added standing pools of stagnant water
+   reflecting the ceiling damage, spray-painted graffiti tags, dark scorch/
+   soot staining from a past fire, a thick grime layer coating every
+   surface, shattered glass on the floor, and rusted rebar exposed through
+   the crumbled rubble pile. `demo`'s cleanup description updated to match
+   (now also mopping standing water and scrubbing at graffiti, not just
+   clearing rubble and dust). Window wall and fireplace opening still
+   deliberately kept recognizable throughout -- unchanged anchor rule from
+   v3.
+2. New concept `t02`: same window-wall+fireplace architecture (required --
+   the shared before/intermediate prompts hardcode that anchor), but the
+   `after` state pushed to genuine opulence rather than t01's warm modern
+   minimalism -- book-matched marble, herringbone smoked oak, aged brass and
+   blackened steel, silk-blend upholstery.
+
 Usage: python transformation_reel/generate_concept_frames.py <concept_id> <out_dir>
 Writes <out_dir>/<concept_id>_{before,demo,framing,finishing,after}.png, in
 that chronological order -- generate_veo_clips.py consumes them as an ordered
@@ -141,13 +161,20 @@ def generate_before(client, after_image):
         "hanging insulation; large dark water stains bloom across the walls and "
         "ceiling; plaster has crumbled away in big sheets revealing bare lath "
         "and brick beneath; one window pane is cracked with a spiderweb "
-        "fracture; a pile of broken rubble, splintered wood and torn drywall "
+        "fracture; a pile of broken rubble, splintered wood and torn drywall, "
+        "with rusted rebar poking through the crumbled concrete at its base, "
         "sits heaped in a corner; rusted exposed pipework and dangling wires "
-        "hang from the damaged ceiling; the floor is stained, cracked and "
-        "littered with debris and dead leaves blown in from outside; faint mold "
-        "staining creeps up one wall. Dim, grim natural light through the "
-        "grimy, cracked window wall is the only illumination -- no work-lights, "
-        "no fixtures. This should read as genuinely shocking neglect, the kind "
+        "hang from the damaged ceiling; shattered glass is scattered across "
+        "the floor near the cracked window; shallow pools of stagnant water "
+        "sit on the uneven floor, reflecting the damaged ceiling above; "
+        "spray-painted graffiti tags streak across one exposed brick wall; "
+        "dark scorch and soot staining climbs the wall near the ceiling from "
+        "some past fire; a thick, undisturbed layer of grime and dust coats "
+        "every surface; the floor is stained, cracked and littered with "
+        "debris and dead leaves blown in from outside; faint mold staining "
+        "creeps up one wall. Dim, grim natural light through the grimy, "
+        "cracked window wall is the only illumination -- no work-lights, no "
+        "fixtures. This should read as genuinely shocking neglect, the kind "
         "of 'before' that makes the finished room feel like a magic trick. "
         f"{SPATIAL_RULE} No people. No text. Keep the room's proportions, "
         "window wall and fireplace position identical to the reference image "
@@ -166,12 +193,14 @@ INTERMEDIATE_STEPS = {
     "demo": (
         "one or two human tradespeople doing heavy early cleanup: hauling "
         "broken rubble and splintered wood into a debris bin, sweeping up "
-        "collapsed plaster and dead leaves, a tarp now covering the damaged "
-        "section of ceiling overhead. The worst hazards (the rubble pile, the "
-        "exposed damaged joists) are visibly being dealt with, but the room is "
-        "still rough, stained and largely stripped -- this is the START of "
-        "recovery from severe decay, not a finished demo. Tools, a debris bin "
-        "and a shop light present."
+        "collapsed plaster and dead leaves, mopping up the pools of standing "
+        "water, scrubbing at the graffiti on the brick wall, a tarp now "
+        "covering the damaged section of ceiling overhead. The worst hazards "
+        "(the rubble pile, the exposed damaged joists, the shattered glass) "
+        "are visibly being dealt with, but the room is still rough, stained "
+        "and largely stripped -- this is the START of recovery from severe "
+        "decay, not a finished demo. Tools, a debris bin and a shop light "
+        "present."
     ),
     "framing": (
         "two or three human tradespeople actively installing: one laying new "
@@ -248,6 +277,15 @@ CONCEPTS = {
         "style": "warm modern minimalism",
         "materials": "white oak flooring, honed limestone fireplace surround, "
         "linen upholstery, brushed brass fixtures",
+    },
+    "t02": {
+        "room": "a great room with a floor-to-ceiling window wall and a fireplace",
+        "style": "opulent contemporary luxury, quiet grandeur",
+        "materials": "book-matched Calacatta gold marble fireplace surround, "
+        "wide-plank smoked oak herringbone flooring, hand-loomed silk-wool "
+        "blend upholstery, aged brass and blackened steel fixtures, sculptural "
+        "travertine side tables, floor-to-ceiling silk drapery framing the "
+        "window wall",
     },
 }
 
