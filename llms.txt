@@ -3989,3 +3989,78 @@ rotation).
 The STATIC_RULE/negative_prompt fix is unverified against a real
 generation -- don't assume it actually stops the touch-less-change bug
 until a future run is watched and reviewed the same way v1/v2 were.
+
+## Transformation Reel: t01 cross-posted, t02 generated + published everywhere,
+STATIC_RULE/negative_prompt fix confirmed working (2026-08-26, same day)
+
+Continuation of the entry directly above, same session.
+
+**t01 cross-posted.** The t01 publish above only went to Facebook (the only
+platform with a one-off "publish an existing video" workflow at the time).
+Dev asked why, then asked for it on all platforms. Built two new one-off
+workflows to match, sibling to `publish-existing-to-facebook.yml`:
+`publish-existing-to-instagram.yml` (wraps `publish_to_instagram()`) and
+`publish-existing-to-tiktok.yml` / `publish-existing-to-youtube.yml` (both
+wrap `publish_to_buffer()`, YouTube additionally taking a `youtube_title`
+input since Buffer requires it separately from the caption). t01 is now
+live on all four: Facebook video_id `1576944614073634`, Instagram media_id
+(via that first cross-post run), TikTok post_id, YouTube post_id
+`6a8f5e8501def2bdf43b8610`.
+
+**One real infra flake worth remembering**: the FIRST `publish-existing-to-
+youtube.yml` run (and its immediate retry) both hung for 9-10 minutes stuck
+exactly on `actions/checkout@v4`, confirmed genuinely stuck via the jobs API
+(not a CLI display artifact) -- while the sibling Facebook/Instagram/TikTok
+runs, using the identical checkout step, completed normally within the same
+few minutes. Cancelling and re-dispatching fixed it immediately (the retry
+also took an unusually long ~4.5min on checkout but did complete). No root
+cause found -- treated as GitHub-side runner flakiness, not a bug in this
+repo's workflow files. Worth trying "cancel and re-dispatch" first if a
+future publish run seems to hang on checkout specifically.
+
+**t02: the next concept, pushed further at both ends per Dev's request
+("more beat down dirty and more luxurious at the end").** Two changes in
+`transformation_reel/generate_concept_frames.py`:
+1. Escalated the SHARED `generate_before()` decay prompt further (affects
+   every concept): added standing pools of stagnant water reflecting the
+   ceiling damage, spray-painted graffiti tags on exposed brick, dark
+   scorch/soot staining from a past fire, a thicker undisturbed grime layer,
+   shattered glass on the floor, and rusted rebar poking through the rubble
+   pile's crumbled concrete base. `demo`'s cleanup description updated to
+   match (now also mopping standing water, scrubbing at graffiti). Window
+   wall + fireplace anchor rule unchanged from v3.
+2. New concept `t02`: same required window-wall+fireplace architecture, but
+   `after` pushed to genuine opulence -- book-matched Calacatta gold marble
+   fireplace surround, wide-plank smoked oak herringbone flooring,
+   hand-loomed silk-wool upholstery, aged brass and blackened steel
+   fixtures, sculptural travertine side tables, floor-to-ceiling silk
+   drapery. Deliberately more dramatic than t01's warm modern minimalism,
+   not just a materials swap.
+
+**Real run result, and the STATIC_RULE/negative_prompt fix (from the entry
+above) confirmed working**: reviewed 6 sampled frames across the real
+18.58s t02 output. Every visible change traced to the worker actually
+touching it -- one worker directly mopping/scrubbing the graffiti wall
+while another sweeps rubble, a worker kneeling with a flooring board in
+hand next to the exact boards now on the floor, a worker on a ladder with
+a hand on the marble panel being installed, furniture plastic being pulled
+back by a visible hand. No spontaneous unexplained material changes
+observed anywhere in the sampled frames -- the bug Dev caught in t01 did
+not recur in t02. Architecture (window wall, fireplace position, arch
+doorway) stayed consistent across all 5 frames same as t01. Still only
+verified by sampling frames, not a full watch-through -- treat as strongly
+supporting evidence the fix works, not exhaustive proof.
+
+**Published**: Dev approved and asked to push it the same way t01 was.
+Same `upload_video_to_public_host()` + four `publish-existing-to-*.yml`
+workflow_dispatch pattern. Live on all four: Facebook video_id
+`997938319971582`, Instagram media_id `18088915898444258`, TikTok post_id
+`6a8f68dc6dce713bf9712679`, YouTube post_id `6a8f68e4f7cda5d0e56d48df`.
+
+**Status: two concepts now live across all four platforms, format still has
+no automated end-to-end pipeline of its own** -- every run so far (frames,
+clips, hosting, publishing) has been triggered manually per-step, not on a
+schedule or via a single wired pipeline script the way Dolly Reel/Hot Takes/
+Single Product Reel/Carousel Post are. Worth building a real
+`transformation_reel_pipeline.py` (mirroring those) if this format goes
+into regular rotation rather than staying a one-off.
