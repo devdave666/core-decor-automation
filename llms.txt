@@ -3894,3 +3894,98 @@ application images (one from `assets/application`, two from
 produced a real mp4 that passed `core.validate_reel_for_meta()`
 (1080x1920, h264/aac, correct duration) -- the same check the live
 pipeline runs before ever calling a Meta API.
+
+## Transformation Reel: v3/v4 -- first real generation against the "prepared,
+not yet run" code, approved and published (2026-08-26)
+
+Continuation of the two "Transformation Reel" entries above. The v3 code
+described there (Fast tier + audio, five-part Veo prompt structure, escalated
+`before` decay) had been sitting un-triggered since 2026-08-23. This session
+ran it for real for the first time, found one new bug from watching the
+actual output, fixed it, and got Dev's approval to publish -- the format's
+first live post.
+
+**v4 hardening applied before the first real run** (none of this changed
+the creative output, all defensive):
+1. `generate_videos` submission itself now retries on 429 with the same
+   backoff shape already used for `gemini-2.5-flash-image` -- the
+   concurrent-Veo-job cap throws `RESOURCE_EXHAUSTED` synchronously at
+   submission time, before there's even an operation to poll, so only
+   wrapping the polling loop (the old code) would have crashed the whole
+   run on the first transient rate limit.
+2. ffmpeg's concat output now pins `-pix_fmt yuv420p -profile:v high -level
+   4.0 -movflags +faststart` explicitly. Without this, ffmpeg's own default
+   pix_fmt choice plays fine on most platforms but Windows' built-in player
+   rejects it outright as "unsupported encoding settings" -- worth pinning
+   defensively even though it wasn't hit this run, since it's a silent,
+   platform-specific failure mode with no error until playback.
+3. A fifth "hero reveal" clip: a silent 2.5s Ken Burns push-in
+   (`core_decor_reel_pipeline.render_pushin_clip()`, the same helper Hot
+   Takes/Dolly Reel already use) on the finished `after` still, appended
+   after the 4 Veo clips, for a stronger closing beat than a flat hold on
+   Veo's own last frame. Deliberately NOT asked of Veo as a camera move --
+   camera-motion instructions are the least reliable part of Veo prompting;
+   a deterministic ffmpeg zoompan on a still can't hallucinate and costs
+   nothing. Muxed with a silent AAC track (`anullsrc`) so it concatenates
+   cleanly against the other clips' real audio.
+
+**Real run result, reviewed by Dev**: a clean 18.58s, 720x1280, h264/aac
+reel -- genuinely dramatic before (collapsed ceiling, water staining, bare
+lath, cracked glass, rubble) to after (warm-lit modern-minimalist living
+room, lit fireplace, dusk skyline), architecture (window wall, fireplace
+position, room proportions) consistent across all 5 frames, no geometry
+breaks. Cost matched the v3 estimate, roughly $1.60-2.40 for the 4 Veo
+clips (the hero reveal is free -- pure ffmpeg on an already-generated
+still).
+
+**Bug Dev caught in that real output**: some surfaces (paint, flooring)
+were visibly changing state without the visible tradesperson touching
+them -- Veo filling the gap between two reference frames that differ in
+several places at once by drifting change across the whole room instead
+of confining it to the worker's hands. Dev asked for a fix via "negative
+prompting or JSON prompting if possible."
+
+Checked both against the installed `google-genai` SDK before assuming
+either was available, rather than guessing:
+- **No JSON-structured prompt input exists for this API.**
+  `generate_videos`'s `prompt` argument is a plain string (confirmed via
+  the method's real signature) -- there is no structured/JSON prompt
+  format to switch to.
+- **A real `negative_prompt` field DOES exist**, as a dedicated
+  `GenerateVideosConfig` field separate from the main prompt (confirmed
+  via the SDK's own pydantic `model_fields`, not just documentation) --
+  this is the actual "negative prompting" lever Veo exposes, and it's
+  structurally different from writing negative language inline in the
+  prose prompt.
+
+Fix applied in `transformation_reel/generate_veo_clips.py`, two parts,
+neither tested against a real generation yet (applied after Dev's
+approval-and-publish instruction for the ALREADY-generated reel, so the
+next real run is what will actually validate this):
+1. `STATIC_RULE`, an affirmative sentence ("only what the tradesperson is
+   directly touching changes; everything else stays completely static")
+   appended to every clip's Action clause -- affirmative framing on
+   purpose, consistent with this project's own established rule (Veo and
+   BFL FLUX both) against negative language inside the main prompt itself.
+2. `NEGATIVE_PROMPT` wired into `GenerateVideosConfig.negative_prompt` on
+   every clip -- names the specific failure mode (unexplained material
+   changes, objects appearing/disappearing, time-lapse motion, teleporting
+   props) in the structured field designed for exactly this.
+
+**Published**: Dev approved the reel as-is and asked for it to go out.
+Published via the existing `upload_video_to_public_host()` +
+`publish_to_facebook()` path (same zero-cost raw.githubusercontent.com
+hosting + pull-based Reels API already used everywhere else in this repo),
+triggered manually via `publish-existing-to-facebook.yml` workflow_dispatch
+since this format still has no automated end-to-end publish pipeline of
+its own. Facebook Reels video_id `1576944614073634`, post_id
+`122123849253091378`. This is the format's first live post -- Instagram/
+TikTok/YouTube cross-posting was NOT done (no one-off dispatch workflow
+exists yet for those platforms the way `publish-existing-to-facebook.yml`
+does for Facebook; would need building if this format goes into regular
+rotation).
+
+**Status: creative pipeline still experimental, one-off publish only.**
+The STATIC_RULE/negative_prompt fix is unverified against a real
+generation -- don't assume it actually stops the touch-less-change bug
+until a future run is watched and reviewed the same way v1/v2 were.
