@@ -89,6 +89,19 @@ worker's hands. Two fixes, both applied to every clip:
    signature -- prompt is a plain string), so this field is the closest
    equivalent available.
 
+Confirmed working against a real t02 run: sampled frames across the full
+18.58s output showed every material change traced to the worker actually
+touching it, no recurrence of the t01 bug.
+
+v4.2 (2026-08-26), after Dev caught one clip in the published t02 reel with
+unrequested upbeat background music -- every clip's audio cues only ever
+specify SFX:/Ambient noise: (diegetic room sound), never music, but nothing
+had explicitly ruled music out, so `generate_audio=True` was free to add a
+score on its own. Fixed the same way as v4.1's other bug: added music terms
+(`background music, musical score, soundtrack, upbeat music, dramatic
+music`) to `NEGATIVE_PROMPT` rather than the main prompt. Not yet verified
+against a real run.
+
 Usage: python transformation_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{before,demo,framing,finishing,after}.png
 (from generate_concept_frames.py). Writes <out_dir>/<concept_id>_clip_a..d.mp4,
@@ -148,11 +161,20 @@ STATIC_RULE = (
 # for this API (generate_videos' prompt argument is a plain string; checked
 # the SDK's real method signature before assuming otherwise), so this field is
 # the closest real equivalent to "JSON prompting" available here.
+#
+# v4.2: Dev caught one clip in the published t02 reel with unrequested
+# upbeat background music -- every prompt's audio cues only ever specify
+# SFX:/Ambient noise: (diegetic room sound), never music, but generate_
+# audio=True leaves Veo free to add a score on its own since nothing
+# explicitly ruled it out. Added music terms here rather than to the main
+# prompt, same reasoning as the rest of this field: this is what negative_
+# prompt is for.
 NEGATIVE_PROMPT = (
     "spontaneous or unexplained changes to walls, flooring, or furniture the "
     "tradesperson is not physically touching, objects instantly appearing or "
     "disappearing, materials changing with no visible cause, time-lapse or "
-    "sped-up motion, teleporting props"
+    "sped-up motion, teleporting props, background music, musical score, "
+    "soundtrack, upbeat music, dramatic music"
 )
 
 # One entry per adjacent stage pair, in STAGES order. Each follows Google's
