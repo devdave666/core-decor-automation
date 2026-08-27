@@ -4095,3 +4095,52 @@ looking band, guessed wrong (Dev confirmed it was actually clip c).
 Static spectrograms are not a trustworthy way to distinguish "music"
 from ambient/mechanical room noise without actually hearing the audio --
 ask Dev which clip rather than guessing from a spectrogram next time.
+
+## Furniture Build Reel: NEW format, first concept generated and published
+same-session (2026-08-27)
+
+Dev supplied a reference video (a real TikTok, @modern.diy0 -- one person
+hand-building furniture from raw materials to an LED-lit reveal: a
+cinder-block-and-plank shelf, then a pallet-wood canopy bed) and asked to
+"recreate something like this and post right now, be creative and a little
+different than reference." New format, `furniture_build_reel/`, sibling to
+`transformation_reel/` -- deliberately NOT the same narrative shape: ONE
+carpenter building ONE furniture piece, not a crew renovating a whole room.
+
+**Built fast by reusing transformation_reel's proven machinery wholesale**
+rather than re-deriving anything: same `gemini-2.5-flash-image` chained
+edit-forward generation (after generated first from text, materials edited
+from after, framing/building/lighting each edited from the previous stage),
+same `VEO_CANVAS` exact-crop fix, same 429 retry, same Veo hardening
+(submission-time retry, Windows-safe ffmpeg pix_fmt, silent hero-reveal
+push-in) -- and critically, `STATIC_RULE` + `NEGATIVE_PROMPT` (touch-less-
+change AND background-music fixes) applied from this format's FIRST run
+instead of waiting to hit the same two bugs a new format would otherwise
+rediscover independently.
+
+**Concept `f01`**: a floating wall-mounted daybed nook with a slatted
+privacy screen, built from reclaimed scaffold-board planks + blackened
+steel L-brackets + integrated warm LED strip lighting. Deliberately
+different from the reference's specific pieces (no cinder blocks, no
+pallet canopy bed) while keeping the same underlying template (raw
+materials on the floor -> frame -> build -> LED install -> styled reveal).
+5 stages: materials/framing/building/lighting/after (renamed from
+transformation_reel's before/demo/framing/finishing/after to fit this
+narrative). Real run: clean 18.58s output, consistent wall/window position
+and camera framing across all 5 frames, no geometry issues.
+
+**Published immediately per Dev's explicit "post right now"** -- skipped
+the review-then-approve step used for transformation_reel's t01/t02 (Dev's
+instruction, not a default). Same `upload_video_to_public_host()` + all
+four `publish-existing-to-*.yml` workflows. Live everywhere: Facebook
+video_id `1541715260484966`, Instagram media_id `18027936899892623`,
+TikTok post_id `6a8f96623cfa0a270d16c46f`, YouTube post_id
+`6a8f966668f0bd7ea6533cb3`.
+
+**Status: one concept, one run, published without a review gate per Dev's
+own instruction this time** -- the STATIC_RULE/negative_prompt fixes were
+applied proactively (carried over from transformation_reel) but NOT
+independently re-verified against this format's real output the way t02
+was for transformation_reel, since there was no review step before
+publishing. If a future furniture-build run gets watched closely, that's
+the first real confirmation these fixes hold on this format too.
