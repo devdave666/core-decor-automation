@@ -91,6 +91,37 @@ phrasing once before). Unverified until the next real run -- and per
 Dev's correction, "looks clean" now means passing real Gemini video
 analysis, not sparse-still-frame sampling.
 
+v6 (2026-08-27, same day): v5's 8/9-stage widening was verified CLEAN by
+a naive gemini-2.5-pro pass (raw video, generic prompt) -- Dev then had
+Gemini 3.6 Flash (in the "global" Vertex AI location; it 404s in
+us-central1, a real regional gap, not unavailability) analyze the SAME
+published file with extended thinking + a forensic system_instruction,
+and it found severe issues: duplicate drills, bracket counts changing
+mid-clip, reverse-motion object pickup, instant color/trim changes.
+Re-ran gemini-2.5-pro with the SAME improved prompt/config (not a
+different model) and it found the identical issues -- proving the
+original "clean" verdict was a METHODOLOGY failure (generic prompt, no
+extended thinking), not evidence the video was actually fine. The naive
+raw-video-plus-generic-prompt QA check is retired; forensic system_
+instruction + `thinking_config=types.ThinkingConfig(thinking_budget=1024)`
+is now required for any verification claim.
+
+Two of the newly-confirmed failure modes trace directly back to v3's own
+choice to remove STATIC_RULE (duplicate/multiplying objects, background
+prop counts changing) -- v3's theory that stating "everything else stays
+static" caused re-rendering is now disproven by the SAME forensic
+analysis; removing it did not fix the touch-less-change bug, it likely
+made background-prop consistency worse with nothing gained. Restored as
+`STATIC_SCENE_RULE`, shorter than the original, applied to every
+transition. Also reworded the `lighting`->`cleanup` transition, which
+Veo had been rendering as tools flying backward into the carpenter's
+hands (an ambiguous "gathers and carries out" instruction read as
+reversed motion) -- now explicit about a single continuous forward
+motion. `NEGATIVE_PROMPT` extended with the specific new failure modes
+(duplicate/doubled objects, object counts changing, reverse motion,
+gravity-defying movement). Unverified until the next real run with the
+now-mandatory forensic QA method.
+
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,bracket_start,framing,building,
 wiring,lighting,cleanup,after}.png
@@ -126,12 +157,29 @@ CAMERA_BASE = (
     "Same wall, same floor, same window light throughout."
 )
 
+# v6: restored an affirmative static-scene constraint (removed in v3 on an
+# unverified theory that stating it caused re-rendering) after real forensic
+# analysis (gemini-2.5-pro AND gemini-3.6-flash, both with a proper forensic
+# prompt + extended thinking) found the SAME v3 "motion-only" output still
+# had duplicate tools, bracket counts changing mid-clip, and reversed/
+# gravity-defying object motion during cleanup. The theory that removing
+# this caused the original bug is now disproven -- removing it did not fix
+# anything, and may have made background-prop consistency worse. Kept
+# short/generic rather than reverting to v2's full material re-description.
+STATIC_SCENE_RULE = (
+    "Every object in the frame keeps a consistent count, position, and "
+    "appearance except the one thing the carpenter is actively touching."
+)
+
 NEGATIVE_PROMPT = (
     "spontaneous or unexplained changes to walls, floor, or furniture the "
     "carpenter is not physically touching, objects instantly appearing or "
-    "disappearing, materials changing with no visible cause, time-lapse or "
-    "sped-up motion, teleporting props, background music, musical score, "
-    "soundtrack, upbeat music, dramatic music"
+    "disappearing, duplicate or doubled tools and objects, the number of "
+    "brackets or boards changing between frames, materials changing with "
+    "no visible cause, objects flying or moving backward, reverse motion, "
+    "gravity-defying object movement, time-lapse or sped-up motion, "
+    "teleporting props, background music, musical score, soundtrack, "
+    "upbeat music, dramatic music"
 )
 
 # v3 style kept (motion-only, minimal object naming), now covering 7 SMALL
@@ -140,52 +188,55 @@ NEGATIVE_PROMPT = (
 TRANSITIONS = {
     ("materials", "bracket_start"): (
         f"{CAMERA_BASE} The carpenter kneels and drives a screw, mounting "
-        "one bracket to the wall. "
+        f"one bracket to the wall. {STATIC_SCENE_RULE} "
         "SFX: a drill motor, a bracket settling flush against the wall. "
         "Ambient noise: quiet room tone, faint birdsong."
     ),
     ("bracket_start", "framing"): (
         f"{CAMERA_BASE} The carpenter drives another screw to mount a "
-        "second bracket, then lifts a board up and rests it across them. "
+        f"second bracket, then lifts a board up and rests it across them. "
+        f"{STATIC_SCENE_RULE} "
         "SFX: a drill motor, a board settling into place. "
         "Ambient noise: quiet room tone."
     ),
     ("framing", "building"): (
         f"{CAMERA_BASE} The carpenter fits several more boards into place "
-        "edge to edge, running a hand along each seam to check it sits "
-        "flush. "
+        f"edge to edge, running a hand along each seam to check it sits "
+        f"flush. {STATIC_SCENE_RULE} "
         "SFX: the soft knock of wood settling into place. "
         "Ambient noise: quiet room tone."
     ),
     ("building", "insert"): (
         f"{CAMERA_BASE} The carpenter lifts a large component out of its "
-        "box and fits it into its opening in the structure, pressing it "
-        "flush into place. "
+        f"box and fits it into its opening in the structure, pressing it "
+        f"flush into place. {STATIC_SCENE_RULE} "
         "SFX: a heavy thud settling into place, cardboard tearing away. "
         "Ambient noise: quiet room tone."
     ),
     ("insert", "wiring"): (
         f"{CAMERA_BASE} The carpenter peels backing from a strip and "
-        "presses it into a channel along one edge, working along its "
-        "length. "
+        f"presses it into a channel along one edge, working along its "
+        f"length. {STATIC_SCENE_RULE} "
         "SFX: adhesive backing peeling away, a soft press of fingers. "
         "Ambient noise: quiet room tone."
     ),
     ("wiring", "lighting"): (
         f"{CAMERA_BASE} The carpenter presses a small connector together, "
-        "and the strip lights up warm along its length. "
+        f"and the strip lights up warm along its length. {STATIC_SCENE_RULE} "
         "SFX: a faint electronic click. "
         "Ambient noise: quiet room tone, warm and settled."
     ),
     ("lighting", "cleanup"): (
-        f"{CAMERA_BASE} The carpenter gathers tools and a box from the "
-        "floor and carries them out of frame. "
-        "SFX: tools clinking into a box, quiet footsteps. "
+        f"{CAMERA_BASE} The carpenter bends down, picks up a box of tools "
+        "from the floor with both hands, straightens up, and walks toward "
+        "the door carrying it, moving forward and out of frame -- a single "
+        f"continuous forward motion, never backward. {STATIC_SCENE_RULE} "
+        "SFX: tools clinking inside the box, footsteps receding. "
         "Ambient noise: quiet room tone."
     ),
     ("cleanup", "after"): (
         f"{CAMERA_BASE} The carpenter sets a folded throw down and steps "
-        "back out of frame. "
+        f"back out of frame. {STATIC_SCENE_RULE} "
         "SFX: soft fabric rustle, quiet footsteps receding. "
         "Ambient noise: warm quiet, faint birdsong."
     ),
