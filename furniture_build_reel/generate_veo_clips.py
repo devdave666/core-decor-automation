@@ -94,7 +94,7 @@ analysis, not sparse-still-frame sampling.
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,bracket_start,framing,building,
 wiring,lighting,cleanup,after}.png
-Writes <out_dir>/<concept_id>_clip_a..g.mp4, <out_dir>/<concept_id>_clip_h_reveal.mp4,
+Writes <out_dir>/<concept_id>_clip_a..h.mp4, <out_dir>/<concept_id>_clip_i_reveal.mp4,
 and the concatenated <out_dir>/<concept_id>_build.mp4.
 """
 import subprocess
@@ -157,7 +157,14 @@ TRANSITIONS = {
         "SFX: the soft knock of wood settling into place. "
         "Ambient noise: quiet room tone."
     ),
-    ("building", "wiring"): (
+    ("building", "insert"): (
+        f"{CAMERA_BASE} The carpenter lifts a large component out of its "
+        "box and fits it into its opening in the structure, pressing it "
+        "flush into place. "
+        "SFX: a heavy thud settling into place, cardboard tearing away. "
+        "Ambient noise: quiet room tone."
+    ),
+    ("insert", "wiring"): (
         f"{CAMERA_BASE} The carpenter peels backing from a strip and "
         "presses it into a channel along one edge, working along its "
         "length. "
@@ -296,7 +303,7 @@ def main():
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
     clip_paths = []
-    letters = "abcdefg"
+    letters = "abcdefgh"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
         clip_path = out_dir / f"{concept_id}_clip_{letters[i]}.mp4"
@@ -309,7 +316,7 @@ def main():
         )
         clip_paths.append(clip_path)
 
-    hero_path = out_dir / f"{concept_id}_clip_h_reveal.mp4"
+    hero_path = out_dir / f"{concept_id}_clip_i_reveal.mp4"
     generate_hero_reveal(frame_paths["after"], hero_path)
     clip_paths.append(hero_path)
 

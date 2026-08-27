@@ -49,7 +49,7 @@ first/last-frame conditioning to read as one continuous space.
 
 Usage: python furniture_build_reel/generate_concept_frames.py <concept_id> <out_dir>
 Writes <out_dir>/<concept_id>_{materials,bracket_start,framing,building,
-wiring,lighting,cleanup,after}.png
+insert,wiring,lighting,cleanup,after}.png
 """
 import sys
 import time
@@ -77,7 +77,7 @@ IMAGE_CONFIG = types.GenerateContentConfig(
 )
 
 STAGES = [
-    "materials", "bracket_start", "framing", "building",
+    "materials", "bracket_start", "framing", "building", "insert",
     "wiring", "lighting", "cleanup", "after",
 ]
 
@@ -164,7 +164,23 @@ INTERMEDIATE_STEPS = {
     "building": (
         "the carpenter fitting most of the remaining boards across the "
         "frame -- the piece now mostly built but still bare/unfinished "
-        "wood, no LED strip visible yet, no styling."
+        "wood, no LED strip visible yet, no styling. If the finished "
+        "piece includes any large single prefabricated component (a "
+        "fireplace insert, a hardware mechanism, or similar boxed item "
+        "from the materials), its designated opening or space is built "
+        "but still visibly EMPTY at this stage -- that component has not "
+        "been installed yet, it is still in its box on the floor."
+    ),
+    "insert": (
+        "the carpenter lifting the large boxed prefabricated component "
+        "(the fireplace insert, hardware mechanism, or largest single "
+        "boxed item described in the materials -- if the piece has one) "
+        "out of its box and fitting it into its designated opening in "
+        "the structure, now visibly installed and physically in place -- "
+        "but not yet wired, powered on, or trimmed out. If this piece "
+        "has no such large single component, show the carpenter instead "
+        "fitting the last of the remaining boards and hardware into "
+        "place, visibly further along than the previous stage."
     ),
     "wiring": (
         "the carpenter laying a warm LED light strip into the channel "
@@ -290,7 +306,7 @@ def main():
     images["materials"] = generate_materials(client, concept, images["after"])
 
     history = [images["materials"]]
-    for stage_name in ["bracket_start", "framing", "building", "wiring", "lighting", "cleanup"]:
+    for stage_name in ["bracket_start", "framing", "building", "insert", "wiring", "lighting", "cleanup"]:
         img = generate_intermediate(
             client, stage_name, concept, history[-HISTORY_WINDOW:], images["after"],
         )
