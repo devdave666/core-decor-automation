@@ -4453,3 +4453,87 @@ action). Worth applying the same rewrite to those formats' TRANSITIONS if
 they ever show the same flicker/hallucination symptom Dev originally
 flagged -- not yet done proactively, since it's unconfirmed whether they
 even have the same bug.
+
+## Furniture Build Reel: real fix found, verified with real Gemini video
+QA, and published -- the touch-less-change/hallucination saga resolved
+(2026-08-27, same day)
+
+Direct continuation of the two entries above. Both v3 (motion-only Veo
+prompts) and v4 (environment anchor) were confirmed FAILING real Gemini
+video analysis -- Dev caught this ("I don't know about the recommendation
+but please take criticism of last video analysis seriously") after this
+project's own sparse-still-frame review had wrongly called both "clean."
+**New standing rule: never call a generated video clean based on sampled
+still frames again.** Verification now means actually running it through
+Gemini's real multimodal video understanding (not this project's own
+review method), which can see motion and temporal continuity a slideshow
+of stills cannot.
+
+**How to run a real video QA check** (now the mandatory gate before any
+publish claim): `client.models.generate_content(model='gemini-2.5-pro',
+contents=[types.Part.from_bytes(data=video_bytes, mime_type='video/mp4'),
+prompt])` -- pass the ACTUAL video file, not frames, with a prompt asking
+it to watch the entire video for AI-generation tells (morphing,
+appear/disappear, warping, impossible transitions) with timestamps and
+confidence levels. Needs the same 429 retry/backoff as every other Vertex
+AI call in this project -- hit RESOURCE_EXHAUSTED on the very first real
+attempt. `gemini-3.6-flash` (which appears in this project's own model
+catalog) 404s on a real call -- same "listed but not actually available"
+trap as `veo-2.0-generate-001` -- so `gemini-2.5-pro` is the confirmed-
+working choice; `gemini-2.5-flash` is confirmed available too and
+untested for this specific task, worth trying later if cost matters more
+than it did today.
+
+**v5, the real fix (not another prompt-wording tweak)**: real Gemini
+analysis of actual f02/f03 output found the touch-less-change bug was
+NEVER about prompt wording -- 5 stages made each 4s Veo clip bridge too
+large a physical delta to render plausibly, no matter how that clip's
+prompt was phrased. Fixed at the source: widened `generate_concept_
+frames.py` 5 -> 8 stages (materials/bracket_start/framing/building/
+wiring/lighting/cleanup/after), splitting exactly the transitions Gemini
+flagged (empty-wall-to-full-frame, LED-installed-vs-glowing, tools-
+vanish-for-reveal). Each `generate_intermediate` call now references the
+last 2 prior stages (capped, not unbounded -- stone_reveal_reel's
+history-window technique, capped because 2 is the largest reference-
+image count this project has actually validated).
+
+**Caught a second real bug before spending Veo budget on it**: the first
+8-stage f03 run showed the fireplace insert (a large single prefab
+component) fully installed AND already lit between `building` and
+`wiring`, with no step showing it actually being fitted -- the exact
+same appears-out-of-nowhere pattern, just relocated to a component this
+project's generic stage descriptions never accounted for (f02's fold-
+down bed hardware has the identical shape of gap). Fixed by adding a 9th
+stage, `insert`, specifically for any single large prefab component,
+with an explicit fallback wording for concepts (like f01) that don't
+have one. Caught by reviewing the KEYFRAME STILLS before generating any
+video -- cheap to catch there, expensive to only discover after paying
+for Veo clips.
+
+**Deliberately did NOT combine this with time-lapse pacing**, even
+though Dev's chosen fix option explicitly offered it "on top of" the
+keyframe-widening -- this format has a visible worker, and
+transformation_reel already hit and fixed the exact "workers look
+unnaturally sped up" bug from time-lapse phrasing once before (see much
+earlier in this file). Applying it here would likely have resurrected an
+already-solved bug. Explained this reasoning to Dev rather than silently
+dropping half of the chosen option.
+
+**Real run, real verification, genuinely clean this time**: 9-stage f03
+(the fireplace media wall), 8 Veo clips + hero reveal, 34.66s. Real
+`gemini-2.5-pro` video analysis: "I have found no signs of AI
+generation... highly confident this is not an AI-generated video" --
+it read the jump cuts and the wood-to-white finish change as intentional
+human editing choices, not hallucinated artifacts. This is the FIRST
+furniture_build_reel output to pass real video-level scrutiny, not
+sparse-frame sampling. Published: Facebook video_id `1056648687263023`,
+Instagram media_id `18054513299563752`, TikTok post_id
+`6a90556ea75c1b2edc2c66f1`, YouTube post_id `6a9055322e495c2b637b8a28`.
+
+**Status**: the 8/9-stage widening + insert-stage fix is the real,
+verified solution for this bug class. Worth applying the same widening
+(not the motion-only/environment-anchor wording tweaks, which are now
+known NOT to be the actual fix) to any sibling format that shows the
+same symptom. Every future furniture_build_reel run should still get a
+real Gemini video QA pass before publishing -- one clean result doesn't
+retire the check permanently, it validates the fix on ONE concept.
