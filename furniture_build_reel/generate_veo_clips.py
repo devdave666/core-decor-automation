@@ -1,5 +1,5 @@
 """
-Generates the furniture-build reel from the 5-stage frames produced by
+Generates the furniture-build reel from the 8-stage frames produced by
 generate_concept_frames.py. Sibling to transformation_reel/generate_veo_clips.py
 -- reuses every hardening fix that project already earned the hard way,
 rather than re-discovering any of them on a brand new format:
@@ -66,12 +66,35 @@ re-describing the SUBJECT or the OBJECT being worked on, which is what
 v3's fix actually targeted. These are different failure modes -- v3 was
 about the model re-rendering an object's appearance each time its
 material/color got restated; this is testing whether anchoring the
-never-changing backdrop helps without reintroducing that. Unverified
-until the next real run.
+never-changing backdrop helps without reintroducing that.
+
+v5 (2026-08-27, same day): v3 and v4 were BOTH real prompt-wording fixes,
+and BOTH failed real verification -- Dev ran actual Gemini multimodal
+video analysis (not this project's own sparse-still-frame review, which
+had missed all of this) against real f02 and f03 output and found
+genuine physically-impossible jumps in both: a bracket system replaced
+outright by full cabinetry in one cut, Murphy-bed hardware appearing
+fully installed with zero intermediate steps, an entire wall frame
+appearing instantly mounted, tools/materials vanishing between the
+pre-reveal and reveal shots. Conclusion: the bug was never about prompt
+wording. It's that 5 stages made each 4s Veo clip bridge too large a
+physical delta to render plausibly, no matter how the prompt for that
+clip was phrased. Fixed at the actual source -- generate_concept_frames.py
+widened 5 -> 8 stages, splitting exactly the transitions Gemini's
+analysis flagged. TRANSITIONS below rewritten to match, keeping v3's
+motion-only style (still real-time, NOT time-lapse -- see
+generate_concept_frames.py's v2 docstring for why time-lapse pacing was
+deliberately rejected here despite being Dev's other suggested fix: this
+format has a visible worker, and transformation_reel already hit and
+fixed the exact "workers look unnaturally sped up" bug from time-lapse
+phrasing once before). Unverified until the next real run -- and per
+Dev's correction, "looks clean" now means passing real Gemini video
+analysis, not sparse-still-frame sampling.
 
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
-Expects <frames_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
-Writes <out_dir>/<concept_id>_clip_a..d.mp4, <out_dir>/<concept_id>_clip_e_reveal.mp4,
+Expects <frames_dir>/<concept_id>_{materials,bracket_start,framing,building,
+wiring,lighting,cleanup,after}.png
+Writes <out_dir>/<concept_id>_clip_a..g.mp4, <out_dir>/<concept_id>_clip_h_reveal.mp4,
 and the concatenated <out_dir>/<concept_id>_build.mp4.
 """
 import subprocess
@@ -111,41 +134,52 @@ NEGATIVE_PROMPT = (
     "soundtrack, upbeat music, dramatic music"
 )
 
-# v3: motion-only per Dev's research -- one camera vector (CAMERA_BASE),
-# one primary action, one ambient-particle layer, minimal object naming.
-# Deliberately does NOT re-describe material, color, or appearance of
-# anything already visible in the conditioning image (no "steel bracket,"
-# "raw wood plank," "cordless drill" as descriptors) -- the claim being
-# tested is that re-describing static geometry is what was causing Veo to
-# re-render (and hallucinate/warp) it, not a lack of a "stay static" rule.
+# v3 style kept (motion-only, minimal object naming), now covering 7 SMALL
+# steps instead of 4 larger ones -- v5's actual fix is the narrower delta
+# between each adjacent pair, not the wording style.
 TRANSITIONS = {
-    ("materials", "framing"): (
-        f"{CAMERA_BASE} The carpenter kneels, drives a screw into a "
-        "bracket, then lifts a board up into place against the frame. "
-        "Fine sawdust drifts through the light. "
-        "SFX: a drill motor, a board settling into place. "
+    ("materials", "bracket_start"): (
+        f"{CAMERA_BASE} The carpenter kneels and drives a screw, mounting "
+        "one bracket to the wall. "
+        "SFX: a drill motor, a bracket settling flush against the wall. "
         "Ambient noise: quiet room tone, faint birdsong."
     ),
-    ("framing", "building"): (
-        f"{CAMERA_BASE} The carpenter fits several boards into place edge "
-        "to edge, running a hand along each seam to check it sits flush. "
-        "Fine sawdust drifts through the light. "
-        "SFX: the soft knock of wood settling into place, a light sanding "
-        "pass. "
+    ("bracket_start", "framing"): (
+        f"{CAMERA_BASE} The carpenter drives another screw to mount a "
+        "second bracket, then lifts a board up and rests it across them. "
+        "SFX: a drill motor, a board settling into place. "
         "Ambient noise: quiet room tone."
     ),
-    ("building", "lighting"): (
+    ("framing", "building"): (
+        f"{CAMERA_BASE} The carpenter fits several more boards into place "
+        "edge to edge, running a hand along each seam to check it sits "
+        "flush. "
+        "SFX: the soft knock of wood settling into place. "
+        "Ambient noise: quiet room tone."
+    ),
+    ("building", "wiring"): (
         f"{CAMERA_BASE} The carpenter peels backing from a strip and "
-        "presses it into a channel along one edge, the strip glowing warm "
-        "as the hand moves along its length. "
-        "SFX: adhesive backing peeling away, a soft press of fingers, a "
-        "faint electronic click. "
+        "presses it into a channel along one edge, working along its "
+        "length. "
+        "SFX: adhesive backing peeling away, a soft press of fingers. "
+        "Ambient noise: quiet room tone."
+    ),
+    ("wiring", "lighting"): (
+        f"{CAMERA_BASE} The carpenter presses a small connector together, "
+        "and the strip lights up warm along its length. "
+        "SFX: a faint electronic click. "
         "Ambient noise: quiet room tone, warm and settled."
     ),
-    ("lighting", "after"): (
-        f"{CAMERA_BASE} The carpenter lays a throw down and sets two "
-        "cushions in place, then steps back out of frame. "
-        "SFX: soft fabric rustle, a light thud, quiet footsteps receding. "
+    ("lighting", "cleanup"): (
+        f"{CAMERA_BASE} The carpenter gathers tools and a box from the "
+        "floor and carries them out of frame. "
+        "SFX: tools clinking into a box, quiet footsteps. "
+        "Ambient noise: quiet room tone."
+    ),
+    ("cleanup", "after"): (
+        f"{CAMERA_BASE} The carpenter sets a folded throw down and steps "
+        "back out of frame. "
+        "SFX: soft fabric rustle, quiet footsteps receding. "
         "Ambient noise: warm quiet, faint birdsong."
     ),
 }
@@ -262,7 +296,7 @@ def main():
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
     clip_paths = []
-    letters = "abcd"
+    letters = "abcdefg"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
         clip_path = out_dir / f"{concept_id}_clip_{letters[i]}.mp4"
@@ -275,7 +309,7 @@ def main():
         )
         clip_paths.append(clip_path)
 
-    hero_path = out_dir / f"{concept_id}_clip_e_reveal.mp4"
+    hero_path = out_dir / f"{concept_id}_clip_h_reveal.mp4"
     generate_hero_reveal(frame_paths["after"], hero_path)
     clip_paths.append(hero_path)
 

@@ -12,16 +12,44 @@ the VEO_CANVAS exact-crop fix, chained edit-forward generation, the 429 retry)
 rather than re-deriving any of it -- only the STAGE NAMES and PROMPT CONTENT
 are new.
 
-Chained generation, same reasoning as transformation_reel: "after" (finished,
-LED-lit) generated first from text, "materials" (raw/unbuilt) edited from
-"after", then framing/building/lighting each edited from the PREVIOUS stage
-(with "after" also passed as a second reference so intermediate stages
-visibly progress toward it) -- wall, window and camera framing have to MATCH
-across every stage for Veo's first/last-frame conditioning to read as one
-continuous space.
+v2 (2026-08-27, same day as v1): Dev caught real Gemini multimodal video
+analysis (NOT this project's own sparse-still-frame review, which missed
+this entirely -- see llms.txt) finding genuine physically-impossible jumps
+in real f02/f03 output: an entire bracket system replacing itself with full
+cabinetry in one cut, Murphy-bed hardware appearing fully installed with no
+intermediate steps, tools/materials vanishing between the pre-reveal and
+reveal shots. Root cause: 5 stages meant each Veo clip had to bridge too
+large a physical delta for a 4s clip to render plausibly -- the exact same
+lesson transformation_reel already learned once (3->5 stages) and
+stone_reveal_reel learned again (5->7), now hitting a THIRD time here.
+Widened 5 -> 8 stages, splitting exactly the transitions Gemini's analysis
+flagged: `bracket_start` (splits the old single-jump "empty wall -> full
+frame" into two smaller steps), `wiring` (splits "LED installed" from "LED
+glowing," since the strip appearing then lighting up in the same clip is
+itself a small instance of the same bug), and `cleanup` (a dedicated stage
+for tools/materials being physically carried away, directly targeting the
+"everything vanishes for the reveal" finding rather than jumping straight
+from a cluttered floor to a styled empty one).
+
+Also v2: each `generate_intermediate` call now references the last TWO
+prior stages (a sliding window), not just the immediately previous one --
+same "reference more than one prior frame" technique already validated on
+stone_reveal_reel, capped at 2 (not the full growing history) because 2 is
+the largest reference-image count this project has actually tested Gemini
+image-editing against; an uncapped history on an 8-stage chain would reach
+6+ reference images on the last stage, past validated territory.
+
+Chained generation: "after" (finished, LED-lit) generated first from text,
+"materials" (raw/unbuilt) edited from "after" (itemized/emphatic -- a
+built-in wall unit needs forceful wording to actually regress, see
+generate_materials()), then every stage in between edited forward from the
+last two prior stages (with "after" also passed as a target reference) --
+wall, window and camera framing have to MATCH across every stage for Veo's
+first/last-frame conditioning to read as one continuous space.
 
 Usage: python furniture_build_reel/generate_concept_frames.py <concept_id> <out_dir>
-Writes <out_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
+Writes <out_dir>/<concept_id>_{materials,bracket_start,framing,building,
+wiring,lighting,cleanup,after}.png
 """
 import sys
 import time
@@ -48,7 +76,15 @@ IMAGE_CONFIG = types.GenerateContentConfig(
     image_config=types.ImageConfig(aspect_ratio="9:16")
 )
 
-STAGES = ["materials", "framing", "building", "lighting", "after"]
+STAGES = [
+    "materials", "bracket_start", "framing", "building",
+    "wiring", "lighting", "cleanup", "after",
+]
+
+# How many prior stages get passed as reference images to each intermediate
+# generation call, in addition to the `after` target. Capped at 2 -- see
+# module docstring for why this isn't an unbounded growing history here.
+HISTORY_WINDOW = 2
 
 SPATIAL_RULE = (
     "The room is a coherent, physically real 3D space: every board, bracket "
@@ -108,39 +144,60 @@ def generate_materials(client, concept, after_image):
     return _first_image(response)
 
 
+# Each entry is a SMALL, single step forward from the previous stage --
+# deliberately narrower than the original 3-stage version (framing/
+# building/lighting) after Gemini's real analysis found large jumps at
+# exactly the points these new splits target.
 INTERMEDIATE_STEPS = {
+    "bracket_start": (
+        "the carpenter mounting just the first one or two brackets to the "
+        "wall with a cordless drill -- most of the wall is still "
+        "completely bare, only a small part of the eventual frame exists "
+        "yet."
+    ),
     "framing": (
-        "a carpenter mounting the structural brackets/frame to the wall with "
-        "a cordless drill and fitting the first support boards across them -- "
-        "just the bare structural frame going up, no surface finish, no LED, "
-        "no styling yet."
+        "the carpenter mounting the remaining brackets and fitting the "
+        "first horizontal board across them -- the frame is now fully up "
+        "but only one board is in place, most of the piece is still just "
+        "bare brackets."
     ),
     "building": (
-        "the carpenter fitting most of the remaining boards across the frame, "
-        "the piece now mostly built but still bare/unfinished wood, no LED "
-        "glow yet, no styling."
+        "the carpenter fitting most of the remaining boards across the "
+        "frame -- the piece now mostly built but still bare/unfinished "
+        "wood, no LED strip visible yet, no styling."
+    ),
+    "wiring": (
+        "the carpenter laying a warm LED light strip into the channel "
+        "along one edge of the now-finished piece -- the strip is "
+        "visibly in place but NOT yet powered on, no glow yet."
     ),
     "lighting": (
-        "the carpenter pressing a warm LED light strip into a channel along "
-        "one edge of the now-finished piece, the first warm glow just "
-        "beginning to show -- the wood is fully built and finished, but no "
-        "final styling (cushions/throw/decor) yet."
+        "the LED strip now glowing warm along that edge -- the wood is "
+        "fully built and finished and the light is on, but tools and "
+        "loose materials are still scattered on the floor and there is "
+        "no final styling yet."
+    ),
+    "cleanup": (
+        "the carpenter gathering up the last loose tools, boxes and "
+        "offcut materials from the floor and carrying them out of frame "
+        "-- the piece itself is complete and lit, the floor now mostly "
+        "clear, but the piece is not yet styled with decor."
     ),
 }
 
 
-def generate_intermediate(client, stage_name, concept, prev_image, after_image):
+def generate_intermediate(client, stage_name, concept, history_images, after_image):
     prompt = (
         "Show this exact same room, same camera angle, same wall and window "
-        f"positions as both reference images. This is the NEXT step after "
-        f"the first reference image, showing {INTERMEDIATE_STEPS[stage_name]} "
-        "The second reference image shows where this build is ultimately "
-        "headed -- move visibly one step closer to it, not all the way "
-        f"there. {SPATIAL_RULE} No text. Keep proportions, wall and window "
-        "positions identical to both reference images."
+        "positions as every reference image. This is the NEXT step after "
+        f"the most recent reference image, showing {INTERMEDIATE_STEPS[stage_name]} "
+        "The final reference image shows where this build is ultimately "
+        "headed -- move visibly one small step closer to it, not all the "
+        f"way there. {SPATIAL_RULE} No text. Keep proportions, wall and "
+        "window positions identical to every reference image."
     )
-    print(f"--- generating {stage_name.upper()} (edited from previous stage) ---")
-    response = _generate_with_retry(client, [prompt, prev_image, after_image])
+    print(f"--- generating {stage_name.upper()} (referencing {len(history_images)} prior frame(s) + after) ---")
+    response = _generate_with_retry(client, [prompt, *history_images, after_image])
     return _first_image(response)
 
 
@@ -232,11 +289,13 @@ def main():
     images["after"] = generate_after(client, concept)
     images["materials"] = generate_materials(client, concept, images["after"])
 
-    prev = images["materials"]
-    for stage_name in ["framing", "building", "lighting"]:
-        img = generate_intermediate(client, stage_name, concept, prev, images["after"])
+    history = [images["materials"]]
+    for stage_name in ["bracket_start", "framing", "building", "wiring", "lighting", "cleanup"]:
+        img = generate_intermediate(
+            client, stage_name, concept, history[-HISTORY_WINDOW:], images["after"],
+        )
         images[stage_name] = img
-        prev = img
+        history.append(img)
 
     for stage_name in STAGES:
         path = out_dir / f"{concept_id}_{stage_name}.png"
