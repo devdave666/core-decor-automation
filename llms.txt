@@ -4204,3 +4204,71 @@ above were.
 video_id `2554608221721447`, Instagram media_id `18117291071475865`,
 TikTok post_id `6a900cc87d1a5188a5e8d9df`, YouTube post_id
 `6a900c923fd82c86cdd84820`.
+
+## Furniture Build Reel: hallucination flagged, unresolved. Resort Reveal
+Reel: NEW format, hook order corrected before spend, published (2026-08-27,
+same day)
+
+**Furniture build reel hallucination, flagged by Dev, NOT yet fixed.**
+Watching the published f02 video, Dev reported cabinets appearing then
+disappearing between frames -- the touch-less-change bug STATIC_RULE/
+negative_prompt was supposed to have fixed is still happening, at least
+partially. Not investigated or fixed this session (a time-sensitive new
+request came in instead) -- treat this as a real, still-open gap in that
+fix, not resolved. Worth a dedicated close look (frame-by-frame review of
+a real furniture-build clip) before assuming STATIC_RULE actually solved
+the class of bug it was written for.
+
+**Dev's hook feedback, and why it mattered twice in one session.** Dev
+first asked for "very strong hook" content generally, which led to
+building `furniture_build_reel`'s flash-forward punch-out (show the
+finished piece first, then cut to materials) -- Dev later said that hook
+"sucked." Then, mid-way through building a NEW format (`resort_reveal_
+reel/`) that had been designed with the SAME "show the payoff first" idea
+(a Veo-generated drone shot of the ALREADY-FINISHED resort, opening the
+video), Dev stated the actual rule directly: **"NEVER show the finished
+product/construction first, that's the opposite of a good hook."** This
+retroactively explains the f02 complaint too -- it wasn't the EXECUTION
+(reversed-zoom vs. real Veo motion) that was wrong, it was the STRUCTURE
+(payoff-first) itself. Caught before any Veo cost was spent on the
+resort concept's wrong-order version -- restructured so the video opens
+on the untouched "before" state (nothing to spoil) and the payoff (the
+Veo-generated drone shot) runs LAST, as a closing flourish after the
+timelapse has already revealed the result on its own. **This rule
+applies to every future format in this project, not just resort_reveal_
+reel** -- any future hook design must build TOWARD a reveal, never open
+with one.
+
+**Resort Reveal Reel, a third sibling format** (`resort_reveal_reel/`,
+alongside `transformation_reel/` and `furniture_build_reel/`): aerial
+drone-angle timelapse, pristine forest developing into an eco-resort that
+stays visually part of the forest -- dominant canopy, no visible clear-
+cutting, minimal footprint, structures nestled under/among trees rather
+than replacing them. No workers, no interior, no hands -- pure landscape/
+architecture. Two deliberate departures from the interior formats, both
+correct on the real run: the 4 build-progress clips are TIME-LAPSE paced
+(accelerated clouds/light), the opposite of transformation_reel's real-
+time rule, because that's this genre's own correct look, not a defect;
+and no STATIC_RULE, since with no workers, structures appearing between
+timelapse frames with nothing visibly building them IS the intended
+aesthetic, not the touch-less-change bug the interior formats fight.
+`generate_forest()` was written itemized/emphatic from the very first
+draft (not a soft summary), applying furniture_build_reel's
+generate_materials() lesson proactively -- and it worked cleanly on the
+first real run, no under-regression bug this time.
+
+**Real run confirmed the structure works as intended**: opening frames
+show pure untouched forest, river bend and terrain consistent throughout,
+canopy still visibly dominant even in the fully-built `after`/finale
+frames -- genuinely reads as "resort blended into forest," not
+deforestation. Published immediately per Dev's "publish right away":
+Facebook video_id `1043439245202124`, Instagram media_id
+`18016796588872828`, TikTok post_id `6a901d8b3739a195482cad82`, YouTube
+post_id `6a901d987d1a5188a5eaa6e3`.
+
+**Status**: one concept (`r01`), one run, structure validated but the
+drone-finale camera move's actual visual impact (how much the "push"
+reads on screen) wasn't closely reviewed frame-by-frame before publishing
+-- worth a closer look on a future run given this project's standing
+caution that Veo camera-motion instructions are the least reliable class
+of prompt.
