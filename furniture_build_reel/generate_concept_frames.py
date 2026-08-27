@@ -201,6 +201,20 @@ CONCEPTS = {
         "coil of warm LED strip lighting, a small pile of blackened steel "
         "brackets",
     },
+    "f03": {
+        "room": "a plain wall beside a large window in an otherwise empty "
+        "modern living room",
+        "piece": "floating built-in media console and fireplace wall with "
+        "a linear gas fireplace insert and concealed storage",
+        "style": "warm modern industrial, quiet luxury",
+        "materials": "blackened steel framing, wide-plank white oak "
+        "paneling, a linear gas fireplace insert, a floating white oak "
+        "media shelf, integrated warm LED strip lighting along the "
+        "console's underside",
+        "raw_materials": "a stack of raw white oak boards, a coiled roll "
+        "of blackened steel angle stock, a boxed linear fireplace insert, "
+        "a coil of warm LED strip lighting",
+    },
 }
 
 

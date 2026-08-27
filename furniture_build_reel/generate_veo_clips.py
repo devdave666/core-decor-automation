@@ -45,9 +45,29 @@ descriptors -- just the action) and removed STATIC_RULE from the prompt
 text entirely, on the theory that stating "everything else stays static"
 is ITSELF a form of re-describing the whole scene. NEGATIVE_PROMPT (the
 structured field, not inline text) is unchanged and still does the
-touch-less-change/music suppression work. Not yet verified against a real
-run before this file was rewritten -- the run this change ships with IS
-the test.
+touch-less-change/music suppression work. CONFIRMED WORKING on a real
+run -- 14 frames sampled densely across the output, zero flicker, zero
+unexplained appear/disappear (see llms.txt for the full test writeup).
+
+v4 (2026-08-27, same day): Dev shared a second piece of research/feedback,
+this one describing generic AI-timelapse failure modes (objects morphing
+mid-shot, a bed appearing on an unassembled lumber pile) and proposing a
+"fix" that turned out to already be this project's own architecture
+(separate keyframes, per-transition Veo calls, locked-off camera) --
+nothing to change there. One piece of its advice DID conflict with v3's
+confirmed fix, though: "explicitly define unchanged elements in every
+prompt" (wall color, floor, light direction) is close to the same
+re-description v3 just proved causes hallucination here. Rather than
+either blindly applying it or flatly rejecting it, split the difference
+and made it a real test: added a short ENVIRONMENT-only anchor to
+CAMERA_BASE (wall/floor/window light -- things that are the same in
+literally every frame of a single concept) while deliberately still NOT
+re-describing the SUBJECT or the OBJECT being worked on, which is what
+v3's fix actually targeted. These are different failure modes -- v3 was
+about the model re-rendering an object's appearance each time its
+material/color got restated; this is testing whether anchoring the
+never-changing backdrop helps without reintroducing that. Unverified
+until the next real run.
 
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
@@ -78,7 +98,10 @@ POLL_TIMEOUT_S = 600
 MAX_SUBMIT_RETRIES = 5
 SUBMIT_RETRY_BASE_DELAY_S = 20
 
-CAMERA_BASE = "Static locked-off shot, steady real-time pacing, not a time-lapse."
+CAMERA_BASE = (
+    "Static locked-off shot, steady real-time pacing, not a time-lapse. "
+    "Same wall, same floor, same window light throughout."
+)
 
 NEGATIVE_PROMPT = (
     "spontaneous or unexplained changes to walls, floor, or furniture the "
