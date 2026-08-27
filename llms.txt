@@ -4687,3 +4687,52 @@ construction in a locked-off shot) may simply be outside what Veo 3.1
 Fast can render convincingly at any reasonable stage count/duration/
 prompt structure, and a different format (less construction detail
 visible on-camera, more cutaway-style edits) may be the real fix.
+
+## Transformation Reel: last-rendered-frame chaining, a genuinely new
+technique, real visible improvement at cut points (2026-08-27, same day)
+
+Dev asked a question this project hadn't tested across the whole
+furniture_build_reel saga: every clip used a PRE-GENERATED still (from
+the Gemini image-editing chain) as both the previous clip's `last_frame=`
+target AND the next clip's `image=` start. But Veo's own rendering only
+approximates that target still, it doesn't reproduce it exactly -- so the
+actual last frame Veo rendered and the still used to start the next clip
+could differ. A real, previously-unexamined source of cut-point jumps.
+
+**Fix implemented in `transformation_reel/generate_veo_clips.py`
+(`_extract_last_frame`)**: only the FIRST clip starts from a pre-generated
+still. Every clip after that starts from the actual last frame extracted
+via ffmpeg (`-sseof -0.1`, one frame) from the PREVIOUS clip's real
+output, not from the next stage's independently-generated still. The
+pre-generated stage stills are still used as each clip's `last_frame=`
+TARGET throughout, so planned direction/staging is unchanged -- only the
+START of clips 2-4 changed. Trade-off named up front: chains Veo's own
+output back into itself, so quality dips could compound across the chain
+instead of resetting to a clean designed still each time.
+
+**New concept t03**: a grand entry foyer with a sweeping curved staircase,
+condemned/dead-beat to hotel-lobby opulent -- fresh room type, not another
+living room (Dev: tired of t01/t02's living room repeats).
+
+**Real result**: sampled frames right at each cut point (3.9s/4.1s,
+7.9s/8.1s, 11.9s/12.1s). First two cuts: the pairs are near pixel-
+identical -- same worker pose, same debris bin, same tarp position, no
+visible jump at all. Third cut: the worker's exact pose differs somewhat
+between frames, but the ROOM ITSELF (staircase, chandelier, marble wall,
+mirror, console, chairs) stayed perfectly consistent throughout -- a much
+smaller, more localized kind of imperfection than the structures-
+materializing/objects-duplicating disasters furniture_build_reel hit
+repeatedly. This is a genuine, visible improvement on the cut-point-jump
+symptom specifically (not a full fix for every hallucination category --
+not run through real Gemini forensic QA this time, published on Dev's
+"publish it and ask me to check" instruction instead).
+
+**Published**: Facebook video_id `4522011748088030`, Instagram media_id
+`17906007675516261`, TikTok post_id `6a90c342ae8294e48369efa2`, YouTube
+post_id `6a90c341ae8294e48369ef34`.
+
+**Worth carrying to furniture_build_reel if/when Dev asks to resume it**:
+this same last-frame-chaining technique was never tried there across all
+six failed fix attempts -- it's a genuinely different, untested lever
+from all of motion-only wording, environment anchors, stage widening,
+static-scene rules, clip duration, and atomic-action structure.
