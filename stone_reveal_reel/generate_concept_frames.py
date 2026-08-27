@@ -108,25 +108,39 @@ def generate_after(client, concept):
 
 
 def generate_slabs_delivered(client, concept, after_image):
-    # Itemized/emphatic from the start -- furniture_build_reel's
-    # generate_materials() needed this escalation after a real run came
-    # back under-regressed for a built-in structure; applying the lesson
-    # proactively here rather than waiting to hit it again.
+    # v2 fix: the first real run of this prompt regressed the FLOOR/tub
+    # (the only items named in concept['final_feature']) but left every
+    # OTHER furnishing the model had independently added to `after` --
+    # the mirror, sink, floor lamp, bench, wall tile -- completely intact,
+    # because nothing ever told it those had to go too. Naming only what
+    # the concept dict itself describes isn't enough; the reference image
+    # can contain plenty the concept text never mentioned. Fixed by
+    # switching to an absolute-baseline description (an empty unfinished
+    # shell, explicitly listing every furnishing that must be absent)
+    # instead of itemizing against the concept text -- the same shape of
+    # fix that worked cleanly for resort_reveal_reel's generate_forest()
+    # on its first attempt.
     prompt = (
-        "Show this exact same room, same camera angle, same window and "
-        "wall positions -- but the floor must be shown COMPLETELY BARE "
-        "and UNFINISHED: plain bare subfloor or concrete, absolutely NO "
-        f"stone flooring installed, no tub, no LED lighting, none of "
-        f"{concept['final_feature']} exists yet in any form -- not "
-        "partially installed, not started, completely absent. Leaning "
-        f"against one wall are several large finished, polished "
-        f"{concept['stone']} slabs, cut to size and ready for "
-        "installation, plus a box of LED strip lighting and basic tools "
-        "on the bare floor. The room is otherwise bare and unfurnished. "
-        f"No text or logos visible on any packaging. {SPATIAL_RULE} No "
-        "people. No text. Keep the room's proportions, window and wall "
-        "positions identical to the reference image so the space is "
-        "still clearly recognizable as the same room."
+        "Show this exact same room as an EMPTY, UNFINISHED CONSTRUCTION-"
+        "STAGE SHELL -- same camera angle, same window and wall "
+        "positions, same room proportions, but otherwise completely "
+        "stripped back. The floor is bare subfloor or concrete, no stone "
+        "flooring of any kind. The walls are bare, unfinished drywall or "
+        "concrete, no tile, no finish material. There is absolutely NO "
+        "furniture and NO fixtures of any kind anywhere in the room -- "
+        "no tub, no sink, no vanity, no mirror, no floor lamp, no bench, "
+        "no towels, no styling objects, no LED lighting. None of it "
+        "exists yet in any form, not partially installed, not started, "
+        "completely absent -- the room is a bare empty shell with "
+        "nothing in it except what is listed next. Leaning against one "
+        f"bare wall are several large finished, polished {concept['stone']} "
+        "slabs, cut to size and ready for installation, plus a box of "
+        "LED strip lighting and basic hand tools sitting on the bare "
+        "floor -- these are the ONLY objects in the room. No text or "
+        f"logos visible on any packaging. {SPATIAL_RULE} No people. No "
+        "text. Keep the room's proportions, window and wall positions "
+        "identical to the reference image so the space is still clearly "
+        "recognizable as the same room, empty and unfinished."
     )
     print("--- generating SLABS_DELIVERED (edited from AFTER) ---")
     response = _generate_with_retry(client, [prompt, after_image])
