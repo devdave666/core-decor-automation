@@ -18,10 +18,29 @@ rather than re-discovering any of them on a brand new format:
    music bug transformation_reel hit on real runs -- applied here from the
    start instead of waiting to hit the same two bugs again on a new format.
 
+v2 (2026-08-27): Dev liked f01 but flagged the hook as the weak point --
+opening on a plain shot of materials on the floor gives a viewer nothing to
+stop scrolling for. Added a ~1.3s flash-forward TEASER clip at the very
+START, before `materials`: a fast punch-OUT from a tight crop on the
+finished piece to the full reveal, so the very first thing on screen is the
+payoff, not the setup -- "wait, what IS that" curiosity before the build
+even starts, then a hard cut back to raw materials. Classic renovation-
+content hook structure (show the result, then explain how).
+
+Built by reusing `render_pushin_clip` rather than writing new zoompan math:
+render a normal slow push-IN on the `after` still, then play it backwards
+with ffmpeg's `reverse` filter -- a zoom-in played in reverse IS a zoom-out,
+so this gets a punch-out reveal for free from already-proven code instead
+of a second hand-rolled animation to get wrong. Deliberately NOT asked of
+Veo as a camera move, same reasoning as the hero-reveal push-in: isolate
+the hard camera work into a deterministic ffmpeg step that can't
+hallucinate.
+
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
-Writes <out_dir>/<concept_id>_clip_a..d.mp4, <out_dir>/<concept_id>_clip_e_reveal.mp4,
-and the concatenated <out_dir>/<concept_id>_build.mp4.
+Writes <out_dir>/<concept_id>_clip_hook.mp4, <out_dir>/<concept_id>_clip_a..d.mp4,
+<out_dir>/<concept_id>_clip_e_reveal.mp4, and the concatenated
+<out_dir>/<concept_id>_build.mp4.
 """
 import subprocess
 import sys
@@ -42,6 +61,8 @@ LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
 CLIP_DURATION_S = 4
 HERO_REVEAL_DURATION_S = 2.5
+HOOK_DURATION_S = 1.3
+HOOK_MAX_ZOOM = 1.4
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
 MAX_SUBMIT_RETRIES = 5
@@ -183,6 +204,34 @@ def generate_hero_reveal(after_image_path, out_path):
     return out_path
 
 
+def generate_hook_teaser(after_image_path, out_path):
+    # A zoom-IN played backwards IS a zoom-out -- reusing render_pushin_clip
+    # rather than writing separate reverse-zoompan math. render_pushin_clip
+    # ramps linearly from 1.0 to target_zoom across the WHOLE duration
+    # regardless of zoom_rate_per_second, as long as the rate is high enough
+    # to clamp target_zoom to max_zoom (true here) -- so the original clip
+    # goes wide->tight over HOOK_DURATION_S, and reversed goes tight->wide
+    # over the same span: a smooth punch-out revealing the full piece by the
+    # end of the hook, not an instant cut.
+    print(f"--- generating hook teaser: {out_path.name} ---")
+    zoomed_path = out_path.with_suffix(".zoomed.mp4")
+    reversed_path = out_path.with_suffix(".reversed.mp4")
+    render_pushin_clip(
+        after_image_path, HOOK_DURATION_S, zoomed_path,
+        width=VEO_CANVAS[0], height=VEO_CANVAS[1],
+        zoom_rate_per_second=HOOK_MAX_ZOOM, max_zoom=HOOK_MAX_ZOOM,
+    )
+    subprocess.run(
+        ["ffmpeg", "-y", "-i", str(zoomed_path), "-vf", "reverse", str(reversed_path)],
+        check=True,
+    )
+    _mux_silent_audio(reversed_path, out_path)
+    zoomed_path.unlink()
+    reversed_path.unlink()
+    print(f"  saved {out_path}")
+    return out_path
+
+
 def concatenate(clip_paths, out_path):
     cmd = ["ffmpeg", "-y"]
     for p in clip_paths:
@@ -216,7 +265,9 @@ def main():
 
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
-    clip_paths = []
+    hook_path = out_dir / f"{concept_id}_clip_hook.mp4"
+    generate_hook_teaser(frame_paths["after"], hook_path)
+    clip_paths = [hook_path]
     letters = "abcd"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]

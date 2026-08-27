@@ -170,6 +170,23 @@ CONCEPTS = {
         "coil of warm LED strip lighting, a small pile of blackened steel "
         "L-brackets",
     },
+    "f02": {
+        "room": "a plain wall beside a large window in an otherwise empty "
+        "modern bedroom",
+        "piece": "full-height built-in bookshelf wall with a hidden "
+        "fold-down bed integrated into its center bay, the bed panel "
+        "folded down and fully made up like a normal bed, blending "
+        "seamlessly into the shelving around it",
+        "style": "warm modern craftsman, quiet luxury",
+        "materials": "rift-cut white oak shelving and paneling, blackened "
+        "steel hardware, an upholstered bouclé fold-down bed panel, "
+        "integrated warm LED strip lighting along the shelf undersides, "
+        "styled books and objects filling the surrounding bays",
+        "raw_materials": "a stack of raw white oak boards and plywood "
+        "panels, a folded fold-down bed hardware kit still in its box, a "
+        "coil of warm LED strip lighting, a small pile of blackened steel "
+        "brackets",
+    },
 }
 
 
