@@ -21,26 +21,38 @@ rather than re-discovering any of them on a brand new format:
 v2 (2026-08-27): Dev liked f01 but flagged the hook as the weak point --
 opening on a plain shot of materials on the floor gives a viewer nothing to
 stop scrolling for. Added a ~1.3s flash-forward TEASER clip at the very
-START, before `materials`: a fast punch-OUT from a tight crop on the
-finished piece to the full reveal, so the very first thing on screen is the
-payoff, not the setup -- "wait, what IS that" curiosity before the build
-even starts, then a hard cut back to raw materials. Classic renovation-
-content hook structure (show the result, then explain how).
+START, before `materials`, punching out from the finished piece to the
+full reveal before cutting back to raw materials.
 
-Built by reusing `render_pushin_clip` rather than writing new zoompan math:
-render a normal slow push-IN on the `after` still, then play it backwards
-with ffmpeg's `reverse` filter -- a zoom-in played in reverse IS a zoom-out,
-so this gets a punch-out reveal for free from already-proven code instead
-of a second hand-rolled animation to get wrong. Deliberately NOT asked of
-Veo as a camera move, same reasoning as the hero-reveal push-in: isolate
-the hard camera work into a deterministic ffmpeg step that can't
-hallucinate.
+v3 (2026-08-27, same day): REMOVED the v2 hook entirely. Dev's later,
+explicit rule (stated while reviewing resort_reveal_reel, applies to every
+format): "NEVER show the finished product/construction first, that's the
+opposite of a good hook." The v2 hook did exactly that. The video now
+opens directly on `materials` -- nothing to spoil -- same fix already
+applied to resort_reveal_reel.
+
+Also v3: Dev shared external research (Vertex AI Imagen/Veo prompting
+guidance) with one claim worth testing directly against this project's
+still-open bug -- Dev flagged real furniture_build_reel output (f02) with
+objects appearing/disappearing between frames, and STATIC_RULE alone
+hadn't fixed it. The research's claim: Veo I2V prompts should use PURE
+MOTION VERBS only and never re-describe a subject/object already visible
+in the conditioning image, because re-describing static geometry causes
+the model to re-render (and warp) it rather than leave it alone. Rewrote
+every TRANSITIONS entry to drop material/color/appearance re-description
+(no more "steel bracket," "raw wood plank," "cordless drill" as
+descriptors -- just the action) and removed STATIC_RULE from the prompt
+text entirely, on the theory that stating "everything else stays static"
+is ITSELF a form of re-describing the whole scene. NEGATIVE_PROMPT (the
+structured field, not inline text) is unchanged and still does the
+touch-less-change/music suppression work. Not yet verified against a real
+run before this file was rewritten -- the run this change ships with IS
+the test.
 
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
-Writes <out_dir>/<concept_id>_clip_hook.mp4, <out_dir>/<concept_id>_clip_a..d.mp4,
-<out_dir>/<concept_id>_clip_e_reveal.mp4, and the concatenated
-<out_dir>/<concept_id>_build.mp4.
+Writes <out_dir>/<concept_id>_clip_a..d.mp4, <out_dir>/<concept_id>_clip_e_reveal.mp4,
+and the concatenated <out_dir>/<concept_id>_build.mp4.
 """
 import subprocess
 import sys
@@ -61,21 +73,12 @@ LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
 CLIP_DURATION_S = 4
 HERO_REVEAL_DURATION_S = 2.5
-HOOK_DURATION_S = 1.3
-HOOK_MAX_ZOOM = 1.4
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
 MAX_SUBMIT_RETRIES = 5
 SUBMIT_RETRY_BASE_DELAY_S = 20
 
-CAMERA_BASE = "Static locked-off shot, real-time pacing, not a time-lapse."
-
-STATIC_RULE = (
-    "Every other surface, wall, and object in the frame that the carpenter "
-    "is not directly touching stays completely static and unchanged from "
-    "the previous frame -- material and color only change exactly where "
-    "their hands are working."
-)
+CAMERA_BASE = "Static locked-off shot, steady real-time pacing, not a time-lapse."
 
 NEGATIVE_PROMPT = (
     "spontaneous or unexplained changes to walls, floor, or furniture the "
@@ -85,44 +88,42 @@ NEGATIVE_PROMPT = (
     "soundtrack, upbeat music, dramatic music"
 )
 
+# v3: motion-only per Dev's research -- one camera vector (CAMERA_BASE),
+# one primary action, one ambient-particle layer, minimal object naming.
+# Deliberately does NOT re-describe material, color, or appearance of
+# anything already visible in the conditioning image (no "steel bracket,"
+# "raw wood plank," "cordless drill" as descriptors) -- the claim being
+# tested is that re-describing static geometry is what was causing Veo to
+# re-render (and hallucinate/warp) it, not a lack of a "stay static" rule.
 TRANSITIONS = {
     ("materials", "framing"): (
-        f"{CAMERA_BASE} A carpenter kneels and drives screws through a "
-        "steel bracket into the wall with a cordless drill, then lifts a "
-        "raw wood plank into place across the first brackets. "
-        f"{STATIC_RULE} "
-        "SFX: the whir and stutter of a cordless drill driving a screw, "
-        "a wood plank knocking into place, a tape measure snapping back "
-        "into its case. "
-        "Ambient noise: quiet room tone, faint birdsong through the window."
+        f"{CAMERA_BASE} The carpenter kneels, drives a screw into a "
+        "bracket, then lifts a board up into place against the frame. "
+        "Fine sawdust drifts through the light. "
+        "SFX: a drill motor, a board settling into place. "
+        "Ambient noise: quiet room tone, faint birdsong."
     ),
     ("framing", "building"): (
-        f"{CAMERA_BASE} A carpenter fits several more raw boards edge to "
-        "edge across the frame, running a hand along a seam to check it's "
-        f"flush before reaching for the next board. {STATIC_RULE} "
+        f"{CAMERA_BASE} The carpenter fits several boards into place edge "
+        "to edge, running a hand along each seam to check it sits flush. "
+        "Fine sawdust drifts through the light. "
         "SFX: the soft knock of wood settling into place, a light sanding "
-        "pass with a cloth, boards shifting against each other. "
-        "Ambient noise: quiet room tone, the occasional creak of a knee on "
-        "the floor."
+        "pass. "
+        "Ambient noise: quiet room tone."
     ),
     ("building", "lighting"): (
-        f"{CAMERA_BASE} A carpenter peels the adhesive backing off a coil "
-        "of LED strip and presses it carefully into a channel along one "
-        "edge of the finished piece, the strip beginning to glow warm as "
-        f"they work along its length. {STATIC_RULE} "
-        "SFX: the crackle of adhesive backing peeling away, a soft press "
-        "of fingers along the strip, a faint electronic click as it powers "
-        "on. "
+        f"{CAMERA_BASE} The carpenter peels backing from a strip and "
+        "presses it into a channel along one edge, the strip glowing warm "
+        "as the hand moves along its length. "
+        "SFX: adhesive backing peeling away, a soft press of fingers, a "
+        "faint electronic click. "
         "Ambient noise: quiet room tone, warm and settled."
     ),
     ("lighting", "after"): (
-        f"{CAMERA_BASE} A carpenter lays a linen throw across the finished "
-        "piece and sets two cushions in place, then steps back out of "
-        "frame, leaving the piece fully finished and glowing warm against "
-        f"the late-afternoon light through the window. {STATIC_RULE} "
-        "SFX: the soft rustle of linen fabric being laid out, the light "
-        "thud of a cushion settling into place, quiet footsteps receding. "
-        "Ambient noise: warm quiet, faint birdsong through the window."
+        f"{CAMERA_BASE} The carpenter lays a throw down and sets two "
+        "cushions in place, then steps back out of frame. "
+        "SFX: soft fabric rustle, a light thud, quiet footsteps receding. "
+        "Ambient noise: warm quiet, faint birdsong."
     ),
 }
 
@@ -204,34 +205,6 @@ def generate_hero_reveal(after_image_path, out_path):
     return out_path
 
 
-def generate_hook_teaser(after_image_path, out_path):
-    # A zoom-IN played backwards IS a zoom-out -- reusing render_pushin_clip
-    # rather than writing separate reverse-zoompan math. render_pushin_clip
-    # ramps linearly from 1.0 to target_zoom across the WHOLE duration
-    # regardless of zoom_rate_per_second, as long as the rate is high enough
-    # to clamp target_zoom to max_zoom (true here) -- so the original clip
-    # goes wide->tight over HOOK_DURATION_S, and reversed goes tight->wide
-    # over the same span: a smooth punch-out revealing the full piece by the
-    # end of the hook, not an instant cut.
-    print(f"--- generating hook teaser: {out_path.name} ---")
-    zoomed_path = out_path.with_suffix(".zoomed.mp4")
-    reversed_path = out_path.with_suffix(".reversed.mp4")
-    render_pushin_clip(
-        after_image_path, HOOK_DURATION_S, zoomed_path,
-        width=VEO_CANVAS[0], height=VEO_CANVAS[1],
-        zoom_rate_per_second=HOOK_MAX_ZOOM, max_zoom=HOOK_MAX_ZOOM,
-    )
-    subprocess.run(
-        ["ffmpeg", "-y", "-i", str(zoomed_path), "-vf", "reverse", str(reversed_path)],
-        check=True,
-    )
-    _mux_silent_audio(reversed_path, out_path)
-    zoomed_path.unlink()
-    reversed_path.unlink()
-    print(f"  saved {out_path}")
-    return out_path
-
-
 def concatenate(clip_paths, out_path):
     cmd = ["ffmpeg", "-y"]
     for p in clip_paths:
@@ -265,9 +238,7 @@ def main():
 
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
-    hook_path = out_dir / f"{concept_id}_clip_hook.mp4"
-    generate_hook_teaser(frame_paths["after"], hook_path)
-    clip_paths = [hook_path]
+    clip_paths = []
     letters = "abcd"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
