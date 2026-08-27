@@ -3,39 +3,44 @@ Generates the resort-reveal reel from the 5-stage frames produced by
 generate_concept_frames.py. Sibling to transformation_reel/ and
 furniture_build_reel/'s Veo scripts -- reuses their hardening (submission-
 time 429 retry, Windows-safe ffmpeg encoding, GenerateVideosConfig.
-negative_prompt) but the HOOK is built differently on purpose.
+negative_prompt).
 
-Dev's explicit feedback on furniture_build_reel's hook (a punch-out zoom on
-a static image via reversed ffmpeg zoompan): it didn't land. For THIS
-format -- drone footage is the whole premise -- the fix isn't a better zoom
-effect, it's a REAL Veo-generated camera move. Per this project's own
-earlier Veo research (see llms.txt): camera-motion instructions are
-unreliable for complex moves, but a SINGLE simple, isolated move (a slow
-aerial push/pull-back, not blended into a longer shot) is the one class of
-camera instruction that research flagged as worth trusting. So the hook
-here is one dedicated Veo clip -- a slow cinematic forward push toward the
-finished resort -- generated on its own, image-conditioned from `after`
-only (no last_frame; Veo invents the motion forward from a single frame),
-not a repeat of the ffmpeg zoom trick.
+v2 (2026-08-27), corrected before the first real run: the original version
+of this file opened with a dedicated Veo drone clip showing the ALREADY-
+FINISHED resort, meant as a stronger hook than furniture_build_reel's
+punch-out zoom (which Dev said didn't land). Dev then gave a direct rule
+that applies here retroactively: NEVER show the finished product first --
+that is the opposite of a good hook, not a fix for one. Restructured
+before any Veo cost was spent on the wrong order:
 
-The four build-progress clips (forest->clearing->foundation->structure->
-after) stay static locked-off aerial shots -- but timelapse-paced, not
-real-time, per Dev's explicit ask this time (the opposite of transformation_
-reel's "not a time-lapse" rule, and deliberately so: this format has no
-workers to look unnaturally sped-up, just accelerated light/cloud motion
-implying days passing, which is the genre's own established look, not a
-defect). No STATIC_RULE carried over from the sibling formats either --
-that rule exists to stop unexplained changes NOT caused by a visible
-worker's hands, but this format has no workers at all; structures
+The video now opens directly on `forest` (pristine, untouched -- nothing to
+spoil) and plays the 4 timelapse build-progress clips in order
+(forest->clearing->foundation->structure->after). The finished resort is
+never seen until clip d's own natural conclusion. The Veo-generated drone
+push (still a single, isolated, simple camera move -- the one class of
+camera instruction this project's own research flagged as worth trusting)
+now runs LAST, as a closing cinematic flourish AFTER the timelapse has
+already revealed the resort on its own -- punctuating a payoff that
+already happened, not spoiling it in advance. This also matches Dev's own
+original plan documented much earlier in this project's research: "static
+until a single drone pull-back at the very end."
+
+The four build-progress clips stay static locked-off aerial shots -- but
+timelapse-paced, not real-time, per Dev's explicit ask (the opposite of
+transformation_reel's "not a time-lapse" rule, and deliberately so: this
+format has no workers to look unnaturally sped-up, just accelerated light/
+cloud motion implying days passing, which is the genre's own established
+look, not a defect). No STATIC_RULE carried over from the sibling formats
+either -- that rule exists to stop unexplained changes NOT caused by a
+visible worker's hands, but this format has no workers at all; structures
 appearing between timelapse frames with nothing visibly building them is
 the correct aesthetic here, not the touch-less-change bug those formats
 had to fix.
 
 Usage: python resort_reveal_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{forest,clearing,foundation,structure,after}.png
-Writes <out_dir>/<concept_id>_clip_hook.mp4, <out_dir>/<concept_id>_clip_a..d.mp4,
-<out_dir>/<concept_id>_clip_e_reveal.mp4, and the concatenated
-<out_dir>/<concept_id>_resort.mp4.
+Writes <out_dir>/<concept_id>_clip_a..d.mp4, <out_dir>/<concept_id>_clip_e_drone.mp4,
+and the concatenated <out_dir>/<concept_id>_resort.mp4.
 """
 import subprocess
 import sys
@@ -46,17 +51,13 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from generate_concept_frames import STAGES, VEO_CANVAS
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
+from generate_concept_frames import STAGES
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
 CLIP_DURATION_S = 4
-HOOK_DURATION_S = 4
-HERO_REVEAL_DURATION_S = 2.5
+DRONE_FINALE_DURATION_S = 4
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
 MAX_SUBMIT_RETRIES = 5
@@ -76,7 +77,7 @@ TIMELAPSE_NEGATIVE_PROMPT = (
     "soundtrack, upbeat music, dramatic music"
 )
 
-HOOK_NEGATIVE_PROMPT = (
+DRONE_FINALE_NEGATIVE_PROMPT = (
     "clear-cut deforestation, bulldozers, heavy construction machinery, "
     "cranes, exposed bare dirt scars, jerky or shaky camera movement, "
     "time-lapse motion, sped-up motion, background music, musical score, "
@@ -119,7 +120,7 @@ TRANSITIONS = {
     ),
 }
 
-HOOK_PROMPT = (
+DRONE_FINALE_PROMPT = (
     "Cinematic aerial drone shot, real-time (not time-lapse), a single "
     "slow continuous forward push deeper over the forest canopy, gliding "
     "toward the eco-resort nestled among the trees below, warm light "
@@ -190,37 +191,16 @@ def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_p
     _poll_and_save(operation, client, out_path)
 
 
-def generate_hook_drone_shot(client, after_image_path, out_path):
-    print(f"--- generating hook drone shot: {out_path.name} ---")
+def generate_drone_finale(client, after_image_path, out_path):
+    # Runs LAST, after the timelapse has already revealed the resort on
+    # its own -- a closing flourish, not a spoiler. See module docstring.
+    print(f"--- generating drone finale: {out_path.name} ---")
     after_image = types.Image.from_file(location=str(after_image_path))
     operation = _submit_with_retry(
-        client, after_image, HOOK_PROMPT, HOOK_NEGATIVE_PROMPT, HOOK_DURATION_S,
+        client, after_image, DRONE_FINALE_PROMPT, DRONE_FINALE_NEGATIVE_PROMPT,
+        DRONE_FINALE_DURATION_S,
     )
     _poll_and_save(operation, client, out_path)
-
-
-def _mux_silent_audio(video_path, out_path):
-    subprocess.run(
-        ["ffmpeg", "-y", "-i", str(video_path),
-         "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
-         "-shortest", "-c:v", "copy", "-c:a", "aac",
-         str(out_path)],
-        check=True,
-    )
-    return out_path
-
-
-def generate_hero_reveal(after_image_path, out_path):
-    print(f"--- generating hero reveal push-in: {out_path.name} ---")
-    silent_path = out_path.with_suffix(".silent.mp4")
-    render_pushin_clip(
-        after_image_path, HERO_REVEAL_DURATION_S, silent_path,
-        width=VEO_CANVAS[0], height=VEO_CANVAS[1],
-    )
-    _mux_silent_audio(silent_path, out_path)
-    silent_path.unlink()
-    print(f"  saved {out_path}")
-    return out_path
 
 
 def concatenate(clip_paths, out_path):
@@ -256,10 +236,7 @@ def main():
 
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
-    hook_path = out_dir / f"{concept_id}_clip_hook.mp4"
-    generate_hook_drone_shot(client, frame_paths["after"], hook_path)
-    clip_paths = [hook_path]
-
+    clip_paths = []
     letters = "abcd"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
@@ -273,9 +250,11 @@ def main():
         )
         clip_paths.append(clip_path)
 
-    hero_path = out_dir / f"{concept_id}_clip_e_reveal.mp4"
-    generate_hero_reveal(frame_paths["after"], hero_path)
-    clip_paths.append(hero_path)
+    # Runs last, on purpose -- see module docstring. The timelapse (a-d)
+    # already revealed the resort; this is a closing flourish, not a hook.
+    drone_path = out_dir / f"{concept_id}_clip_e_drone.mp4"
+    generate_drone_finale(client, frame_paths["after"], drone_path)
+    clip_paths.append(drone_path)
 
     final = out_dir / f"{concept_id}_resort.mp4"
     concatenate(clip_paths, final)
