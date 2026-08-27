@@ -4144,3 +4144,63 @@ independently re-verified against this format's real output the way t02
 was for transformation_reel, since there was no review step before
 publishing. If a future furniture-build run gets watched closely, that's
 the first real confirmation these fixes hold on this format too.
+
+## Furniture Build Reel: flash-forward hook + f02 (hidden murphy bed),
+one real generation bug found and fixed same-session (2026-08-27)
+
+Continuation of the entry directly above, next day.
+
+**Hook fix, applied to the format itself (not just f02).** Dev liked f01
+but named the hook as the weak point -- opening on a plain shot of
+materials on the floor gives no reason to stop scrolling. Added a ~1.3s
+flash-forward teaser clip at the very START of every future run, before
+`materials`: a fast punch-OUT from a tight crop on the finished piece to
+the full reveal, so the payoff is the first thing on screen. Built by
+reusing `render_pushin_clip` and playing it backwards with ffmpeg's
+`reverse` filter (a zoom-in reversed IS a zoom-out) rather than writing
+new zoompan math -- `generate_hook_teaser()` in
+`furniture_build_reel/generate_veo_clips.py`. Real f02 output confirms it
+reads as intended: opens tight, pulls out to the full stunning reveal by
+~1.3s, then hard-cuts to raw materials.
+
+**f02 concept**: a built-in bookshelf wall with a fold-down bed hidden in
+its center bay, styled to blend seamlessly with the shelving -- a "wait,
+WHAT is that" reveal (a bed hiding inside a bookshelf) rather than f01's
+still-impressive-but-more-expected floating daybed. Same exact template,
+zero new mechanics needed.
+
+**Real generation bug found and fixed**: the first f02 `materials` frame
+came back with the wall still almost fully built (shelving/bed basically
+intact, just a few raw-material props added on top), plus visible text on
+a box -- `generate_materials()`'s instruction ("with none of the finished
+piece built yet") wasn't forceful enough to make the model actually
+*remove* existing BUILT-IN wall structure via editing. f01's freestanding
+daybed reverted to a plank pile fine on the same wording; a fixed/built-in
+piece (shelving embedded in the wall) did not. Root cause: soft summary
+instructions work for freestanding furniture, not for architecture-like
+built-ins -- same lesson transformation_reel already learned for
+`generate_before()`'s decay prompt (itemized/emphatic beats a mild
+summary). Fixed by rewriting `generate_materials()` to be itemized and
+emphatic ("the wall must be shown COMPLETELY BARE... NONE of the piece
+exists yet in any form... not partially built, not started, completely
+absent"), plus explicitly banning visible text/logos on packaging. Second
+attempt with the fix came back correctly bare. **This fix is now shared
+code (`generate_materials()` itself), so it applies to every future
+concept, not just f02** -- worth remembering if a future built-in-style
+concept still comes back under-regressed: the fix is already in the
+prompt, so suspect stochastic variance first, not a missing fix.
+
+**Also caught and fixed on the same run**: the regenerated `lighting`
+frame drifted to TWO people (a second tradesperson appeared), inconsistent
+with every TRANSITIONS motion prompt's singular "a carpenter" and with
+`framing`/`building`'s correctly-singular carpenter. One retry of just
+that stage (`generate_intermediate('lighting', ...)` called directly)
+produced a single-carpenter version. Not registered as a systemic fix
+(no prompt change made) -- treat as ordinary generation variance to watch
+for, not a bug needing a permanent prompt change the way the two fixes
+above were.
+
+**Published immediately per Dev's "publish right away."** Facebook
+video_id `2554608221721447`, Instagram media_id `18117291071475865`,
+TikTok post_id `6a900cc87d1a5188a5e8d9df`, YouTube post_id
+`6a900c923fd82c86cdd84820`.
