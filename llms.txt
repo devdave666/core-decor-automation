@@ -4372,3 +4372,84 @@ installers' actions visibly causing the visible changes. Published
 immediately: Facebook video_id `841978665577171`, Instagram media_id
 `18070792037476083`, TikTok post_id `6a9035273161437d5821306d`, YouTube
 post_id `6a9035273d78379be21936a0`.
+
+## Furniture Build Reel: motion-only Veo prompts confirmed fixing the
+hallucination bug, payoff-first hook removed, republished clean (2026-08-27,
+same day)
+
+Dev pushed back on the still-open cabinet-flicker bug from earlier this
+session ("Wow that sucks") and shared external research (Vertex AI
+Imagen/Veo prompting guidance) with two claims. Both checked against this
+project's real environment before acting on either:
+
+1. **Switch base-frame generation to Imagen 3** -- rejected, verified not
+   assumed. `generate_images()`'s real signature is `(model, prompt,
+   config)`, no image parameter -- Imagen 3 is text-to-image only and
+   cannot take reference images, which every format in this project
+   depends on for chained consistency. Imagen also doesn't appear at all
+   in this account's enabled model catalog (`client.models.list()`
+   returns `veo-2.0/3.0/3.1` variants, zero `imagen-*` entries). Their
+   script's exact model IDs (`imagen-3.0-generate-002`,
+   `veo-2.0-generate-001`) are both suspect for this account specifically
+   -- `veo-2.0-generate-001` is a known case of "listed in the catalog
+   but 404s on real calls" from this project's own earlier research.
+2. **Veo I2V prompts should be pure motion verbs, never re-describe a
+   subject/object already visible in the conditioning image** -- accepted
+   and tested for real. This is a plausible, specific mechanism for the
+   exact bug Dev flagged (re-describing static geometry causes Veo to
+   re-render, not just leave it alone, and re-rendering is where
+   hallucination/warping comes from).
+
+**Applied to `furniture_build_reel/generate_veo_clips.py` (v3)**: rewrote
+every `TRANSITIONS` entry to drop all material/color/appearance
+re-description of anything already visible in frame (no more "steel
+bracket," "raw wood plank," "cordless drill" as descriptors -- just the
+action), and removed `STATIC_RULE` from the prompt text entirely on the
+theory that stating "everything else stays static" is itself a form of
+re-describing the whole scene. `NEGATIVE_PROMPT` (the structured field)
+unchanged. Same v3 also REMOVED the v2 payoff-first hook (flash-forward
+punch-out to the finished piece) -- this violates Dev's own explicit rule
+from earlier the same session, and f02 had never been fixed to match it.
+Video now opens directly on `materials`, same fix already applied to
+resort_reveal_reel.
+
+**Real test, done properly**: first ran the new prompts against the OLD
+f02 frames still on disk -- results were ambiguous, because those frames
+had a pre-existing flaw (the `lighting` keyframe was already
+prematurely fully styled, from before today) unrelated to what was being
+tested. Recognized the test was contaminated and **regenerated the frames
+fresh** rather than publish on top of a confounded result. Fresh frames
+had one ordinary generation-variance issue (a `building` stage drifted to
+two carpenters) -- one retry of just that stage fixed it, not a systemic
+bug. Final real run against clean frames + the motion-only prompts: 14
+frames sampled densely across the full output, zero flicker, zero
+unexplained appear/disappear, single consistent carpenter throughout,
+clean natural progression with no premature styling. **The motion-only
+rewrite is confirmed working** -- this is the first time this specific
+bug class has been verified fixed on a real run, not just theorized.
+
+**Published**, replacing the flawed original f02 post conceptually (not
+literally deleted, per Dev's earlier explicit "leave published posts
+alone" stance on a different but analogous case): Facebook video_id
+`1810491046786244`, Instagram media_id `18169176856457901`, TikTok
+post_id `6a9042467cbe3631e7ab6530`, YouTube post_id
+`6a90423f9b170ac13e3e5e62`.
+
+**Infra note**: TikTok and YouTube both hung on `actions/checkout@v4`
+again during this publish (now the third occurrence this project has
+hit, after two earlier same-day cases on other formats) -- both past 6.5
+minutes with zero progress, cancelled and re-dispatched, both succeeded
+within 1.5 minutes on retry. Consistently a GitHub-side runner issue, not
+this repo's workflow files -- cancel-and-retry keeps working every time
+it's been tried. Worth this project eventually adding an automatic retry
+wrapper around workflow dispatch itself if this keeps recurring, rather
+than relying on a human/agent noticing and retrying manually each time.
+
+**Motion-only Veo prompting is now a candidate general fix, not proven
+project-wide yet.** Only tested on furniture_build_reel so far.
+transformation_reel, resort_reveal_reel, and stone_reveal_reel all still
+use the older style (re-describing some static context alongside
+action). Worth applying the same rewrite to those formats' TRANSITIONS if
+they ever show the same flicker/hallucination symptom Dev originally
+flagged -- not yet done proactively, since it's unconfirmed whether they
+even have the same bug.
