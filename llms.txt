@@ -4537,3 +4537,86 @@ known NOT to be the actual fix) to any sibling format that shows the
 same symptom. Every future furniture_build_reel run should still get a
 real Gemini video QA pass before publishing -- one clean result doesn't
 retire the check permanently, it validates the fix on ONE concept.
+
+## Furniture Build Reel: five real fixes tried, all failed real dual-model
+QA, published anyway per Dev's explicit override (2026-08-27, same day)
+
+Direct continuation. The "clean" v5 verdict above did NOT hold up.
+
+**gemini-3.6-flash only works in the `global` Vertex AI location, not
+us-central1** -- worth remembering as its own fact, separate from
+everything below. 404s region-specific, not a real availability gap (same
+shape of near-miss as the earlier Drive-access confusion this session --
+check thoroughly across reasonable variations before declaring something
+unavailable).
+
+**Dev had Gemini 3.6 Flash (global) re-analyze the published "clean" v5
+file with extended thinking + a forensic system_instruction and it found
+severe issues** (duplicate drill, bracket counts changing, reverse-motion
+object pickup, instant color/trim change) that contradicted this
+project's own gemini-2.5-pro pass. Control experiment: re-ran gemini-2.5-
+pro on the SAME file with the SAME improved prompt/config (not a
+different model) -- it found the identical issues. **Conclusive: the
+"clean" verdict was a methodology failure** (raw video + generic prompt),
+not evidence the video was fine. Naive video QA is retired. Mandatory
+method going forward: `thinking_config=types.ThinkingConfig(
+thinking_budget=1024)` + a forensic `system_instruction` framing the
+model as a video forensic examiner, ideally cross-checked across BOTH
+gemini-2.5-pro (us-central1) and gemini-3.6-flash (global) since they can
+disagree and one has now been caught being wrong in each direction.
+
+**Two more real fixes tried after that, both also failed real QA:**
+- v6: restored `STATIC_SCENE_RULE` (a short version of the v3-removed
+  STATIC_RULE) and extended `NEGATIVE_PROMPT` with duplicate-object/
+  reverse-motion terms, reworded the ambiguous cleanup transition.
+  Result: gemini-2.5-pro's language softened noticeably (stopped saying
+  "duplicate," stopped saying "reverse motion") and it concluded "does
+  not appear to be AI-generated" -- **a verdict later proven factually
+  wrong** (ground truth: this IS Veo-generated). gemini-3.6-flash, same
+  prompt/config, still found severe issues at 99% confidence and got the
+  "is this AI-generated" question right where gemini-2.5-pro got it
+  wrong -- concrete reason to weight gemini-3.6-flash's read higher when
+  the two disagree, not treat disagreement as a coin flip. v6 NOT
+  published.
+- v7: `CLIP_DURATION_S` 4 -> 8 (Veo's own max for image+last_frame
+  conditioning), on the theory that some findings might be a real-time-
+  budget problem rather than a wording problem. Result: BOTH models
+  found the same categories of severe issues again, high confidence,
+  full agreement between them this time -- bracket multiplication,
+  entire wall assembly popping into existence complete, lumber
+  reappearing after vanishing, wood-to-white material morph (this last
+  one flagged by literally every single forensic pass across every
+  version tried today -- the one finding that never went away no matter
+  what changed).
+
+**Five genuinely different fixes tried today, all failed real
+verification**: motion-only prompts (v3), environment anchors (v4),
+8/9-stage widening + insert stage (v5), restored static-scene rule +
+extended negative_prompt (v6), doubled clip duration (v7). This is no
+longer "wrong wording" -- it looks like a real limit of how Veo's
+`image=`+`last_frame=` conditioning handles a locked-off shot with this
+much structural change happening in frame, not fixable by the
+parameters available through this API surface. Recommended pausing the
+format; **Dev explicitly overrode this** ("some anomalies is fine since
+some YouTube videos also jump from unfinished to finished product in
+stop motion style") and asked to publish v7 anyway, with Dev doing their
+own manual review after the fact rather than relying on the automated
+QA gate for this one. This is a legitimate, different bar than "passes
+forensic AI-detection" -- real stop-motion/timelapse DIY content also
+jump-cuts through unfinished->finished states, and Dev is the one
+positioned to judge whether v7's specific jumps read as acceptable
+stylized compression or as actually broken, not a model.
+
+**Published per Dev's explicit instruction, NOT because it passed QA**:
+Facebook video_id `1601047691731572`, Instagram media_id
+`18130371142675358`, TikTok post_id `6a906115aa201a688ed52284`, YouTube
+post_id `6a906131aa201a688ed5240c`. Dev said they'll inspect it
+themselves and report back whether it's usable.
+
+**Status**: furniture_build_reel's automated pipeline does not currently
+produce content that passes real forensic AI-detection scrutiny. Don't
+assume the format is "fixed" from this publish -- it went out on Dev's
+override, not validation. If Dev reports v7 back as unusable, the
+recommended path is pausing the format rather than a sixth prompt/
+parameter guess, given the consistent five-for-five failure pattern
+above.
