@@ -77,17 +77,31 @@ def generate_after(client, concept):
 
 
 def generate_materials(client, concept, after_image):
+    # Forceful/itemized on purpose -- a first pass on a built-IN (wall-
+    # mounted millwork) concept came back with the wall still almost fully
+    # built, just with a few raw-material props added on top, because a
+    # softer "with none of the piece built yet" instruction wasn't strong
+    # enough to make the model actually remove existing built-in structure
+    # via editing (freestanding-furniture concepts reverted fine; built-in
+    # wall units didn't). Same escalation shape as transformation_reel's
+    # generate_before() needing itemized decay instead of a mild summary.
     prompt = (
         "Show this exact same room, same camera angle, same wall and window "
-        "position -- but with NONE of the finished piece built yet: only "
-        f"the raw, unassembled materials for a {concept['piece']} resting "
-        f"on the bare floor -- {concept['raw_materials']}, plus a cordless "
-        "drill, a box of screws and a tape measure laid out nearby. The "
-        "wall is bare and plain, the floor is otherwise empty, warm "
-        f"daylight through the window. {SPATIAL_RULE} No people. No text. "
-        "Keep the room's proportions, wall and window position identical to "
-        "the reference image so the space is still clearly recognizable as "
-        "the same room."
+        "position -- but the wall must be shown COMPLETELY BARE and EMPTY: "
+        "no shelving, no millwork, no framework, no panels, nothing at all "
+        "attached to or built into the wall. It is a plain, empty painted "
+        f"wall. NONE of the {concept['piece']} exists yet in any form -- "
+        "not partially built, not started, completely absent. All that is "
+        "in the room are the raw, unassembled materials for it, sitting in "
+        f"a loose, disorganized pile on the bare floor -- {concept['raw_materials']}, "
+        "plus a cordless drill, a box of screws and a tape measure laid out "
+        "nearby. No text or logos visible on any packaging or boxes. The "
+        "floor is otherwise empty, warm daylight through the window. "
+        f"{SPATIAL_RULE} No people. No text. Keep the room's proportions, "
+        "wall and window position identical to the reference image so the "
+        "space is still clearly recognizable as the same room -- but the "
+        "wall itself must be completely empty and unbuilt, not partially "
+        "finished."
     )
     print("--- generating MATERIALS (edited from AFTER) ---")
     response = _generate_with_retry(client, [prompt, after_image])
