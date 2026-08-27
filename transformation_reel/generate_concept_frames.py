@@ -287,6 +287,15 @@ CONCEPTS = {
         "travertine side tables, floor-to-ceiling silk drapery framing the "
         "window wall",
     },
+    "t03": {
+        "room": "a grand entry foyer with a sweeping curved staircase and a "
+        "two-story window wall",
+        "style": "opulent modern glamour, hotel-lobby grandeur",
+        "materials": "polished book-matched Calacatta marble flooring and "
+        "accent wall, a wrought-iron and brushed brass staircase railing, "
+        "an oversized crystal chandelier, integrated warm cove lighting "
+        "along the stair and ceiling line",
+    },
 }
 
 

@@ -99,8 +99,27 @@ specify SFX:/Ambient noise: (diegetic room sound), never music, but nothing
 had explicitly ruled music out, so `generate_audio=True` was free to add a
 score on its own. Fixed the same way as v4.1's other bug: added music terms
 (`background music, musical score, soundtrack, upbeat music, dramatic
-music`) to `NEGATIVE_PROMPT` rather than the main prompt. Not yet verified
-against a real run.
+music`) to `NEGATIVE_PROMPT` rather than the main prompt.
+
+v5 (2026-08-27, after furniture_build_reel's long hallucination saga --
+see llms.txt): Dev asked a genuinely new question this project hadn't
+tested -- every clip so far used a PRE-GENERATED still (from the Gemini
+image-editing chain) as both the previous clip's `last_frame=` TARGET and
+the next clip's `image=` START. But Veo's own rendering only approximates
+that target still; it doesn't reproduce it pixel-for-pixel. So the actual
+last frame Veo rendered for clip N and the still used to start clip N+1
+could differ -- a real, previously-unexamined source of the "jump at the
+cut" symptom that's shown up across many forensic analyses today.
+
+Fix: **extract the actual last rendered frame of clip N via ffmpeg and use
+THAT as the `image=` start for clip N+1**, instead of the independently-
+generated stage still. The pre-generated stills are kept only as the
+`last_frame=` TARGET for each clip (so direction/staging is still planned),
+not as the start of any clip after the first. This guarantees pixel-perfect
+continuity at every cut, at the cost of chaining Veo's own output back into
+itself (any quality dip in one clip can compound into the next, instead of
+"resetting" to a clean designed still each time) -- a real trade-off, not
+a strict improvement, and unverified until this run.
 
 Usage: python transformation_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{before,demo,framing,finishing,after}.png
@@ -254,9 +273,22 @@ def _submit_with_retry(client, start_image, end_image, motion_prompt):
             time.sleep(delay)
 
 
-def generate_clip(client, start_image_path, end_image_path, motion_prompt, out_path):
+def _extract_last_frame(video_path, out_path):
+    # v5: grabs the actual pixels Veo rendered at the end of this clip, not
+    # the pre-generated stage still we'd asked it to aim for via last_frame=
+    # -- those are only an approximation of each other. Seeking to 0.1s
+    # before EOF and taking one frame lands on (or within a frame or two of)
+    # the true last frame at this project's typical ~24fps output.
+    subprocess.run(
+        ["ffmpeg", "-y", "-sseof", "-0.1", "-i", str(video_path),
+         "-update", "1", "-frames:v", "1", str(out_path)],
+        check=True,
+    )
+    return out_path
+
+
+def generate_clip(client, start_image, end_image_path, motion_prompt, out_path):
     print(f"--- generating clip: {out_path.name} ---")
-    start_image = types.Image.from_file(location=str(start_image_path))
     end_image = types.Image.from_file(location=str(end_image_path))
 
     operation = _submit_with_retry(client, start_image, end_image, motion_prompt)
@@ -352,17 +384,29 @@ def main():
 
     clip_paths = []
     letters = "abcd"
+    # v5: only the FIRST clip starts from a pre-generated still. Every clip
+    # after that starts from the actual last rendered frame of the previous
+    # clip -- guaranteed cut-point continuity instead of hoping Veo's
+    # last_frame= rendering matched the next stage's independently-generated
+    # still closely enough. The stage stills are still used as each clip's
+    # last_frame= TARGET throughout, so direction/staging is still planned.
+    start_image = types.Image.from_file(location=str(frame_paths[STAGES[0]]))
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
         clip_path = out_dir / f"{concept_id}_clip_{letters[i]}.mp4"
         generate_clip(
             client,
-            frame_paths[start_stage],
+            start_image,
             frame_paths[end_stage],
             TRANSITIONS[(start_stage, end_stage)],
             clip_path,
         )
         clip_paths.append(clip_path)
+
+        if i < len(STAGES) - 2:
+            last_frame_path = out_dir / f"{concept_id}_clip_{letters[i]}_lastframe.png"
+            _extract_last_frame(clip_path, last_frame_path)
+            start_image = types.Image.from_file(location=str(last_frame_path))
 
     hero_path = out_dir / f"{concept_id}_clip_e_reveal.mp4"
     generate_hero_reveal(frame_paths["after"], hero_path)
