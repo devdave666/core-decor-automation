@@ -4064,3 +4064,34 @@ schedule or via a single wired pipeline script the way Dolly Reel/Hot Takes/
 Single Product Reel/Carousel Post are. Worth building a real
 `transformation_reel_pipeline.py` (mirroring those) if this format goes
 into regular rotation rather than staying a one-off.
+
+## Transformation Reel: unrequested background music, fixed via negative_prompt
+(2026-08-26, same day)
+
+Dev caught one clip in the published t02 reel with unrequested upbeat
+background music -- confirmed by Dev as **clip c (framing -> finishing,
+the furniture-placement segment)**. Every clip's audio cues only ever
+specify `SFX:`/`Ambient noise:` (diegetic room sound), never music, but
+`generate_audio=True` was left free to add a score anyway since nothing
+explicitly ruled it out.
+
+Fixed the same way as the touch-less-change bug: added music terms
+(`background music, musical score, soundtrack, upbeat music, dramatic
+music`) to `NEGATIVE_PROMPT` in `generate_veo_clips.py` (v4.2) rather than
+the main prompt -- same reasoning, `negative_prompt` is the real lever for
+this, not inline negative language. **Not yet verified against a real
+run** -- the next transformation-reel generation is what actually tests
+this.
+
+**Dev's explicit call on the already-published t02**: leave it as-is, the
+fix applies going forward only (t03+). Do not regenerate or replace the
+live t02 posts over this.
+
+Also worth remembering for next time: asked to identify which of 4 clips
+had stray music from spectrograms alone (`ffmpeg showspectrumpic`), with
+no audio playback available -- this did NOT work reliably. Generated
+spectrograms for all 4 clips, guessed clip d based on a sustained tonal-
+looking band, guessed wrong (Dev confirmed it was actually clip c).
+Static spectrograms are not a trustworthy way to distinguish "music"
+from ambient/mechanical room noise without actually hearing the audio --
+ask Dev which clip rather than guessing from a spectrogram next time.
