@@ -122,6 +122,28 @@ motion. `NEGATIVE_PROMPT` extended with the specific new failure modes
 gravity-defying movement). Unverified until the next real run with the
 now-mandatory forensic QA method.
 
+v6 real result: gemini-2.5-pro (forensic prompt, us-central1) softened
+significantly -- no more "duplicate," no more "reverse motion" -- and
+concluded "does not appear to be AI-generated." BUT gemini-3.6-flash
+(SAME prompt/config, global location) still found severe issues at 99%
+confidence, AND correctly identified the video as AI-generated where
+gemini-2.5-pro's v6 verdict was factually wrong (ground truth: this IS
+Veo-generated) -- a concrete reason to weight gemini-3.6-flash's read
+more heavily here, not treat the disagreement as a coin flip. v6 was
+NOT published.
+
+v7 (2026-08-27, same day): Dev's choice -- try substantially longer
+clips instead of another prompt tweak. `CLIP_DURATION_S` 4 -> 8 (Veo's
+own max for image+last_frame conditioning; duration_seconds only
+accepts {4, 6, 8} in this mode). Theory: many of the remaining findings
+(instant structure assembly, instant paint change) may be the clip
+simply not having enough real time budget to render a plausible
+transition, independent of prompt wording -- giving Veo 2x the duration
+per transition is a different lever than anything tried in v3-v6.
+Roughly doubles Veo cost for this format (8 clips x 8s instead of 4s).
+Unverified until the next real run, same mandatory dual-model forensic
+QA method.
+
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
 Expects <frames_dir>/<concept_id>_{materials,bracket_start,framing,building,
 wiring,lighting,cleanup,after}.png
@@ -145,7 +167,7 @@ from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
-CLIP_DURATION_S = 4
+CLIP_DURATION_S = 8
 HERO_REVEAL_DURATION_S = 2.5
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
