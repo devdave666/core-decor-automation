@@ -47,9 +47,23 @@ last two prior stages (with "after" also passed as a target reference) --
 wall, window and camera framing have to MATCH across every stage for Veo's
 first/last-frame conditioning to read as one continuous space.
 
+v3 (2026-08-27, same day, after v2's 8/9-stage widening + every other prompt-
+wording fix all failed real dual-model forensic QA five times in a row --
+see llms.txt for the full saga): Dev asked for one more attempt with a
+fresh concept, SHORT clips to control cost, and to actually apply a piece
+of research this project had NOT tried yet -- the "atomic scene rule"
+(one single physical action per clip, never a chained "does X, then does
+Y") and front-loading the subject+verb before camera/environment text.
+None of the five failed fixes touched action-compounding; every TRANSITIONS
+entry across every version had 2-5 sequential sub-actions crammed into one
+clip. Reverted STAGES back down to 5 (materials/framing/building/lighting/
+after) specifically so clip count -- and cost -- goes back down while
+testing this new, different lever. See generate_veo_clips.py for where the
+atomic-action rewrite actually lives (this file's own prompts were already
+single-purpose per stage, so the real change here is just fewer stages).
+
 Usage: python furniture_build_reel/generate_concept_frames.py <concept_id> <out_dir>
-Writes <out_dir>/<concept_id>_{materials,bracket_start,framing,building,
-insert,wiring,lighting,cleanup,after}.png
+Writes <out_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
 """
 import sys
 import time
@@ -76,10 +90,7 @@ IMAGE_CONFIG = types.GenerateContentConfig(
     image_config=types.ImageConfig(aspect_ratio="9:16")
 )
 
-STAGES = [
-    "materials", "bracket_start", "framing", "building", "insert",
-    "wiring", "lighting", "cleanup", "after",
-]
+STAGES = ["materials", "framing", "building", "lighting", "after"]
 
 # How many prior stages get passed as reference images to each intermediate
 # generation call, in addition to the `after` target. Capped at 2 -- see
@@ -144,60 +155,27 @@ def generate_materials(client, concept, after_image):
     return _first_image(response)
 
 
-# Each entry is a SMALL, single step forward from the previous stage --
-# deliberately narrower than the original 3-stage version (framing/
-# building/lighting) after Gemini's real analysis found large jumps at
-# exactly the points these new splits target.
+# Back to 3 small intermediate steps (5 stages total) -- v3 tests a
+# different lever (atomic single-action Veo prompts, see generate_veo_
+# clips.py) while keeping clip count/cost down, not more keyframe
+# splitting.
 INTERMEDIATE_STEPS = {
-    "bracket_start": (
-        "the carpenter mounting just the first one or two brackets to the "
-        "wall with a cordless drill -- most of the wall is still "
-        "completely bare, only a small part of the eventual frame exists "
-        "yet."
-    ),
     "framing": (
-        "the carpenter mounting the remaining brackets and fitting the "
-        "first horizontal board across them -- the frame is now fully up "
-        "but only one board is in place, most of the piece is still just "
-        "bare brackets."
+        "the carpenter mounting the structural brackets to the wall with "
+        "a cordless drill and fitting the first board across them -- just "
+        "the bare structural frame going up, no surface finish, no LED, "
+        "no styling yet."
     ),
     "building": (
         "the carpenter fitting most of the remaining boards across the "
         "frame -- the piece now mostly built but still bare/unfinished "
-        "wood, no LED strip visible yet, no styling. If the finished "
-        "piece includes any large single prefabricated component (a "
-        "fireplace insert, a hardware mechanism, or similar boxed item "
-        "from the materials), its designated opening or space is built "
-        "but still visibly EMPTY at this stage -- that component has not "
-        "been installed yet, it is still in its box on the floor."
-    ),
-    "insert": (
-        "the carpenter lifting the large boxed prefabricated component "
-        "(the fireplace insert, hardware mechanism, or largest single "
-        "boxed item described in the materials -- if the piece has one) "
-        "out of its box and fitting it into its designated opening in "
-        "the structure, now visibly installed and physically in place -- "
-        "but not yet wired, powered on, or trimmed out. If this piece "
-        "has no such large single component, show the carpenter instead "
-        "fitting the last of the remaining boards and hardware into "
-        "place, visibly further along than the previous stage."
-    ),
-    "wiring": (
-        "the carpenter laying a warm LED light strip into the channel "
-        "along one edge of the now-finished piece -- the strip is "
-        "visibly in place but NOT yet powered on, no glow yet."
+        "wood, no LED strip visible yet, no styling."
     ),
     "lighting": (
-        "the LED strip now glowing warm along that edge -- the wood is "
-        "fully built and finished and the light is on, but tools and "
-        "loose materials are still scattered on the floor and there is "
-        "no final styling yet."
-    ),
-    "cleanup": (
-        "the carpenter gathering up the last loose tools, boxes and "
-        "offcut materials from the floor and carrying them out of frame "
-        "-- the piece itself is complete and lit, the floor now mostly "
-        "clear, but the piece is not yet styled with decor."
+        "the carpenter pressing a warm LED light strip into a channel "
+        "along one edge of the now-finished piece, the first warm glow "
+        "just beginning to show -- the wood is fully built and finished, "
+        "but no final styling (glassware/decor/tools cleared) yet."
     ),
 }
 
@@ -288,6 +266,20 @@ CONCEPTS = {
         "of blackened steel angle stock, a boxed linear fireplace insert, "
         "a coil of warm LED strip lighting",
     },
+    "f04": {
+        "room": "a plain wall beside a large window in an otherwise empty "
+        "modern dining room",
+        "piece": "floating built-in bar cabinet with a fold-down brass "
+        "serving shelf and a glass-front display case",
+        "style": "warm modern art-deco-inspired luxury",
+        "materials": "dark walnut veneer paneling, brushed brass trim and "
+        "hardware, a glass-front display case, a fold-down brass-hinged "
+        "serving shelf, integrated warm LED strip lighting inside the "
+        "glass case, styled glassware and bottles on the shelves",
+        "raw_materials": "a stack of raw dark walnut veneer panels, a box "
+        "of brushed brass hardware and hinges, a large glass panel "
+        "wrapped in protective film, a coil of warm LED strip lighting",
+    },
 }
 
 
@@ -306,7 +298,7 @@ def main():
     images["materials"] = generate_materials(client, concept, images["after"])
 
     history = [images["materials"]]
-    for stage_name in ["bracket_start", "framing", "building", "insert", "wiring", "lighting", "cleanup"]:
+    for stage_name in ["framing", "building", "lighting"]:
         img = generate_intermediate(
             client, stage_name, concept, history[-HISTORY_WINDOW:], images["after"],
         )

@@ -133,21 +133,38 @@ more heavily here, not treat the disagreement as a coin flip. v6 was
 NOT published.
 
 v7 (2026-08-27, same day): Dev's choice -- try substantially longer
-clips instead of another prompt tweak. `CLIP_DURATION_S` 4 -> 8 (Veo's
-own max for image+last_frame conditioning; duration_seconds only
-accepts {4, 6, 8} in this mode). Theory: many of the remaining findings
-(instant structure assembly, instant paint change) may be the clip
-simply not having enough real time budget to render a plausible
-transition, independent of prompt wording -- giving Veo 2x the duration
-per transition is a different lever than anything tried in v3-v6.
-Roughly doubles Veo cost for this format (8 clips x 8s instead of 4s).
-Unverified until the next real run, same mandatory dual-model forensic
-QA method.
+clips instead of another prompt tweak. `CLIP_DURATION_S` 4 -> 8. BOTH
+gemini-2.5-pro and gemini-3.6-flash still found severe issues, in full
+agreement this time -- longer duration alone didn't help either. v7 was
+published anyway per Dev's explicit override (real stop-motion DIY
+content also jump-cuts through unfinished->finished states, and Dev
+judged it usable enough by eye, not by an AI-detector's verdict), not
+because it passed QA.
+
+v8 (2026-08-27, same day, after a pause+brainstorm): five real fixes in
+a row (v3-v7) never touched one thing -- every TRANSITIONS entry across
+every version chained 2-5 sequential sub-actions into one clip ("drives
+a screw... THEN lifts a board... AND rests it across them"; "bends down,
+picks up..., straightens up, AND walks..."). Dev surfaced research
+naming this specific pattern -- the "atomic scene rule" -- as a root
+cause of compound-action hallucination independent of wording style,
+plus front-loading the subject+verb before extra environment/lighting
+description. Neither had been tried. Reverted STAGES back to 5 (cost
+control, per Dev -- "short clips to keep it cheap") and rewrote every
+TRANSITIONS entry to exactly ONE physical action, camera phrase kept to
+two words, environment/lighting description moved to the END of the
+prompt instead of stacked into CAMERA_BASE up front (v4's environment-
+anchor experiment is dropped here, superseded by this reordering).
+CLIP_DURATION_S back to 4 (v7's 8s didn't help; no reason to keep paying
+for it). Per Dev's explicit instruction, only ONE QA gate is run this
+time (gemini-3.6-flash, global location -- the model that was right both
+times it disagreed with gemini-2.5-pro today), not the dual-model
+cross-check, to control verification cost too. Unverified until the next
+real run.
 
 Usage: python furniture_build_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
-Expects <frames_dir>/<concept_id>_{materials,bracket_start,framing,building,
-wiring,lighting,cleanup,after}.png
-Writes <out_dir>/<concept_id>_clip_a..h.mp4, <out_dir>/<concept_id>_clip_i_reveal.mp4,
+Expects <frames_dir>/<concept_id>_{materials,framing,building,lighting,after}.png
+Writes <out_dir>/<concept_id>_clip_a..d.mp4, <out_dir>/<concept_id>_clip_e_reveal.mp4,
 and the concatenated <out_dir>/<concept_id>_build.mp4.
 """
 import subprocess
@@ -167,17 +184,14 @@ from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-fast-generate-001"
-CLIP_DURATION_S = 8
+CLIP_DURATION_S = 4
 HERO_REVEAL_DURATION_S = 2.5
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
 MAX_SUBMIT_RETRIES = 5
 SUBMIT_RETRY_BASE_DELAY_S = 20
 
-CAMERA_BASE = (
-    "Static locked-off shot, steady real-time pacing, not a time-lapse. "
-    "Same wall, same floor, same window light throughout."
-)
+CAMERA_BASE = "Static locked-off shot."
 
 # v6: restored an affirmative static-scene constraint (removed in v3 on an
 # unverified theory that stating it caused re-rendering) after real forensic
@@ -204,62 +218,41 @@ NEGATIVE_PROMPT = (
     "upbeat music, dramatic music"
 )
 
-# v3 style kept (motion-only, minimal object naming), now covering 7 SMALL
-# steps instead of 4 larger ones -- v5's actual fix is the narrower delta
-# between each adjacent pair, not the wording style.
+# v8: the ATOMIC SCENE RULE -- exactly ONE physical action per clip, never
+# a chained "does X, then does Y." Every prior version (v3-v7) had 2-5
+# sequential sub-actions crammed into a single 4-8s clip; this is the first
+# version that doesn't. Structure per clip: [short camera phrase] + [subject
+# + single verb] + [material interaction detail] + STATIC_SCENE_RULE +
+# [environment/lighting, kept brief and LAST, not stacked up front] + SFX +
+# Ambient noise.
 TRANSITIONS = {
-    ("materials", "bracket_start"): (
-        f"{CAMERA_BASE} The carpenter kneels and drives a screw, mounting "
-        f"one bracket to the wall. {STATIC_SCENE_RULE} "
-        "SFX: a drill motor, a bracket settling flush against the wall. "
+    ("materials", "framing"): (
+        f"{CAMERA_BASE} The carpenter drives a screw into a wall bracket "
+        f"with a cordless drill, the bracket settling flush against the "
+        f"wall. {STATIC_SCENE_RULE} Warm daylight through the window. "
+        "SFX: a drill motor, a bracket settling into place. "
         "Ambient noise: quiet room tone, faint birdsong."
     ),
-    ("bracket_start", "framing"): (
-        f"{CAMERA_BASE} The carpenter drives another screw to mount a "
-        f"second bracket, then lifts a board up and rests it across them. "
-        f"{STATIC_SCENE_RULE} "
-        "SFX: a drill motor, a board settling into place. "
-        "Ambient noise: quiet room tone."
-    ),
     ("framing", "building"): (
-        f"{CAMERA_BASE} The carpenter fits several more boards into place "
-        f"edge to edge, running a hand along each seam to check it sits "
-        f"flush. {STATIC_SCENE_RULE} "
-        "SFX: the soft knock of wood settling into place. "
+        f"{CAMERA_BASE} The carpenter presses a panel flush against the "
+        f"frame, smoothing a hand across its surface to seat it. "
+        f"{STATIC_SCENE_RULE} Warm daylight through the window. "
+        "SFX: a soft settling thud, a hand brushing across the surface. "
         "Ambient noise: quiet room tone."
     ),
-    ("building", "insert"): (
-        f"{CAMERA_BASE} The carpenter lifts a large component out of its "
-        f"box and fits it into its opening in the structure, pressing it "
-        f"flush into place. {STATIC_SCENE_RULE} "
-        "SFX: a heavy thud settling into place, cardboard tearing away. "
-        "Ambient noise: quiet room tone."
-    ),
-    ("insert", "wiring"): (
-        f"{CAMERA_BASE} The carpenter peels backing from a strip and "
-        f"presses it into a channel along one edge, working along its "
-        f"length. {STATIC_SCENE_RULE} "
-        "SFX: adhesive backing peeling away, a soft press of fingers. "
-        "Ambient noise: quiet room tone."
-    ),
-    ("wiring", "lighting"): (
-        f"{CAMERA_BASE} The carpenter presses a small connector together, "
-        f"and the strip lights up warm along its length. {STATIC_SCENE_RULE} "
-        "SFX: a faint electronic click. "
+    ("building", "lighting"): (
+        f"{CAMERA_BASE} The carpenter presses a warm LED strip into a "
+        f"channel along one edge, the strip glowing warm as the hand "
+        f"moves along its length. {STATIC_SCENE_RULE} Warm daylight "
+        "through the window, LED glow building. "
+        "SFX: adhesive backing peeling away, a faint electronic click. "
         "Ambient noise: quiet room tone, warm and settled."
     ),
-    ("lighting", "cleanup"): (
-        f"{CAMERA_BASE} The carpenter bends down, picks up a box of tools "
-        "from the floor with both hands, straightens up, and walks toward "
-        "the door carrying it, moving forward and out of frame -- a single "
-        f"continuous forward motion, never backward. {STATIC_SCENE_RULE} "
-        "SFX: tools clinking inside the box, footsteps receding. "
-        "Ambient noise: quiet room tone."
-    ),
-    ("cleanup", "after"): (
-        f"{CAMERA_BASE} The carpenter sets a folded throw down and steps "
-        f"back out of frame. {STATIC_SCENE_RULE} "
-        "SFX: soft fabric rustle, quiet footsteps receding. "
+    ("lighting", "after"): (
+        f"{CAMERA_BASE} The carpenter sets a single object onto a shelf, "
+        f"adjusting it upright with a light touch. {STATIC_SCENE_RULE} "
+        "Warm evening light through the window, LED glow steady. "
+        "SFX: a soft clink as it settles into place. "
         "Ambient noise: warm quiet, faint birdsong."
     ),
 }
@@ -376,7 +369,7 @@ def main():
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
     clip_paths = []
-    letters = "abcdefgh"
+    letters = "abcd"
     for i in range(len(STAGES) - 1):
         start_stage, end_stage = STAGES[i], STAGES[i + 1]
         clip_path = out_dir / f"{concept_id}_clip_{letters[i]}.mp4"
@@ -389,7 +382,7 @@ def main():
         )
         clip_paths.append(clip_path)
 
-    hero_path = out_dir / f"{concept_id}_clip_i_reveal.mp4"
+    hero_path = out_dir / f"{concept_id}_clip_e_reveal.mp4"
     generate_hero_reveal(frame_paths["after"], hero_path)
     clip_paths.append(hero_path)
 
