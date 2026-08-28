@@ -4736,3 +4736,47 @@ this same last-frame-chaining technique was never tried there across all
 six failed fix attempts -- it's a genuinely different, untested lever
 from all of motion-only wording, environment anchors, stage widening,
 static-scene rules, clip duration, and atomic-action structure.
+
+## Stained Glass Reel: NEW narrow-subject format, combines both proven
+Veo fixes, published (2026-08-27/28, same day)
+
+Dev approved the t03 last-frame-chaining result ("this pipeline could
+work") and asked for the next generation to be scoped very differently:
+a NARROW subject (one specific detail, not a whole room or whole piece
+of furniture) with the artisan's pace slowed down, and explicitly
+"unique, artistic and mind blowing."
+
+**New format, `stained_glass_reel/`**: a small leaded stained-glass
+window panel, hand-crafted and fitted into a plain arched wall nook --
+jewel-toned floral medallion (cobalt blue, amber, ruby red), tightly and
+intimately framed throughout (`TIGHT_FRAMING_RULE` -- only the window,
+adjacent wall and a small workbench ever visible, camera never pulls
+back to a room view). 4 stages / 3 transitions (raw materials on a
+workbench -> soldering -> fitting the panel into the frame -> after,
+sunlight streaming through), the narrowest scope of any format in this
+project so far.
+
+**Combines both of today's proven Veo fixes at once, for the first
+time**: last-rendered-frame chaining (transformation_reel v5) AND atomic
+single-action prompts (furniture_build_reel v8) in the same pipeline.
+Also new: `CAMERA_BASE` says "slow and unhurried pacing" instead of
+every sibling format's "real-time pacing, not a time-lapse" -- Dev asked
+explicitly for the craftsman's movements to read as deliberate, not
+rushed.
+
+**Real result**: raw materials and the finished panel both came back
+clean on the first attempt -- itemized/emphatic `generate_raw()` (the
+lesson every sibling format needed eventually) worked immediately here,
+no re-generation needed. One minor, non-structural imperfection: the
+`fitting` stage frame already shows near-full sunlight glow through the
+glass, almost identical to `after` except for the artisan's hands --
+much smaller than any hallucination category hit in the furniture_
+build_reel saga (no duplicated objects, no structures materializing,
+just a slightly early lighting cue). Not run through real Gemini
+forensic QA this time (Dev's "create and publish now," no QA gate
+requested) -- worth a proper QA pass on a future run of this format
+before treating it as fully validated.
+
+**Published**: Facebook video_id `1389060712692067`, Instagram media_id
+`18130822285727419`, TikTok post_id `6a90fc7daec1e6b643fe9997`, YouTube
+post_id `6a90fc7ddf4be5293ae0d90a`.
