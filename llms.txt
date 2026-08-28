@@ -4780,3 +4780,68 @@ before treating it as fully validated.
 **Published**: Facebook video_id `1389060712692067`, Instagram media_id
 `18130822285727419`, TikTok post_id `6a90fc7daec1e6b643fe9997`, YouTube
 post_id `6a90fc7ddf4be5293ae0d90a`.
+
+## Loft Reveal Reel: NEW format, single-character renovation, FAILED real
+forensic QA on first attempt -- NOT published (2026-08-28)
+
+Dev asked for a new, more ambitious format: a mice-infested loft
+transformed into a nice loft across exactly 7 four-second clips, by a
+single beautiful woman working single-handedly, with character
+consistency called out explicitly as a requirement.
+
+**New format, `loft_reveal_reel/`**: 8 keyframes (infested, clearing,
+repairing, painting, flooring, furnishing, styling, after) -> 7 Veo
+transitions, no push-in hero clip appended (Dev's "7 clips" was literal).
+New machinery: `generate_character()` produces a standalone reference
+portrait FIRST, then that image is passed into every single downstream
+`generate_content` call (after, infested, all 6 intermediates) alongside
+a fixed `CHARACTER_DESCRIPTION` text block repeated in every prompt --
+identity anchored by both image reference and text on every call. Mice
+infestation depicted via evidence only (droppings, gnaw marks, grease
+trails, nesting debris) not live rodents -- flagged proactively in the
+script's own docstring as a known Veo weak spot (small fast-moving
+subjects), before generation, not after a failure.
+
+**Image stage**: excellent. All 8 keyframes (see output/l01/frames/)
+show strong, real character consistency -- same face, hair, build,
+overalls/tank top/tool belt from the studio portrait through to the
+final "after" shot. No geometry problems, no intersecting furniture.
+
+**Video stage**: all 7 clips rendered and concatenated cleanly
+(28.14s, 720x1280, h264/aac) with zero submission/API errors. But this
+was the first run where the mandatory real Gemini forensic QA gate
+(gemini-2.5-pro, us-central1, forensic system_instruction + extended
+thinking -- see `loft_reveal_reel/_forensic_qa.py`) was actually RUN
+(not skipped) on a whole-room-plus-person format, and it failed hard:
+
+1. **Objects popping in/out at cut points** -- a broom+dustpan appear
+   from nowhere at 0:01, a flooring plank stack vanishes at 0:13, a
+   drop cloth/paint tray/putty knife/drill all disappear at the 0:16
+   cut, a rug+floor lamp materialize while a different rolled rug
+   vanishes at the 0:20 cut. Same object-permanence failure class as
+   furniture_build_reel's entire saga, now confirmed on a DIFFERENT
+   format (whole-room + person) -- this is evidence the problem is a
+   general Veo weakness at handling frame pairs that differ in many
+   places at once, not something specific to furniture close-ups.
+2. **A real design bug, not a Veo bug**: the `infested` keyframe kept
+   the same light wood floor as `after` (only added debris on top of
+   it), so the `flooring` stage's "she installs new floorboards" scene
+   has no damaged/different floor to justify replacing -- Gemini
+   correctly called this out as installing a floor that already
+   existed. Needs a visibly different (damaged/dark/old) floor at
+   `infested` for the flooring narrative to make geometric sense.
+3. **Clothing drift** -- white tank top under the overalls became a
+   yellow t-shirt at the 0:20 cut (furnishing->styling), an identity
+   consistency failure this format specifically exists to avoid.
+4. Minor: a physically-incorrect flooring installation action (boards
+   not interlocking), and a hallway/window continuity wobble at the
+   0:05 cut.
+
+**Not published to any platform.** This is the first time this project
+has run a full real forensic QA pass and then deliberately withheld
+publication based on the result, rather than either skipping the gate
+(explicit Dev instruction) or passing it. Consistent with the furniture_
+build_reel precedent: report a real QA failure honestly rather than
+publish through it or quietly re-attempt without Dev's sign-off, given
+that project's six-failed-fix history on a similar object-permanence
+problem.
