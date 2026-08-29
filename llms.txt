@@ -5186,3 +5186,18 @@ Gotchas learned:
 - Music bed: reused `core.fetch_next_template` + `extract_and_master_audio`
   (Drive rotation, counter NOT advanced), mixed over the Veo ambient with the
   ambient ducked to ~18% (`finish_mansion.py`).
+
+**FUTURE-REFERENCE CORRECTION (Dev, after seeing the result -- do NOT
+regenerate now):** the published mansion reel MISSED the point. ref3.mp4's
+hook is a full grass-to-estate TRANSFORMATION -- bare lawn, then paths etch in,
+gardens/pool/fountains materialize -- and that "magical build" IS the
+watch-time driver. The version shipped is "just a motion picture of a finished
+house, no transformation" because we chose a camera-driven reveal to dodge
+Veo's bad text-prompted time-lapse. Wrong call: the transformation is
+non-negotiable for this genre. Next time do it with FRAME-CONDITIONED
+interpolation, not a time-lapse text prompt: generate a "before" still
+(palace on bare grass) and an "after" still (full estate), then Veo
+`image=<before>` + `config.last_frame=<after>` per clip so Veo renders the
+build BETWEEN two real frames -- the exact transformation_reel / loft_reveal
+technique, which works where "time-lapse style" prompting fails. Keep the
+camera moving over the top of the build.
