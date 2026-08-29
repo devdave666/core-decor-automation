@@ -55,15 +55,32 @@ def norm(src, dst):
          "-c:a", "aac", "-ar", "48000", str(dst)], f"normalize {Path(src).name}")
 
 
-def stitch(head, tail, dst):
-    hd = probe_dur(head)
-    off = max(hd - XFADE, 0.1)
-    run(["ffmpeg", "-y", "-v", "error", "-i", str(head), "-i", str(tail),
-         "-filter_complex",
-         f"[0:v][1:v]xfade=transition=fade:duration={XFADE}:offset={off}[v];"
-         f"[0:a][1:a]acrossfade=d={XFADE}[a]",
-         "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-pix_fmt", "yuv420p",
-         "-crf", "18", "-c:a", "aac", str(dst)], "stitch head+tail")
+def stitch(head, tail, dst, mode="cut", overlap=1.0):
+    """
+    mode="cut": hard concat, with `overlap` seconds trimmed off the front of the
+    tail so its content lines up with where the head ends (the two omni segments
+    are cut from overlapping source ranges).
+    mode="xfade": crossfade dissolve over XFADE seconds.
+    """
+    if mode == "xfade":
+        hd = probe_dur(head)
+        off = max(hd - XFADE, 0.1)
+        run(["ffmpeg", "-y", "-v", "error", "-i", str(head), "-i", str(tail),
+             "-filter_complex",
+             f"[0:v][1:v]xfade=transition=fade:duration={XFADE}:offset={off}[v];"
+             f"[0:a][1:a]acrossfade=d={XFADE}[a]",
+             "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+             "-crf", "18", "-c:a", "aac", str(dst)], "stitch head+tail (xfade)")
+        return
+    tail_cut = dst.with_name("tail_cut.mp4")
+    run(["ffmpeg", "-y", "-v", "error", "-ss", f"{overlap}", "-i", str(tail),
+         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
+         "-c:a", "aac", "-ar", "48000", str(tail_cut)], f"trim {overlap}s off tail front")
+    lst = dst.with_name("stitch_list.txt")
+    lst.write_text(f"file '{Path(head).name}'\nfile '{tail_cut.name}'\n")
+    run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(lst),
+         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "aac",
+         str(dst)], "stitch head+tail (hard cut)")
 
 
 def make_hook_png(text, dst):
@@ -166,6 +183,7 @@ def main():
     ap.add_argument("--no-coldopen", action="store_true")
     ap.add_argument("--no-hook", action="store_true")
     ap.add_argument("--no-pushin", action="store_true")
+    ap.add_argument("--stitch", choices=("cut", "xfade"), default="cut")
     args = ap.parse_args()
 
     wd = Path(args.workdir) if args.workdir else Path(tempfile.mkdtemp(prefix="finish_"))
@@ -177,7 +195,7 @@ def main():
     norm(args.tail, tn)
 
     cur = wd / "stitched.mp4"
-    stitch(hn, tn, cur)
+    stitch(hn, tn, cur, mode=args.stitch)
 
     if not args.no_coldopen:
         nxt = wd / "withco.mp4"
