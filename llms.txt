@@ -5127,3 +5127,20 @@ works for both -- IG delete DID work, `{"success":true,"deleted_id":...}`).
 TikTok + YouTube went via Buffer `mode:shareNow` and **cannot be retracted**
 -- Buffer's `deletePost` returns `VoidMutationError` for an already-sent post;
 those must be removed by hand in the TikTok app / YouTube Studio.
+
+**v3 -- the light-touch approach, done right, published (2026-08-29).** After
+the rejection, per Dev's exact spec: (a) ONE conservative full-video pass
+(richer wood/materials + slightly warmer light, motion preserved -- came back
+10s, the hard cap, and did compress the timing somewhat); (b) a SECOND pass on
+just `--trim-start 9` (the last ~6s) with three named changes -- bonsai ->
+tiered rock waterfall, male workers -> female, day -> night -- which all
+landed cleanly. Then `finish.py --stitch cut` (hard concat, 1s trimmed off the
+tail front to align content; Dev rejected the crossfade dissolve as "weird")
++ the "$15,000" hook + 1080p upscale, no cold-open/push-in. 15.1s, published
+to all four (IG 18122345542853762).
+
+Extra omni quirk found on v3: **output orientation is not stable** -- one
+trimmed-segment pass came back 1280x720 LANDSCAPE from a 720x1280 portrait
+source. Re-running with an explicit "must stay vertical 9:16 720x1280, do not
+reframe to landscape" clause in the instruction fixed it. Always check the
+output dims and re-run if it flipped.
