@@ -163,6 +163,9 @@ def main():
     ap.add_argument("--hook", default=DEFAULT_HOOK)
     ap.add_argument("--out", required=True)
     ap.add_argument("--workdir", default=None)
+    ap.add_argument("--no-coldopen", action="store_true")
+    ap.add_argument("--no-hook", action="store_true")
+    ap.add_argument("--no-pushin", action="store_true")
     args = ap.parse_args()
 
     wd = Path(args.workdir) if args.workdir else Path(tempfile.mkdtemp(prefix="finish_"))
@@ -173,22 +176,28 @@ def main():
     norm(args.head, hn)
     norm(args.tail, tn)
 
-    stitched = wd / "stitched.mp4"
-    stitch(hn, tn, stitched)
+    cur = wd / "stitched.mp4"
+    stitch(hn, tn, cur)
 
-    withco = wd / "withco.mp4"
-    cold_open(stitched, withco)
+    if not args.no_coldopen:
+        nxt = wd / "withco.mp4"
+        cold_open(cur, nxt)
+        cur = nxt
 
-    hook_png = wd / "hook.png"
-    make_hook_png(args.hook, hook_png)
-    withhook = wd / "withhook.mp4"
-    add_hook(withco, hook_png, withhook)
+    if not args.no_hook:
+        hook_png = wd / "hook.png"
+        make_hook_png(args.hook, hook_png)
+        nxt = wd / "withhook.mp4"
+        add_hook(cur, hook_png, nxt)
+        cur = nxt
 
-    withpush = wd / "withpush.mp4"
-    add_pushin(withhook, withpush)
+    if not args.no_pushin:
+        nxt = wd / "withpush.mp4"
+        add_pushin(cur, nxt)
+        cur = nxt
 
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    finalize(withpush, args.out)
+    finalize(cur, args.out)
     print(f"done -> {args.out} ({probe_dur(args.out):.1f}s)")
 
 
