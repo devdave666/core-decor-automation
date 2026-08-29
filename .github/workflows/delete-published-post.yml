@@ -1,0 +1,49 @@
+name: Delete Published Post
+
+# Best-effort takedown of an already-published cross-post (Facebook video +
+# Buffer TikTok/YouTube posts; Instagram has no delete API -> reported for
+# manual removal). See delete_published_post.py. workflow_dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ig_media_id:
+        description: "Instagram media id (will be reported for manual removal)"
+        required: false
+        type: string
+      fb_video_id:
+        description: "Facebook video id to DELETE"
+        required: false
+        type: string
+      buffer_post_ids:
+        description: "Comma-separated Buffer post ids (TikTok, YouTube) to delete"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests
+      - name: Delete
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+        run: |
+          BUF_ARGS=""
+          IFS=',' read -ra IDS <<< "${{ inputs.buffer_post_ids }}"
+          for id in "${IDS[@]}"; do
+            id="$(echo "$id" | xargs)"
+            [ -n "$id" ] && BUF_ARGS="$BUF_ARGS --buffer $id"
+          done
+          python3 delete_published_post.py \
+            ${{ inputs.ig_media_id && format('--ig {0}', inputs.ig_media_id) || '' }} \
+            ${{ inputs.fb_video_id && format('--fb {0}', inputs.fb_video_id) || '' }} \
+            $BUF_ARGS
