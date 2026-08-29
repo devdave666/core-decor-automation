@@ -4955,10 +4955,75 @@ combination and reported real output dimensions. Ground truth:
 **Adopted in `backyard_stopmotion_reel/generate_frames.py`** (first consumer):
 `genai.Client(vertexai=True, project=PROJECT, location="global")`, model
 `gemini-3.1-flash-image`, `GenerateContentConfig(response_modalities=["IMAGE"],
-image_config=ImageConfig(aspect_ratio="9:16", image_size="4K"),
+image_config=ImageConfig(aspect_ratio="9:16", image_size="2K"),
 thinking_config=ThinkingConfig(thinking_level="MINIMAL"), safety_settings=all
-OFF)`, ~17 MP output downscaled locally to 1600px wide for sane chain-input
-size. The older `generate_concept_frames.py` / `generate_eseries.py` scripts
+OFF)`. The older `generate_concept_frames.py` / `generate_eseries.py` scripts
 are untouched for now -- switching them is just `location="global"` + the
 model id + the per-model config rule above, no auth change, but each needs its
 own real eye-reviewed run before flipping.
+
+**`image_size="2K"` in practice, not "4K"** (real run learning): "4K" made
+`gemini-3.1-flash-image` return ~17 MP (3072x5504), and on a 16-step chained
+edit that payload made every multi-image edit call heavy enough to hit a
+gateway disconnect (`httpcore.RemoteProtocolError: Server disconnected without
+sending a response`) -- which the retry loop originally didn't catch. "2K"
+(~1536x2752) is still oversampled for a 1080x1920 reel, and the run went clean.
+Also learned the same run: shrink reference images fed back into an edit call
+to ~1024px, set a per-request `HttpOptions(timeout=...)` so a hung call retries
+instead of hanging ~9 min, and retry transient 5xx/disconnect/timeout not just
+429s.
+
+## Backyard-landscape stop-motion reel -- new format, first run PUBLISHED (2026-08-29)
+
+Dev asked for "one stop motion reel with photorealistic images and workers of
+a backyard landscape ... and publish it", using imagen or veo, high quality
+("nano banana"). Built as `backyard_stopmotion_reel/` -- a NEW standalone
+content type, unrelated to the c/d/e-series or the transformation/loft/etc.
+Veo reels.
+
+**Stills-based stop-motion, deliberately not Veo.** "Stop motion" IS a
+photo sequence, so this plays to the image model's strengths and sidesteps
+the frame-to-frame object-permanence failures Veo has hit on every
+transformation format here (furniture_build_reel, loft_reveal_reel,
+transformation_reel). 16 chained keyframes (overgrown yard -> crew clearing ->
+compacting -> paver patio -> cedar pergola -> planting -> sod -> lawn -> path
+lighting -> furniture -> styled dusk reveal), one nominally locked camera,
+assembled "on twos" at 30fps with a small deterministic per-frame position
+jitter, ~1s/frame (ends held ~2.5s), 19.7s total, 1080x1920.
+
+**Pipeline** (`backyard_stopmotion_reel/`):
+- `generate_frames.py`: chained edits on `gemini-3.1-flash-image` via
+  wif:global (see the image-gen correction entry above). Frame 1 text-only;
+  each later frame = edit of the previous frame + a one-step delta, with
+  frame 1 also passed as a fixed second reference for camera/fence/house/tree.
+  Reuses any `frame_NN.png` already on disk (resume support).
+- `assemble_reel.py`: ffmpeg stop-motion assembly + a music bed pulled from
+  the daily pipeline's Drive "Template Reels" rotation (`core.fetch_next_
+  template` + `extract_and_master_audio`), looped/trimmed, counter NOT
+  advanced (one-off). NB: ffmpeg's concat demuxer resolves `file` paths
+  relative to the LIST file's own dir -- use bare basenames in concat.txt.
+- `publish_reel.py`: mirrors `core.run_pipeline`'s fan-out exactly (IG Reels
+  + FB Reels API + TikTok + YouTube via Buffer) with a bespoke caption; the
+  shared `caption_index` is left untouched (interior-materials captions don't
+  fit a backyard build).
+- Three workflows: `backyard-stopmotion-probe.yml` (model/region discovery),
+  `-generate.yml` (16 frames + assemble, `workflow_dispatch`, `resume_run_id`
+  input), `-publish.yml` (takes a generate run id, publishes). Split so the
+  paid image step never re-runs just to publish.
+
+**Result, eye-reviewed frame grid + sampled video frames before publishing:**
+transformation arc reads clearly, photoreal, no geometry failures (clear
+walkways, no interpenetrating solids), strong dusk payoff. Real chained-edit
+drift is present and was called out to Dev, not hidden: the background house
+shifts colour across the sequence, the foreground deck railing style wanders,
+and the camera is not perfectly locked (frames 1-4 wider, then tighter). The
+assembler's centre-crop hides most of the camera drift; the rest reads as
+stop-motion wobble at 1s/frame under music. Dev reviewed and approved
+publishing to all four channels.
+
+**This is the FIRST brand-new experimental format this project has published
+straight to all channels on its first run** rather than holding it as an
+artifact for review (transformation_reel/loft_reveal_reel precedent was
+hold-and-review). Done here only because Dev explicitly chose "all channels,
+like the daily reel" up front AND re-confirmed after seeing the reviewed
+frames. Not a new default -- still ask before publishing a new format.
