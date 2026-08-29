@@ -4845,3 +4845,66 @@ build_reel precedent: report a real QA failure honestly rather than
 publish through it or quietly re-attempt without Dev's sign-off, given
 that project's six-failed-fix history on a similar object-permanence
 problem.
+
+## High-res image generation: Dev supplied a working recipe (2026-08-29)
+
+**Supersedes the 2026-08-23 "why e-series looks lower quality than FLUX"
+conclusion** ("gemini-2.5-flash-image is the only image model this account
+has access to and it's hard-capped ~1MP; Gemini 3 image models 404;
+image_size='4K' is silently ignored"). That entry also predicted the fix:
+"gemini-3-pro-image most likely being where image_size actually does
+something ... but unconfirmed since it's inaccessible from this account
+right now." Dev has now supplied a concrete recipe that reaches the Gemini 3
+image family and honors image_size, from a separate chat (treated as
+authoritative external guidance, same standing as the loft-reveal v2
+research). NOT yet run inside this repo -- documented here so the next real
+image-gen run can adopt it, not asserted as verified.
+
+**What changes vs. every current `generate_*` script in this repo:**
+
+1. **Auth path: API key, not WIF/ADC.** The recipe builds the client as
+   `genai.Client(vertexai=True, api_key=os.environ.get("GOOGLE_CLOUD_API_KEY"))`
+   -- Vertex AI Express-style API-key auth. Every image/video script here
+   currently uses `genai.Client(vertexai=True, project=PROJECT,
+   location=LOCATION)` against Workload Identity Federation creds
+   (`vertex-ai-runner`). WIF yields application-default credentials, NOT an
+   API key, so adopting this needs a real `GOOGLE_CLOUD_API_KEY` value added
+   as a GitHub Actions secret (it does not exist yet -- not in env.template,
+   not referenced anywhere in the repo). The Gemini 3 image family that
+   404'd under the trial project's WIF creds appears reachable via this
+   key-auth path.
+2. **Model: `gemini-3.1-flash-image`** (the recipe's `model =` line), not
+   `gemini-2.5-flash-image`. `gemini-3-pro-image` is the higher tier in the
+   same family if flash isn't enough.
+3. **`image_size="4K"` in `types.ImageConfig` is honored here** -- the exact
+   field `gemini-2.5-flash-image` accepted-but-ignored. Full config in the
+   recipe: `GenerateContentConfig(response_modalities=["IMAGE"],
+   image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K",
+   output_mime_type="image/png"), thinking_config=types.ThinkingConfig(
+   thinking_level="MINIMAL"), temperature=1, top_p=0.95,
+   max_output_tokens=32768, all four safety categories set to "OFF")`.
+   `aspect_ratio="9:16"` in the same config -- if 4K lands an exact 9:16
+   this also removes the need for the `VEO_CANVAS` `ImageOps.fit` crop the
+   transformation/loft pipelines bolt on (verify the real pixel dims before
+   dropping that safety crop).
+4. **Chained multi-image editing still works the same way** -- prior turn's
+   image is fed back as a `model`-role `types.Part.from_bytes(data=...,
+   mime_type="image/png")`, user prompts as `user`-role `Part.from_text`.
+   Same conversational-edit pattern the reel pipelines already use, just via
+   explicit `types.Content(role=...)` turns.
+5. Recipe iterates `client.models.generate_content_stream(...)` over chunks;
+   for image output the bytes come back as inline parts on the streamed
+   chunks (collect them the same way `_first_image()` walks
+   `response.candidates[].content.parts[].inline_data`), not as `chunk.text`
+   (the recipe prints `chunk.text` because it's a verbatim Vertex AI Studio
+   "Get code" export -- which is also why its `msg2_image1` has an empty
+   base64 blob: a placeholder, not runnable as-pasted).
+
+**To adopt:** add the `GOOGLE_CLOUD_API_KEY` secret, then it's a small,
+uniform change to each `generate_concept_frames.py` / `generate_eseries.py`
+(client construction + `MODEL` + config + streamed-part collection). Do one
+real generation and review it by eye (resolution + geometry) before rolling
+it across all the reel formats -- same discipline as every prior image/video
+model change here. The `--model` override already left in
+`generate_eseries.py` / `generate-eseries.yml` means testing there needs no
+new code beyond the auth swap.
