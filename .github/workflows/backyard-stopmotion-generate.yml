@@ -1,14 +1,16 @@
 name: Backyard Stop-Motion — generate
 
 # Generates the 16 photoreal keyframes for the backyard-landscape stop-motion
-# reel (backyard_stopmotion_reel/generate_frames.py) via the "nano banana"
-# high-quality path (Gemini 3 image family at image_size="4K"), then assembles
-# the stop-motion video with a Drive-template music bed. Uploads frames + the
-# finished mp4 as an artifact. Does NOT publish -- that's a separate dispatch
+# reel (backyard_stopmotion_reel/generate_frames.py) via gemini-3.1-flash-image
+# (Vertex location=global, image_size="2K"), then assembles the stop-motion
+# video with a Drive-template music bed. Uploads frames + the finished mp4 as
+# an artifact. Does NOT publish -- that's a separate dispatch
 # (backyard-stopmotion-publish.yml) so this expensive step never runs twice.
 #
-# REAL MONEY: 16 image generations on the Gemini 3 image model. workflow_dispatch
-# only, same discipline as every paid-generation workflow here.
+# REAL MONEY: up to 16 image generations. workflow_dispatch only, same
+# discipline as every paid-generation workflow here. generate_frames.py reuses
+# any frame_NN.png already on disk, so pass resume_run_id to continue a partial
+# run instead of paying to regenerate frames it already made.
 
 on:
   workflow_dispatch:
@@ -17,10 +19,15 @@ on:
         description: "Force an image model id (blank = auto: gemini-3.1-flash-image, then 3-pro-image, then 2.5-flash-image)"
         required: false
         type: string
+      resume_run_id:
+        description: "Run ID of a prior generate run whose frames artifact to resume from (blank = fresh)"
+        required: false
+        type: string
 
 permissions:
   contents: read
   id-token: write  # WIF OIDC exchange
+  actions: read    # download another run's frames artifact (resume)
 
 jobs:
   generate:
@@ -44,6 +51,15 @@ jobs:
         run: |
           pip install google-genai pillow requests
           sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Restore frames from a prior run (resume)
+        if: inputs.resume_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: backyard-stopmotion-frames
+          path: backyard_stopmotion_reel/frames
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.resume_run_id }}
 
       - name: Generate 16 keyframes
         run: |

@@ -82,9 +82,13 @@ def _config_for_model(model):
     output_mime_type is omitted everywhere: Vertex-only and PNG is the default.
     """
     if model.startswith("gemini-3"):
+        # "2K" not "4K": the reel canvas is 1080x1920, so 2K (~1440x2560) is
+        # already oversampled, and 4K's ~17 MP output made every chained edit
+        # call huge and slow enough to hit a gateway disconnect on the first
+        # real run. 2K keeps quality well above final and the requests light.
         cfg = dict(
             response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
+            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="2K"),
             safety_settings=_SAFETY_OFF,
         )
         if "flash" in model:
@@ -234,11 +238,15 @@ def build_clients(model_override):
     kept only as a fallback for the 2.5 model.
     """
     models = [model_override] if model_override else list(DEFAULT_MODELS)
+    # Per-request timeout so a hung generation aborts and RETRIES instead of
+    # blocking ~9 min then dying (the first real run's failure mode).
+    http_options = types.HttpOptions(timeout=300_000)  # ms
     clients = []
     for loc in ("global", "us-central1"):
         try:
             clients.append((f"wif:{loc}", genai.Client(
-                vertexai=True, project=PROJECT, location=loc)))
+                vertexai=True, project=PROJECT, location=loc,
+                http_options=http_options)))
         except Exception as e:  # noqa: BLE001
             print(f"[wif:{loc}] client construction failed: {e}")
     if not clients:
@@ -248,6 +256,16 @@ def build_clients(model_override):
 
 TARGET_W, TARGET_H = 1080, 1920
 MAX_STORE_W = 1600  # cap stored frame width -- 17 MP is wasteful as chain input
+REF_W = 1024        # reference images fed into an edit call are shrunk to this
+
+
+def _ref(img):
+    """A lightweight copy of a frame for use as an edit reference -- keeps the
+    multi-image request payload small (two full-size frames + prompt was heavy
+    enough to hang the first real run)."""
+    if img.width <= REF_W:
+        return img
+    return img.resize((REF_W, round(img.height * REF_W / img.width)), Image.LANCZOS)
 
 
 def _finish(img):
@@ -291,13 +309,24 @@ class Generator:
                 return client.models.generate_content(
                     model=model, contents=contents, config=config
                 )
-            except genai_errors.ClientError as e:
+            except Exception as e:  # noqa: BLE001
                 msg = str(e)
-                is_rate_limit = "429" in msg or "RESOURCE_EXHAUSTED" in msg
-                if not is_rate_limit or attempt == MAX_RETRIES - 1:
+                # Retry rate limits AND transient server/transport failures --
+                # the first real run died on an un-retried "Server disconnected
+                # without sending a response" (httpcore.RemoteProtocolError) on
+                # a heavy multi-image edit call.
+                retryable = (
+                    "429" in msg or "RESOURCE_EXHAUSTED" in msg
+                    or "503" in msg or "500" in msg or "UNAVAILABLE" in msg
+                    or isinstance(e, genai_errors.ServerError)
+                    or "RemoteProtocolError" in repr(e)
+                    or "Server disconnected" in msg
+                    or "timeout" in msg.lower() or "connection" in msg.lower()
+                )
+                if not retryable or attempt == MAX_RETRIES - 1:
                     raise
                 delay = RETRY_BASE_DELAY_S * (2 ** attempt)
-                print(f"  429 rate-limited, retrying in {delay}s "
+                print(f"  transient error ({msg[:120]}), retrying in {delay}s "
                       f"(attempt {attempt + 1}/{MAX_RETRIES})...")
                 time.sleep(delay)
 
@@ -332,10 +361,22 @@ def main():
 
     gen = Generator(args.model)
 
-    print("--- frame 01 (establishing, text-only) ---")
-    frame1 = gen.generate(FRAME_01)
-    frame1.save(args.out_dir / "frame_01.png")
-    print(f"saved {args.out_dir / 'frame_01.png'} ({frame1.width}x{frame1.height})")
+    def _load_or_make(path, make):
+        if path.exists():
+            print(f"--- {path.name}: already present, reusing ---")
+            return Image.open(path).convert("RGB")
+        img = make()
+        img.save(path)
+        print(f"saved {path} ({img.width}x{img.height})")
+        return img
+
+    # Resume-friendly: any frame already in out_dir (e.g. downloaded from a
+    # prior partial run's artifact) is reused instead of regenerated.
+    frame1 = _load_or_make(
+        args.out_dir / "frame_01.png",
+        lambda: (print("--- frame 01 (establishing, text-only) ---")
+                 or gen.generate(FRAME_01)),
+    )
 
     anchor_note = (
         "The SECOND reference image is ONLY for locking the camera framing, the "
@@ -347,16 +388,16 @@ def main():
 
     prev = frame1
     for i, delta in enumerate(DELTAS, start=2):
-        print(f"--- frame {i:02d} ---")
         prompt = (
             f"Edit the FIRST reference image. Keep it identical except for one "
             f"step of progress: {delta} {LOCKED_SCENE} {anchor_note} "
             f"Keep {CREW} consistent in appearance across frames. {QUALITY}"
         )
-        img = gen.generate([prompt, prev, frame1])
-        img.save(args.out_dir / f"frame_{i:02d}.png")
-        print(f"saved {args.out_dir / f'frame_{i:02d}.png'} ({img.width}x{img.height})")
-        prev = img
+        prev = _load_or_make(
+            args.out_dir / f"frame_{i:02d}.png",
+            lambda p=prev, pr=prompt: (print(f"--- frame {i:02d} ---")
+                                       or gen.generate([pr, _ref(p), _ref(frame1)])),
+        )
 
     print(f"\nDone -- 16 frames in {args.out_dir}")
 
