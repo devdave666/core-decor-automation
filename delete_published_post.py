@@ -37,24 +37,24 @@ def try_del_ig(media_id, token):
 
 
 def del_buffer(post_id, token):
-    mutation = """
-    mutation DeletePost($input: DeletePostInput!) {
-      deletePost(input: $input) {
-        __typename
-        ... on PostActionSuccess { post { id status } }
-        ... on NotFoundError { message }
-        ... on UnauthorizedError { message }
-        ... on UnexpectedError { message }
-      }
-    }
-    """
-    r = requests.post(
-        "https://api.buffer.com/graphql",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        json={"query": mutation, "variables": {"input": {"id": post_id}}},
-        timeout=60,
-    )
-    print(f"[buffer] {post_id}: {r.status_code} {r.text[:400]}")
+    for mutation in (
+        "mutation D($id: ID!){ deletePost(input:{id:$id}){ __typename } }",
+        "mutation D($id: ID!){ deletePost(input:{id:$id}){ id } }",
+        "mutation D($id: ID!){ deletePost(id:$id){ __typename } }",
+    ):
+        r = requests.post(
+            "https://api.buffer.com/graphql",
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            json={"query": mutation, "variables": {"id": post_id}},
+            timeout=60,
+        )
+        body = r.json()
+        if not body.get("errors"):
+            print(f"[buffer] {post_id}: OK {body}")
+            return
+        print(f"[buffer] {post_id}: try failed -> {str(body['errors'])[:200]}")
+    print(f"[buffer] {post_id}: all delete attempts failed -- remove this "
+          f"post BY HAND in Buffer (and on TikTok/YouTube if it already sent).")
 
 
 def main():
