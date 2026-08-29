@@ -5100,8 +5100,30 @@ hook (auto-shrinks to fit margins; MUST `-loop 1` the still PNG or the overlay
 is invisible), slow push-in on the last frame (`core.render_pushin_clip`),
 upscale to 1080x1920 + loudnorm. Produced the 18.7s final.
 
-**First real use:** ref.mp4 (craftsman builds a hidden zen garden under a
-floating staircase) -> omni dusk regrade + LED-glow + stitch + hook
-("the space under your stairs is worth $15,000") + push-in + 1080p ->
-published to all four channels (IG 18437129602132520). Dev reviewed the
-graded output and approved.
+**First use -- OVER-PROCESSED, published, then pulled. Learn from this.**
+ref.mp4 (craftsman builds a hidden zen garden under a floating staircase) got
+a full creative rework: omni dusk relight + LED-glow regrade + two-pass stitch
++ cold-open + "$15,000" hook + push-in + 1080p, published to all 4. Dev
+rejected it: **"you made it worse ... all you had to do was change elements,
+material and lighting while keeping motion and video consistent so we don't
+have problems like AI-hallucinated videos. That's why I'm giving you finished
+viral videos that look good -- so you can EDIT them, not make a whole new AI
+video."** The heavy pass reintroduced exactly the drift it was meant to avoid
+(identity shift, geometry morph, the stitch seam, retiming) and the hook/
+cold-open/push-in were unwanted.
+
+**The rule for these user-supplied "edit this good video" tasks:** ONE omni
+pass, minimal instruction, change ONLY the materials / decor elements /
+lighting the user named, explicitly tell the model to keep motion, camera,
+framing, cuts, timing, length and every object identical. NO stitch, NO
+regrade, NO cold-open, NO text hook, NO push-in, NO upscale unless asked.
+Then show the user and wait -- do not publish a user's own video without an
+explicit post-review go-ahead on the actual result (tile previews are not
+enough).
+
+Takedown of that publish: Instagram + Facebook deleted via
+`delete_published_post.py` / `delete-published-post.yml` (Graph API DELETE
+works for both -- IG delete DID work, `{"success":true,"deleted_id":...}`).
+TikTok + YouTube went via Buffer `mode:shareNow` and **cannot be retracted**
+-- Buffer's `deletePost` returns `VoidMutationError` for an already-sent post;
+those must be removed by hand in the TikTok app / YouTube Studio.
