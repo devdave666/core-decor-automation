@@ -1,0 +1,93 @@
+name: Mansion Reel — refine (consistency + music)
+
+# Takes a prior mansion-reel run's clips, regenerates clips 2 & 3 with clip 1's
+# palace as a Veo STYLE reference (one coherent estate), lays a music bed under
+# the Veo ambient, and finalizes 1080x1920. workflow_dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      generate_run_id:
+        description: "Run ID of the mansion-reel generate run (has clip_1..3)"
+        required: true
+      clips_to_redo:
+        description: "1-indexed comma list to regenerate with the style ref"
+        required: false
+        default: "2,3"
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Auth to Google Cloud (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          pip install google-genai pillow requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Download prior clips
+        uses: actions/download-artifact@v4
+        with:
+          name: mansion-reel
+          path: prior
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.generate_run_id }}
+
+      - name: Stage clips + extract palace style-ref from clip 1
+        run: |
+          mkdir -p mansion_reel/output
+          cp prior/output/clip_1.mp4 prior/output/clip_2.mp4 prior/output/clip_3.mp4 mansion_reel/output/
+          ffmpeg -v error -y -ss 5.5 -i mansion_reel/output/clip_1.mp4 -frames:v 1 mansion_reel/palace_ref.png
+          ls -la mansion_reel/output mansion_reel/palace_ref.png
+
+      - name: Regenerate clips with style reference
+        run: |
+          python3 mansion_reel/generate_veo.py mansion_reel/plan.json mansion_reel/output \
+            --ref-frame mansion_reel/palace_ref.png \
+            --clips "${{ inputs.clips_to_redo }}" --no-concat
+
+      - name: Fetch a music bed from the Drive template rotation
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          python3 - <<'PY'
+          import core_decor_reel_pipeline as core
+          from pathlib import Path
+          p, idx, n = core.fetch_next_template(".", Path("mansion_reel"))
+          core.extract_and_master_audio(p, Path("mansion_reel/music.wav"))
+          print(f"music bed: template {idx+1}/{n} (counter NOT advanced)")
+          PY
+
+      - name: Assemble final
+        run: |
+          python3 mansion_reel/finish_mansion.py \
+            mansion_reel/output/clip_1.mp4 mansion_reel/output/clip_2.mp4 mansion_reel/output/clip_3.mp4 \
+            mansion_reel/music.wav mansion_reel/output/mansion_reel_final.mp4
+
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mansion-reel-final
+          path: |
+            mansion_reel/output/clip_*.mp4
+            mansion_reel/output/mansion_reel_final.mp4
+            mansion_reel/palace_ref.png
+          if-no-files-found: warn

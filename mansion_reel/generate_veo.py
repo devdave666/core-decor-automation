@@ -10,9 +10,9 @@ to share encoding params -- same lesson as transformation_reel).
 Usage: python mansion_reel/generate_veo.py <plan.json> <out_dir>
 Auth: WIF/ADC. Model: veo-3.1-fast-generate-001, resolution 1080p, 9:16, audio on.
 """
+import argparse
 import json
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -35,20 +35,28 @@ NEGATIVE_DEFAULT = (
 )
 
 
-def _submit(client, prompt, negative, duration):
+def _submit(client, prompt, negative, duration, ref_bytes=None):
+    cfg = dict(
+        aspect_ratio="9:16",
+        resolution="1080p",
+        duration_seconds=int(duration),
+        generate_audio=True,
+        number_of_videos=1,
+        negative_prompt=negative or NEGATIVE_DEFAULT,
+    )
+    if ref_bytes:
+        # STYLE (not ASSET): carry the limestone / Beaux-Arts / blue-hour look
+        # across the separate shots without forcing an exact-match that can
+        # distort a different camera angle.
+        cfg["reference_images"] = [types.VideoGenerationReferenceImage(
+            image=types.Image(image_bytes=ref_bytes, mime_type="image/png"),
+            reference_type="style",
+        )]
     for attempt in range(MAX_SUBMIT_RETRIES):
         try:
             return client.models.generate_videos(
-                model=MODEL,
-                prompt=prompt,
-                config=types.GenerateVideosConfig(
-                    aspect_ratio="9:16",
-                    resolution="1080p",
-                    duration_seconds=int(duration),
-                    generate_audio=True,
-                    number_of_videos=1,
-                    negative_prompt=negative or NEGATIVE_DEFAULT,
-                ),
+                model=MODEL, prompt=prompt,
+                config=types.GenerateVideosConfig(**cfg),
             )
         except genai_errors.ClientError as e:
             if ("429" in str(e) or "RESOURCE_EXHAUSTED" in str(e)) and attempt < MAX_SUBMIT_RETRIES - 1:
@@ -59,9 +67,9 @@ def _submit(client, prompt, negative, duration):
             raise
 
 
-def _generate(client, prompt, negative, duration, out_path):
-    print(f"--- {out_path.name} ({duration}s) ---\n  {prompt[:160]}...")
-    op = _submit(client, prompt, negative, duration)
+def _generate(client, prompt, negative, duration, out_path, ref_bytes=None):
+    print(f"--- {out_path.name} ({duration}s{' +styleref' if ref_bytes else ''}) ---\n  {prompt[:160]}...")
+    op = _submit(client, prompt, negative, duration, ref_bytes)
     waited = 0
     while not op.done:
         if waited >= POLL_TIMEOUT_S:
@@ -95,20 +103,37 @@ def concat(paths, dst):
 
 
 def main():
-    plan = json.loads(Path(sys.argv[1]).read_text())
-    out_dir = Path(sys.argv[2])
+    ap = argparse.ArgumentParser()
+    ap.add_argument("plan")
+    ap.add_argument("out_dir")
+    ap.add_argument("--ref-frame", help="style-reference image for regenerated clips")
+    ap.add_argument("--clips", help="1-indexed comma list to (re)generate; others reused from out_dir")
+    ap.add_argument("--no-concat", action="store_true")
+    args = ap.parse_args()
+
+    plan = json.loads(Path(args.plan).read_text())
+    out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     shots = plan["veo_prompts"] if isinstance(plan, dict) else plan
+    todo = set(int(x) for x in args.clips.split(",")) if args.clips else set(range(1, len(shots) + 1))
+    ref_bytes = Path(args.ref_frame).read_bytes() if args.ref_frame else None
 
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
     clips = []
     for i, shot in enumerate(shots):
-        cp = out_dir / f"clip_{i + 1}.mp4"
-        _generate(client, shot["prompt"], shot.get("negative_prompt", ""),
-                  min(int(shot.get("duration_s", 8)), 8), cp)
+        n = i + 1
+        cp = out_dir / f"clip_{n}.mp4"
+        if n in todo:
+            _generate(client, shot["prompt"], shot.get("negative_prompt", ""),
+                      min(int(shot.get("duration_s", 8)), 8), cp, ref_bytes)
+        elif not cp.exists():
+            raise SystemExit(f"clip {n} not in --clips and {cp} missing")
+        else:
+            print(f"--- clip_{n}.mp4: reusing existing ---")
         clips.append(cp)
 
-    concat(clips, out_dir / "mansion_reel.mp4")
+    if not args.no_concat:
+        concat(clips, out_dir / "mansion_reel.mp4")
 
 
 if __name__ == "__main__":
