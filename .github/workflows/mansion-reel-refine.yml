@@ -8,10 +8,14 @@ on:
   workflow_dispatch:
     inputs:
       generate_run_id:
-        description: "Run ID of the mansion-reel generate run (has clip_1..3)"
+        description: "Run ID whose 'mansion-reel'/'mansion-reel-final' artifact has clip_1..3"
         required: true
+      artifact_name:
+        description: "Artifact name on that run (mansion-reel or mansion-reel-final)"
+        required: false
+        default: "mansion-reel"
       clips_to_redo:
-        description: "1-indexed comma list to regenerate with the style ref"
+        description: "1-indexed comma list to regenerate with the style ref (blank = reuse all, just re-assemble)"
         required: false
         default: "2,3"
 
@@ -42,7 +46,7 @@ jobs:
       - name: Download prior clips
         uses: actions/download-artifact@v4
         with:
-          name: mansion-reel
+          name: ${{ inputs.artifact_name }}
           path: prior
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.generate_run_id }}
@@ -50,11 +54,12 @@ jobs:
       - name: Stage clips + extract palace style-ref from clip 1
         run: |
           mkdir -p mansion_reel/output
-          cp prior/output/clip_1.mp4 prior/output/clip_2.mp4 prior/output/clip_3.mp4 mansion_reel/output/
+          find prior -name 'clip_*.mp4' -exec cp {} mansion_reel/output/ \;
           ffmpeg -v error -y -ss 5.5 -i mansion_reel/output/clip_1.mp4 -frames:v 1 mansion_reel/palace_ref.png
           ls -la mansion_reel/output mansion_reel/palace_ref.png
 
       - name: Regenerate clips with style reference
+        if: inputs.clips_to_redo != ''
         run: |
           python3 mansion_reel/generate_veo.py mansion_reel/plan.json mansion_reel/output \
             --ref-frame mansion_reel/palace_ref.png \

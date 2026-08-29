@@ -32,8 +32,15 @@ def main():
     for c in clips:
         cmd += ["-i", str(c)]
     n = len(clips)
-    fin = "".join(f"[{i}:v:0][{i}:a:0]" for i in range(n))
-    cmd += ["-filter_complex", f"{fin}concat=n={n}:v=1:a=1[v][a]",
+    # clips can be mixed resolution (1080p native + 720p style-ref clips) --
+    # normalise every stream to WxH before the concat filter or it errors
+    # ("Error reinitializing filters! Invalid argument").
+    pre = "".join(
+        f"[{i}:v]scale={W}:{H}:flags=lanczos,setsar=1,fps={FPS}[v{i}];"
+        f"[{i}:a]aresample=48000[a{i}];" for i in range(n)
+    )
+    fin = "".join(f"[v{i}][a{i}]" for i in range(n))
+    cmd += ["-filter_complex", f"{pre}{fin}concat=n={n}:v=1:a=1[v][a]",
             "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-pix_fmt", "yuv420p",
             "-crf", "18", "-c:a", "aac", str(silent_concat)]
     run(cmd, "concat clips")
