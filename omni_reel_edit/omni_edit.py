@@ -137,39 +137,45 @@ def probe(in_path=None):
         sys.exit(2)
     client = _client()
     b64 = base64.b64encode(Path(in_path).read_bytes()).decode()
-    for model in MODEL_CANDIDATES:
-        print(f"--- probe {model} on {in_path} ---")
+    text = {"type": "text", "text": "Slightly increase the contrast and warmth of this clip. Keep everything else identical."}
+    vid = {"type": "video", "data": b64, "mime_type": "video/mp4"}
+    model = MODEL_CANDIDATES[0]
+
+    variants = [
+        ("modalities-only", dict(response_modalities=["video"])),
+        ("rf-minimal", dict(response_format={"type": "video"})),
+        ("rf-inline", dict(response_modalities=["video"],
+                           response_format={"type": "video", "delivery": "inline"})),
+        ("rf-720", dict(response_format={"type": "video", "delivery": "inline",
+                                         "resolution": "720p", "aspect_ratio": "9:16"})),
+        ("bare", dict()),
+        ("text-first-video", dict(response_modalities=["video"], _order="tv")),
+    ]
+    for label, kw in variants:
+        order_tv = kw.pop("_order", None) == "tv"
+        inp = [text, vid] if not order_tv else [vid, text]
+        print(f"--- {model} / variant={label} kw={list(kw)} ---")
         try:
-            interaction, status = _create(
-                client, model,
-                input_=[
-                    {"type": "text", "text": "Slightly increase the contrast and warmth of this clip. Keep everything else identical."},
-                    {"type": "video", "data": b64, "mime_type": "video/mp4"},
-                ],
-                response_modalities=["video"],
-                response_format={"type": "video", "delivery": "inline",
-                                 "resolution": "1080p", "aspect_ratio": "9:16"},
-                store=False,
-            )
+            interaction, status = _create(client, model, input_=inp, store=False, **kw)
         except Exception as e:  # noqa: BLE001
-            print(f"  FAILED: {str(e)[:600]}")
+            print(f"  FAILED: {str(e)[:500]}")
             continue
         d = _as_dict(interaction)
-        print(f"  status={status!r}  top-level keys={list(d.keys())}")
+        print(f"  OK status={status!r} keys={list(d.keys())}")
         for i, step in enumerate(_iter_steps(interaction)):
             sd = _as_dict(step)
             ct = [(_as_dict(p) if not isinstance(p, dict) else p).get("type")
                   for p in (sd.get("content") or [])]
-            print(f"    step[{i}] type={sd.get('type')} content_types={ct} err={sd.get('error')}")
+            print(f"    step[{i}] type={sd.get('type')} content={ct} err={sd.get('error')}")
         texts, videos = _collect(interaction)
         if texts:
             print(f"  text: {' '.join(texts)[:400]}")
         if videos:
             out = Path(in_path).with_name("probe_out.mp4")
             out.write_bytes(videos[0])
-            print(f"  VIDEO OK: {len(videos[0])} bytes -> {out}")
+            print(f"  *** VIDEO OK ({label}): {len(videos[0])} bytes -> {out} ***")
         return model
-    print("no omni model candidate responded")
+    print("no request variant worked")
     sys.exit(1)
 
 
