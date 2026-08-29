@@ -89,10 +89,15 @@ def _clients():
                 yield label, genai.Client(**kwargs)
             except Exception as e:  # noqa: BLE001
                 print(f"[{label}] client construction failed: {e}")
-    try:
-        yield "wif", genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
-    except Exception as e:  # noqa: BLE001
-        print(f"[wif] client construction failed: {e}")
+    # The Gemini 3 image family may be served on Vertex in only some regions
+    # (e.g. gemini-3.6-flash is global-only for this project -- see llms.txt).
+    # Sweep the plausible ones via WIF/ADC, which bills to the GCP project's
+    # credits (the "use Vertex not AI Studio" workaround -- already our setup).
+    for loc in ("global", "us-central1", "us-east4", "europe-west4"):
+        try:
+            yield f"wif:{loc}", genai.Client(vertexai=True, project=PROJECT, location=loc)
+        except Exception as e:  # noqa: BLE001
+            print(f"[wif:{loc}] client construction failed: {e}")
 
 
 def _first_image_bytes(response):
@@ -104,7 +109,22 @@ def _first_image_bytes(response):
     return None
 
 
+def _list_catalog():
+    """Print any gemini-3 image models Vertex's publisher catalog exposes."""
+    try:
+        client = genai.Client(vertexai=True, project=PROJECT, location="us-central1")
+        hits = [
+            getattr(m, "name", "") for m in client.models.list(config={"query_base": True})
+            if "gemini-3" in (getattr(m, "name", "") or "").lower()
+            and "image" in (getattr(m, "name", "") or "").lower()
+        ]
+        print(f"catalog (us-central1) gemini-3 image models: {hits or 'none listed'}")
+    except Exception as e:  # noqa: BLE001
+        print(f"catalog listing failed: {str(e)[:300]}")
+
+
 def main():
+    _list_catalog()
     any_success = False
     for auth, client in _clients():
         for model in CANDIDATE_MODELS:
