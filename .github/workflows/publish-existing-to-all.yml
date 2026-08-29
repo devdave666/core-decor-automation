@@ -1,0 +1,54 @@
+name: Publish Existing Video to All Channels
+
+# One-off cross-post tool: publishes an ALREADY-HOSTED video (a video_url that
+# already exists, e.g. a media/reels/ raw.githubusercontent.com URL committed
+# by core.upload_video_to_public_host) to Instagram + Facebook + TikTok +
+# YouTube in a single dispatch -- the same fan-out core.run_pipeline does.
+# Sibling to publish-existing-to-{instagram,facebook,tiktok,youtube}.yml, which
+# each hit one platform. Does NOT generate content, does NOT advance any
+# rotation counter. workflow_dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: "Public URL of the already-hosted video (raw.githubusercontent.com/... media URL)"
+        required: true
+        type: string
+      caption:
+        description: "Exact caption to use on every channel"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Publish to all channels
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+        run: |
+          python3 publish_existing_all.py \
+            --url "${{ inputs.video_url }}" \
+            --caption "${{ inputs.caption }}"
