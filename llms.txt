@@ -5042,3 +5042,66 @@ Gotcha logged: `gh workflow run -F caption=@file` -- build that caption file
 with a heredoc, not `printf "...'\''..."` inside double quotes (that leaves a
 literal `'\''` in the text; a first dispatch was cancelled mid-checkout for
 exactly this before anything published).
+
+## Omni video-to-video reel editing -- works, first run PUBLISHED (2026-08-29)
+
+Dev asked to "change things in a reel" via the Gemini "omni" model
+(`client.interactions.create`, from a Colab snippet) and then to punch up a
+zen-garden reel (`omni_reel_edit/samples/ref.mp4`) to "go viral". Built
+`omni_reel_edit/` + `.github/workflows/omni-reel-edit.yml`. It works.
+
+**Access / model / quota:**
+- Reached through the SAME WIF/ADC auth as everything else, `location="global"`,
+  with `http_options=types.HttpOptions(headers={"Api-Revision": "2026-05-20"})`.
+- Model is **`gemini-omni-flash-preview`** -- NOT `gemini-omni-1.1-flash-
+  preview` (Dev's snippet's name), which 404s "Requested entity was not found"
+  for us. Other guesses (`gemini-omni-1-flash-preview`, `-1.1-pro-`) -> 400
+  "Unsupported model interaction".
+- Quota: **3 requests/min**, base_model `gemini-omni-flash-preview`, metric
+  `global_generate_content_requests_per_minute_per_project_per_base_model`.
+  The console says "not eligible for a quota increase at this time ... contact
+  Sales" -- 3/min is the ceiling. Fine for one-reel edits; `omni_edit.py` backs
+  off on 429. (Upgrading the project to a paid plan did NOT raise it.)
+
+**The ONLY request shape that doesn't 400 "invalid argument"** (found by a
+variant sweep, probe run 33265300199):
+```
+client.interactions.create(
+  model="gemini-omni-flash-preview",
+  input=[{"type":"text","text": <instruction>},
+         {"type":"video","data": <base64 mp4>, "mime_type":"video/mp4"}],
+  response_format={"type": "video"},   # <-- exactly this, nothing else
+  store=False,
+)
+```
+Adding `delivery`, `resolution`, `aspect_ratio`, or `response_modalities`
+anywhere -> 400. A text-only request also 400s (model wants video I/O). The
+SDK auto-wraps a bare content list into `[{"type":"user_input","content":[...]}]`.
+Output: `interaction.output_video` (bytes via `.output` props) or walk
+`steps` -> `model_output` step -> `content` `video` part (`data` inline b64;
+`uri` gs:// only if delivered to a bucket -- we have none, inline works).
+
+**Real behaviour (two live runs on ref.mp4):**
+- **Output is hard-capped ~10s.** A 15.2s source came back 10.0s, truncated
+  (lost the ending). Work around with a TWO-PASS STITCH: `--trim-start 9`
+  grades the tail segment separately, then ffmpeg-crossfade head+tail. The two
+  passes' grades matched closely enough with the identical instruction that
+  the seam is invisible.
+- Output keeps source resolution (720p in -> 720p out) and preserves content,
+  action, camera moves and cuts. Upscale/retime in post.
+- The GRADE/RELIGHT changes land very well from one prose instruction:
+  "relight the windows from grey overcast to golden-hour dusk with city lights,
+  warm cinematic grade, deepen shadows, make the LED strip glow" produced
+  exactly that, photoreal, in ~90s. Minor identity drift on the person.
+
+**`omni_reel_edit/finish.py`** -- local ffmpeg punch-up (no cloud): stitch the
+two graded halves, cold-open on the finished reveal (~0.7s), Playfair text
+hook (auto-shrinks to fit margins; MUST `-loop 1` the still PNG or the overlay
+is invisible), slow push-in on the last frame (`core.render_pushin_clip`),
+upscale to 1080x1920 + loudnorm. Produced the 18.7s final.
+
+**First real use:** ref.mp4 (craftsman builds a hidden zen garden under a
+floating staircase) -> omni dusk regrade + LED-glow + stitch + hook
+("the space under your stairs is worth $15,000") + push-in + 1080p ->
+published to all four channels (IG 18437129602132520). Dev reviewed the
+graded output and approved.
