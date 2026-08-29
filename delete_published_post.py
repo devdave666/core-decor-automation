@@ -45,11 +45,14 @@ def del_buffer(post_id, token):
         timeout=60,
     )
     body = r.json()
-    if body.get("errors"):
-        print(f"[buffer] {post_id}: FAILED {str(body['errors'])[:300]} -- remove "
-              f"BY HAND in Buffer + on TikTok/YouTube if it already sent.")
+    result = body.get("data", {}).get("deletePost") or {}
+    tn = result.get("__typename", "")
+    if body.get("errors") or tn.endswith("Error"):
+        print(f"[buffer] {post_id}: NOT DELETED ({tn or body.get('errors')}) -- Buffer "
+              f"won't delete an already-sent post. Remove it BY HAND on the "
+              f"platform (TikTok app / YouTube Studio) and in Buffer.")
     else:
-        print(f"[buffer] {post_id}: {body.get('data', {}).get('deletePost')}")
+        print(f"[buffer] {post_id}: deleted ({tn})")
 
 
 def main():
