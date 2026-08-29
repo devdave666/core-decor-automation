@@ -1,0 +1,88 @@
+{
+  "hook": "An extreme high-angle, perfectly symmetrical shot of a massive, lit-up mansion sitting on a completely empty, dark green lawn. The stark contrast between the opulent, finished building and the vast, undeveloped land creates a surreal visual question that makes the user stop and wait to see what happens next.",
+  "genre": "Oddly Satisfying / Luxury Visualization / AI Art Timelapse",
+  "why_viral": [
+    "High Watch-Time: The 'magical build' format is a powerful watch-time driver. Viewers are compelled to stay to see the satisfying completion of the impossibly perfect landscape.",
+    "High Save-Rate: The final shot is pure aspirational eye candy. Users save it for 'dream home' or 'luxury aesthetic' inspiration boards.",
+    "Oddly Satisfying Effect: The perfect symmetry, clean lines, and the smooth, magical appearance of complex garden elements from nothing is deeply satisfying to the brain.",
+    "Escapism: The video offers a moment of pure visual fantasy and escape into a world of ultimate luxury and perfection, which is highly appealing on social media feeds."
+  ],
+  "visual_style": {
+    "architecture_style": "Neoclassical / Beaux-Arts mega-mansion, highly symmetrical with a grand central entrance and balanced wings.",
+    "materials": "Cream-colored limestone facade, dark grey slate mansard roof, large paned windows, wrought iron railings.",
+    "palette": "A tight, luxurious palette: deep manicured green, warm cream/beige stone, brilliant warm yellow light from interiors and uplighting, and a bright cyan blue for the pool.",
+    "time_of_day": "Blue hour / early night. The sky is a deep, dark navy blue, not pure black.",
+    "lighting": "Dramatic and artificial. The mansion glows from within, with warm light in every window. The facade, trees, and pathways are meticulously lit with warm, golden uplights, creating high contrast against the cool tones of the evening.",
+    "level_of_symmetry": "Extreme. The entire composition, from the mansion's architecture to the final landscape design, is built on a foundation of perfect bilateral symmetry.",
+    "lens_feel": "Clean, wide-angle, distortion-free drone lens. It captures the grand scale without any fish-eye effect, maintaining a crisp, architectural look.",
+    "grade": "Highly polished and saturated. The colors are rich, the contrast is high, and the blacks are deep. It has the distinct look of a high-end, photorealistic 3D architectural rendering."
+  },
+  "camera": [
+    "Static high-angle aerial shot, slightly off 90-degrees to show the front facade.",
+    "Static ground-level shot, looking through the front gates.",
+    "Slow, continuous vertical crane-up / drone rise, starting from the ground-level gate and ascending to a final high-angle reveal."
+  ],
+  "structure": [
+    {
+      "t": "0:00",
+      "beat": "Hook: Static high-angle of mansion on empty lawn."
+    },
+    {
+      "t": "0:01",
+      "beat": "Magic begins: Thin white lines etch the future garden paths into the lawn."
+    },
+    {
+      "t": "0:03",
+      "beat": "Build 1: The stone pathways and a large clover-shaped pool appear."
+    },
+    {
+      "t": "0:05",
+      "beat": "Build 2: Full landscaping, including trees, a pool house, and flower beds, materializes."
+    },
+    {
+      "t": "0:07",
+      "beat": "Build 3: The front circular driveway and a grand central fountain appear."
+    },
+    {
+      "t": "0:09",
+      "beat": "Cut to new angle: Static ground-level shot of the ornate front gates."
+    },
+    {
+      "t": "0:11",
+      "beat": "Camera move: A slow, majestic crane-up begins, rising above the gates."
+    },
+    {
+      "t": "0:15",
+      "beat": "Reveal: The camera crests the gate, revealing the full facade and the pool in the background."
+    },
+    {
+      "t": "0:20",
+      "beat": "Climax/Loop Point: The camera reaches its apex, showing the entire, fully realized estate in a final, glorious wide shot."
+    }
+  ],
+  "audio": {
+    "music": "A simple, gentle, and melodic piece played on a kalimba. It is repetitive and dreamy, creating a magical and calming atmosphere that is common in satisfying/aesthetic content.",
+    "sfx": "None. The absence of sound effects enhances the unreal, magical quality of the transformation. There are no whooshes, clicks, or construction sounds.",
+    "ambient": "None detectable; the music completely dominates the soundscape."
+  },
+  "veo_prompts": [
+    {
+      "clip": 1,
+      "duration_s": 8,
+      "prompt": "A perfectly still, high-angle aerial drone shot, 9:16 vertical aspect ratio, centered on a massive, hyper-modernist glass and black steel mansion sitting in the middle of a vast, empty expanse of dark desert sand at blue hour. Suddenly, intricate glowing white lines etch themselves into the sand, outlining a sprawling oasis garden. In a smooth, magical time-lapse, sunken conversation pits, minimalist water channels, and groves of illuminated palm trees grow into place, transforming the barren landscape into a luxurious desert paradise. The mansion's interior glows with warm, inviting light. Photorealistic, 8K, architectural visualization, hyper-detailed. Ambient: gentle, hypnotic kalimba melody.",
+      "negative_prompt": "shaky camera, distorted lens, daylight, cartoonish, low resolution"
+    },
+    {
+      "clip": 2,
+      "duration_s": 8,
+      "prompt": "A static, symmetrical ground-level shot looking towards the entrance of the hyper-modernist glass and black steel mansion. A sleek, monolithic black gate retracts sideways with a silent, smooth motion. The camera then begins a slow, majestic, and perfectly smooth crane shot, rising vertically to reveal a minimalist courtyard with a single, ancient olive tree at its center, lit from below. The night sky is filled with pinprick stars. The lighting is cinematic and high-contrast, with warm light from the house contrasting the cool blue of the desert twilight. Photorealistic, cinematic, wide-angle lens. SFX: a soft, magical shimmer as the gate opens.",
+      "negative_prompt": "fast motion, shaky, handheld, daylight, people, cars"
+    },
+    {
+      "clip": 3,
+      "duration_s": 8,
+      "prompt": "Continuing the perfectly smooth vertical crane shot, the camera ascends high above the hyper-modernist mansion, revealing the entire estate. We now see the full scope of the magically-appeared oasis garden, with glowing water channels snaking through groves of palm trees, leading to a massive infinity pool that reflects the starry sky. The design is a complex geometric pattern of light and shadow on the desert floor. The camera continues to rise to a god's-eye view, showing the stark, beautiful contrast between the glowing, man-made oasis and the endless dark desert surrounding it. Ultra high-detail, 8K, photorealistic, epic scale. Ambient: gentle, hypnotic kalimba melody continues and fades to loop.",
+      "negative_prompt": "jittery movement, sudden stops, daylight, clouds, motion blur"
+    }
+  ]
+}

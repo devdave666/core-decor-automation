@@ -1,0 +1,23 @@
+{
+  "_note": "Curated from the gemini-2.5-pro analysis of ref3.mp4 (see plan_auto.json). Style matched to the reference (Beaux-Arts limestone palace, formal gardens, blue hour), reveal is camera-driven -- NO magical grow-in / time-lapse, which Veo renders badly. Three 8s veo-3.1-fast shots, 1080p, 9:16.",
+  "veo_prompts": [
+    {
+      "clip": 1,
+      "duration_s": 8,
+      "prompt": "Cinematic aerial drone shot, vertical 9:16, gliding slowly forward and gently craning upward toward an enormous perfectly symmetrical Beaux-Arts limestone palace at blue hour. The cream stone facade and steep grey slate mansard roof are washed with warm golden uplight; hundreds of tall windows glow warm amber. Spread below and ahead are vast symmetrical formal parterre gardens on a central axis: clipped topiary allees, a large glowing turquoise lagoon pool, tiered stone fountains, pink flowering trees, lantern-lit gravel paths, all against a deep navy twilight sky. Motion is smooth, slow, hypnotic and majestic. Polished photorealistic architectural-render look, richly saturated, deep contrast, crisp distortion-free wide lens, extreme bilateral symmetry. Ambient: a gentle repetitive kalimba melody, faint trickle of fountain water, soft night air.",
+      "negative_prompt": "text, captions, watermark, logo, timestamp, time-lapse, sped-up motion, objects growing or materializing, morphing or warping architecture, fisheye, lens distortion, people, cars, animals, daylight, harsh sun, letterboxing, black bars, camera shake, jitter, low quality, blurry"
+    },
+    {
+      "clip": 2,
+      "duration_s": 8,
+      "prompt": "Cinematic low drone shot, vertical 9:16, pushing slowly and perfectly smoothly forward through a pair of tall ornate black wrought-iron gates set between carved limestone piers topped with glowing coach lanterns, then gliding up the wide symmetrical pale-stone driveway, past a lit tiered central fountain ringed with clipped boxwood hedges, straight toward the grand glowing limestone palace facade directly ahead. Blue hour, warm golden light against cool navy dusk, cinematic depth and high contrast, dead-centre symmetry, clean wide lens, photorealistic 3D-render polish. Ambient: gentle kalimba melody continues, water splashing softly in the fountain, quiet still night.",
+      "negative_prompt": "text, captions, watermark, logo, time-lapse, sped-up motion, morphing architecture, warping, fisheye, lens distortion, people, cars, animals, daylight, letterboxing, black bars, camera shake, jitter, fast motion, low quality, blurry"
+    },
+    {
+      "clip": 3,
+      "duration_s": 8,
+      "prompt": "Cinematic aerial drone shot, vertical 9:16, rising and craning up and back from just above the central fountain to a soaring high god's-eye view that reveals the entire illuminated estate at once: the symmetrical limestone palace, the glowing turquoise lagoon pool, the parterre gardens, tiered fountains and lantern-lit paths all laid out in perfect bilateral symmetry against the dark navy night, faint stars above. The crane-up is slow, continuous, smooth and triumphant. Richly saturated photorealistic architectural-render grade, deep blacks, high contrast, no lens distortion. Ambient: the kalimba melody swells gently then settles, soft wind, distant fountain water.",
+      "negative_prompt": "text, captions, watermark, logo, time-lapse, sped-up motion, objects materializing, morphing architecture, warping, fisheye, lens distortion, people, cars, animals, daylight, letterboxing, black bars, camera shake, jitter, sudden stops, low quality, blurry"
+    }
+  ]
+}

@@ -46,11 +46,16 @@ jobs:
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Fetch reference
+        if: inputs.mode == 'analyze'
         run: curl -fsSL "${{ inputs.video_url }}" -o mansion_reel/ref.mp4
 
       - name: Analyze
-        run: python3 mansion_reel/analyze.py mansion_reel/ref.mp4 mansion_reel/plan.json
+        if: inputs.mode == 'analyze'
+        run: python3 mansion_reel/analyze.py mansion_reel/ref.mp4 mansion_reel/plan_auto.json
 
+      # generate mode uses the CURATED, committed mansion_reel/plan.json
+      # (style-matched, camera-driven -- the auto analysis kept the unreliable
+      # magical grow-in), not a fresh re-analysis.
       - name: Generate (Veo 3.1 Fast, 1080p)
         if: inputs.mode == 'generate'
         run: python3 mansion_reel/generate_veo.py mansion_reel/plan.json mansion_reel/output
@@ -61,6 +66,6 @@ jobs:
         with:
           name: mansion-reel
           path: |
-            mansion_reel/plan.json
+            mansion_reel/plan_auto.json
             mansion_reel/output/*.mp4
           if-no-files-found: warn
