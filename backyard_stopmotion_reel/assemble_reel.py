@@ -61,7 +61,10 @@ def build_silent_video(frames_dir, work_dir):
     for i, f in enumerate(frames):
         clips.append(_frame_clip(f, work_dir / f"clip_{i:02d}.mp4", HOLD_S[i], f"bstm-{i}"))
     concat_list = work_dir / "concat.txt"
-    concat_list.write_text("".join(f"file '{c.as_posix()}'\n" for c in clips))
+    # ffmpeg's concat demuxer resolves `file` paths relative to the LIST file's
+    # own directory, not the CWD -- the clips sit next to concat.txt, so use
+    # bare basenames (full relative paths double up the directory prefix).
+    concat_list.write_text("".join(f"file '{c.name}'\n" for c in clips))
     silent = work_dir / "silent.mp4"
     core._run_ffmpeg(
         ["-f", "concat", "-safe", "0", "-i", str(concat_list),
