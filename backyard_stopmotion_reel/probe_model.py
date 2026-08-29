@@ -31,6 +31,7 @@ PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 
 CANDIDATE_MODELS = [
+    "gemini-3-pro-image-preview",
     "gemini-3-pro-image",
     "gemini-3.1-flash-image",
     "gemini-2.5-flash-image",
@@ -77,10 +78,17 @@ def config_for_model(model):
 def _clients():
     api_key = os.environ.get("GOOGLE_CLOUD_API_KEY")
     if api_key:
-        try:
-            yield "apikey", genai.Client(vertexai=True, api_key=api_key)
-        except Exception as e:  # noqa: BLE001
-            print(f"[apikey] client construction failed: {e}")
+        # The key could be either a Vertex AI API key (vertexai=True) or a
+        # Google AI Studio / Gemini Developer API key (vertexai=False). Try both
+        # -- whichever the key actually is will authenticate.
+        for label, kwargs in (
+            ("apikey-developer", dict(api_key=api_key)),
+            ("apikey-vertex", dict(vertexai=True, api_key=api_key)),
+        ):
+            try:
+                yield label, genai.Client(**kwargs)
+            except Exception as e:  # noqa: BLE001
+                print(f"[{label}] client construction failed: {e}")
     try:
         yield "wif", genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
     except Exception as e:  # noqa: BLE001

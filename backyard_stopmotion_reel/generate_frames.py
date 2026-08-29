@@ -46,6 +46,7 @@ PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
 
 DEFAULT_MODELS = [
+    "gemini-3-pro-image-preview",
     "gemini-3-pro-image",
     "gemini-3.1-flash-image",
     "gemini-2.5-flash-image",
@@ -225,10 +226,17 @@ def build_clients(model_override):
     api_key = os.environ.get("GOOGLE_CLOUD_API_KEY")
     clients = []
     if api_key:
-        try:
-            clients.append(("apikey", genai.Client(vertexai=True, api_key=api_key)))
-        except Exception as e:  # noqa: BLE001
-            print(f"[apikey] client construction failed: {e}")
+        # Key may be a Gemini Developer API (AI Studio) key or a Vertex AI API
+        # key -- try the Developer path first (that's where the Gemini 3 image
+        # family is broadly available), then Vertex.
+        for label, kwargs in (
+            ("apikey-developer", dict(api_key=api_key)),
+            ("apikey-vertex", dict(vertexai=True, api_key=api_key)),
+        ):
+            try:
+                clients.append((label, genai.Client(**kwargs)))
+            except Exception as e:  # noqa: BLE001
+                print(f"[{label}] client construction failed: {e}")
     try:
         clients.append(("wif", genai.Client(vertexai=True, project=PROJECT, location=LOCATION)))
     except Exception as e:  # noqa: BLE001
