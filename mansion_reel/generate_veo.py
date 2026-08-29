@@ -38,20 +38,21 @@ NEGATIVE_DEFAULT = (
 def _submit(client, prompt, negative, duration, ref_bytes=None):
     cfg = dict(
         aspect_ratio="9:16",
-        resolution="1080p",
         duration_seconds=int(duration),
         generate_audio=True,
         number_of_videos=1,
         negative_prompt=negative or NEGATIVE_DEFAULT,
     )
     if ref_bytes:
-        # STYLE (not ASSET): carry the limestone / Beaux-Arts / blue-hour look
-        # across the separate shots without forcing an exact-match that can
-        # distort a different camera angle.
+        # asset reference; Veo 3.1 rejects references at 1080p
+        # ("does not support this mix of references"), so these clips render at
+        # 720p and get upscaled in finish.
         cfg["reference_images"] = [types.VideoGenerationReferenceImage(
             image=types.Image(image_bytes=ref_bytes, mime_type="image/png"),
-            reference_type="style",
+            reference_type="asset",
         )]
+    else:
+        cfg["resolution"] = "1080p"
     for attempt in range(MAX_SUBMIT_RETRIES):
         try:
             return client.models.generate_videos(
