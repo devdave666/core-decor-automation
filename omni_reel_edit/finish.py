@@ -27,7 +27,7 @@ from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 W, H, FPS = 1080, 1920, 30
 FONT = str(Path(__file__).resolve().parent.parent / "hot_takes" / "fonts" / "PlayfairDisplay-Bold.ttf")
-XFADE = 0.7
+XFADE = 1.0   # a longer dissolve eases the day->night seam
 COLD_OPEN = 0.7
 HOOK_IN, HOOK_HOLD, HOOK_FADE = 0.7, 4.0, 0.6
 PUSHIN_S = 2.6
