@@ -186,17 +186,17 @@ def edit(in_path, instruction, out_path):
     for model in MODEL_CANDIDATES:
         print(f"--- edit via {model} ---")
         try:
+            # Confirmed working shape (probe run 33265300199): a plain
+            # response_format={"type":"video"} and NOTHING else. Adding
+            # delivery / resolution / aspect_ratio or response_modalities makes
+            # it 400 "invalid argument".
             interaction, status = _create(
                 client, model,
                 input_=[
                     {"type": "text", "text": instruction},
                     {"type": "video", "data": b64, "mime_type": "video/mp4"},
                 ],
-                response_modalities=["video"],
-                response_format={
-                    "type": "video", "delivery": "inline",
-                    "resolution": "1080p", "aspect_ratio": "9:16",
-                },
+                response_format={"type": "video"},
                 store=False,
             )
         except Exception as e:  # noqa: BLE001

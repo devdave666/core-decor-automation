@@ -76,9 +76,11 @@ jobs:
             --out omni_reel_edit/output/edited.mp4
 
       - name: Upload result
-        if: always() && inputs.mode == 'edit'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: omni-reel-edit
-          path: omni_reel_edit/output/edited.mp4
+          path: |
+            omni_reel_edit/output/edited.mp4
+            omni_reel_edit/probe_out.mp4
           if-no-files-found: warn
