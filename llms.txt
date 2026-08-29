@@ -4908,3 +4908,57 @@ it across all the reel formats -- same discipline as every prior image/video
 model change here. The `--model` override already left in
 `generate_eseries.py` / `generate-eseries.yml` means testing there needs no
 new code beyond the auth swap.
+
+## CORRECTION: the real fix was the REGION, not the auth key (2026-08-29)
+
+The entry directly above is wrong about the mechanism. Resolved for real by a
+scripted probe sweep (`backyard_stopmotion_reel/probe_model.py` +
+`backyard-stopmotion-probe.yml`) that tried every (auth, model, region)
+combination and reported real output dimensions. Ground truth:
+
+- **The Gemini 3 image family IS accessible to this project via the existing
+  WIF/ADC auth -- it is only served in Vertex `location="global"`.**
+  `gemini-3.1-flash-image`, `gemini-3-pro-image`,
+  `gemini-3.1-flash-image-preview`, `gemini-3.1-flash-lite-image` all appear
+  in the `us-central1` publisher catalog but 404 ("project does not have
+  access to it") when actually called in `us-central1`, `us-east4` or
+  `europe-west4`. In `global` they work. This is the same
+  global-location-only quirk already documented for `gemini-3.6-flash`
+  elsewhere in this file -- now confirmed to also apply to the Gemini 3
+  IMAGE models. **No API key, no billing change, no `GOOGLE_CLOUD_API_KEY`
+  needed.** It bills to the GCP project's credits exactly like Veo.
+- **`gemini-3.1-flash-image` in `global` honours `image_size="4K"` for
+  real** -- a single probe call returned **3072x5504 (~17 MP)**, vs.
+  `gemini-2.5-flash-image`'s fixed 768x1344 (~1 MP). It also accepts
+  `thinking_config`.
+- **`gemini-3-pro-image` rejects `thinking_config`** (real 400: "thinking_level
+  MINIMAL is not supported by this model") -- send that model no
+  `thinking_config`. `gemini-2.5-flash-image` rejects it too. Only
+  `gemini-3.1-flash-image` (and presumably other `-flash-` Gemini 3 models)
+  take it.
+- **`output_mime_type` in `types.ImageConfig` is Vertex-only** ("only
+  supported in Gemini Enterprise Agent Platform mode") -- the Gemini
+  Developer API (`genai.Client(api_key=...)`, no `vertexai=True`) rejects it
+  with a 400. PNG is the default, so just omit it.
+- **The `GOOGLE_CLOUD_API_KEY` secret that got added** (an AI Studio key,
+  value `AQ.Ab8...`, project 584573644858 -- the same GCP project) is a dead
+  end and can be deleted: its project is on the **free API tier**, and the
+  free tier's image-generation quota is 0, so every Developer-API image call
+  returns `429 RESOURCE_EXHAUSTED` ("free_tier_requests"/"free_tier_input_
+  token_count"). GCP trial/promo credits do NOT apply to standalone AI Studio
+  keys (Google policy change). The `vertexai=True, api_key=...` variant fails
+  differently -- `403 API_KEY_SERVICE_BLOCKED` -- because the key isn't
+  authorised for `aiplatform.googleapis.com`. Interactive use of the model on
+  the aistudio.google.com website works regardless; that allowance is
+  unrelated to the API key's quota.
+
+**Adopted in `backyard_stopmotion_reel/generate_frames.py`** (first consumer):
+`genai.Client(vertexai=True, project=PROJECT, location="global")`, model
+`gemini-3.1-flash-image`, `GenerateContentConfig(response_modalities=["IMAGE"],
+image_config=ImageConfig(aspect_ratio="9:16", image_size="4K"),
+thinking_config=ThinkingConfig(thinking_level="MINIMAL"), safety_settings=all
+OFF)`, ~17 MP output downscaled locally to 1600px wide for sane chain-input
+size. The older `generate_concept_frames.py` / `generate_eseries.py` scripts
+are untouched for now -- switching them is just `location="global"` + the
+model id + the per-model config rule above, no auth change, but each needs its
+own real eye-reviewed run before flipping.
