@@ -5027,3 +5027,18 @@ artifact for review (transformation_reel/loft_reveal_reel precedent was
 hold-and-review). Done here only because Dev explicitly chose "all channels,
 like the daily reel" up front AND re-confirmed after seeing the reviewed
 frames. Not a new default -- still ask before publishing a new format.
+
+## publish-existing-to-all.yml -- one-dispatch cross-post (2026-08-29)
+
+Added alongside the per-platform `publish-existing-to-{instagram,facebook,
+tiktok,youtube}.yml` workflows: `publish-existing-to-all.yml` +
+`publish_existing_all.py` take a `video_url` (already hosted, e.g. a
+`media/reels/` raw URL) + a `caption` and run `core.run_pipeline`'s full IG +
+FB Reels + TikTok + YouTube fan-out in a single `workflow_dispatch`. No content
+generation, no rotation-counter changes, caption used verbatim. First use: Dev
+supplied a finished 8s aerial villa-reveal mp4 to cross-post -- committed to
+`media/reels/`, hosted, published to all four (IG 17929734471147768).
+Gotcha logged: `gh workflow run -F caption=@file` -- build that caption file
+with a heredoc, not `printf "...'\''..."` inside double quotes (that leaves a
+literal `'\''` in the text; a first dispatch was cancelled mid-checkout for
+exactly this before anything published).
