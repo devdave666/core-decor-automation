@@ -1,0 +1,58 @@
+name: Backyard Stop-Motion — publish
+
+# Publishes an already-assembled backyard stop-motion reel (from a
+# backyard-stopmotion-generate.yml run's artifact) to Instagram + Facebook +
+# TikTok + YouTube, exactly like core.run_pipeline's fan-out. Separate dispatch
+# so the paid generation step is never re-run just to publish, and so the
+# assembled reel can be eyeballed from the generate run's artifact first.
+
+on:
+  workflow_dispatch:
+    inputs:
+      generate_run_id:
+        description: "Run ID of the backyard-stopmotion-generate.yml run whose artifact holds the reel"
+        required: true
+
+permissions:
+  contents: write  # upload_video_to_public_host commits the mp4 into media/reels/
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the assembled reel
+        uses: actions/download-artifact@v4
+        with:
+          name: backyard-stopmotion-reel
+          path: reel_in
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.generate_run_id }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Configure git for the hosting commit
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Publish to all channels
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python3 backyard_stopmotion_reel/publish_reel.py reel_in/backyard_stopmotion.mp4

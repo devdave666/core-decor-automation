@@ -1,0 +1,49 @@
+name: Backyard Stop-Motion — model probe
+
+# One-off: confirm which (auth, model) combination reaches the Gemini 3 image
+# family ("nano banana" high-quality path) at image_size="4K" for this project,
+# before the real 16-frame stop-motion generator depends on it. See
+# backyard_stopmotion_reel/probe_model.py. Tries API-key auth first (if the
+# GOOGLE_CLOUD_API_KEY secret exists), then falls back to the WIF/ADC path every
+# current script here uses. Cheap — one image per working combination.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write  # WIF OIDC exchange
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai pillow
+
+      - name: Probe (auth, model) combinations
+        env:
+          GOOGLE_CLOUD_API_KEY: ${{ secrets.GOOGLE_CLOUD_API_KEY }}
+        run: python3 backyard_stopmotion_reel/probe_model.py
+
+      - name: Upload probe images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backyard-stopmotion-probe
+          path: backyard_stopmotion_reel/probe_*.png
+          if-no-files-found: warn

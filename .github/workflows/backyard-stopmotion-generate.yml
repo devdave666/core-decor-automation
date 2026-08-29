@@ -1,0 +1,81 @@
+name: Backyard Stop-Motion — generate
+
+# Generates the 16 photoreal keyframes for the backyard-landscape stop-motion
+# reel (backyard_stopmotion_reel/generate_frames.py) via the "nano banana"
+# high-quality path (Gemini 3 image family at image_size="4K"), then assembles
+# the stop-motion video with a Drive-template music bed. Uploads frames + the
+# finished mp4 as an artifact. Does NOT publish -- that's a separate dispatch
+# (backyard-stopmotion-publish.yml) so this expensive step never runs twice.
+#
+# REAL MONEY: 16 image generations on the Gemini 3 image model. workflow_dispatch
+# only, same discipline as every paid-generation workflow here.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Force an image model id (blank = auto: gemini-3-pro-image, then 3.1-flash, then 2.5-flash)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write  # WIF OIDC exchange
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai pillow requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Generate 16 keyframes
+        env:
+          GOOGLE_CLOUD_API_KEY: ${{ secrets.GOOGLE_CLOUD_API_KEY }}
+        run: |
+          python3 backyard_stopmotion_reel/generate_frames.py \
+            backyard_stopmotion_reel/frames \
+            ${{ inputs.model && format('--model {0}', inputs.model) || '' }}
+
+      - name: Upload raw frames early (survives a later failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backyard-stopmotion-frames
+          path: backyard_stopmotion_reel/frames/*.png
+          if-no-files-found: warn
+
+      - name: Assemble the stop-motion reel (music bed from Drive template)
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          python3 backyard_stopmotion_reel/assemble_reel.py \
+            backyard_stopmotion_reel/frames \
+            backyard_stopmotion_reel/output/backyard_stopmotion.mp4
+
+      - name: Upload the assembled reel
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backyard-stopmotion-reel
+          path: backyard_stopmotion_reel/output/backyard_stopmotion.mp4
+          if-no-files-found: warn
