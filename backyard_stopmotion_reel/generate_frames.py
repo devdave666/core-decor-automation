@@ -40,7 +40,7 @@ from pathlib import Path
 from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
-from PIL import Image
+from PIL import Image, ImageFilter
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
@@ -54,24 +54,40 @@ DEFAULT_MODELS = [
 MAX_RETRIES = 5
 RETRY_BASE_DELAY_S = 20
 
-CONFIG = types.GenerateContentConfig(
-    response_modalities=["IMAGE"],
-    image_config=types.ImageConfig(
-        aspect_ratio="9:16",
-        image_size="4K",
-        output_mime_type="image/png",
-    ),
-    thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
-    safety_settings=[
-        types.SafetySetting(category=c, threshold="OFF")
-        for c in (
-            "HARM_CATEGORY_HATE_SPEECH",
-            "HARM_CATEGORY_DANGEROUS_CONTENT",
-            "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            "HARM_CATEGORY_HARASSMENT",
+_SAFETY_OFF = [
+    types.SafetySetting(category=c, threshold="OFF")
+    for c in (
+        "HARM_CATEGORY_HATE_SPEECH",
+        "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "HARM_CATEGORY_HARASSMENT",
+    )
+]
+
+
+def _config_for_model(model):
+    """
+    The Gemini 3 image family ("nano banana" high-quality path) honours
+    image_size="4K" and takes thinking_config; gemini-2.5-flash-image rejects
+    thinking_config outright (real 400: "thinking_level is not supported by this
+    model") and silently ignores image_size, so it gets the minimal proven
+    config transformation_reel/loft_reveal_reel already use.
+    """
+    if model.startswith("gemini-3"):
+        return types.GenerateContentConfig(
+            response_modalities=["IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio="9:16",
+                image_size="4K",
+                output_mime_type="image/png",
+            ),
+            thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
+            safety_settings=_SAFETY_OFF,
         )
-    ],
-)
+    return types.GenerateContentConfig(
+        image_config=types.ImageConfig(aspect_ratio="9:16"),
+        safety_settings=_SAFETY_OFF,
+    )
 
 # Repeated verbatim in every delta prompt. The camera never moves and these
 # landmarks never change -- they're what keeps 16 chained edits reading as one
@@ -222,6 +238,23 @@ def build_clients(model_override):
     return clients, models
 
 
+TARGET_W, TARGET_H = 1080, 1920
+
+
+def _finish(img):
+    """
+    If the model returned sub-1080p (gemini-2.5-flash-image is hard-capped
+    ~1MP and ignores image_size), Lanczos-upscale to the 1080x1920 reel canvas
+    and apply a mild unsharp -- the same zero-cost local step the e-series
+    adopted as standard (see llms.txt). Native-4K output from the Gemini 3
+    path is left untouched.
+    """
+    if img.width >= TARGET_W:
+        return img
+    up = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+    return up.filter(ImageFilter.UnsharpMask(radius=2, percent=110, threshold=3))
+
+
 def _first_image(response):
     for candidate in response.candidates or []:
         for part in candidate.content.parts or []:
@@ -239,10 +272,11 @@ class Generator:
         self.resolved = None  # (label, client, model)
 
     def _call(self, client, model, contents):
+        config = _config_for_model(model)
         for attempt in range(MAX_RETRIES):
             try:
                 return client.models.generate_content(
-                    model=model, contents=contents, config=CONFIG
+                    model=model, contents=contents, config=config
                 )
             except genai_errors.ClientError as e:
                 msg = str(e)
@@ -257,7 +291,7 @@ class Generator:
     def generate(self, contents):
         if self.resolved is not None:
             label, client, model = self.resolved
-            return _first_image(self._call(client, model, contents))
+            return _finish(_first_image(self._call(client, model, contents)))
         last_err = None
         for label, client in self.clients:
             for model in self.models:
@@ -269,9 +303,10 @@ class Generator:
                     last_err = e
                     continue
                 print(f"  resolved image path: {label}/{model} "
-                      f"({img.width}x{img.height})")
+                      f"({img.width}x{img.height}) -> "
+                      f"{'native' if img.width >= TARGET_W else f'upscaled to {TARGET_W}x{TARGET_H}'}")
                 self.resolved = (label, client, model)
-                return img
+                return _finish(img)
         raise RuntimeError(f"No (auth, model) combination worked. Last error: {last_err}")
 
 

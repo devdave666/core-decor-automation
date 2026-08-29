@@ -45,24 +45,33 @@ PROMPT = (
     "focus, no people, no text, no watermark."
 )
 
-CONFIG = types.GenerateContentConfig(
-    response_modalities=["IMAGE"],
-    image_config=types.ImageConfig(
-        aspect_ratio="9:16",
-        image_size="4K",
-        output_mime_type="image/png",
-    ),
-    thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
-    safety_settings=[
-        types.SafetySetting(category=c, threshold="OFF")
-        for c in (
-            "HARM_CATEGORY_HATE_SPEECH",
-            "HARM_CATEGORY_DANGEROUS_CONTENT",
-            "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            "HARM_CATEGORY_HARASSMENT",
+_SAFETY_OFF = [
+    types.SafetySetting(category=c, threshold="OFF")
+    for c in (
+        "HARM_CATEGORY_HATE_SPEECH",
+        "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "HARM_CATEGORY_HARASSMENT",
+    )
+]
+
+
+def config_for_model(model):
+    # gemini-2.5-flash-image rejects thinking_config (real 400) and ignores
+    # image_size; the Gemini 3 image family takes both.
+    if model.startswith("gemini-3"):
+        return types.GenerateContentConfig(
+            response_modalities=["IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio="9:16", image_size="4K", output_mime_type="image/png",
+            ),
+            thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
+            safety_settings=_SAFETY_OFF,
         )
-    ],
-)
+    return types.GenerateContentConfig(
+        image_config=types.ImageConfig(aspect_ratio="9:16"),
+        safety_settings=_SAFETY_OFF,
+    )
 
 
 def _clients():
@@ -95,7 +104,7 @@ def main():
             print(f"--- trying {tag} ---")
             try:
                 response = client.models.generate_content(
-                    model=model, contents=PROMPT, config=CONFIG
+                    model=model, contents=PROMPT, config=config_for_model(model)
                 )
             except Exception as e:  # noqa: BLE001
                 print(f"  FAILED: {str(e)[:400]}")
