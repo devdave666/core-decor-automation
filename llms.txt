@@ -5144,3 +5144,45 @@ trimmed-segment pass came back 1280x720 LANDSCAPE from a 720x1280 portrait
 source. Re-running with an explicit "must stay vertical 9:16 720x1280, do not
 reframe to landscape" clause in the instruction fixed it. Always check the
 output dims and re-run if it flipped.
+
+## mansion_reel/ -- reverse-engineer a viral video + Veo 3.1 Fast regen, PUBLISHED (2026-08-29)
+
+Dev: "ask gemini vision to analyze and reverse engineer this video, and
+generate similar viral video using veo 3.1 fast 1080p" (ref3.mp4 -- a 20s AI
+luxury mega-mansion showcase: symmetrical Beaux-Arts palace, blue hour, formal
+gardens, glowing pool, wrought-iron gates, "magical build" landscaping grows
+in, kalimba music). Built `mansion_reel/`, published to all 4 (IG
+18239958481315501).
+
+**Analysis** (`analyze.py` + `mansion-reel.yml mode=analyze`): feeds the whole
+mp4 to `gemini-2.5-pro` @ us-central1 (same whole-video standard as
+`_forensic_qa.py`), asks for JSON: hook / genre / why_viral / visual_style /
+camera / structure(t,beat) / audio / veo_prompts[3]. Worked well -- accurate
+shot-by-shot read. Saved as `mansion_reel/plan_auto.json`. Its auto Veo prompts
+were NOT used verbatim: they kept the "magical grow-in" (Veo renders time-lapse
+badly -- see transformation_reel) and reinvented the style as modernist-desert.
+
+**Curated plan** (`mansion_reel/plan.json`): style matched to the reference,
+reveal is CAMERA-DRIVEN (aerial approach -> push through the gate -> crane-up
+reveal), no grow-in. 3x 8s shots.
+
+**Generation** (`generate_veo.py` + `mansion-reel.yml mode=generate`):
+`veo-3.1-fast-generate-001`, text-to-video (no start image -- it's a fantasy
+build). `resolution="1080p"` + `aspect_ratio="9:16"` + `generate_audio=True`
+WORKS on Fast. ~$3-4 for 3 clips. First result: great quality, on-style, but
+the palace DESIGN DRIFTS between the 3 independent generations.
+
+**Consistency fix** (`mansion-reel-refine.yml`): pull a palace still from
+clip 1, regenerate clips 2-3 with it as a Veo `reference_images` entry.
+Gotchas learned:
+- `reference_images` + `resolution="1080p"` -> `code 3: "Reference to video
+  does not support this mix of references."` The ref'd clips must render at
+  the default 720p; upscale in post.
+- `reference_type="style"` also hit that error; `reference_type="asset"` at
+  720p WORKED and locked the building look across all three shots.
+- Mixed-resolution concat (1080p clip 1 + upscaled-720p clips 2-3) errors
+  "Error reinitializing filters! Invalid argument" -- scale EVERY input to
+  the target WxH inside the filter graph before `concat`.
+- Music bed: reused `core.fetch_next_template` + `extract_and_master_audio`
+  (Drive rotation, counter NOT advanced), mixed over the Veo ambient with the
+  ambient ducked to ~18% (`finish_mansion.py`).
