@@ -37,12 +37,7 @@ def try_del_ig(media_id, token):
 
 
 def del_buffer(post_id, token):
-    mutation = (
-        "mutation D($id: PostId!){ deletePost(input:{id:$id}){ "
-        "__typename ... on DeletePostSuccess { post { id status } } "
-        "... on NotFoundError { message } ... on UnauthorizedError { message } "
-        "... on UnexpectedError { message } } }"
-    )
+    mutation = "mutation D($id: PostId!){ deletePost(input:{id:$id}){ __typename } }"
     r = requests.post(
         "https://api.buffer.com/graphql",
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
