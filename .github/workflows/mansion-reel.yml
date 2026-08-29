@@ -1,0 +1,66 @@
+name: Mansion Reel (analyze + Veo)
+
+# Reverse-engineers a reference viral video with Gemini multimodal analysis,
+# then (mode=generate) produces a similar ~24s video as three 8s Veo 3.1 Fast
+# shots at 1080p / 9:16, concatenated. workflow_dispatch only -- Veo costs real
+# money (~$0.10-0.15/s Fast -> roughly $2.50-4 for 3x8s).
+#
+# mode=analyze  : just the shot-plan JSON + printed breakdown (cheap).
+# mode=generate : analyze, then feed the plan's veo_prompts straight into Veo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "analyze | generate"
+        required: true
+        default: "analyze"
+        type: choice
+        options: [analyze, generate]
+      video_url:
+        description: "public URL of the reference mp4"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  mansion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Auth to Google Cloud (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          pip install google-genai
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Fetch reference
+        run: curl -fsSL "${{ inputs.video_url }}" -o mansion_reel/ref.mp4
+
+      - name: Analyze
+        run: python3 mansion_reel/analyze.py mansion_reel/ref.mp4 mansion_reel/plan.json
+
+      - name: Generate (Veo 3.1 Fast, 1080p)
+        if: inputs.mode == 'generate'
+        run: python3 mansion_reel/generate_veo.py mansion_reel/plan.json mansion_reel/output
+
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mansion-reel
+          path: |
+            mansion_reel/plan.json
+            mansion_reel/output/*.mp4
+          if-no-files-found: warn
