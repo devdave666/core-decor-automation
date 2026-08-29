@@ -1,0 +1,80 @@
+name: Omni Reel Edit
+
+# Video-to-video reel editing via Gemini "omni" (client.interactions.create),
+# through our existing WIF/ADC auth on project ...bfa, location="global".
+# See omni_reel_edit/omni_edit.py. workflow_dispatch only -- paid preview model.
+#
+# Two ways to supply the source video:
+#   video_url    -- an already-hosted mp4 (e.g. a media/reels/ raw URL)
+#   (or commit the file and pass its repo path via video_path)
+# The edit instruction is a dispatch input (multi-line ok).
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "probe | edit"
+        required: true
+        default: "probe"
+        type: choice
+        options: [probe, edit]
+      video_url:
+        description: "edit mode: public URL of the source mp4"
+        required: false
+        type: string
+      instruction:
+        description: "edit mode: the change to make"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  omni:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install google-genai google-cloud-storage requests
+
+      - name: Probe
+        if: inputs.mode == 'probe'
+        run: python3 omni_reel_edit/omni_edit.py --probe
+
+      - name: Fetch source video
+        if: inputs.mode == 'edit'
+        run: |
+          curl -fsSL "${{ inputs.video_url }}" -o omni_reel_edit/source.mp4
+          ls -la omni_reel_edit/source.mp4
+
+      - name: Edit
+        if: inputs.mode == 'edit'
+        run: |
+          printf '%s' "${{ inputs.instruction }}" > omni_reel_edit/instruction.txt
+          python3 omni_reel_edit/omni_edit.py \
+            --in omni_reel_edit/source.mp4 \
+            --instruction-file omni_reel_edit/instruction.txt \
+            --out omni_reel_edit/output/edited.mp4
+
+      - name: Upload result
+        if: always() && inputs.mode == 'edit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: omni-reel-edit
+          path: omni_reel_edit/output/edited.mp4
+          if-no-files-found: warn

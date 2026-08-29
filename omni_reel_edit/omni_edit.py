@@ -1,0 +1,190 @@
+"""
+Video-to-video reel editing via Gemini "omni" (client.interactions.create).
+
+Dev supplied the API shape (Colab snippet): the `interactions` namespace with
+`gemini-omni-1.1-flash-preview`, an `Api-Revision` header, and steps[] output
+carrying text/video parts. This runs it through our existing WIF/ADC auth on
+project ...bfa, location="global" (same place the Gemini 3 image family lives).
+
+The `input` type alias is `Union[str, List[Step], List[Content], Content]`; we
+pass a list of Content items: one text instruction + one video
+(`{"type": "video", "data": <b64>, "mime_type": "video/mp4"}`). Output video
+comes back on a `model_output` step as a `video` content part -- inline base64
+`data`, or a `gs://` `uri` if the service delivered to Cloud Storage (this
+project has no bucket, so we request `delivery="inline"`).
+
+Modes:
+  --probe                     tiny reachability check, no video in/out
+  --in V --instruction T --out O   real edit
+
+Auth: WIF/ADC in GitHub Actions (google-github-actions/auth@v2).
+"""
+import argparse
+import base64
+import sys
+import time
+from pathlib import Path
+
+from google import genai
+from google.genai import types
+
+PROJECT = "project-58f4f689-36b9-406b-bfa"
+LOCATION = "global"
+API_REVISION = "2026-05-20"
+
+MODEL_CANDIDATES = [
+    "gemini-omni-1.1-flash-preview",
+    "gemini-omni-1-flash-preview",
+    "gemini-omni-flash-preview",
+    "gemini-omni-1.1-pro-preview",
+]
+
+POLL_INTERVAL_S = 15
+POLL_TIMEOUT_S = 1200
+
+
+def _client():
+    return genai.Client(
+        vertexai=True, project=PROJECT, location=LOCATION,
+        http_options=types.HttpOptions(headers={"Api-Revision": API_REVISION}),
+    )
+
+
+def _as_dict(obj):
+    if hasattr(obj, "model_dump"):
+        return obj.model_dump()
+    if isinstance(obj, dict):
+        return obj
+    return {}
+
+
+def _iter_steps(interaction):
+    steps = getattr(interaction, "steps", None)
+    if steps is None and isinstance(interaction, dict):
+        steps = interaction.get("steps")
+    return steps or []
+
+
+def _collect(interaction):
+    """Return (texts, video_bytes_list) from an interaction's model_output steps."""
+    texts, videos = [], []
+    for step in _iter_steps(interaction):
+        d = _as_dict(step)
+        if d.get("type") != "model_output":
+            continue
+        for part in d.get("content") or []:
+            pd = _as_dict(part) if not isinstance(part, dict) else part
+            if pd.get("type") == "text" and pd.get("text"):
+                texts.append(pd["text"])
+            elif pd.get("type") == "video":
+                data = pd.get("data")
+                uri = pd.get("uri")
+                if data:
+                    videos.append(base64.b64decode(data))
+                elif uri and uri.startswith("gs://"):
+                    from google.cloud import storage
+                    bkt, blob = uri[5:].split("/", 1)
+                    videos.append(storage.Client().bucket(bkt).blob(blob).download_as_bytes())
+    return texts, videos
+
+
+def _create(client, model, input_, **kw):
+    interaction = client.interactions.create(model=model, input=input_, **kw)
+    # poll if the service returned something still running
+    waited = 0
+    while True:
+        d = _as_dict(interaction)
+        status = (d.get("status") or getattr(interaction, "status", None) or "")
+        status = str(status).lower()
+        if status in ("", "completed", "succeeded", "done", "failed", "cancelled", "error"):
+            return interaction, status
+        if waited >= POLL_TIMEOUT_S:
+            return interaction, f"timeout({status})"
+        time.sleep(POLL_INTERVAL_S)
+        waited += POLL_INTERVAL_S
+        iid = d.get("id") or getattr(interaction, "id", None)
+        interaction = client.interactions.get(interaction_id=iid)
+
+
+def probe():
+    client = _client()
+    for model in MODEL_CANDIDATES:
+        print(f"--- probe {model} ---")
+        try:
+            interaction, status = _create(
+                client, model,
+                input_="Reply with the single word: ready.",
+                response_modalities=["text"],
+                store=False,
+            )
+        except Exception as e:  # noqa: BLE001
+            print(f"  FAILED: {str(e)[:400]}")
+            continue
+        texts, _ = _collect(interaction)
+        print(f"  OK status={status!r} text={' '.join(texts)[:200]!r}")
+        print(f"  raw keys: {list(_as_dict(interaction).keys())}")
+        return model
+    print("no omni model candidate responded")
+    sys.exit(1)
+
+
+def edit(in_path, instruction, out_path):
+    client = _client()
+    b64 = base64.b64encode(Path(in_path).read_bytes()).decode()
+    last_err = None
+    for model in MODEL_CANDIDATES:
+        print(f"--- edit via {model} ---")
+        try:
+            interaction, status = _create(
+                client, model,
+                input_=[
+                    {"type": "text", "text": instruction},
+                    {"type": "video", "data": b64, "mime_type": "video/mp4"},
+                ],
+                response_modalities=["video"],
+                response_format={
+                    "type": "video", "delivery": "inline",
+                    "resolution": "1080p", "aspect_ratio": "9:16",
+                },
+                store=False,
+            )
+        except Exception as e:  # noqa: BLE001
+            print(f"  FAILED: {str(e)[:500]}")
+            last_err = e
+            continue
+        texts, videos = _collect(interaction)
+        if texts:
+            print(f"  model said: {' '.join(texts)[:500]}")
+        if not videos:
+            print(f"  status={status!r} but no video in output; keys={list(_as_dict(interaction).keys())}")
+            last_err = RuntimeError("no video part in model_output")
+            continue
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(out_path).write_bytes(videos[0])
+        print(f"  wrote {out_path} ({len(videos[0])} bytes) via {model}")
+        return
+    raise RuntimeError(f"omni edit produced no video. last error: {last_err}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--probe", action="store_true")
+    ap.add_argument("--in", dest="in_path")
+    ap.add_argument("--instruction")
+    ap.add_argument("--instruction-file")
+    ap.add_argument("--out", dest="out_path")
+    args = ap.parse_args()
+
+    if args.probe:
+        probe()
+        return
+    instruction = args.instruction
+    if args.instruction_file:
+        instruction = Path(args.instruction_file).read_text().strip()
+    if not (args.in_path and instruction and args.out_path):
+        ap.error("need --in, --instruction/--instruction-file and --out (or --probe)")
+    edit(args.in_path, instruction, args.out_path)
+
+
+if __name__ == "__main__":
+    main()
