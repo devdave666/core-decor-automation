@@ -26,6 +26,14 @@ on:
         description: "edit mode: the change to make"
         required: false
         type: string
+      trim_start:
+        description: "edit mode: trim source to start at this second (blank = 0)"
+        required: false
+        type: string
+      trim_end:
+        description: "edit mode: trim source to end at this second (blank = end)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -73,6 +81,8 @@ jobs:
           python3 omni_reel_edit/omni_edit.py \
             --in omni_reel_edit/source.mp4 \
             --instruction-file omni_reel_edit/instruction.txt \
+            ${{ inputs.trim_start && format('--trim-start {0}', inputs.trim_start) || '' }} \
+            ${{ inputs.trim_end && format('--trim-end {0}', inputs.trim_end) || '' }} \
             --out omni_reel_edit/output/edited.mp4
 
       - name: Upload result

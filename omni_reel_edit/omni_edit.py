@@ -179,8 +179,27 @@ def probe(in_path=None):
     sys.exit(1)
 
 
-def edit(in_path, instruction, out_path):
+def _maybe_trim(in_path, start, end):
+    if start is None and end is None:
+        return in_path
+    import subprocess
+    trimmed = Path(in_path).with_name("trimmed.mp4")
+    cmd = ["ffmpeg", "-y", "-v", "error"]
+    if start is not None:
+        cmd += ["-ss", str(start)]
+    cmd += ["-i", str(in_path)]
+    if end is not None:
+        dur = float(end) - float(start or 0)
+        cmd += ["-t", str(dur)]
+    cmd += ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(trimmed)]
+    subprocess.run(cmd, check=True)
+    print(f"  trimmed source to [{start}, {end}] -> {trimmed}")
+    return trimmed
+
+
+def edit(in_path, instruction, out_path, trim_start=None, trim_end=None):
     client = _client()
+    in_path = _maybe_trim(in_path, trim_start, trim_end)
     b64 = base64.b64encode(Path(in_path).read_bytes()).decode()
     last_err = None
     for model in MODEL_CANDIDATES:
@@ -224,6 +243,8 @@ def main():
     ap.add_argument("--instruction")
     ap.add_argument("--instruction-file")
     ap.add_argument("--out", dest="out_path")
+    ap.add_argument("--trim-start", type=float, default=None)
+    ap.add_argument("--trim-end", type=float, default=None)
     args = ap.parse_args()
 
     if args.probe:
@@ -234,7 +255,7 @@ def main():
         instruction = Path(args.instruction_file).read_text().strip()
     if not (args.in_path and instruction and args.out_path):
         ap.error("need --in, --instruction/--instruction-file and --out (or --probe)")
-    edit(args.in_path, instruction, args.out_path)
+    edit(args.in_path, instruction, args.out_path, args.trim_start, args.trim_end)
 
 
 if __name__ == "__main__":
