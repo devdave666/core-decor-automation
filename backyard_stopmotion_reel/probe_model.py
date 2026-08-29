@@ -61,11 +61,11 @@ def config_for_model(model):
     # gemini-2.5-flash-image rejects thinking_config (real 400) and ignores
     # image_size; the Gemini 3 image family takes both.
     if model.startswith("gemini-3"):
+        # output_mime_type is Vertex-only ("Gemini Enterprise Agent Platform
+        # mode"); the Developer API rejects it. PNG is the default anyway.
         return types.GenerateContentConfig(
             response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio="9:16", image_size="4K", output_mime_type="image/png",
-            ),
+            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
             thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
             safety_settings=_SAFETY_OFF,
         )

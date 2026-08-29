@@ -75,13 +75,11 @@ def _config_for_model(model):
     config transformation_reel/loft_reveal_reel already use.
     """
     if model.startswith("gemini-3"):
+        # output_mime_type is Vertex-only ("Gemini Enterprise Agent Platform
+        # mode") and the Developer API rejects it outright; PNG is the default.
         return types.GenerateContentConfig(
             response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio="9:16",
-                image_size="4K",
-                output_mime_type="image/png",
-            ),
+            image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
             thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
             safety_settings=_SAFETY_OFF,
         )
