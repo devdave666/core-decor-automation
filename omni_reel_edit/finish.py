@@ -67,38 +67,46 @@ def stitch(head, tail, dst):
 
 
 def make_hook_png(text, dst):
-    font = ImageFont.truetype(FONT, 78)
-    try:
-        font.set_variation_by_name("Bold")
-    except Exception:
-        pass
+    lines = text.split("|")
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    # soft top gradient
+    # soft top gradient (not a box)
     grad = Image.new("L", (1, H), 0)
     gpx = int(H * 0.5)
     for y in range(gpx):
-        grad.putpixel((0, y), int(170 * (1 - y / gpx)))
+        grad.putpixel((0, y), int(175 * (1 - y / gpx)))
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 255))
     ov.putalpha(grad.resize((W, H)))
     img.alpha_composite(ov)
-    lines = text.split("|")
-    lh = 92
-    top = int(H * 0.16)
+    # shrink font until the widest line fits inside a safe margin
+    margin = 70
+    size = 72
+    while size > 40:
+        font = ImageFont.truetype(FONT, size)
+        try:
+            font.set_variation_by_name("Bold")
+        except Exception:
+            pass
+        if max(d.textlength(ln, font=font) for ln in lines) <= W - 2 * margin:
+            break
+        size -= 3
+    lh = int(size * 1.22)
+    top = int(H * 0.15)
     for i, ln in enumerate(lines):
         w = d.textlength(ln, font=font)
         d.text(((W - w) / 2, top + i * lh), ln, font=font, fill="white",
-               stroke_width=4, stroke_fill=(0, 0, 0, 220))
+               stroke_width=4, stroke_fill=(0, 0, 0, 230))
     img.save(dst)
 
 
 def add_hook(src, hook_png, dst):
     end = HOOK_IN + HOOK_HOLD
-    run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-i", str(hook_png),
+    # -loop 1 so the still PNG is a continuous stream the fades/enable can act on
+    run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-loop", "1", "-i", str(hook_png),
          "-filter_complex",
          f"[1:v]format=rgba,fade=t=in:st={HOOK_IN}:d=0.4:alpha=1,"
          f"fade=t=out:st={end}:d={HOOK_FADE}:alpha=1[hk];"
-         f"[0:v][hk]overlay=0:0:enable='between(t,{HOOK_IN},{end + HOOK_FADE})'[v]",
+         f"[0:v][hk]overlay=0:0:shortest=1[v]",
          "-map", "[v]", "-map", "0:a", "-c:v", "libx264", "-pix_fmt", "yuv420p",
          "-crf", "18", "-c:a", "copy", str(dst)], "overlay hook text")
 
@@ -106,7 +114,7 @@ def add_hook(src, hook_png, dst):
 def cold_open(body, dst):
     """Prepend a short clip of the finished reveal (body's own last COLD_OPEN s)."""
     bd = probe_dur(body)
-    run(["ffmpeg", "-y", "-v", "error", "-ss", f"{bd - COLD_OPEN:.2f}", "-i", str(body),
+    run(["ffmpeg", "-y", "-v", "error", "-ss", f"{bd - COLD_OPEN - 0.4:.2f}", "-i", str(body),
          "-t", f"{COLD_OPEN}", "-an",
          "-vf", f"fps={FPS},scale={W}:{H}", "-c:v", "libx264", "-pix_fmt", "yuv420p",
          "-crf", "18", str(dst.with_name("co_clip.mp4"))], "grab reveal for cold-open")
