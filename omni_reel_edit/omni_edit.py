@@ -32,15 +32,21 @@ PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "global"
 API_REVISION = "2026-05-20"
 
+# The GCP console shows a real quota only for base_model "gemini-omni-flash-
+# preview" (value 3/min, not raisable right now) -- "gemini-omni-1.1-flash-
+# preview" from Dev's snippet returns a hard 429 (0 quota). So call the
+# un-versioned name first.
 MODEL_CANDIDATES = [
-    "gemini-omni-1.1-flash-preview",
-    "gemini-omni-1-flash-preview",
     "gemini-omni-flash-preview",
-    "gemini-omni-1.1-pro-preview",
+    "gemini-omni-1.1-flash-preview",
 ]
 
 POLL_INTERVAL_S = 15
 POLL_TIMEOUT_S = 1200
+
+# Quota is only ~3 requests/min -- back off and retry on 429 rather than fail.
+RL_RETRIES = 5
+RL_BASE_DELAY_S = 25
 
 
 def _client():
@@ -89,7 +95,20 @@ def _collect(interaction):
 
 
 def _create(client, model, input_, **kw):
-    interaction = client.interactions.create(model=model, input=input_, **kw)
+    for attempt in range(RL_RETRIES):
+        try:
+            interaction = client.interactions.create(model=model, input=input_, **kw)
+            break
+        except Exception as e:  # noqa: BLE001
+            msg = str(e)
+            if ("429" in msg or "too_many_requests" in msg or "RESOURCE_EXHAUSTED" in msg) \
+                    and attempt < RL_RETRIES - 1:
+                delay = RL_BASE_DELAY_S * (attempt + 1)
+                print(f"  429 (quota ~3/min), waiting {delay}s "
+                      f"(attempt {attempt + 1}/{RL_RETRIES})...")
+                time.sleep(delay)
+                continue
+            raise
     # poll if the service returned something still running
     waited = 0
     while True:
@@ -106,23 +125,49 @@ def _create(client, model, input_, **kw):
         interaction = client.interactions.get(interaction_id=iid)
 
 
-def probe():
+def probe(in_path=None):
+    """
+    A text-only request to gemini-omni-flash-preview 400s ("invalid argument")
+    -- the model wants video I/O. So the probe does a REAL minimal round-trip on
+    a short clip (--in required) and dumps the response structure so we learn
+    how the edited video comes back.
+    """
+    if not in_path:
+        print("probe needs --in <short mp4>")
+        sys.exit(2)
     client = _client()
+    b64 = base64.b64encode(Path(in_path).read_bytes()).decode()
     for model in MODEL_CANDIDATES:
-        print(f"--- probe {model} ---")
+        print(f"--- probe {model} on {in_path} ---")
         try:
             interaction, status = _create(
                 client, model,
-                input_="Reply with the single word: ready.",
-                response_modalities=["text"],
+                input_=[
+                    {"type": "text", "text": "Slightly increase the contrast and warmth of this clip. Keep everything else identical."},
+                    {"type": "video", "data": b64, "mime_type": "video/mp4"},
+                ],
+                response_modalities=["video"],
+                response_format={"type": "video", "delivery": "inline",
+                                 "resolution": "1080p", "aspect_ratio": "9:16"},
                 store=False,
             )
         except Exception as e:  # noqa: BLE001
-            print(f"  FAILED: {str(e)[:400]}")
+            print(f"  FAILED: {str(e)[:600]}")
             continue
-        texts, _ = _collect(interaction)
-        print(f"  OK status={status!r} text={' '.join(texts)[:200]!r}")
-        print(f"  raw keys: {list(_as_dict(interaction).keys())}")
+        d = _as_dict(interaction)
+        print(f"  status={status!r}  top-level keys={list(d.keys())}")
+        for i, step in enumerate(_iter_steps(interaction)):
+            sd = _as_dict(step)
+            ct = [(_as_dict(p) if not isinstance(p, dict) else p).get("type")
+                  for p in (sd.get("content") or [])]
+            print(f"    step[{i}] type={sd.get('type')} content_types={ct} err={sd.get('error')}")
+        texts, videos = _collect(interaction)
+        if texts:
+            print(f"  text: {' '.join(texts)[:400]}")
+        if videos:
+            out = Path(in_path).with_name("probe_out.mp4")
+            out.write_bytes(videos[0])
+            print(f"  VIDEO OK: {len(videos[0])} bytes -> {out}")
         return model
     print("no omni model candidate responded")
     sys.exit(1)
@@ -176,7 +221,7 @@ def main():
     args = ap.parse_args()
 
     if args.probe:
-        probe()
+        probe(args.in_path)
         return
     instruction = args.instruction
     if args.instruction_file:

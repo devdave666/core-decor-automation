@@ -19,8 +19,8 @@ on:
         type: choice
         options: [probe, edit]
       video_url:
-        description: "edit mode: public URL of the source mp4"
-        required: false
+        description: "public URL of the source mp4 (both modes)"
+        required: true
         type: string
       instruction:
         description: "edit mode: the change to make"
@@ -50,17 +50,21 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install google-genai google-cloud-storage requests
-
-      - name: Probe
-        if: inputs.mode == 'probe'
-        run: python3 omni_reel_edit/omni_edit.py --probe
+        run: |
+          pip install google-genai google-cloud-storage requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Fetch source video
-        if: inputs.mode == 'edit'
         run: |
           curl -fsSL "${{ inputs.video_url }}" -o omni_reel_edit/source.mp4
           ls -la omni_reel_edit/source.mp4
+
+      - name: Probe (3s clip round-trip)
+        if: inputs.mode == 'probe'
+        run: |
+          ffmpeg -v error -y -i omni_reel_edit/source.mp4 -t 3 \
+            -c:v libx264 -pix_fmt yuv420p -c:a aac omni_reel_edit/clip3.mp4
+          python3 omni_reel_edit/omni_edit.py --probe --in omni_reel_edit/clip3.mp4
 
       - name: Edit
         if: inputs.mode == 'edit'
