@@ -43,13 +43,16 @@ from google.genai import types
 from PIL import Image, ImageFilter
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
-LOCATION = "us-central1"
+# The Gemini 3 image family is served ONLY in the "global" Vertex location for
+# this project -- confirmed by a region sweep (us-central1/us-east4/europe-west4
+# all 404). gemini-2.5-flash-image works in any region including global, so a
+# single global client covers every candidate.
+LOCATION = "global"
 
 DEFAULT_MODELS = [
-    "gemini-3-pro-image-preview",
-    "gemini-3-pro-image",
-    "gemini-3.1-flash-image",
-    "gemini-2.5-flash-image",
+    "gemini-3.1-flash-image",  # confirmed: wif:global, ~17 MP native output
+    "gemini-3-pro-image",      # higher tier; rejects thinking_config
+    "gemini-2.5-flash-image",  # ~1 MP fallback, upscaled
 ]
 
 MAX_RETRIES = 5
@@ -68,21 +71,25 @@ _SAFETY_OFF = [
 
 def _config_for_model(model):
     """
-    The Gemini 3 image family ("nano banana" high-quality path) honours
-    image_size="4K" and takes thinking_config; gemini-2.5-flash-image rejects
-    thinking_config outright (real 400: "thinking_level is not supported by this
-    model") and silently ignores image_size, so it gets the minimal proven
-    config transformation_reel/loft_reveal_reel already use.
+    Per-model, learned from real probe runs against this project:
+      - gemini-3.1-flash-image: honours image_size="4K" AND thinking_config
+        (probe: 3072x5504 native via wif:global).
+      - gemini-3-pro-image: honours image_size but REJECTS thinking_config
+        (real 400: "thinking_level MINIMAL is not supported by this model").
+      - gemini-2.5-flash-image: rejects thinking_config, silently ignores
+        image_size (~1 MP cap) -- minimal proven config, same as
+        transformation_reel/loft_reveal_reel.
+    output_mime_type is omitted everywhere: Vertex-only and PNG is the default.
     """
     if model.startswith("gemini-3"):
-        # output_mime_type is Vertex-only ("Gemini Enterprise Agent Platform
-        # mode") and the Developer API rejects it outright; PNG is the default.
-        return types.GenerateContentConfig(
+        cfg = dict(
             response_modalities=["IMAGE"],
             image_config=types.ImageConfig(aspect_ratio="9:16", image_size="4K"),
-            thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
             safety_settings=_SAFETY_OFF,
         )
+        if "flash" in model:
+            cfg["thinking_config"] = types.ThinkingConfig(thinking_level="MINIMAL")
+        return types.GenerateContentConfig(**cfg)
     return types.GenerateContentConfig(
         image_config=types.ImageConfig(aspect_ratio="9:16"),
         safety_settings=_SAFETY_OFF,
@@ -220,45 +227,45 @@ assert len(DELTAS) == 15, "expected 15 deltas for frames 02..16"
 
 
 def build_clients(model_override):
+    """
+    WIF/ADC only -- bills to the GCP project's credits (same as Veo), no API key.
+    The Gemini 3 image family needs location="global"; gemini-2.5-flash-image
+    works there too, so one global client covers everything, with us-central1
+    kept only as a fallback for the 2.5 model.
+    """
     models = [model_override] if model_override else list(DEFAULT_MODELS)
-    api_key = os.environ.get("GOOGLE_CLOUD_API_KEY")
     clients = []
-    if api_key:
-        # Key may be a Gemini Developer API (AI Studio) key or a Vertex AI API
-        # key -- try the Developer path first (that's where the Gemini 3 image
-        # family is broadly available), then Vertex.
-        for label, kwargs in (
-            ("apikey-developer", dict(api_key=api_key)),
-            ("apikey-vertex", dict(vertexai=True, api_key=api_key)),
-        ):
-            try:
-                clients.append((label, genai.Client(**kwargs)))
-            except Exception as e:  # noqa: BLE001
-                print(f"[{label}] client construction failed: {e}")
-    try:
-        clients.append(("wif", genai.Client(vertexai=True, project=PROJECT, location=LOCATION)))
-    except Exception as e:  # noqa: BLE001
-        print(f"[wif] client construction failed: {e}")
+    for loc in ("global", "us-central1"):
+        try:
+            clients.append((f"wif:{loc}", genai.Client(
+                vertexai=True, project=PROJECT, location=loc)))
+        except Exception as e:  # noqa: BLE001
+            print(f"[wif:{loc}] client construction failed: {e}")
     if not clients:
         raise RuntimeError("No usable genai client could be constructed")
     return clients, models
 
 
 TARGET_W, TARGET_H = 1080, 1920
+MAX_STORE_W = 1600  # cap stored frame width -- 17 MP is wasteful as chain input
 
 
 def _finish(img):
     """
-    If the model returned sub-1080p (gemini-2.5-flash-image is hard-capped
-    ~1MP and ignores image_size), Lanczos-upscale to the 1080x1920 reel canvas
-    and apply a mild unsharp -- the same zero-cost local step the e-series
-    adopted as standard (see llms.txt). Native-4K output from the Gemini 3
-    path is left untouched.
+    Normalise every frame toward the reel canvas:
+      - sub-1080p (gemini-2.5-flash-image's ~1 MP cap): Lanczos-upscale to
+        1080x1920 + mild unsharp, the e-series' adopted step (see llms.txt).
+      - oversized (gemini-3's ~17 MP native): downscale to MAX_STORE_W wide,
+        still well above the 1080p final, keeping the chained-edit input and
+        the artifact a sane size.
     """
-    if img.width >= TARGET_W:
-        return img
-    up = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
-    return up.filter(ImageFilter.UnsharpMask(radius=2, percent=110, threshold=3))
+    if img.width < TARGET_W:
+        up = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+        return up.filter(ImageFilter.UnsharpMask(radius=2, percent=110, threshold=3))
+    if img.width > MAX_STORE_W:
+        h = round(img.height * MAX_STORE_W / img.width)
+        return img.resize((MAX_STORE_W, h), Image.LANCZOS)
+    return img
 
 
 def _first_image(response):
@@ -308,11 +315,11 @@ class Generator:
                     print(f"  [{label}/{model}] failed: {str(e)[:300]}")
                     last_err = e
                     continue
+                out = _finish(img)
                 print(f"  resolved image path: {label}/{model} "
-                      f"({img.width}x{img.height}) -> "
-                      f"{'native' if img.width >= TARGET_W else f'upscaled to {TARGET_W}x{TARGET_H}'}")
+                      f"(native {img.width}x{img.height} -> stored {out.width}x{out.height})")
                 self.resolved = (label, client, model)
-                return _finish(img)
+                return out
         raise RuntimeError(f"No (auth, model) combination worked. Last error: {last_err}")
 
 

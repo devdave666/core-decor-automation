@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: "Force an image model id (blank = auto: gemini-3-pro-image, then 3.1-flash, then 2.5-flash)"
+        description: "Force an image model id (blank = auto: gemini-3.1-flash-image, then 3-pro-image, then 2.5-flash-image)"
         required: false
         type: string
 
@@ -46,8 +46,6 @@ jobs:
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Generate 16 keyframes
-        env:
-          GOOGLE_CLOUD_API_KEY: ${{ secrets.GOOGLE_CLOUD_API_KEY }}
         run: |
           python3 backyard_stopmotion_reel/generate_frames.py \
             backyard_stopmotion_reel/frames \
