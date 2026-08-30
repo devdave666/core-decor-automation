@@ -55,17 +55,17 @@ _SAFETY_OFF = [
 # The structured Veo prompt (Dev's cinematic-prompt-engineer format), built
 # directly -- no LLM call. Only [ENVIRONMENT & LIGHTING] varies per concept.
 #
-# NB: the word "ASMR" is DELIBERATELY not used -- to Veo, "ASMR" cues whispered
-# human voice (ASMR = whisper videos), which produced garbled multilingual
-# mumbling on the first run. The audio is specified purely as mechanical +
-# environmental construction sound with an explicit no-voice ban. (Veo 3 will
-# not let prompt enhancement be disabled, so this + the negative_prompt + the
-# post-gen speech check + mute fallback are the only levers.)
+# The audio is ASMR-style construction sound -- crisp, close, tactile MACHINERY
+# and MATERIAL sound, which is the whole appeal. The one thing to exclude is
+# ASMR *whispering* / any human voice: the first run's "ASMR sound design"
+# produced garbled multilingual mumbling, so "ASMR" is now tightly bound to a
+# no-voice ban, backed by the negative_prompt + the post-gen speech check +
+# local audio repair.
 VEO_PROMPT_TEMPLATE = """[SHOT TYPE / COMPOSITION]: High aerial drone establishing shot, very wide, 24mm deep-focus lens, vertical 9:16, the clifftop building site centred with the mountain range filling the background.
 [SUBJECT & ACTION]: An entire vast modern luxury villa constructs itself from bare ground to a completely finished home in one continuous accelerated build -- excavation, poured foundation, structural frame raised, concrete floors and full-height glazing installed, roof and cantilevered terraces completed, the cliff-edge infinity pool filling with water, mature landscaping and the driveway set -- while multiple tall tower cranes, tracked excavators, diggers and a long-boom concrete pump work the site continuously throughout, ending locked on the pristine completed villa.
 [ENVIRONMENT & LIGHTING]: {concept}. Natural volumetric light, rich cinematic colour, deep clean shadows, real high-altitude atmosphere and depth.
 [CAMERA MOVEMENT]: Near-static locked-off aerial hold with an almost imperceptible slow push-in; absolutely no whip pans, no orbit, no shake.
-[AUDIO / DIALOGUE]: Diegetic construction-site sound only, close and detailed: the groan and clank of crane cables, hydraulic hiss and reverse-beep of excavators, the heavy slap and surge of a concrete pump, rebar clinking, nail guns, large glass panels being suction-lifted and set into steel, gravel and grit underfoot, wind sweeping over the exposed ridge, and water rushing into the pool. This audio track contains ONLY mechanical and environmental sound. There is NO human voice, NO speech, NO whispering, NO singing, NO chanting, NO narration and NO spoken words of any language anywhere in the clip. No music, no score."""
+[AUDIO / DIALOGUE]: Crisp, close-miked, deeply tactile ASMR-style construction sound design -- every sound sharp, detailed and satisfyingly up close: the groan and clank of crane cables, hydraulic hiss and reverse-beep of excavators, the heavy slap and surge of a concrete pump, rebar clinking, nail guns firing, large glass panels suction-lifted and set into steel, gravel and grit crunching underfoot, wind sweeping over the exposed ridge, water rushing into the pool. This track contains ONLY mechanical and environmental sound. There is NO human voice, NO speech, NO ASMR whispering, NO whispering, NO singing, NO chanting, NO narration and NO spoken words of any language anywhere in the clip. No music, no score."""
 
 VEO_NEGATIVE = (
     "speech, dialogue, talking, conversation, voiceover, narration, human voice, "
