@@ -5201,3 +5201,23 @@ interpolation, not a time-lapse text prompt: generate a "before" still
 build BETWEEN two real frames -- the exact transformation_reel / loft_reveal
 technique, which works where "time-lapse style" prompting fails. Keep the
 camera moving over the top of the build.
+
+## Veo 3.1 FAST was the quality/hallucination culprit -- switch to STANDARD (2026-08-30)
+
+Dev, after the mansion reel and reviewing all the earlier Veo work: **the
+persistent "bad video quality" and hallucination problems across the reel
+formats trace to `veo-3.1-fast-generate-001` itself.** `veo-3.1-generate-001`
+(Standard) gives "much much much better quality without hallucinations."
+
+This reverses the repo's standing default. Fast was adopted everywhere purely
+for cost (transformation_reel v3 notes: "5-7x cheaper"), and 7 pipelines
+inherited `MODEL = "veo-3.1-fast-generate-001"`: transformation_reel,
+loft_reveal_reel, furniture_build_reel, resort_reveal_reel, stone_reveal_reel,
+stained_glass_reel, mansion_reel/generate_veo.py.
+
+Going forward, default Veo work to **`veo-3.1-generate-001`** unless Dev
+explicitly wants the cheap tier for a throwaway iteration. Cost reality:
+Standard ~$0.75/s vs Fast ~$0.10-0.15/s, so e.g. a 24s reel jumps from ~$3 to
+~$18 -- but the furniture_build_reel / loft_reveal_reel hallucination sagas
+(and their many failed fix attempts) were likely fighting the Fast tier the
+whole time. Quality-first is Dev's call and it's made.
