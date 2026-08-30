@@ -1,0 +1,71 @@
+name: Daily Villa Reel
+
+# "Luxury villa builds itself" reel, fully automated end to end, DAILY.
+#   Nano Banana Pro -> finished villa image ("after")
+#   Nano Banana Pro -> same scenery with everything removed ("before", barren land)
+#   Gemini           -> structured Veo prompt (Dev's cinematic-prompt template)
+#   Veo 3.1 STANDARD -> 8s / 1080p / 9:16 / ASMR audio, before-frame to after-frame
+#                       build with visible construction machinery, NO music
+#   ffmpeg           -> strip all metadata
+#   -> publish to Instagram + Facebook + TikTok + YouTube, advance rotation counters
+#
+# REAL MONEY, EVERY DAY: ~2 Nano Banana Pro images (~$0.50) + one 8s Veo 3.1
+# Standard generation with audio (~$6) ~= $6-7/run, ~$200/month. This is the
+# one paid-generation workflow in this repo that runs on a timer -- explicit
+# Dev decision (2026-08-30), overriding the usual workflow_dispatch-only rule.
+
+on:
+  schedule:
+    - cron: "0 16 * * *"   # 16:00 UTC daily; first automated run 2026-08-31
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  villa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "project-58f4f689-36b9-406b-bfa"
+          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai pillow requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Configure git
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run daily villa reel
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python3 daily_villa_reel/run_daily.py
+
+      - name: Upload artifacts (survives a later failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-villa-reel
+          path: daily_villa_reel/output/*
+          if-no-files-found: warn
