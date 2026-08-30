@@ -5221,3 +5221,41 @@ Standard ~$0.75/s vs Fast ~$0.10-0.15/s, so e.g. a 24s reel jumps from ~$3 to
 ~$18 -- but the furniture_build_reel / loft_reveal_reel hallucination sagas
 (and their many failed fix attempts) were likely fighting the Fast tier the
 whole time. Quality-first is Dev's call and it's made.
+
+## daily_villa_reel/ -- fully automated daily reel, LIVE (2026-08-30)
+
+Dev's spec: every day, (1) Nano Banana Pro renders a finished luxury villa in
+good scenery, (2) Nano Banana Pro edits that image to remove everything built
+and leave only barren natural land, (3) Veo 3.1 STANDARD does an 8s / 1080p /
+9:16 `image=<before>` + `last_frame=<after>` build with visible construction
+machinery and ASMR-only audio (no music), (4) `ffmpeg -map_metadata -1
+-map_metadata:s:v -1 -map_metadata:s:a -1 -c:v copy -c:a copy` strips metadata,
+(5) publish to all 4 channels. `.github/workflows/daily-villa-reel.yml`,
+cron `0 16 * * *`, first automated run 2026-08-31.
+
+- **This is the ONLY paid-generation workflow in the repo on a timer.** ~2
+  Nano Banana Pro images + one 8s Veo 3.1 Standard w/ audio ~= $6-7/run,
+  ~$200/month. Explicit Dev decision, overriding the workflow_dispatch-only rule.
+- `gemini-3-pro-image` (Nano Banana Pro) CONFIRMED working via `wif:global`
+  (1536x2752 output) -- the earlier probe only hit its config error. Config:
+  no `thinking_config` for the pro model (flash models take it).
+- The structured Veo prompt (Dev's "[SHOT TYPE] / [SUBJECT & ACTION] /
+  [ENVIRONMENT & LIGHTING] / [CAMERA MOVEMENT] / [AUDIO / DIALOGUE]" cinematic
+  format) is built directly in `run_daily.py` -- NOT via an LLM call (Dev
+  asked why route it through Gemini; no reason to). Only the ENVIRONMENT line
+  varies per concept.
+- Veo 3.1 Standard: `image=` + `last_frame=` + `resolution="1080p"` +
+  `generate_audio=True` all together WORKS on Standard (Fast rejected the
+  1080p+references combo). `run_daily.py` auto-falls-back off 1080p if a
+  future run gets an INVALID_ARGUMENT on the resolution.
+- 14 scene concepts (`concepts.json`) + 10 captions (`captions.json`),
+  each on its own rotating counter (`concept_index.txt` / `caption_index.txt`),
+  advanced only after a confirmed publish.
+
+**First run (concept 1, alpine-ridge villa), reviewed by eye:** before/after
+images excellent -- same ridge, peaks, light; villa cleanly removed for the
+"before". Veo output is a smooth, coherent before->after construction
+timelapse WITH visible cranes + excavators (the machinery Dev said was missing
+before), 1080p, ASMR construction audio, no music, no warping. This is Veo 3.1
+Standard quality -- clearly better than the Fast-tier mansion reel. Published:
+IG 17879965419522664.
