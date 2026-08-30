@@ -5259,3 +5259,33 @@ timelapse WITH visible cranes + excavators (the machinery Dev said was missing
 before), 1080p, ASMR construction audio, no music, no warping. This is Veo 3.1
 Standard quality -- clearly better than the Fast-tier mansion reel. Published:
 IG 17879965419522664.
+
+## daily_villa_reel: audio + counter fixes (2026-08-30)
+
+**Garbled multilingual voice on the first run.** Veo 3.1's `generate_audio`
+slipped in nonsense speech despite the no-dialogue prompt. Root cause: the
+prompt said "ASMR sound design" and to Veo **"ASMR" cues whispered human
+voice** (ASMR = whisper videos). Fixes, in `run_daily.py`:
+- Prompt keeps "ASMR-style construction sound design" (the crisp/close/tactile
+  MACHINERY sound is the whole point -- Dev's call) but binds it hard to "NO
+  human voice, NO ASMR whispering, NO speech in any language".
+- Heavy voice/whisper/speech/language terms in `negative_prompt`.
+- `enhance_prompt=False` is **rejected by Veo 3** ("prompt enhancement cannot
+  be disabled") -- do not set it.
+- Post-generation `gemini-2.5-flash` speech check on the clip. If a voice is
+  heard, the AUDIO is repaired LOCALLY (ffmpeg: hard `lowpass=f=260` kills
+  speech intelligibility while machinery low-end survives, mixed with a
+  synthesised brown-noise-rumble + shaped-pink-noise-wind ambience bed). A
+  full 8s Veo re-render (~$6) for a sound-only problem is NOT worth it (Dev).
+
+**Counter filename bug.** `_counter`/`_advance` were called with `"concept_index"`
+but the committed files were `concept_index.txt`; the code read/wrote
+extensionless `concept_index`. Rotation actually worked (on the wrong file);
+the `.txt` files sat dead at 0. Fixed to use `<name>.txt` consistently (repo
+convention), migrated the real position, removed the strays. When adding a
+counter here: the file IS `<name>.txt`.
+
+First two concepts published: concept 1 (alpine ridge) PULLED for the voice
+bug -- it will not auto-retry, cycles back in ~13 days. Concept 2 (Mediterranean
+cliff, IG 18334062613287438) is a keeper: clean before->after build, visible
+tower crane + concrete pump + excavator, no voice.
