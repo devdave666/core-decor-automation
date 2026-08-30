@@ -55,8 +55,9 @@ _SAFETY_OFF = [
 # NB: the word "ASMR" is DELIBERATELY not used -- to Veo, "ASMR" cues whispered
 # human voice (ASMR = whisper videos), which produced garbled multilingual
 # mumbling on the first run. The audio is specified purely as mechanical +
-# environmental construction sound, with an explicit no-voice ban, and
-# `enhance_prompt=False` so Veo doesn't rewrite it back toward voice.
+# environmental construction sound with an explicit no-voice ban. (Veo 3 will
+# not let prompt enhancement be disabled, so this + the negative_prompt + the
+# post-gen speech check + mute fallback are the only levers.)
 VEO_PROMPT_TEMPLATE = """[SHOT TYPE / COMPOSITION]: High aerial drone establishing shot, very wide, 24mm deep-focus lens, vertical 9:16, the clifftop building site centred with the mountain range filling the background.
 [SUBJECT & ACTION]: An entire vast modern luxury villa constructs itself from bare ground to a completely finished home in one continuous accelerated build -- excavation, poured foundation, structural frame raised, concrete floors and full-height glazing installed, roof and cantilevered terraces completed, the cliff-edge infinity pool filling with water, mature landscaping and the driveway set -- while multiple tall tower cranes, tracked excavators, diggers and a long-boom concrete pump work the site continuously throughout, ending locked on the pristine completed villa.
 [ENVIRONMENT & LIGHTING]: {concept}. Natural volumetric light, rich cinematic colour, deep clean shadows, real high-altitude atmosphere and depth.
@@ -197,9 +198,11 @@ def veo_build(before_img, after_img, prompt, out_path, max_attempts=2):
     start, end = _to_veo_image(before_img), _to_veo_image(after_img)
 
     def submit(res):
+        # NB: Veo 3 rejects enhance_prompt=False ("cannot be disabled"), so the
+        # no-voice enforcement is entirely: prompt wording + negative_prompt +
+        # the post-generation speech check/regen + the mute fallback.
         cfg = dict(aspect_ratio="9:16", duration_seconds=8, generate_audio=True,
-                   number_of_videos=1, last_frame=end, negative_prompt=VEO_NEGATIVE,
-                   enhance_prompt=False)  # don't let Veo rewrite the audio spec
+                   number_of_videos=1, last_frame=end, negative_prompt=VEO_NEGATIVE)
         if res:
             cfg["resolution"] = res
         return client.models.generate_videos(
