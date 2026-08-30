@@ -10,8 +10,11 @@ Per Dev's spec (2026-08-30):
      (Dev's cinematic-prompt-engineer format) -- built in code, no LLM call.
   4. Veo 3.1 STANDARD (veo-3.1-generate-001, 8s, 1080p, 9:16, audio): the villa
      constructs itself from the "before" frame to the "after" frame, with
-     visible construction machinery, ASMR sound design, NO music.
-  5. Strip ALL metadata (ffmpeg -map_metadata -1 ...).
+     visible construction machinery, tactile construction sound, NO music.
+  5. Strip ALL metadata (ffmpeg -map_metadata -1 ...). A gemini-2.5-flash
+     speech check runs here -- if Veo slipped a human voice in, the audio is
+     repaired LOCALLY (hard low-pass + synthesised ambience bed), not by
+     re-rendering the clip (~$6 for a sound-only problem).
   6. Host + publish to Instagram + Facebook + TikTok + YouTube.
   7. Advance the concept/caption rotation counters.
 
@@ -193,14 +196,15 @@ def has_speech(video_path):
         return False
 
 
-def veo_build(before_img, after_img, prompt, out_path, max_attempts=2):
+def veo_build(before_img, after_img, prompt, out_path):
     client = genai.Client(vertexai=True, project=PROJECT, location=VEO_LOCATION)
     start, end = _to_veo_image(before_img), _to_veo_image(after_img)
 
     def submit(res):
         # NB: Veo 3 rejects enhance_prompt=False ("cannot be disabled"), so the
-        # no-voice enforcement is entirely: prompt wording + negative_prompt +
-        # the post-generation speech check/regen + the mute fallback.
+        # no-voice enforcement is: prompt wording + negative_prompt + a
+        # post-generation speech check that repairs the AUDIO locally (not a
+        # full re-render -- a whole re-gen is ~$6 for a sound-track problem).
         cfg = dict(aspect_ratio="9:16", duration_seconds=8, generate_audio=True,
                    number_of_videos=1, last_frame=end, negative_prompt=VEO_NEGATIVE)
         if res:
@@ -242,32 +246,44 @@ def veo_build(before_img, after_img, prompt, out_path, max_attempts=2):
         return vids[0].video.video_bytes
 
     print("--- veo 3.1 standard: build (8s) ---")
-    for gen in range(1, max_attempts + 1):
-        data = one_generation("1080p")
-        out_path.write_bytes(data)
-        print(f"  saved {out_path} ({len(data)} bytes)  [generation {gen}/{max_attempts}]")
-        if not has_speech(out_path):
-            return True
-        if gen < max_attempts:
-            print("  -> voice detected, regenerating once")
-    print("  voice still present after retries -- audio will be muted")
-    return False
+    data = one_generation("1080p")
+    out_path.write_bytes(data)
+    print(f"  saved {out_path} ({len(data)} bytes)")
 
 
-def strip_metadata(src, dst, mute=False):
-    cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src),
-           "-map_metadata", "-1", "-map_metadata:s:v", "-1", "-map_metadata:s:a", "-1"]
-    if mute:
-        # last-resort: Veo kept injecting garbled voice -- replace the track
-        # with silence rather than ship gibberish.
-        cmd += ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo",
-                "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac",
-                "-shortest"]
-    else:
-        cmd += ["-c:v", "copy", "-c:a", "copy"]
-    cmd += ["-movflags", "+faststart", str(dst)]
+# 8s construction-ambience bed, synthesised -- brown-noise machinery rumble +
+# a shaped pink-noise wind layer. Used to mask the audio when Veo slips a voice
+# in; keeps the vibe without another paid render.
+_AMBIENCE = (
+    "anoisesrc=c=brown:d=9:a=0.9,lowpass=f=170,volume=2.0[rumble];"
+    "anoisesrc=c=pink:d=9:a=0.5,highpass=f=220,lowpass=f=2600,"
+    "tremolo=f=0.13:d=0.85,volume=0.9[wind];"
+    "[rumble][wind]amix=inputs=2:duration=longest[amb]"
+)
+
+
+def finalize(src, dst):
+    """Strip all metadata (Dev's exact -map_metadata flags). If the Gemini
+    speech check hears a voice, rebuild the audio: hard low-pass the Veo track
+    to kill speech intelligibility (real machinery low-end survives) and mix in
+    the synthesised construction ambience bed."""
+    voice = has_speech(src)
+    meta = ["-map_metadata", "-1", "-map_metadata:s:v", "-1", "-map_metadata:s:a", "-1"]
+    if not voice:
+        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), *meta,
+               "-c:v", "copy", "-c:a", "copy", "-movflags", "+faststart", str(dst)]
+        subprocess.run(cmd, check=True)
+        print(f"  clean audio -- stripped metadata -> {dst}")
+        return
+    cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), *meta,
+           "-filter_complex",
+           f"[0:a]lowpass=f=260,volume=2.2[dv];{_AMBIENCE};"
+           "[dv][amb]amix=inputs=2:duration=first:weights=1 0.9,"
+           "loudnorm=I=-14:TP=-1.5:LRA=11[a]",
+           "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+           "-shortest", "-movflags", "+faststart", str(dst)]
     subprocess.run(cmd, check=True)
-    print(f"  {'muted + ' if mute else ''}stripped metadata -> {dst}")
+    print(f"  VOICE DETECTED -- de-voiced + ambience bed, metadata stripped -> {dst}")
 
 
 def _counter(name, default=0):
@@ -307,10 +323,10 @@ def main():
 
     prompt = veo_prompt_for(concept)
     raw = out / "raw.mp4"
-    audio_ok = veo_build(before_img, after_img, prompt, raw)
+    veo_build(before_img, after_img, prompt, raw)
 
     clean = out / "villa_reel.mp4"
-    strip_metadata(raw, clean, mute=not audio_ok)
+    finalize(raw, clean)
 
     duration = core.get_audio_duration_seconds(clean)
     core.validate_reel_for_meta(clean, duration)
