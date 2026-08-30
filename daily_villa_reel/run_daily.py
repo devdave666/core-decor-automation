@@ -6,8 +6,8 @@ Per Dev's spec (2026-08-30):
      villa in good scenery -- the "after" frame.
   2. Nano Banana Pro again on that image: remove everything built, leave only
      barren natural land -- the "before" frame.
-  3. Gemini turns the day's scene concept into a structured Veo prompt using
-     Dev's exact cinematic-prompt-engineer template.
+  3. The day's scene concept is dropped into a fixed structured Veo prompt
+     (Dev's cinematic-prompt-engineer format) -- built in code, no LLM call.
   4. Veo 3.1 STANDARD (veo-3.1-generate-001, 8s, 1080p, 9:16, audio): the villa
      constructs itself from the "before" frame to the "after" frame, with
      visible construction machinery, ASMR sound design, NO music.
@@ -38,7 +38,6 @@ PROJECT = "project-58f4f689-36b9-406b-bfa"
 
 IMG_MODELS = ["gemini-3-pro-image", "gemini-3.1-flash-image"]
 IMG_LOCATION = "global"
-PROMPT_MODEL, PROMPT_LOCATION = "gemini-2.5-pro", "us-central1"
 VEO_MODEL, VEO_LOCATION = "veo-3.1-generate-001", "us-central1"
 
 MAX_RETRIES = 5
@@ -50,18 +49,15 @@ _SAFETY_OFF = [
               "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_HARASSMENT")
 ]
 
-META_TEMPLATE = """You are an expert cinematic prompt engineer for Google Veo.
-I will give you a scene concept. Transform it into an optimized Veo prompt following this exact syntax:
-
-[SHOT TYPE / COMPOSITION]: (e.g., Extreme close-up, low-angle tracking shot, 35mm anamorphic lens)
-[SUBJECT & ACTION]: (Describe the subject and exactly ONE primary physical action in high detail)
-[ENVIRONMENT & LIGHTING]: (Atmosphere, location, volumetric lighting, color palette, weather)
-[CAMERA MOVEMENT]: (e.g., Slow continuous dolly forward, smooth orbit at eye level, static lock-off)
-[AUDIO / DIALOGUE]: (Explicit ambient sounds, foley, score mood; if dialogue, format as Character says: "[Dialogue]" (no subtitles))
-
-Scene Concept: {concept}
-
-Output ONLY the five bracketed lines, nothing else."""
+# The structured Veo prompt (Dev's cinematic-prompt-engineer format), built
+# directly -- no LLM call. Only [ENVIRONMENT & LIGHTING] varies per concept;
+# the shot, the single action (the villa self-constructs), the locked camera
+# and the ASMR-only audio are fixed for the format.
+VEO_PROMPT_TEMPLATE = """[SHOT TYPE / COMPOSITION]: High aerial drone establishing shot, very wide, 24mm deep-focus lens, vertical 9:16, the clifftop building site centred with the mountain range filling the background.
+[SUBJECT & ACTION]: An entire vast modern luxury villa constructs itself from bare ground to a completely finished home in one continuous accelerated build -- excavation, poured foundation, structural frame raised, concrete floors and full-height glazing installed, roof and cantilevered terraces completed, the cliff-edge infinity pool filling with water, mature landscaping and the driveway set -- while multiple tall tower cranes, tracked excavators, diggers and a long-boom concrete pump work the site continuously throughout, ending locked on the pristine completed villa.
+[ENVIRONMENT & LIGHTING]: {concept}. Natural volumetric light, rich cinematic colour, deep clean shadows, real high-altitude atmosphere and depth.
+[CAMERA MOVEMENT]: Near-static locked-off aerial hold with an almost imperceptible slow push-in; absolutely no whip pans, no orbit, no shake.
+[AUDIO / DIALOGUE]: Immersive, close, tactile ASMR construction sound design ONLY -- the groan and clank of crane cables, hydraulic hiss and reverse-beep of excavators, the heavy slap and surge of a concrete pump, rebar clinking, nail guns, large glass panels being suction-lifted and set, gravel underfoot, wind sweeping over the ridge, and water rushing into the pool. No music, no score, no voice, no dialogue."""
 
 VEO_NEGATIVE = (
     "music, musical score, soundtrack, song, melody, background music, lo-fi, "
@@ -153,28 +149,8 @@ class NanoBanana:
 
 
 def veo_prompt_for(concept):
-    scene = (
-        "An 8-second hyper-detailed architectural construction timelapse. Starting "
-        f"from completely barren natural land -- {concept} with nothing built on "
-        "it -- an entire enormous luxury villa rapidly self-constructs in fast "
-        "forward: excavation, foundation, structural steel and timber frame, "
-        "concrete floors, walls, full-height glazing, roof, terraces, the infinity "
-        "pool filling with water, and mature landscaping, all materialising "
-        "smoothly and continuously until the home is completely finished and "
-        "pristine by the final frame. Multiple large construction cranes, "
-        "excavators, diggers and a concrete pump are actively working on and "
-        "around the site throughout the build. The audio is immersive, close, "
-        "tactile ASMR construction sound design only -- absolutely no music."
-    )
-    client = genai.Client(vertexai=True, project=PROJECT, location=PROMPT_LOCATION)
-    resp = client.models.generate_content(
-        model=PROMPT_MODEL,
-        contents=META_TEMPLATE.format(concept=scene),
-    )
-    p = (resp.text or "").strip()
+    p = VEO_PROMPT_TEMPLATE.format(concept=concept.rstrip(". "))
     print(f"--- structured Veo prompt ---\n{p}\n")
-    if "[SHOT TYPE" not in p.upper() and "SHOT TYPE" not in p.upper():
-        p = scene  # fallback: use the raw scene if the model didn't follow format
     return p
 
 

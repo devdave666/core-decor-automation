@@ -3,7 +3,7 @@ name: Daily Villa Reel
 # "Luxury villa builds itself" reel, fully automated end to end, DAILY.
 #   Nano Banana Pro -> finished villa image ("after")
 #   Nano Banana Pro -> same scenery with everything removed ("before", barren land)
-#   Gemini           -> structured Veo prompt (Dev's cinematic-prompt template)
+#   (structured Veo prompt is built directly in run_daily.py -- no LLM call)
 #   Veo 3.1 STANDARD -> 8s / 1080p / 9:16 / ASMR audio, before-frame to after-frame
 #                       build with visible construction machinery, NO music
 #   ffmpeg           -> strip all metadata
