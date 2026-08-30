@@ -50,20 +50,28 @@ _SAFETY_OFF = [
 ]
 
 # The structured Veo prompt (Dev's cinematic-prompt-engineer format), built
-# directly -- no LLM call. Only [ENVIRONMENT & LIGHTING] varies per concept;
-# the shot, the single action (the villa self-constructs), the locked camera
-# and the ASMR-only audio are fixed for the format.
+# directly -- no LLM call. Only [ENVIRONMENT & LIGHTING] varies per concept.
+#
+# NB: the word "ASMR" is DELIBERATELY not used -- to Veo, "ASMR" cues whispered
+# human voice (ASMR = whisper videos), which produced garbled multilingual
+# mumbling on the first run. The audio is specified purely as mechanical +
+# environmental construction sound, with an explicit no-voice ban, and
+# `enhance_prompt=False` so Veo doesn't rewrite it back toward voice.
 VEO_PROMPT_TEMPLATE = """[SHOT TYPE / COMPOSITION]: High aerial drone establishing shot, very wide, 24mm deep-focus lens, vertical 9:16, the clifftop building site centred with the mountain range filling the background.
 [SUBJECT & ACTION]: An entire vast modern luxury villa constructs itself from bare ground to a completely finished home in one continuous accelerated build -- excavation, poured foundation, structural frame raised, concrete floors and full-height glazing installed, roof and cantilevered terraces completed, the cliff-edge infinity pool filling with water, mature landscaping and the driveway set -- while multiple tall tower cranes, tracked excavators, diggers and a long-boom concrete pump work the site continuously throughout, ending locked on the pristine completed villa.
 [ENVIRONMENT & LIGHTING]: {concept}. Natural volumetric light, rich cinematic colour, deep clean shadows, real high-altitude atmosphere and depth.
 [CAMERA MOVEMENT]: Near-static locked-off aerial hold with an almost imperceptible slow push-in; absolutely no whip pans, no orbit, no shake.
-[AUDIO / DIALOGUE]: Immersive, close, tactile ASMR construction sound design ONLY -- the groan and clank of crane cables, hydraulic hiss and reverse-beep of excavators, the heavy slap and surge of a concrete pump, rebar clinking, nail guns, large glass panels being suction-lifted and set, gravel underfoot, wind sweeping over the ridge, and water rushing into the pool. No music, no score, no voice, no dialogue."""
+[AUDIO / DIALOGUE]: Diegetic construction-site sound only, close and detailed: the groan and clank of crane cables, hydraulic hiss and reverse-beep of excavators, the heavy slap and surge of a concrete pump, rebar clinking, nail guns, large glass panels being suction-lifted and set into steel, gravel and grit underfoot, wind sweeping over the exposed ridge, and water rushing into the pool. This audio track contains ONLY mechanical and environmental sound. There is NO human voice, NO speech, NO whispering, NO singing, NO chanting, NO narration and NO spoken words of any language anywhere in the clip. No music, no score."""
 
 VEO_NEGATIVE = (
+    "speech, dialogue, talking, conversation, voiceover, narration, human voice, "
+    "voices, whispering, whisper, ASMR whispering, singing, humming, chanting, "
+    "mumbling, gibberish, foreign language, vocals, people speaking, crowd noise, "
+    "radio chatter, "
     "music, musical score, soundtrack, song, melody, background music, lo-fi, "
     "text, captions, subtitles, watermark, logo, timestamp, ui, letterboxing, "
-    "black bars, dialogue, voiceover, people talking, camera shake, jitter, "
-    "low quality, blurry, distorted architecture, warping"
+    "black bars, camera shake, jitter, low quality, blurry, distorted "
+    "architecture, warping, morphing"
 )
 
 
@@ -160,63 +168,103 @@ def _to_veo_image(pil):
     return types.Image(image_bytes=buf.getvalue(), mime_type="image/png")
 
 
-def veo_build(before_img, after_img, prompt, out_path):
+def has_speech(video_path):
+    """Cheap Gemini audio check -- Veo sometimes injects garbled multilingual
+    voice despite the no-dialogue prompt/negative. Returns True if any human
+    voice is present."""
+    try:
+        client = genai.Client(vertexai=True, project=PROJECT, location=VEO_LOCATION)
+        resp = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                types.Part.from_bytes(data=video_path.read_bytes(), mime_type="video/mp4"),
+                "Listen to the ENTIRE audio track of this clip. Does it contain any "
+                "human voice at all -- speech, talking, whispering, singing, chanting, "
+                "narration or spoken words in ANY language? Answer with a single word: "
+                "YES or NO.",
+            ],
+        )
+        verdict = (resp.text or "").strip().upper()
+        print(f"  speech check: {verdict!r}")
+        return verdict.startswith("YES")
+    except Exception as e:  # noqa: BLE001
+        print(f"  speech check failed ({str(e)[:150]}) -- assuming clean")
+        return False
+
+
+def veo_build(before_img, after_img, prompt, out_path, max_attempts=2):
     client = genai.Client(vertexai=True, project=PROJECT, location=VEO_LOCATION)
     start, end = _to_veo_image(before_img), _to_veo_image(after_img)
 
     def submit(res):
         cfg = dict(aspect_ratio="9:16", duration_seconds=8, generate_audio=True,
-                   number_of_videos=1, last_frame=end, negative_prompt=VEO_NEGATIVE)
+                   number_of_videos=1, last_frame=end, negative_prompt=VEO_NEGATIVE,
+                   enhance_prompt=False)  # don't let Veo rewrite the audio spec
         if res:
             cfg["resolution"] = res
         return client.models.generate_videos(
             model=VEO_MODEL, prompt=prompt, image=start,
             config=types.GenerateVideosConfig(**cfg))
 
+    def one_generation(res):
+        for attempt in range(MAX_RETRIES):
+            try:
+                op = submit(res)
+                break
+            except genai_errors.ClientError as e:
+                msg = str(e)
+                if res and ("resolution" in msg.lower() or "mix of references" in msg.lower()
+                            or "not support" in msg.lower() or "INVALID_ARGUMENT" in msg):
+                    print(f"  1080p rejected ({msg[:120]}); falling back to default res")
+                    return one_generation(None)
+                if ("429" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < MAX_RETRIES - 1:
+                    d = RETRY_BASE_S * (2 ** attempt)
+                    print(f"  429 on submit, retry in {d}s")
+                    time.sleep(d)
+                    continue
+                raise
+        waited = 0
+        while not op.done:
+            if waited >= 900:
+                raise RuntimeError("veo timeout")
+            time.sleep(15)
+            waited += 15
+            op = client.operations.get(op)
+            print(f"  ...{waited}s done={op.done}")
+        if getattr(op, "error", None):
+            raise RuntimeError(f"veo op failed: {op.error}")
+        vids = getattr(op.response, "generated_videos", None) or []
+        if not vids:
+            raise RuntimeError(f"no video: {op.response!r}"[:400])
+        return vids[0].video.video_bytes
+
     print("--- veo 3.1 standard: build (8s) ---")
-    res = "1080p"
-    for attempt in range(MAX_RETRIES):
-        try:
-            op = submit(res)
-            break
-        except genai_errors.ClientError as e:
-            msg = str(e)
-            if res and ("resolution" in msg.lower() or "mix of references" in msg.lower()
-                        or "not support" in msg.lower() or "INVALID_ARGUMENT" in msg):
-                print(f"  1080p rejected ({msg[:120]}); falling back to default res")
-                res = None
-                continue
-            if ("429" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < MAX_RETRIES - 1:
-                d = RETRY_BASE_S * (2 ** attempt)
-                print(f"  429 on submit, retry in {d}s")
-                time.sleep(d)
-                continue
-            raise
-    waited = 0
-    while not op.done:
-        if waited >= 900:
-            raise RuntimeError("veo timeout")
-        time.sleep(15)
-        waited += 15
-        op = client.operations.get(op)
-        print(f"  ...{waited}s done={op.done}")
-    if getattr(op, "error", None):
-        raise RuntimeError(f"veo op failed: {op.error}")
-    vids = getattr(op.response, "generated_videos", None) or []
-    if not vids:
-        raise RuntimeError(f"no video: {op.response!r}"[:400])
-    out_path.write_bytes(vids[0].video.video_bytes)
-    print(f"  saved {out_path} ({out_path.stat().st_size} bytes)")
+    for gen in range(1, max_attempts + 1):
+        data = one_generation("1080p")
+        out_path.write_bytes(data)
+        print(f"  saved {out_path} ({len(data)} bytes)  [generation {gen}/{max_attempts}]")
+        if not has_speech(out_path):
+            return True
+        if gen < max_attempts:
+            print("  -> voice detected, regenerating once")
+    print("  voice still present after retries -- audio will be muted")
+    return False
 
 
-def strip_metadata(src, dst):
-    subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-i", str(src),
-         "-map_metadata", "-1", "-map_metadata:s:v", "-1", "-map_metadata:s:a", "-1",
-         "-c:v", "copy", "-c:a", "copy", "-movflags", "+faststart", str(dst)],
-        check=True,
-    )
-    print(f"  stripped metadata -> {dst}")
+def strip_metadata(src, dst, mute=False):
+    cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src),
+           "-map_metadata", "-1", "-map_metadata:s:v", "-1", "-map_metadata:s:a", "-1"]
+    if mute:
+        # last-resort: Veo kept injecting garbled voice -- replace the track
+        # with silence rather than ship gibberish.
+        cmd += ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo",
+                "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac",
+                "-shortest"]
+    else:
+        cmd += ["-c:v", "copy", "-c:a", "copy"]
+    cmd += ["-movflags", "+faststart", str(dst)]
+    subprocess.run(cmd, check=True)
+    print(f"  {'muted + ' if mute else ''}stripped metadata -> {dst}")
 
 
 def _counter(name, default=0):
@@ -256,10 +304,10 @@ def main():
 
     prompt = veo_prompt_for(concept)
     raw = out / "raw.mp4"
-    veo_build(before_img, after_img, prompt, raw)
+    audio_ok = veo_build(before_img, after_img, prompt, raw)
 
     clean = out / "villa_reel.mp4"
-    strip_metadata(raw, clean)
+    strip_metadata(raw, clean, mute=not audio_ok)
 
     duration = core.get_audio_duration_seconds(clean)
     core.validate_reel_for_meta(clean, duration)
