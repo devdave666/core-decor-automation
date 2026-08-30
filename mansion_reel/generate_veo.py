@@ -8,7 +8,8 @@ with a re-encoding ffmpeg filter (independent Veo generations aren't guaranteed
 to share encoding params -- same lesson as transformation_reel).
 
 Usage: python mansion_reel/generate_veo.py <plan.json> <out_dir>
-Auth: WIF/ADC. Model: veo-3.1-fast-generate-001, resolution 1080p, 9:16, audio on.
+Auth: WIF/ADC. Model: veo-3.1-generate-001 (Standard -- Fast was the
+quality/hallucination culprit, 2026-08-30), resolution 1080p, 9:16, audio on.
 """
 import argparse
 import json
@@ -22,7 +23,7 @@ from google.genai import types
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
-MODEL = "veo-3.1-fast-generate-001"
+MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 POLL_INTERVAL_S = 15
 POLL_TIMEOUT_S = 900
 MAX_SUBMIT_RETRIES = 5
@@ -44,9 +45,9 @@ def _submit(client, prompt, negative, duration, ref_bytes=None):
         negative_prompt=negative or NEGATIVE_DEFAULT,
     )
     if ref_bytes:
-        # asset reference; Veo 3.1 rejects references at 1080p
-        # ("does not support this mix of references"), so these clips render at
-        # 720p and get upscaled in finish.
+        # asset reference. Veo 3.1 FAST rejected references at 1080p ("does not
+        # support this mix of references"); on Standard this may be allowed --
+        # untested, so kept conservative at 720p + upscale in finish.
         cfg["reference_images"] = [types.VideoGenerationReferenceImage(
             image=types.Image(image_bytes=ref_bytes, mime_type="image/png"),
             reference_type="asset",

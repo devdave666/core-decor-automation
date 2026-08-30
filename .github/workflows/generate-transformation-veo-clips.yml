@@ -2,26 +2,20 @@ name: Generate Transformation Reel (Veo)
 
 # Takes the 5-stage (before/demo/framing/finishing/after) frames from a prior
 # generate-transformation-concept.yml run and generates the actual
-# transformation reel via Veo 3.1 FAST (veo-3.1-fast-generate-001). Four
+# transformation reel via Veo 3.1 STANDARD (veo-3.1-generate-001). Four
 # chained 4s first/last-frame generations, audio ON (native ASMR-style SFX/
 # ambient cues), concatenated into one ~16s video.
 #
-# v3 (2026-08-23): switched from Lite/no-audio (v2, used to cut cost while
-# iterating on visuals-only fixes) to Fast/audio-on per Dev, for all FUTURE
-# runs -- Fast genuinely supports native audio (confirmed via research, unlike
-# some cheaper tiers), so this is the tier to actually use going forward, not
-# a temporary state. See generate_veo_clips.py's own v3 header for the
-# researched Veo 3.1 prompting changes that came with this (SFX:/Ambient
-# noise: cue syntax, five-part Cinematography+Subject+Action+Context+Style
-# structure) and generate_concept_frames.py's v3 header for the escalated
-# "before" stage (more dramatic derelict state for more transformation "wow
-# factor").
+# History: v2 used Lite/no-audio to cut cost; v3 (2026-08-23) moved to Fast/
+# audio-on for cost. 2026-08-30: Dev concluded Fast itself was the cause of
+# the persistent quality/hallucination problems -- switched to Standard for
+# all Veo work. See generate_veo_clips.py's v3 header for the Veo 3.1 prompting
+# changes (SFX:/Ambient noise: cues, five-part structure) and
+# generate_concept_frames.py's v3 header for the escalated "before" stage.
 #
-# REAL MONEY: Veo 3.1 Fast with audio runs roughly $0.10-0.15/s, so four 4s
-# clips is on the order of $1.60-$2.40/run -- still ~5-7x cheaper than v1's
-# Standard tier (~$12/run) while getting the native audio v1 had and v2
-# deliberately gave up. workflow_dispatch only, same discipline as every other
-# paid-generation workflow here -- never on a timer.
+# REAL MONEY: Veo 3.1 Standard with audio runs roughly $0.75/s, so four 4s
+# clips is on the order of $12/run. workflow_dispatch only, same discipline as
+# every other paid-generation workflow here -- never on a timer.
 #
 # Takes the source frames as a run ID to download from rather than requiring
 # them to be committed -- this format is still experimental (see

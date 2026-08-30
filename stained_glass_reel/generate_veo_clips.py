@@ -45,7 +45,7 @@ from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
 
 PROJECT = "project-58f4f689-36b9-406b-bfa"
 LOCATION = "us-central1"
-MODEL = "veo-3.1-fast-generate-001"
+MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 CLIP_DURATION_S = 4
 HERO_REVEAL_DURATION_S = 2.5
 POLL_INTERVAL_S = 10
