@@ -287,12 +287,12 @@ def finalize(src, dst):
 
 
 def _counter(name, default=0):
-    p = HERE / name
+    p = HERE / f"{name}.txt"
     return int(p.read_text().strip()) if p.exists() else default
 
 
 def _advance(name, value, repo_root):
-    p = HERE / name
+    p = HERE / f"{name}.txt"
     p.write_text(str(value))
     rel = p.relative_to(Path(repo_root)).as_posix()
     subprocess.run(["git", "-C", str(repo_root), "add", rel], check=True)
