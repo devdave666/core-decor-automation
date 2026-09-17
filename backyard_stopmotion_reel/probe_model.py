@@ -27,7 +27,7 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 
 CANDIDATE_MODELS = [

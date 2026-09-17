@@ -23,7 +23,7 @@ import time
 from google import genai
 from google.genai import types
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 # Tried in this order -- newest/cheapest-audio-capable first, falling back to
 # older generations if this project's catalog doesn't have them yet.

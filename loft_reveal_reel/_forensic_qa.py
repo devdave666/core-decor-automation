@@ -7,7 +7,7 @@ from pathlib import Path
 from google import genai
 from google.genai import types
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 
 FORENSIC_SYSTEM_INSTRUCTION = (
     "You are an expert AI video forensic examiner. You are reviewing an "

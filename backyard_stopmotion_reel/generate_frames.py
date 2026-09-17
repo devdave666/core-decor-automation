@@ -42,7 +42,7 @@ from google.genai import errors as genai_errors
 from google.genai import types
 from PIL import Image, ImageFilter
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 # The Gemini 3 image family is served ONLY in the "global" Vertex location for
 # this project -- confirmed by a region sweep (us-central1/us-east4/europe-west4
 # all 404). gemini-2.5-flash-image works in any region including global, so a

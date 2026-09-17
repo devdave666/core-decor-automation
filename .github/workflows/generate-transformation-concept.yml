@@ -34,9 +34,9 @@ jobs:
       - name: Authenticate to Google Cloud via Workload Identity Federation
         uses: google-github-actions/auth@v2
         with:
-          project_id: "project-58f4f689-36b9-406b-bfa"
-          workload_identity_provider: "projects/584573644858/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-          service_account: "vertex-ai-runner@project-58f4f689-36b9-406b-bfa.iam.gserviceaccount.com"
+          project_id: "core-decor-657616"
+          workload_identity_provider: "projects/75129415228/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@core-decor-657616.iam.gserviceaccount.com"
 
       - name: Set up Python
         uses: actions/setup-python@v5

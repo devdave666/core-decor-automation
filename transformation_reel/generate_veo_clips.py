@@ -141,7 +141,7 @@ from generate_concept_frames import STAGES, VEO_CANVAS
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from core_decor_reel_pipeline import render_pushin_clip  # noqa: E402
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 CLIP_DURATION_S = 4

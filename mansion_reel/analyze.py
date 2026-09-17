@@ -15,7 +15,7 @@ from pathlib import Path
 from google import genai
 from google.genai import types
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 MODELS = [("us-central1", "gemini-2.5-pro"), ("global", "gemini-3.6-flash")]
 
 SYSTEM = (

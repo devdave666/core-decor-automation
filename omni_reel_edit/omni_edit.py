@@ -28,7 +28,7 @@ from pathlib import Path
 from google import genai
 from google.genai import types
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "global"
 API_REVISION = "2026-05-20"
 

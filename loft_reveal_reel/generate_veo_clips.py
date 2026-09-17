@@ -1,31 +1,52 @@
 """
-Generates the loft reveal reel from the 8-stage frames produced by
-generate_concept_frames.py. Sibling to transformation_reel/generate_veo_
-clips.py -- reuses its two most recently proven fixes:
+Generates the loft reveal reel. v2 (2026-08-28), a structural rewrite after
+Dev supplied external research that correctly diagnosed v1's real forensic
+QA failure (see llms.txt for the full failure report). Three changes, each
+mapped directly to one of the research's findings:
 
-1. **Last-rendered-frame chaining** (transformation_reel v5, confirmed
-   working on the real t03 run -- see llms.txt): only the FIRST clip starts
-   from a pre-generated still. Every clip after that starts from the actual
-   last frame extracted (via ffmpeg) from the PREVIOUS clip's real output.
-   This matters even more here than on any prior format: the subject is a
-   specific woman who has to stay recognizably herself across every cut, and
-   chaining Veo's own rendered pixels forward guarantees whatever face/hair/
-   outfit Veo actually drew at the end of clip N is exactly what clip N+1
-   starts from -- no chance of a "different woman at the cut" mismatch
-   between Veo's rendering and the independently-generated stage still.
-2. **Real-time pacing + affirmative static-scene framing** (transformation_
-   reel v3/v4.1): unchanged from that format, no new pacing request this
-   round.
+1. **No more Veo `last_frame=` target conditioning, anywhere.** v1 gave Veo
+   both a start image AND an independently-generated end image to bridge in
+   4 seconds. The research's diagnosis: when those two images disagree on
+   what furniture/objects exist, Veo has no choice but to warp or "pop"
+   things into existence mid-clip to land on the target -- this is
+   Google's own documented First/Last-Frame behavior, not a bug, and no
+   amount of prompt wording (including this project's own negative_prompt
+   field) can override a hard pixel contradiction between two conditioning
+   images. v2 calls `generate_videos` with `image=` ONLY, no `last_frame=`
+   -- Veo generates forward motion from a single starting point with no
+   forced destination.
+2. **Motion-only prompts.** Google's own Veo prompting guidance (quoted
+   verbatim in Dev's research): "Your source image already provides the
+   subject, scene, and style... Do not re-describe the character,
+   background, or lighting depicted in the image." v1's TRANSITIONS prompts
+   re-described lighting, environment and character identity in every
+   clip -- redundant with the image, and per the research, actively
+   conflicting with it. v2's prompts are camera + one atomic physical
+   action, nothing else. No STATIC_RULE prose, no re-stated identity
+   description -- the source image alone carries all of that now.
+3. **Interleaved real-frame editing, not a pre-built still chain.** Each
+   clip starts from either the original `infested` still (clip A) or an
+   edited version of the ACTUAL last frame Veo rendered for the PREVIOUS
+   clip (clips B-G) -- via `generate_concept_frames.edit_forward()`, which
+   makes exactly ONE small, itemized change to that real frame (e.g. "the
+   wall is now painted white") and nothing else. This is the closest this
+   pipeline can get to the research's "single spatial anchor" principle
+   without true depth/mask-conditioned inpainting: every image after
+   `infested` is a small edit of something Veo actually rendered, not a
+   fresh independent synthesis, so architecture has far less room to drift
+   between clips than v1's fully-independent keyframe chain had.
 
-Exactly 7 four-second Veo clips per Dev's explicit request -- no push-in
-hero-reveal clip appended this time (every sibling format's extra silent
-push-in beat is skipped on purpose here so the count stays exactly 7).
+Each clip is still exactly 4 seconds; still exactly 7 clips per Dev's
+original request; still uses last-rendered-frame extraction (proven
+technique, unchanged) -- just for the edit-forward step now, not for
+picking the next clip's start image directly (that's still true too, since
+edit_forward's OUTPUT becomes the next clip's start image).
 
 Usage: python loft_reveal_reel/generate_veo_clips.py <concept_id> <frames_dir> <out_dir>
-Expects <frames_dir>/<concept_id>_{infested,clearing,repairing,painting,
-flooring,furnishing,styling,after}.png
-Writes <out_dir>/<concept_id>_clip_a..g.mp4 and the concatenated
-<out_dir>/<concept_id>_loft.mp4.
+Expects <frames_dir>/<concept_id>_{character,after,infested}.png (from
+generate_concept_frames.py). Writes <out_dir>/<concept_id>_clip_a..g.mp4,
+<out_dir>/<concept_id>_stepNN.png (the interleaved edit stills, for
+inspection), and the concatenated <out_dir>/<concept_id>_loft.mp4.
 """
 import subprocess
 import sys
@@ -36,11 +57,11 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from generate_concept_frames import STAGES
+from generate_concept_frames import CHARACTER_DESCRIPTION, edit_forward
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
-MODEL = "veo-3.1-fast-generate-001"
+MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 CLIP_DURATION_S = 4
 POLL_INTERVAL_S = 10
 POLL_TIMEOUT_S = 600
@@ -49,88 +70,128 @@ SUBMIT_RETRY_BASE_DELAY_S = 20
 
 CAMERA_BASE = "Static locked-off shot, real-time pacing, not a time-lapse."
 
-STATIC_RULE = (
-    "Every other surface, wall, and object in the frame that the woman is "
-    "not directly touching stays completely static and unchanged from the "
-    "previous frame -- material and color only change exactly where her "
-    "hands are working."
-)
-
-# Base negative terms carried over from transformation_reel, plus two new
-# categories specific to this format: rodents (excluded from every frame on
-# purpose, see generate_concept_frames.py's header) and identity drift
-# (this is the first format where the same named person has to survive 7
-# consecutive clips, so appearance consistency gets its own explicit terms).
+# Kept as a config-level safety net (a real, separate lever per the SDK's
+# own field, not prose inside the main prompt) -- but per the research, it's
+# no longer being asked to fight a forced target-frame contradiction, just
+# to nudge away from drift during otherwise-unconstrained forward motion.
 NEGATIVE_PROMPT = (
-    "spontaneous or unexplained changes to walls, flooring, or furniture "
-    "the woman is not physically touching, objects instantly appearing or "
-    "disappearing, materials changing with no visible cause, time-lapse or "
-    "sped-up motion, teleporting props, live rodents, mice, rats, insects, "
-    "or any live animals visible, a second person entering frame, the "
-    "woman's face, hair, build, or clothing changing partway through the "
-    "shot, duplicate or doubled versions of the woman, background music, "
-    "musical score, soundtrack, upbeat music, dramatic music"
+    "objects instantly appearing or disappearing, furniture or decor "
+    "materializing that wasn't in the starting image, materials changing "
+    "with no visible cause, time-lapse or sped-up motion, teleporting "
+    "props, live rodents, mice, rats, insects, or any live animals "
+    "visible, a second person entering frame, the woman's face, hair, "
+    "build, or clothing changing partway through the shot, duplicate or "
+    "doubled versions of the woman, background music, musical score, "
+    "soundtrack, upbeat music, dramatic music"
 )
 
-TRANSITIONS = {
-    ("infested", "clearing"): (
-        f"{CAMERA_BASE} A woman alone in work clothes hauls a full trash "
-        "bag and a stack of ruined cardboard boxes toward the door of a "
-        "neglected loft, then crouches to sweep debris into a dustpan. "
-        f"{STATIC_RULE} Dim grimy light through industrial windows. "
-        "SFX: the rustle of a heavy trash bag, cardboard scraping the "
-        "floor, the scrape of a dustpan on concrete. "
-        "Ambient noise: faint city hum through the windows, distant traffic."
-    ),
-    ("clearing", "repairing"): (
-        f"{CAMERA_BASE} The woman kneels at the baseboard, presses wire "
-        "mesh over a gnawed hole, then smooths joint compound over it with "
-        f"a putty knife. {STATIC_RULE} Bare work light overhead. "
-        "SFX: the scrape of a putty knife, a soft press of mesh against "
-        "wood. "
-        "Ambient noise: quiet room tone, faint traffic outside."
-    ),
-    ("repairing", "painting"): (
-        f"{CAMERA_BASE} The woman rolls fresh white paint onto the wall "
-        "with a roller on an extension pole, smooth even strokes top to "
-        f"bottom. {STATIC_RULE} "
-        "SFX: the wet roll of a paint roller against the wall. "
-        "Ambient noise: quiet room tone."
-    ),
-    ("painting", "flooring"): (
-        f"{CAMERA_BASE} The woman kneels and taps a new floorboard into "
-        "place edge to edge with a rubber mallet, then sets a spacer "
-        f"wedge against the wall. {STATIC_RULE} Fresh white walls behind "
-        "her. "
-        "SFX: the soft thud of a rubber mallet, a board clicking into "
-        "place. "
-        "Ambient noise: quiet room tone."
-    ),
-    ("flooring", "furnishing"): (
-        f"{CAMERA_BASE} The woman carries a single armchair into the "
-        "finished room by herself and sets it down carefully on the new "
-        f"flooring. {STATIC_RULE} "
-        "SFX: the soft thud of the armchair's legs meeting the floor. "
-        "Ambient noise: quiet room tone, warm and settled."
-    ),
-    ("furnishing", "styling"): (
-        f"{CAMERA_BASE} The woman unrolls an area rug flat onto the floor "
-        "beside the armchair, then sets a potted plant down and steps back "
-        f"to check the arrangement. {STATIC_RULE} "
-        "SFX: the soft unfurling rustle of the rug, a faint scrape as the "
-        "plant pot is set down. "
-        "Ambient noise: quiet room tone, warm and settled."
-    ),
-    ("styling", "after"): (
-        f"{CAMERA_BASE} The woman switches on a floor lamp, warm light "
-        "filling the finished loft, then steps back and puts her hands on "
-        f"her hips, admiring the space she renovated herself. {STATIC_RULE} "
-        "Warm lamplight against the dusk skyline through the tall "
-        "windows. "
-        "SFX: the soft click of a lamp switch. "
-        "Ambient noise: warm quiet, faint city hum far below."
-    ),
-}
+# Each entry: (motion prompt for Veo -- ONE atomic action, no scene/identity
+# re-description) and (edit delta for the still that follows -- None for the
+# final clip, which needs no further still). Applied in order.
+STEPS = [
+    {
+        "motion": (
+            f"{CAMERA_BASE} She crouches, picks up a full trash bag and a "
+            "stack of ruined cardboard boxes, and carries them toward the "
+            "door, stepping out of frame. "
+            "SFX: the rustle of a heavy trash bag, cardboard scraping the "
+            "floor. Ambient noise: faint city hum through the windows."
+        ),
+        "edit": (
+            "the loose debris, droppings and litter have been swept from "
+            "the floor -- the room is now clear of clutter, but the "
+            "grease marks along the walls, the gnawed holes in the "
+            "baseboard, and the dark, worn, damaged wood floor are all "
+            "still exactly as before, untouched."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She kneels at the baseboard and presses a "
+            "patch of wire mesh over a gnawed hole, holding it flat with "
+            "one hand. "
+            "SFX: the soft press of mesh against wood. Ambient noise: "
+            "quiet room tone."
+        ),
+        "edit": (
+            "the mesh patch is now fully covered and smoothed over with "
+            "pale filler compound, blended flush with the wall -- a small "
+            "tray of compound and a putty knife rest on a drop cloth "
+            "below it."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She rolls fresh white paint onto the wall with "
+            "a roller on an extension pole, smooth even strokes top to "
+            "bottom. "
+            "SFX: the wet roll of a paint roller against the wall. "
+            "Ambient noise: quiet room tone."
+        ),
+        "edit": (
+            "the wall she was painting is now fully painted a clean bright "
+            "white floor to ceiling -- but the floor beneath it is still "
+            "the same dark, worn, damaged wood as before, clearly in need "
+            "of replacement."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She kneels and taps a new floorboard into "
+            "place edge to edge with a rubber mallet. "
+            "SFX: the soft thud of a rubber mallet, a board clicking into "
+            "place. Ambient noise: quiet room tone."
+        ),
+        "edit": (
+            "the new light whitewashed-oak flooring she was laying now "
+            "fully covers the entire floor of the room, completely "
+            "replacing the old dark damaged wood."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She carries a single black leather armchair "
+            "into the room by herself and sets it down carefully on the "
+            "new floor. "
+            "SFX: the soft thud of the armchair's legs meeting the floor. "
+            "Ambient noise: quiet room tone, warm and settled."
+        ),
+        "edit": (
+            "a rolled-up jute area rug now leans against the wall nearby, "
+            "waiting to be laid out, and an unlit floor lamp stands in "
+            "the corner."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She unrolls the area rug flat onto the floor "
+            "beside the armchair, then sets a potted plant down next to "
+            "it. "
+            "SFX: the soft unfurling rustle of the rug. Ambient noise: "
+            "quiet room tone, warm and settled."
+        ),
+        "edit": (
+            # v2.1 fix: dropped a reference to "the open shelving" here --
+            # forensic QA caught an entire bookshelf materializing at this
+            # cut because no shelving unit was ever established in any
+            # earlier frame; this delta had asked the model to put objects
+            # on furniture that didn't exist yet. Only describe objects
+            # placed on/beside things already actually in frame.
+            "the floor lamp beside the armchair is now positioned and "
+            "ready, though still switched off."
+        ),
+    },
+    {
+        "motion": (
+            f"{CAMERA_BASE} She switches on the floor lamp, warm light "
+            "filling the room, then steps back and puts her hands on her "
+            "hips, admiring the space she renovated herself. "
+            "SFX: the soft click of a lamp switch. Ambient noise: warm "
+            "quiet, faint city hum far below."
+        ),
+        "edit": None,
+    },
+]
 
 
 def _extract_last_frame(video_path, out_path):
@@ -142,7 +203,7 @@ def _extract_last_frame(video_path, out_path):
     return out_path
 
 
-def _submit_with_retry(client, start_image, end_image, motion_prompt):
+def _submit_with_retry(client, start_image, motion_prompt):
     for attempt in range(MAX_SUBMIT_RETRIES):
         try:
             return client.models.generate_videos(
@@ -153,7 +214,6 @@ def _submit_with_retry(client, start_image, end_image, motion_prompt):
                     aspect_ratio="9:16",
                     duration_seconds=CLIP_DURATION_S,
                     generate_audio=True,
-                    last_frame=end_image,
                     number_of_videos=1,
                     negative_prompt=NEGATIVE_PROMPT,
                 ),
@@ -167,11 +227,9 @@ def _submit_with_retry(client, start_image, end_image, motion_prompt):
             time.sleep(delay)
 
 
-def generate_clip(client, start_image, end_image_path, motion_prompt, out_path):
+def generate_clip(client, start_image, motion_prompt, out_path):
     print(f"--- generating clip: {out_path.name} ---")
-    end_image = types.Image.from_file(location=str(end_image_path))
-
-    operation = _submit_with_retry(client, start_image, end_image, motion_prompt)
+    operation = _submit_with_retry(client, start_image, motion_prompt)
 
     waited = 0
     while not operation.done:
@@ -218,34 +276,41 @@ def main():
     concept_id, frames_dir, out_dir = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    frame_paths = {}
-    for stage in STAGES:
-        p = frames_dir / f"{concept_id}_{stage}.png"
+    infested_path = frames_dir / f"{concept_id}_infested.png"
+    character_path = frames_dir / f"{concept_id}_character.png"
+    for p in (infested_path, character_path):
         if not p.exists():
             raise FileNotFoundError(f"Missing expected frame: {p}")
-        frame_paths[stage] = p
 
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
+    character_image = types.Image.from_file(location=str(character_path))
+
     clip_paths = []
     letters = "abcdefg"
-    start_image = types.Image.from_file(location=str(frame_paths[STAGES[0]]))
-    for i in range(len(STAGES) - 1):
-        start_stage, end_stage = STAGES[i], STAGES[i + 1]
+    start_image = types.Image.from_file(location=str(infested_path))
+    for i, step in enumerate(STEPS):
         clip_path = out_dir / f"{concept_id}_clip_{letters[i]}.mp4"
-        generate_clip(
-            client,
-            start_image,
-            frame_paths[end_stage],
-            TRANSITIONS[(start_stage, end_stage)],
-            clip_path,
-        )
+        generate_clip(client, start_image, step["motion"], clip_path)
         clip_paths.append(clip_path)
 
-        if i < len(STAGES) - 2:
+        if step["edit"] is not None:
             last_frame_path = out_dir / f"{concept_id}_clip_{letters[i]}_lastframe.png"
             _extract_last_frame(clip_path, last_frame_path)
-            start_image = types.Image.from_file(location=str(last_frame_path))
+            last_frame_img = types.Image.from_file(location=str(last_frame_path))
+            # edit_forward expects PIL-style objects loaded via its own
+            # module's image-generation path (genai types.Part inline
+            # bytes), so re-open the harvested frame through PIL for the
+            # image-editing call, keeping this module's Veo-side types.Image
+            # objects separate from the image-editing client's inputs.
+            from PIL import Image as PILImage
+            prev_pil = PILImage.open(last_frame_path).convert("RGB")
+            character_pil = PILImage.open(character_path).convert("RGB")
+            next_still = edit_forward(client, prev_pil, character_pil, step["edit"])
+            step_path = out_dir / f"{concept_id}_step{i + 1:02d}.png"
+            next_still.save(step_path)
+            print(f"  saved {step_path}")
+            start_image = types.Image.from_file(location=str(step_path))
 
     final = out_dir / f"{concept_id}_loft.mp4"
     concatenate(clip_paths, final)

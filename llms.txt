@@ -2635,7 +2635,7 @@ ready-to-run connectivity test (workflow_dispatch only, generates one
 throwaway image as a build artifact, not wired into any content pipeline).
 
 **Dev's real GCP project details** (from what he already ran/received):
-project_id `project-58f4f689-36b9-406b-bfa`, project_number `584573644858`.
+project_id `core-decor-657616`, project_number `75129415228`.
 Already baked into test-vertex-imagen.yml's `workload_identity_provider` and
 `service_account` fields.
 
@@ -2644,8 +2644,8 @@ Already baked into test-vertex-imagen.yml's `workload_identity_provider` and
 if it did, since IAM changes need the project owner's own credentials):
 
 ```bash
-PROJECT_ID="project-58f4f689-36b9-406b-bfa"
-PROJECT_NUMBER="584573644858"
+PROJECT_ID="core-decor-657616"
+PROJECT_NUMBER="75129415228"
 REPO="devdave666/core-decor-automation"
 
 # 1. Workload Identity Pool
@@ -4941,7 +4941,7 @@ combination and reported real output dimensions. Ground truth:
   Developer API (`genai.Client(api_key=...)`, no `vertexai=True`) rejects it
   with a 400. PNG is the default, so just omit it.
 - **The `GOOGLE_CLOUD_API_KEY` secret that got added** (an AI Studio key,
-  value `AQ.Ab8...`, project 584573644858 -- the same GCP project) is a dead
+  value `AQ.Ab8...`, project 75129415228 -- the same GCP project) is a dead
   end and can be deleted: its project is on the **free API tier**, and the
   free tier's image-generation quota is 0, so every Developer-API image call
   returns `429 RESOURCE_EXHAUSTED` ("free_tier_requests"/"free_tier_input_

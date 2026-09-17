@@ -12,25 +12,38 @@ was asked for. Playfair Display is a serif long associated with editorial/fashio
 luxury branding, which matches Core Decor's own swatch-card typography elsewhere
 in this pipeline rather than introducing an unrelated new visual language.
 
-Legibility: NO boxed backdrop — an earlier version used a solid semi-transparent
-rounded rectangle behind the text, which read as cheap rather than premium. In its
-place, a soft cinematic gradient across the top portion of the frame (dark at the
-very top, fading to fully transparent by the point text ends) — the same technique
-used in high-end real estate and fashion video, not a banner hugging the text.
+Type treatment (matched to the Sleep Archive title-card style):
+  - a soft BLURRED drop shadow, not a hard slab stroke — the thick black outline
+    an earlier version used read as cheap/meme, not premium. A hairline 2px stroke
+    stays only for edge definition over bright rooms.
+  - straight quotes/apostrophes are curled ('It's' -> 'It’s').
+  - two-line copy is BALANCED (both lines a similar length), not greedily packed.
+  - digits are nudged up so Playfair's old-style figures (which sit below the
+    baseline and can read as odd) align like lining figures — PIL here has no
+    libraqm so the OpenType 'lnum' feature isn't available.
+
+Legibility also leans on a soft cinematic gradient across the top of the frame
+(render_gradient) — the same technique used in high-end real estate and fashion
+video, not a banner hugging the text.
 
 Text is fully static throughout — no motion, no scale change. Only WHEN each line
 is visible changes; nothing about its position or appearance animates.
 """
 
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
+
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 W, H = 1080, 1920
 FONT_PATH = str(Path(__file__).resolve().parent / "fonts" / "PlayfairDisplay-Bold.ttf")
 FONT_VARIATION = "Bold"
 FONT_SIZE = 74
 LINE_SPACING = 20
-STROKE_WIDTH = 4
+STROKE_WIDTH = 2          # hairline only; the shadow does the heavy lifting now
+SHADOW_BLUR = 8
+SHADOW_OPACITY = 0.55
+SHADOW_OFFSET = (0, 5)
+DIGIT_LIFT = 0.16         # * FONT_SIZE, to fake lining figures
 MARGIN_X = 90
 CENTER_Y_FRACTION = 0.38  # vertical center of the whole text block, as a fraction of H
 GRADIENT_HEIGHT_FRACTION = 0.62  # how far down the frame the top gradient extends
@@ -43,26 +56,73 @@ def _load_font():
     return font
 
 
-def _wrap_text(text, font, max_width, draw):
-    words = text.split()
-    lines, current = [], ""
+def _smart_quotes(text):
+    """Curl straight quotes/apostrophes so the copy reads as typeset."""
+    out, prev = [], " "
+    for ch in text:
+        if ch == "'":
+            out.append("’")
+        elif ch == '"':
+            out.append("“" if prev in " \t([{" else "”")
+        else:
+            out.append(ch)
+        prev = ch
+    return "".join(out)
+
+
+def _greedy_wrap(text, font, max_width, draw):
+    words, lines, current = text.split(), [], ""
     for word in words:
         trial = f"{current} {word}".strip()
-        if draw.textlength(trial, font=font) <= max_width:
+        if draw.textlength(trial, font=font) <= max_width or not current:
             current = trial
         else:
-            if current:
-                lines.append(current)
+            lines.append(current)
             current = word
     if current:
         lines.append(current)
     return lines
 
 
+def _wrap_text(text, font, max_width, draw):
+    """Greedy-wrap to learn the line count; if it lands on exactly two lines,
+    rebalance them so neither is a stub. Longer copy is left greedy."""
+    lines = _greedy_wrap(text, font, max_width, draw)
+    if len(lines) != 2:
+        return lines
+    words = text.split()
+    best = None
+    for i in range(1, len(words)):
+        a, b = " ".join(words[:i]), " ".join(words[i:])
+        wa, wb = draw.textlength(a, font=font), draw.textlength(b, font=font)
+        if max(wa, wb) > max_width:
+            continue
+        score = abs(wa - wb)
+        if a.rstrip().endswith((".", "?", "!", ",", ":", ";")):
+            score -= max_width * 0.15
+        if best is None or score < best[0]:
+            best = (score, [a, b])
+    return best[1] if best else lines
+
+
 def _measure_block(lines, font, draw):
     line_height = FONT_SIZE + LINE_SPACING
     widths = [draw.textlength(line, font=font) for line in lines]
     return max(widths, default=0), len(lines) * line_height - LINE_SPACING
+
+
+def _draw_line(draw, x, y, line, font, fill, stroke_fill):
+    """Centre-independent line draw that lifts digits to sit like lining figures."""
+    if not any(c.isdigit() for c in line):
+        draw.text((x, y), line, font=font, fill=fill,
+                  stroke_width=STROKE_WIDTH, stroke_fill=stroke_fill)
+        return
+    cx = x
+    lift = FONT_SIZE * DIGIT_LIFT
+    for ch in line:
+        draw.text((cx, y - (lift if ch.isdigit() else 0)), ch, font=font, fill=fill,
+                  stroke_width=STROKE_WIDTH, stroke_fill=stroke_fill)
+        cx += draw.textlength(ch, font=font)
 
 
 def render_gradient(output_dir):
@@ -85,6 +145,21 @@ def render_gradient(output_dir):
     return path
 
 
+def _with_shadow(text_layer):
+    """Composite a soft blurred drop shadow under an already-rendered text layer."""
+    alpha = text_layer.split()[3]
+    shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    shadow.putalpha(alpha.filter(ImageFilter.GaussianBlur(SHADOW_BLUR)))
+    r, g, b, a = shadow.split()
+    a = a.point(lambda p: int(p * SHADOW_OPACITY))
+    shadow = Image.merge("RGBA", (Image.new("L", (W, H), 0),) * 3 + (a,))
+
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    out.alpha_composite(shadow, SHADOW_OFFSET)
+    out.alpha_composite(text_layer)
+    return out
+
+
 def render_text_block(setup, punchline, output_dir):
     """
     Renders the setup and punchline as TWO SEPARATE transparent PNGs at full
@@ -95,6 +170,9 @@ def render_text_block(setup, punchline, output_dir):
     font = _load_font()
     dummy_draw = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
     max_width = W - 2 * MARGIN_X
+
+    setup = _smart_quotes(setup)
+    punchline = _smart_quotes(punchline)
 
     setup_lines = _wrap_text(setup, font, max_width, dummy_draw)
     punchline_lines = _wrap_text(punchline, font, max_width, dummy_draw)
@@ -107,16 +185,15 @@ def render_text_block(setup, punchline, output_dir):
     block_top = int(H * CENTER_Y_FRACTION - total_h / 2)
 
     def render_lines(lines, top):
-        img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        draw = ImageDraw.Draw(img)
+        layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(layer)
         y = top
         for line in lines:
             line_width = draw.textlength(line, font=font)
             x = (W - line_width) / 2
-            draw.text((x, y), line, font=font, fill="white",
-                       stroke_width=STROKE_WIDTH, stroke_fill="black")
+            _draw_line(draw, x, y, line, font, "white", (0, 0, 0, 235))
             y += FONT_SIZE + LINE_SPACING
-        return img
+        return _with_shadow(layer)
 
     setup_img = render_lines(setup_lines, block_top)
     setup_path = Path(output_dir) / "setup.png"

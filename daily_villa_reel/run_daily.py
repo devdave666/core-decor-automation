@@ -37,7 +37,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import core_decor_reel_pipeline as core  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 
 IMG_MODELS = ["gemini-3-pro-image", "gemini-3.1-flash-image"]
 IMG_LOCATION = "global"

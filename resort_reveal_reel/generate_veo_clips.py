@@ -53,7 +53,7 @@ from google.genai import types
 
 from generate_concept_frames import STAGES
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 CLIP_DURATION_S = 4

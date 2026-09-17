@@ -21,7 +21,7 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 MODEL = "veo-3.1-generate-001"  # Standard, not Fast -- Fast was the quality/hallucination culprit (2026-08-30)
 POLL_INTERVAL_S = 15

@@ -59,7 +59,7 @@ from generate_concept import (  # noqa: E402
     ROOM_W, ROOM_H,
 )
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 MODEL = "gemini-2.5-flash-image"
 

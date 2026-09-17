@@ -1,52 +1,41 @@
 """
-Asset prep for the loft-reveal-reel format (a NEW, standalone content type --
-see llms.txt). Sibling to transformation_reel (same chained-edit machinery,
-same whole-room derelict-to-luxury arc) but with two deliberate differences
-Dev asked for on this run:
+Asset prep for the loft-reveal-reel format. v2 (2026-08-28), rewritten after
+Dev supplied external research diagnosing exactly why v1's forensic QA
+failed -- see llms.txt for the full failure report and this file's v2 header
+in generate_veo_clips.py for the paired pipeline restructuring. The two
+findings that changed THIS file:
 
-1. **A single named human does the entire renovation alone**, not an
-   anonymous crew of tradespeople. Every sibling format with people in it
-   (transformation_reel, furniture_build_reel) used interchangeable generic
-   workers where identity never had to hold across frames. Here it does --
-   the same woman has to be recognizably the same woman in image 1 and image
-   8, and in the FIRST and LAST frame of all 7 Veo clips. Fixed with a
-   dedicated `generate_character()` reference portrait, generated once and
-   passed as an explicit image reference into every single downstream
-   generate_content call (after, raw, and all 6 intermediates) alongside a
-   fixed `CHARACTER_DESCRIPTION` text block repeated in every prompt --
-   identity is anchored by BOTH the reference image and consistent text on
-   every call, not just one or the other.
-2. **8 keyframes / 7 transition clips instead of the usual 5/4** -- Dev asked
-   for exactly 7 four-second clips. Widening the stage count this far (vs.
-   transformation_reel's 5) keeps each individual step small even with a
-   longer overall arc, consistent with the same "small deltas per clip" logic
-   transformation_reel's own v2 fix established.
+1. **"Single spatial anchor" principle.** v1 pre-generated all 8 keyframes
+   upfront as a chain of independent edits, then handed pairs of them to Veo
+   as (start, target) conditioning. The research's diagnosis: each edit call
+   is a fresh synthesis, not true pixel-locked inpainting, so architecture
+   (window scale, beam position, brick pattern) could drift between any two
+   independently-generated stills even when editing forward -- and Veo's
+   last_frame= conditioning then had to warp reality to bridge two stills
+   that didn't actually describe the same physical room. v2 stops
+   pre-generating a full chain of stills. This file now only produces THREE
+   images: the character portrait, the "after" master shot (used loosely, as
+   a style/architecture reference -- never as a hard Veo target anymore),
+   and "infested" (edited from "after", same as v1). Every image AFTER
+   "infested" is now produced by generate_veo_clips.py's interleaved loop,
+   editing the ACTUAL last frame Veo rendered for the previous clip -- real
+   photographed pixels, not another independent synthesis -- one small step
+   at a time. `edit_forward()` below is the one generic function that loop
+   calls repeatedly.
 
-Mice infestation is depicted through EVIDENCE, not live animals: droppings,
-gnaw marks and chewed-through holes at the baseboards, greasy rub marks along
-the walls, shredded cardboard and nesting material. Live rodents are
-deliberately excluded (see generate_veo_clips.py's NEGATIVE_PROMPT) -- a
-small fast-moving animal is exactly the kind of subject this project has
-already found Veo can't hold consistent frame-to-frame (see the furniture_
-build_reel hallucination saga in llms.txt), and getting it wrong would read
-as unintentionally comedic rather than "beat down." The mess mice leave
-behind carries the same story without that risk.
-
-Reuses transformation_reel's proven machinery wholesale (gemini-2.5-flash-
-image on Vertex AI, the aspect-ratio config fix, the VEO_CANVAS exact-crop
-fix, chained edit-forward generation, the 429 retry).
-
-Chained generation: character portrait first (identity anchor), then "after"
-(finished loft with her in it) from text + character reference, "infested"
-(the wreck) edited from "after" + character reference, then each of the 6
-intermediate stages edited from the PREVIOUS stage (with "after" also passed
-as a target reference and the character portrait passed on every single call)
-so architecture, framing AND her appearance all stay locked across the chain.
+2. **Fixed the "floor already matches after" logic bug** the QA report
+   caught: v1's `generate_infested()` never described the floor as
+   different from the finished "after" floor, so the later "she installs
+   new flooring" clip had nothing damaged to replace. v2 explicitly makes
+   the infested floor dark, worn and damaged -- distinct from "after"'s
+   whitewashed oak -- and `edit_forward()`'s per-step delta text (written in
+   generate_veo_clips.py) explicitly carries that damaged floor forward
+   until the flooring step actually replaces it.
 
 Usage: python loft_reveal_reel/generate_concept_frames.py <concept_id> <out_dir>
-Writes <out_dir>/<concept_id>_character.png and
-<out_dir>/<concept_id>_{infested,clearing,repairing,painting,flooring,
-furnishing,styling,after}.png, in that chronological order.
+Writes <out_dir>/<concept_id>_{character,after,infested}.png only -- the
+remaining images in the sequence are produced during video generation, not
+here.
 """
 import sys
 import time
@@ -58,7 +47,7 @@ from google.genai import errors as genai_errors
 from google.genai import types
 from PIL import Image, ImageOps
 
-PROJECT = "project-58f4f689-36b9-406b-bfa"
+PROJECT = "core-decor-657616"
 LOCATION = "us-central1"
 MODEL = "gemini-2.5-flash-image"
 
@@ -70,13 +59,6 @@ IMAGE_CONFIG = types.GenerateContentConfig(
     image_config=types.ImageConfig(aspect_ratio="9:16")
 )
 
-# Chronological order -- load-bearing for both this script and
-# generate_veo_clips.py, which zips consecutive pairs from this same list.
-STAGES = [
-    "infested", "clearing", "repairing", "painting",
-    "flooring", "furnishing", "styling", "after",
-]
-
 SPATIAL_RULE = (
     "The room is a coherent, physically real 3D space: every piece of "
     "furniture is fully separated from every other by visible floor or "
@@ -84,10 +66,13 @@ SPATIAL_RULE = (
     "any doorway or walking route is left clear and passable."
 )
 
-# Repeated verbatim in every prompt below AND anchored by the reference
-# portrait image on every call -- text alone has never been reliable enough
-# for identity-locking in this project's own findings, so both levers are
-# used together here.
+# Repeated verbatim in every IMAGE prompt below AND anchored by the reference
+# portrait image on every call. Note this stays an image-editing-step-only
+# practice in v2 -- the research Dev supplied specifically flags heavy
+# identity text as counterproductive during the VIDEO step (Veo should rely
+# on the keyframe image alone there), so generate_veo_clips.py's motion
+# prompts do NOT repeat this description. Here, for still editing, both
+# levers together remain the right call.
 CHARACTER_DESCRIPTION = (
     "a striking woman in her early thirties with warm olive skin and long "
     "dark wavy hair tied back in a low, loose bun with a few loose strands "
@@ -110,6 +95,8 @@ def generate_character(client):
 
 
 def generate_after(client, concept, character_image):
+    # v2: still generated, but its role downstream has changed -- see this
+    # file's header. No longer a Veo last_frame= target for any clip.
     prompt = (
         f"A photorealistic interior photograph of {concept['room']}, styled "
         f"in {concept['style']}. Materials clearly visible: "
@@ -124,28 +111,40 @@ def generate_after(client, concept, character_image):
         f"quality real estate photography, no text, no watermark, no other "
         f"people."
     )
-    print("--- generating AFTER ---")
+    print("--- generating AFTER (style/architecture reference only) ---")
     response = _generate_with_retry(client, [prompt, character_image])
     return _first_image(response)
 
 
 def generate_infested(client, after_image, character_image):
-    # Itemized/emphatic from the start -- the lesson every sibling format
-    # eventually needed after a soft "before" instruction under-regressed.
+    # v2: added an explicit, itemized floor description -- dark, worn,
+    # damaged -- distinct from "after"'s whitewashed oak. v1 never
+    # described the floor at all here, so it silently inherited something
+    # close to the finished floor, and the later flooring-replacement clip
+    # had nothing damaged left to justify replacing (the QA report's
+    # "installing a floor that already existed" finding).
     prompt = (
         "Show this exact same room, same camera angle, same architecture, "
         "same exposed brick, windows and beam positions -- but in a state "
         "of severe neglect and rodent infestation, far beyond an ordinary "
-        "mess: dark greasy rub marks streak along the base of every wall "
+        "mess. The room is a COMPLETELY EMPTY SHELL -- absolutely no sofa, "
+        "no armchair, no coffee table, no TV, no rug, no shelving, no "
+        "potted plants, no pendant lighting, none of the furniture or "
+        "decor from the reference image exists yet, not damaged, not "
+        "partial, entirely absent -- only bare walls, bare floor, the "
+        "windows and the exposed ceiling beams: dark greasy rub marks "
+        "streak along the base of every wall "
         "where rodents have traveled repeatedly; the baseboards and one "
         "corner of drywall show ragged gnawed-through holes; scattered "
         "rodent droppings are visible on the floor and along the "
         "baseboards; shredded cardboard boxes and torn insulation used as "
         "nesting material spill out of a corner; thick dust and cobwebs "
         "coat every surface and hang from the exposed steel beams; old "
-        "food packaging is chewed open and scattered; the floor beneath "
-        "is stained, scuffed and littered with debris; peeling paint and "
-        "water staining mar the brick and walls. No live rodents visible "
+        "food packaging is chewed open and scattered; peeling paint and "
+        "water staining mar the brick and walls. The wood floor itself is "
+        "dark, worn, deeply scuffed, stained and damaged -- visibly aged "
+        "and different from any finished flooring, clearly in need of "
+        "full replacement, not just cleaning. No live rodents visible "
         "anywhere -- only the evidence they left behind. Dim, grim light "
         "through grimy industrial windows is the only illumination -- no "
         "work-lights, no fixtures. This should read as genuinely shocking "
@@ -165,75 +164,46 @@ def generate_infested(client, after_image, character_image):
     return _first_image(response)
 
 
-# Each entry: what SHE is doing alone at this step, one small delta from the
-# previous stage. Single-handed throughout -- no other people ever appear.
-INTERMEDIATE_STEPS = {
-    "clearing": (
-        "the woman alone hauling a full trash bag and a stack of ruined, "
-        "chewed-open cardboard boxes toward the door, rubber gloves on, a "
-        "dust mask pulled down around her neck, a broom and dustpan resting "
-        "against the wall nearby. The worst of the rodent droppings, "
-        "shredded nesting material and loose debris are visibly cleared "
-        "from the floor, but the gnawed baseboards, grease marks and grimy "
-        "walls are all still untouched -- this is the START of cleanup, "
-        "not a finished one."
-    ),
-    "repairing": (
-        "the woman alone kneeling at the baseboard, patching a gnawed-"
-        "through hole with wire mesh and joint compound, a caulking gun and "
-        "a small tray of compound beside her on a drop cloth, knee pads on. "
-        "One section of wall/baseboard now looks freshly patched and pale "
-        "against the still-grimy wall around it -- visibly further along "
-        "than clearing, still no paint or fresh flooring."
-    ),
-    "painting": (
-        "the woman alone rolling fresh light paint onto a section of wall "
-        "with a roller on an extension pole, a paint tray and a spare "
-        "roller cover on the drop cloth below, one wall now a clean bright "
-        "color against the still-bare brick and unfinished floor around "
-        "it."
-    ),
-    "flooring": (
-        "the woman alone kneeling to fit a new wide-plank floorboard into "
-        "place with a rubber mallet, spacer wedges lined up along the "
-        "finished wall edge, a stack of unlaid boards close by. A section "
-        "of new flooring now visibly covers part of the old stained floor, "
-        "walls behind her now finished and painted."
-    ),
-    "furnishing": (
-        "the woman alone carrying in a single armchair by herself, setting "
-        "it down carefully in the now-finished room, a rolled area rug "
-        "leaning against the wall waiting to be laid out. Walls and floor "
-        "are now fully finished; furniture is only partially placed, room "
-        "isn't fully styled yet -- visibly one step before the fully "
-        "finished reference."
-    ),
-    "styling": (
-        "the woman alone unrolling the area rug flat onto the new floor "
-        "and setting a potted plant down beside the armchair, stepping "
-        "back slightly to check the arrangement. Nearly everything from "
-        "the finished reference image is now in place, just a couple of "
-        "final touches (a throw pillow still on a nearby box, a lamp not "
-        "yet switched on) short of fully done."
-    ),
-}
-
-
-def generate_intermediate(client, stage_name, prev_image, after_image, character_image):
+def edit_forward(client, prev_image, character_image, delta_instruction):
+    # v2's core new primitive, replacing generate_intermediate(). Called by
+    # generate_veo_clips.py's interleaved loop on the ACTUAL last frame Veo
+    # rendered for the previous clip (real photographed pixels), never on an
+    # independently-imagined still -- this is what "single spatial anchor"
+    # means in practice for a model without true mask/depth-conditioned
+    # inpainting: keep editing the same real image forward by small deltas
+    # instead of re-imagining the room from a text description each time.
+    #
+    # v2.1 fix (2026-08-28), after a real forensic QA pass on the first v2
+    # run caught her tool belt and work gloves vanishing (replaced by knee
+    # pads that appeared from nowhere) at one cut. Root cause: this prompt
+    # told the model to match her "clothing" to the CHARACTER reference
+    # image (the clean studio portrait -- no gloves, no knee pads, since
+    # those are work-in-progress items she picks up mid-task) on every
+    # single edit call, so each edit silently reset her back toward the
+    # portrait's clean state instead of preserving whatever transient gear
+    # she actually had on in the real previous frame. Fixed by splitting
+    # the two reference images' jobs explicitly: the character image is
+    # ONLY for face/hair/build (core identity), while current clothing,
+    # tool belt, gloves, knee pads etc. must carry over from the FIRST
+    # (previous-frame) reference image exactly, since that's what "nothing
+    # else changes" already covers for every other object in the room --
+    # her gear is not exempt from that rule just because a character
+    # reference also happens to be in play.
     prompt = (
         "Show this exact same room, same camera angle, same architecture, "
-        "windows and beam positions as both room reference images. This is "
-        f"the NEXT step after the first reference image, showing "
-        f"{INTERMEDIATE_STEPS[stage_name]} The second room reference image "
-        "shows where this renovation is ultimately headed -- move visibly "
-        "one step closer to it, not all the way there. The third reference "
-        "image shows the woman's face, hair, build and clothing -- match "
-        f"her exactly, no other people ever appear. {SPATIAL_RULE} No text. "
-        "Keep proportions, windows and beam positions identical to both "
-        "room reference images."
+        "exact same objects, walls, windows and floor as the FIRST "
+        f"reference image -- with ONE small change: {delta_instruction} "
+        "Nothing else in the frame changes at all -- same lighting, same "
+        "untouched clutter or furniture, same everything except that one "
+        "change. The woman's exact current clothing, tool belt, gloves, "
+        "knee pads and any other gear must also stay identical to the "
+        "FIRST reference image, whatever she currently has on -- do not "
+        "reset her to a cleaner or different outfit. The SECOND reference "
+        "image (a plain studio portrait) is ONLY for matching her face, "
+        f"hair and build -- ignore its clothing entirely. {SPATIAL_RULE} "
+        "No text. No other people."
     )
-    print(f"--- generating {stage_name.upper()} (edited from previous stage) ---")
-    response = _generate_with_retry(client, [prompt, prev_image, after_image, character_image])
+    response = _generate_with_retry(client, [prompt, prev_image, character_image])
     return _first_image(response)
 
 
@@ -290,20 +260,13 @@ def main():
     character_image.save(out_dir / f"{concept_id}_character.png")
     print(f"Saved {out_dir / f'{concept_id}_character.png'}")
 
-    images = {}
-    images["after"] = generate_after(client, concept, character_image)
-    images["infested"] = generate_infested(client, images["after"], character_image)
+    after_image = generate_after(client, concept, character_image)
+    after_image.save(out_dir / f"{concept_id}_after.png")
+    print(f"Saved {out_dir / f'{concept_id}_after.png'}")
 
-    prev = images["infested"]
-    for stage_name in ["clearing", "repairing", "painting", "flooring", "furnishing", "styling"]:
-        img = generate_intermediate(client, stage_name, prev, images["after"], character_image)
-        images[stage_name] = img
-        prev = img
-
-    for stage_name in STAGES:
-        path = out_dir / f"{concept_id}_{stage_name}.png"
-        images[stage_name].save(path)
-        print(f"Saved {path}")
+    infested_image = generate_infested(client, after_image, character_image)
+    infested_image.save(out_dir / f"{concept_id}_infested.png")
+    print(f"Saved {out_dir / f'{concept_id}_infested.png'}")
 
 
 if __name__ == "__main__":
