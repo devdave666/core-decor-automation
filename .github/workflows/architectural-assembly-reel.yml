@@ -1,0 +1,87 @@
+name: Architectural Assembly Reel
+
+# "Villa assembles itself, piece by piece" reel, fully automated end to end,
+# DAILY at 7:30 PM EST -- sibling to Daily Villa Reel, same single-shot
+# shape (one 8s Veo generation, start frame to end frame, no multi-clip
+# concatenation), just a different build aesthetic: a stylised, workerless/
+# machineless "snap-assembly" instead of visible construction machinery.
+# See architectural_assembly_reel/run_daily.py for the full per-run design.
+#
+#   Nano Banana Pro -> "after" (finished villa, dusk) then "site" (same
+#                       scenery, everything removed), one fixed camera lock
+#   Veo 3.1 STANDARD -> 8s / 1080p / 9:16 / ASMR audio, site-frame to
+#                       after-frame, one continuous snap-assembly build,
+#                       NO workers/machinery, NO music
+#   ffmpeg           -> strip all metadata (+ local de-voice repair if a
+#                       post-gen speech check hears a hallucinated voice)
+#   -> publish to Instagram + Facebook + TikTok + YouTube, advance rotation
+#      counters
+#
+# REAL MONEY, EVERY DAY: ~2 Nano Banana Pro images (~$0.50) + one 8s Veo 3.1
+# Standard generation with audio (~$6) ~= $6-7/run, ~$200/month -- same
+# order of magnitude as Daily Villa Reel. Scheduled immediately per Dev's
+# explicit request (2026-09-19) rather than the usual test-run-then-promote
+# flow used for Dolly Reel/Daily Villa Reel; watch the first live run
+# closely the same way those were watched.
+#
+# 7:30 PM EST = 00:30 UTC the following day (EST = UTC-5, fixed -- cron has
+# no DST awareness, so during EDT this lands at 8:30 PM local instead of
+# 7:30). Chosen to avoid every other schedule's window in this repo: 10:00
+# UTC dolly-reel, 14:00 UTC daily-reel, 16:00 UTC daily-villa-reel /
+# carousel-post, 18:00 UTC hot-takes, 20:00 UTC missed-post-check.
+
+on:
+  schedule:
+    - cron: "30 0 * * *"   # 00:30 UTC daily (7:30 PM EST); first automated run 2026-09-20
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  assembly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "core-decor-657616"
+          workload_identity_provider: "projects/75129415228/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@core-decor-657616.iam.gserviceaccount.com"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai pillow requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Configure git
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run architectural assembly reel
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python3 architectural_assembly_reel/run_daily.py
+
+      - name: Upload artifacts (survives a later failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architectural-assembly-reel
+          path: architectural_assembly_reel/output/*
+          if-no-files-found: warn

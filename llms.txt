@@ -5289,3 +5289,80 @@ First two concepts published: concept 1 (alpine ridge) PULLED for the voice
 bug -- it will not auto-retry, cycles back in ~13 days. Concept 2 (Mediterranean
 cliff, IG 18334062613287438) is a keeper: clean before->after build, visible
 tower crane + concrete pump + excavator, no voice.
+
+## Architectural Assembly Reel -- the sixth content type (2026-09-19)
+
+Dev handed over a full spec (a "System Prompt: Architectural Assembly Video
+Generator") for a progressive "0 to 1" villa build reel and asked for it to
+be scheduled DAILY at 7:30 PM EST, with exterior design/scenery left to this
+project's own judgment. New folder, `architectural_assembly_reel/`, sibling
+to `daily_villa_reel/`.
+
+**v1 (first pass) used a 5-stage-frame / 4-clip-concatenated shape**, closer
+to the dormant `resort_reveal_reel`/`stone_reveal_reel` family, on the
+assumption Veo needed splitting into short clips to match the spec's
+1.5-2s-per-transition wording. **Dev corrected this immediately**: no need
+for multiple clips, Veo already generates 8s natively in a single
+image->image (`last_frame`) call -- exactly what `daily_villa_reel` already
+does. Rebuilt to that simpler shape before any Veo cost was spent on the
+wrong structure. Lesson: default to the simplest existing sibling pattern
+(`daily_villa_reel`'s single-shot) rather than reaching for a more complex
+dormant pattern (`resort_reveal_reel`'s multi-clip) just because the spec's
+prose implied multiple short transitions -- the API's own constraints should
+decide the shape, not a literal reading of a spec written model-agnostically.
+
+**v2 (shipped): same single-shot shape as `daily_villa_reel`**, one 8s
+`veo-3.1-generate-001` Standard generation from a "site" (empty land) start
+frame to an "after" (finished villa, dusk) end frame -- just a different
+build aesthetic. **Deliberately workerless/machineless**, unlike Daily Villa
+Reel's visible cranes+excavators: the spec's own language ("elements
+descending from above, snapping onto the grid") already describes a
+stylised snap-assembly, not a literal construction crew -- and a literal
+crew is exactly the failure mode that got `furniture_build_reel` paused
+(workers/hands reading as physically inconsistent frame to frame after 7
+tries). `resort_reveal_reel` proved a workerless build ships clean on the
+first real run; this format leans into that rather than re-risking the
+paused format's exact bug class.
+
+**Image generation** (`generate_concept_frames.py`): Nano Banana Pro
+(`gemini-3-pro-image` -> `gemini-3.1-flash-image` fallback), the exact same
+2-image chain as `daily_villa_reel/run_daily.py` -- "after" (finished villa,
+dusk, warm lights + filled pool + lit fire pit) generated first from text as
+the camera/terrain anchor, "site" (empty land) edited FROM "after"
+(itemized, emphatic full removal -- soft summaries under-regress on built
+structure, a lesson multiple sibling formats had to learn the hard way).
+
+**Video generation** (`generate_veo_clips.py`): ONE `veo-3.1-generate-001`
+Standard 8s generation, `image=site`/`config.last_frame=after`, 9:16, 1080p,
+`generate_audio=True`, a single structured prompt (same
+[SHOT/SUBJECT/ENVIRONMENT/CAMERA/AUDIO] shape as `daily_villa_reel`'s
+`VEO_PROMPT_TEMPLATE`) narrating the entire snap-assembly build --
+foundation, frame, glass, roof, pool, landscaping, dusk lighting -- as one
+continuous accelerated sequence, with a matching continuous audio
+description covering the spec's Foley Audio Blueprint beats in order
+(gravel/stone thud -> timber clack/lock -> glass suction -> water/fire/wind
+chimes). `VEO_NEGATIVE` and the post-generation `gemini-2.5-flash` speech
+check + local de-voice ffmpeg repair are reused VERBATIM from
+`daily_villa_reel/run_daily.py` -- a project-wide Veo risk, not specific to
+that format.
+
+**Scheduling**: `.github/workflows/architectural-assembly-reel.yml`, cron
+`30 0 * * *` (00:30 UTC daily = 7:30 PM EST, fixed offset -- cron has no DST
+awareness, so this drifts to 8:30 PM local during EDT), scheduled
+IMMEDIATELY per Dev's explicit ask rather than the usual manually-dispatched-
+test-runs-then-promote flow Dolly Reel and Daily Villa Reel went through.
+Same real-money-daily profile as Daily Villa Reel (~$6-7/run: 2 Nano Banana
+Pro images + one 8s Veo Standard generation with audio, ~$200/month). No
+live run has been watched yet -- the first automated run (2026-09-20) or an
+earlier manual `workflow_dispatch` should get the same "watch it by eye"
+scrutiny every other format got before its schedule was trusted.
+
+Own rotation state (`concept_index.txt`, `caption_index.txt`) lives in the
+folder, not shared with any other pipeline's counters, per convention. 12
+scenery concepts picked fresh for this format (Patagonian ridge, Big Sur
+cliff, Nordic fjord forest, red desert dunes, volcanic caldera, Scottish
+moor, alpine meadow, redwood bluff, Icelandic highland, Andean altiplano,
+Japanese pine headland, Utah canyon rim) sharing one fixed warm-minimalist
+architectural style (dark timber, board-formed concrete, glass, infinity
+pool, fire pit) across every concept, the same way Daily Villa Reel varies
+only `[ENVIRONMENT & LIGHTING]` per concept.
