@@ -3086,5 +3086,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd01",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd01_living room_emerald&brass_app.webp",
+    "room": "Living Room",
+    "style": "Emerald & Brass",
+    "hotspots": [
+      {
+        "id": "dd01-h1",
+        "x": 34.9,
+        "y": 59.0,
+        "label": "Sofa",
+        "productName": "Curved Emerald Velvet Sofa, Brass Base",
+        "productUrl": "https://www.amazon.com/s?k=curved+emerald+green+velvet+sofa+brass+base&linkCode=ll2&tag=dev0f7d00-20&linkId=bea97bcaf174e7d3e3829074f37652bd&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved emerald green velvet sofa brass base",
+        "auto": true
+      },
+      {
+        "id": "dd01-h2",
+        "x": 9.9,
+        "y": 66.5,
+        "label": "Armchairs",
+        "productName": "Cream Boucle Modern Armchair (Set)",
+        "productUrl": "https://www.amazon.com/s?k=cream+boucle+modern+armchair+set&linkCode=ll2&tag=dev0f7d00-20&linkId=cd2168ce46bf08fa3e9ecaedc34e379b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cream boucle modern armchair set",
+        "auto": true
+      },
+      {
+        "id": "dd01-h3",
+        "x": 58.2,
+        "y": 64.0,
+        "label": "Coffee Table",
+        "productName": "White Marble Rectangular Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=white+marble+rectangular+coffee+table&linkCode=ll2&tag=dev0f7d00-20&linkId=d9e66eb20cd5295953d649c92642b89d&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "white marble rectangular coffee table",
+        "auto": true
+      },
+      {
+        "id": "dd01-h4",
+        "x": 70.8,
+        "y": 24.0,
+        "label": "Chandelier",
+        "productName": "Clear Bubble Glass Cluster Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=clear+bubble+glass+cluster+chandelier+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=be759d3dba23c032b066b335999a4a8e&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "clear bubble glass cluster chandelier brass",
+        "auto": true
+      },
+      {
+        "id": "dd01-h5",
+        "x": 22.4,
+        "y": 87.5,
+        "label": "Area Rug",
+        "productName": "Cream & Black Diamond Moroccan Area Rug",
+        "productUrl": "https://www.amazon.com/s?k=cream+black+diamond+pattern+moroccan+area+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=f5c51b73ae306832fd278b931f120e5f&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cream black diamond pattern moroccan area rug",
+        "auto": true
+      },
+      {
+        "id": "dd01-h6",
+        "x": 29.6,
+        "y": 74.0,
+        "label": "Side Table",
+        "productName": "Round Dark Wood Pedestal Side Table",
+        "productUrl": "https://www.amazon.com/s?k=round+dark+wood+pedestal+side+table&linkCode=ll2&tag=dev0f7d00-20&linkId=86f9edcd91066420efaf01eaa97b99cb&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "round dark wood pedestal side table",
+        "auto": true
+      }
+    ]
   }
 ]
