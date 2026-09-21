@@ -5366,3 +5366,147 @@ Japanese pine headland, Utah canyon rim) sharing one fixed warm-minimalist
 architectural style (dark timber, board-formed concrete, glass, infinity
 pool, fire pit) across every concept, the same way Daily Villa Reel varies
 only `[ENVIRONMENT & LIGHTING]` per concept.
+
+## Reproducing a competitor reference reel: 7 failed multi-clip Veo attempts, then a working omni end-frame-only technique (2026-09-20/21)
+
+Dev supplied a downloaded reference reel (another creator's branded luxury-villa
+"gravity build" reveal -- FPV dive into a ground explosion, macro debris/rebar
+swirl, whip-zoom impact, fast reverse-crane reveal, ~5 cuts in the first 4s) and
+asked for an original reel in the same format. This produced the single most
+useful debugging technique found all session, and a genuinely new working
+pipeline shape -- both worth recording even though the multi-clip Veo path that
+consumed most of the session's budget was ultimately abandoned.
+
+**Gemini 3.8 Flash exists** (`gemini-3.8-flash`, GA 2026-09-02, Vertex AI,
+accepts video/image/audio/PDF input, text output) -- postdates most AI
+assistants' training data, so don't assume a "gemini-3.8-*" reference is a
+hallucination; check `ai.google.dev/gemini-api/docs/models` before objecting.
+
+**Debugging technique that actually worked: send the FULL video as bytes to
+Gemini, never sampled frames.** Early in this session, judging a generated reel
+by extracting frames at 1-2fps and eyeballing them (or having Gemini look at a
+handful of stills) missed the actual problem every time -- camera motion,
+cut rhythm, and geometric continuity between shots are invisible in still
+frames. Once Dev pushed back ("analyze whole video through gcp"), switching to
+`client.models.generate_content(model="gemini-3.8-flash", contents=[video_bytes,
+video_bytes, critique_prompt])` with BOTH the reference and our generated clip
+as full `types.Part.from_bytes(mime_type="video/mp4")` parts in one call gave
+precise, timestamped, specific critiques (exact artifact timestamps, shot-by-
+shot camera move breakdowns, a numeric severity rating) that stills-based
+review never produced. This became the standing QA loop for the rest of the
+session: generate -> full-video Gemini critique against the reference -> fix ->
+re-critique. Reuse this pattern for any future "does our output match this
+reference" question -- it is worth the extra ~15-30s and full video upload cost.
+
+**7 straight attempts at matching the reference via independent Veo clips
+stitched together all plateaued at 4-5/10, never converging:**
+1. `architectural_assembly_reel`'s existing single-shot static-camera format
+   (reused as-is, just a different `concept` string) -- Gemini's verdict: "not
+   even close" -- zero cuts vs the reference's ~5, zero debris vs heavy debris,
+   locked-off camera vs FPV dive/barrel-roll/whip-zoom/reverse-crane. Confirms
+   this format's static-camera design (chosen to dodge `furniture_build_reel`'s
+   hallucination failures) is fundamentally the wrong shape for a chaotic
+   reference, not a parameter to tune.
+2. A NEW 3-shot pipeline (`villa_reveal_montage_reel/generate_montage.py`):
+   explosion dive / impact / reverse-crane reveal, each an independent Veo
+   generation, hard-concatenated. Individual shots were fine; the shot2->shot3
+   cut was flagged as a hard jump-cut every time.
+3. `xfade(transition=hblur)` crossfade at the cut -- made it WORSE (5/10 ->
+   4/10), not better. Lesson: blending two frames of mismatched camera
+   geometry makes the mismatch MORE visible ("wooden framing visibly dissolves
+   into pool geometry"), not less. A blend transition is the wrong tool for
+   masking a real spatial mismatch between independent generations.
+4. A hard cut disguised by a directional blur ramp (0->peak->0 Gaussian blur
+   straddling the cut, no image blending) -- ffmpeg gotcha: gblur's sigma
+   option does NOT expose `t` or `n` as per-frame variables even with
+   eval=frame in this ffmpeg build ("Undefined constant... in 't/0.150'");
+   worked around by rendering discrete fixed-sigma sub-segments (a stepped
+   ramp) instead of a continuous expression. Result: still flagged, same
+   seam, because the underlying clips' geometry didn't match -- no transition
+   technique fixes a root-cause spatial mismatch between independent
+   generations.
+5. Regenerated shot 3 with a prompt that actually described the real anchor
+   frame (extracted the literal last frame of shot 2 -- an extreme close-up
+   INSIDE the raw stud framework -- and wrote the new prompt around exactly
+   that, instead of a generic "starting low and close to the entrance" line
+   that fought the image anchor). Softened Gemini's language ("layout
+   hallucination" -> "noticeable jump") but did not fully resolve it.
+6. Full redesign per Veo's own documented best practice (confirmed via
+   cloud.google.com/blog/.../ultimate-prompting-guide-for-veo-3-1: "choose
+   one primary camera behavior per shot," "write 'the camera pulls back' as a
+   standalone sentence," first-and-last-frame workflow): every shot got BOTH a
+   real Nano-Banana-generated start AND end frame, adjacent shots sharing the
+   literal same connecting image (zero seam by construction), one simple
+   single-movement prompt per shot. Real improvement in tone, but Gemini still
+   flagged a "layout hallucination" at the framing->reveal cut, plus a NEW
+   artifact: a literal tripod object visible in frame.
+7. Tripod root cause: architectural_assembly_reel/generate_concept_frames.py's
+   shared CAMERA constant says "fixed tripod position" -- Nano Banana renders
+   this LITERALLY as a physical tripod prop in the shot, not as a camera-
+   stability descriptor. Fixed locally (new prompt wording: "locked-off frame,
+   no camera equipment visible in shot") in villa_reveal_montage_reel's own
+   frame-gen code, NOT by editing the shared file. Fixed the tripod; a
+   different artifact (an internal cross-dissolve/morph WITHIN the Veo
+   first/last-frame interpolation itself, not at the cut) took its place.
+   Plateaued at 4.5/10.
+
+**What actually worked, on the first real try: Gemini "omni"
+(gemini-omni-flash-preview), image-to-video, END-FRAME ONLY, no start
+frame.** Per Dev's direction -- feed the single finished-building reference
+image plus an explicit prompt stating the image is the FINAL state only and
+the video must begin from nothing at 00:00 -- as ONE continuous omni
+generation (villa_reveal_montage_reel/generate_omni_build.py, new file,
+reuses omni_reel_edit/omni_edit.py's _client/_create/_collect/
+MODEL_CANDIDATES machinery verbatim rather than duplicating the auth/retry/
+rate-limit logic -- that file's own edit() is video-to-video only, so this
+adds an image-input path it didn't have). Result, first attempt: a genuinely
+continuous 10s single-take construction build-up, SAME location throughout,
+zero cuts, zero seams, zero geometric mismatch -- the entire failure class
+that sank all 7 Veo attempts simply doesn't exist here, because there's
+nothing to stitch. Gemini's verdict dropped from "layout hallucination" /
+"not even close" language to "technically clean enough for a general 3D
+visualization showcase" -- the only remaining gap was energy/chaos level
+(smooth build vs the reference's violent whip-pans/debris), a style choice,
+not a technical defect.
+
+**Omni image-to-video aspect-ratio control, undocumented in the existing
+omni_edit.py comments:** that file's edit() (video-to-video) found ONLY
+a bare response_format={"type":"video"} works -- adding delivery,
+resolution, or aspect_ratio 400s ("invalid argument"). For the NEW
+image-to-video path this session added, response_format={"type":"video",
+"aspect_ratio":"9:16"} worked on the first try (720x1280 out, vs 1280x720
+default without it) -- the constraint documented for video-editing mode does
+NOT carry over to image-to-video mode on the same model. Don't assume one
+mode's confirmed-working request shape applies to another input modality;
+they were validated separately and this session found they differ.
+
+**Practical infra notes from this session, unrelated to the reference-reel
+work itself but worth keeping:**
+- core.upload_video_to_public_host() runs `git pull --rebase origin main`
+  regardless of the currently-checked-out branch. From a non-main worktree
+  branch, if origin/main has moved (e.g. another concurrent session
+  committed to media/reels/), this can produce a real rebase conflict
+  (rename/rename on the pruned-reel filename). Safe fix: `git rebase --abort`
+  (no data lost -- the local commit survives), then `git push -u origin
+  <branch-name>` to push the worktree's own branch under its own name rather
+  than forcing a merge with main. raw.githubusercontent.com URLs work
+  from any branch, not just main, so this is a complete fix, not a
+  workaround.
+- No `gh workflow run` output includes the actual publish result -- follow up
+  with `gh run watch <id> --exit-status` then `gh run view <id> --log | grep
+  "Done. IG="` to get the real per-platform post IDs.
+- Local dev shells have GCP/Vertex ADC (`gcloud auth application-default
+  print-access-token` works) but NEVER have the META_*/BUFFER_* publish
+  secrets -- those only exist as GitHub Actions secrets. Generation can run
+  locally; the actual live publish step must go through `gh workflow run
+  publish-existing-to-all.yml`, not a local script.
+- Passing binary file content (e.g. a finished video) through an MCP tool
+  call's inline base64Content parameter is impractical past roughly
+  100KB-1MB -- it has to flow through the calling model's own context/token
+  budget with no chunking option, and PowerShell/Bash tool output is
+  independently capped (PowerShell: hard 30,000-char truncation; Bash:
+  silently redirects large output to a side file that can't be fed back into
+  a tool-call parameter). For "put this video somewhere the user can review
+  it," host it via the existing zero-cost raw.githubusercontent.com
+  mechanism and put the LINK in a small Drive doc/file instead of trying to
+  upload the binary itself.
