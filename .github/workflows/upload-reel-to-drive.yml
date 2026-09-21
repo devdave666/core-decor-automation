@@ -1,0 +1,63 @@
+name: Upload Reel to Drive
+
+# Generic one-off: uploads an already-committed media/reels/ video straight to
+# Drive via drive_upload.py's direct OAuth multipart upload -- bypasses the
+# chat/MCP tool's inline base64 size ceiling entirely (see drive_upload.py's
+# own docstring). Sibling to upload-eseries-to-drive.yml, which is scoped to
+# e-series PNGs only; this one is for any single video already hosted under
+# media/reels/.
+
+on:
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: "Filename under media/reels/ to upload (e.g. reel_1790022484.mp4)"
+        required: true
+        type: string
+      drive_folder_name:
+        description: "Drive subfolder name to upload into (created under ROOT_FOLDER_ID if missing)"
+        required: false
+        default: "Reel Reviews"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Upload video to Drive
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          FILENAME: ${{ github.event.inputs.filename }}
+          DRIVE_FOLDER_NAME: ${{ github.event.inputs.drive_folder_name }}
+        run: |
+          python3 -c "
+          import os
+          from pathlib import Path
+          from drive_upload import get_or_create_folder, upload_file, ROOT_FOLDER_ID
+
+          filename = os.environ['FILENAME']
+          folder_name = os.environ.get('DRIVE_FOLDER_NAME', '').strip() or 'Reel Reviews'
+          src = Path('media/reels') / filename
+          if not src.exists():
+              print(f'Not found: {src}')
+              raise SystemExit(1)
+
+          folder_id = get_or_create_folder(folder_name, ROOT_FOLDER_ID)
+          result = upload_file(str(src), folder_id, mime_type='video/mp4')
+          print(f\"{filename} -> {result.get('webViewLink')}\")
+          "
