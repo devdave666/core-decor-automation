@@ -3160,5 +3160,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd02",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd02_kitchen_gildedmaximalist_app.webp",
+    "room": "Kitchen",
+    "style": "Gilded Maximalist",
+    "hotspots": [
+      {
+        "id": "dd02-h1",
+        "x": 31.0,
+        "y": 26.0,
+        "label": "Chandelier",
+        "productName": "Tiered Fluted Glass Brass Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=fluted+glass+cylinder+tiered+chandelier+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=3e3502c48c131eea78943c6e9547cb76&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "fluted glass cylinder tiered chandelier brass",
+        "auto": true
+      },
+      {
+        "id": "dd02-h2",
+        "x": 16.5,
+        "y": 75.0,
+        "label": "Barstool",
+        "productName": "Olive Velvet Upholstered Barstool",
+        "productUrl": "https://www.amazon.com/s?k=olive+green+velvet+bar+stool+round+seat+wooden+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=11e3f13b21e8ee99d4de5586f46c01b2&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "olive green velvet bar stool round seat wooden legs",
+        "auto": true
+      },
+      {
+        "id": "dd02-h3",
+        "x": 37.8,
+        "y": 56.5,
+        "label": "Faucet",
+        "productName": "Brass Bridge Kitchen Faucet",
+        "productUrl": "https://www.amazon.com/s?k=antique+brass+bridge+kitchen+faucet+gooseneck&linkCode=ll2&tag=dev0f7d00-20&linkId=8c9cd3748464915b5f8c8241bca7a5e2&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "antique brass bridge kitchen faucet gooseneck",
+        "auto": true
+      },
+      {
+        "id": "dd02-h4",
+        "x": 88.0,
+        "y": 57.5,
+        "label": "Dutch Oven",
+        "productName": "Cobalt Blue Enameled Cast Iron Dutch Oven",
+        "productUrl": "https://www.amazon.com/s?k=cobalt+blue+enameled+cast+iron+dutch+oven&linkCode=ll2&tag=dev0f7d00-20&linkId=95229aaf08511aa43ccf0dfe0cc8c269&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cobalt blue enameled cast iron dutch oven",
+        "auto": true
+      },
+      {
+        "id": "dd02-h5",
+        "x": 13.0,
+        "y": 58.5,
+        "label": "Vase",
+        "productName": "Patterned Ceramic Floral Vase",
+        "productUrl": "https://www.amazon.com/s?k=vintage+ceramic+painted+table+vase+floral&linkCode=ll2&tag=dev0f7d00-20&linkId=a2944751c20776565963d7201dc06c17&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "vintage ceramic painted table vase floral",
+        "auto": true
+      },
+      {
+        "id": "dd02-h6",
+        "x": 66.8,
+        "y": 54.2,
+        "label": "Cutting Board",
+        "productName": "Arched Wooden Paddle Cutting Board",
+        "productUrl": "https://www.amazon.com/s?k=arched+acacia+wood+cutting+board+with+handle&linkCode=ll2&tag=dev0f7d00-20&linkId=2eaed5ea516949a5b689d47d93f1c1e3&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "arched acacia wood cutting board with handle",
+        "auto": true
+      }
+    ]
   }
 ]
