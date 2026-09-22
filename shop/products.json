@@ -3012,5 +3012,153 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "kf01",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/kf01_kit_sagewalnut_app.webp",
+    "room": "Kitchen",
+    "style": "Sage & Walnut",
+    "hotspots": [
+      {
+        "id": "kf01-h1",
+        "x": 34.7,
+        "y": 57.0,
+        "label": "Dining Table",
+        "productName": "Round Light Wood Dining Table",
+        "productUrl": "https://www.amazon.com/s?k=round+solid+wood+dining+table+light+oak+4-person&linkCode=ll2&tag=dev0f7d00-20&linkId=a3194fdab37628f67129574f2850b4fa&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "round solid wood dining table light oak 4-person",
+        "auto": true
+      },
+      {
+        "id": "kf01-h2",
+        "x": 77.8,
+        "y": 64.8,
+        "label": "Dining Chairs",
+        "productName": "Wood and Black Metal Leg Dining Chair (Set)",
+        "productUrl": "https://www.amazon.com/s?k=wood+seat+dining+chair+black+metal+legs+modern&linkCode=ll2&tag=dev0f7d00-20&linkId=2ecf5fe75d4867acdf5f6bd050330675&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "wood seat dining chair black metal legs modern",
+        "auto": true
+      },
+      {
+        "id": "kf01-h3",
+        "x": 15.3,
+        "y": 84.4,
+        "label": "Area Rug",
+        "productName": "Round Woven Jute Area Rug",
+        "productUrl": "https://www.amazon.com/s?k=round+braided+jute+area+rug+natural+with+white+stripe&linkCode=ll2&tag=dev0f7d00-20&linkId=f070533216a36eb2da34cbaf9558bd1c&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "round braided jute area rug natural with white stripe",
+        "auto": true
+      },
+      {
+        "id": "kf01-h4",
+        "x": 54.4,
+        "y": 50.4,
+        "label": "Vase",
+        "productName": "Ribbed Ceramic Vase",
+        "productUrl": "https://www.amazon.com/s?k=tall+ribbed+ceramic+vase+ivory+matte&linkCode=ll2&tag=dev0f7d00-20&linkId=542d2f3e1d57e4e55441f2492e7842a1&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "tall ribbed ceramic vase ivory matte",
+        "auto": true
+      },
+      {
+        "id": "kf01-h5",
+        "x": 44.2,
+        "y": 55.1,
+        "label": "Fruit Bowl",
+        "productName": "Ceramic Fruit Bowl",
+        "productUrl": "https://www.amazon.com/s?k=large+white+ceramic+fruit+bowl+footed&linkCode=ll2&tag=dev0f7d00-20&linkId=9e2390e32ebc33eb5b741fe11d0fd0dc&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "large white ceramic fruit bowl footed",
+        "auto": true
+      },
+      {
+        "id": "kf01-h6",
+        "x": 34.3,
+        "y": 45.3,
+        "label": "Kitchen Faucet",
+        "productName": "Matte Black Gooseneck Kitchen Faucet",
+        "productUrl": "https://www.amazon.com/s?k=matte+black+gooseneck+kitchen+faucet+pull+down&linkCode=ll2&tag=dev0f7d00-20&linkId=c2119a331dd3715986123c2387741c26&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "matte black gooseneck kitchen faucet pull down",
+        "auto": true
+      }
+    ]
+  },
+  {
+    "id": "dd01",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd01_livingroom_emeraldbrass_app.webp",
+    "room": "Living Room",
+    "style": "Emerald & Brass",
+    "hotspots": [
+      {
+        "id": "dd01-h1",
+        "x": 34.9,
+        "y": 59.0,
+        "label": "Sofa",
+        "productName": "Curved Emerald Velvet Sofa, Brass Base",
+        "productUrl": "https://www.amazon.com/s?k=curved+emerald+green+velvet+sofa+brass+base&linkCode=ll2&tag=dev0f7d00-20&linkId=bea97bcaf174e7d3e3829074f37652bd&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved emerald green velvet sofa brass base",
+        "auto": true
+      },
+      {
+        "id": "dd01-h2",
+        "x": 9.9,
+        "y": 66.5,
+        "label": "Armchairs",
+        "productName": "Cream Boucle Modern Armchair (Set)",
+        "productUrl": "https://www.amazon.com/s?k=cream+boucle+modern+armchair+set&linkCode=ll2&tag=dev0f7d00-20&linkId=cd2168ce46bf08fa3e9ecaedc34e379b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cream boucle modern armchair set",
+        "auto": true
+      },
+      {
+        "id": "dd01-h3",
+        "x": 58.2,
+        "y": 64.0,
+        "label": "Coffee Table",
+        "productName": "White Marble Rectangular Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=white+marble+rectangular+coffee+table&linkCode=ll2&tag=dev0f7d00-20&linkId=d9e66eb20cd5295953d649c92642b89d&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "white marble rectangular coffee table",
+        "auto": true
+      },
+      {
+        "id": "dd01-h4",
+        "x": 70.8,
+        "y": 24.0,
+        "label": "Chandelier",
+        "productName": "Clear Bubble Glass Cluster Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=clear+bubble+glass+cluster+chandelier+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=be759d3dba23c032b066b335999a4a8e&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "clear bubble glass cluster chandelier brass",
+        "auto": true
+      },
+      {
+        "id": "dd01-h5",
+        "x": 22.4,
+        "y": 87.5,
+        "label": "Area Rug",
+        "productName": "Cream & Black Diamond Moroccan Area Rug",
+        "productUrl": "https://www.amazon.com/s?k=cream+black+diamond+pattern+moroccan+area+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=f5c51b73ae306832fd278b931f120e5f&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cream black diamond pattern moroccan area rug",
+        "auto": true
+      },
+      {
+        "id": "dd01-h6",
+        "x": 29.6,
+        "y": 74.0,
+        "label": "Side Table",
+        "productName": "Round Dark Wood Pedestal Side Table",
+        "productUrl": "https://www.amazon.com/s?k=round+dark+wood+pedestal+side+table&linkCode=ll2&tag=dev0f7d00-20&linkId=86f9edcd91066420efaf01eaa97b99cb&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "round dark wood pedestal side table",
+        "auto": true
+      }
+    ]
   }
 ]

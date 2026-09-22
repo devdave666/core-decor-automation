@@ -5510,3 +5510,170 @@ work itself but worth keeping:**
   it," host it via the existing zero-cost raw.githubusercontent.com
   mechanism and put the LINK in a small Drive doc/file instead of trying to
   upload the binary itself.
+
+## Decor Drop Reel -- the seventh content type, daily 8:00 PM EST (2026-09-21/22)
+
+Dev loved the `dd01` "Emerald & Brass" living room result (see the omni
+end-frame-only entry above) and asked for it as a permanent daily pipeline,
+with the exact working prompts recorded word-for-word rather than
+paraphrased, since paraphrasing is exactly how a working recipe quietly
+drifts into a worse one across sessions.
+
+**Shape**: Gemini generates ONE bold single-room interior photo (no fixed
+concept list -- room type and style are the model's own choice each run,
+deliberate, so this format needs no `concept_index` rotation the way every
+other content type in this repo does) -> that photo goes into Gemini omni
+as the END FRAME ONLY, same validated technique as the villa work above ->
+publish to all four platforms -> the SAME photo gets auto-listed on the
+shop with Gemini-identified hotspots, no human review step (the original 57
+shop concepts got an "AI-drafted first pass" a human then reviewed; a daily
+cron job has no human in the loop, so this had to be trusted straight
+through instead of just used as a draft).
+
+### The room-generation prompt, verbatim (`decor_drop_reel/generate_room.py`)
+
+Via Nano Banana Pro (`gemini-3-pro-image` -> `gemini-3.1-flash-image`
+fallback, same `NanoBanana` class reused as-is from
+`architectural_assembly_reel/generate_concept_frames.py`):
+
+> Ultra-photorealistic interior design photograph, vertical 9:16
+> composition, magazine real-estate quality. ONE single room only -- your
+> choice of room type (living room, bedroom, kitchen, bathroom, home
+> office, dining room) and design style -- go genuinely bold and
+> mind-blowing: a striking color palette, statement furniture, dramatic
+> lighting, luxurious materials. Fully furnished and decorated to an
+> aspirational, high-end standard. Natural daylight or warm evening light,
+> crisp detail, no people, no text, no watermark.
+
+### The omni reveal prompt, verbatim (`decor_drop_reel/generate_omni_reveal.py`)
+
+Via `gemini-omni-flash-preview` image-to-video, the SAME image passed as
+BOTH the `image` (start) input AND the intended final state -- i.e. no
+separate start frame, exactly the technique that beat 7 straight multi-clip
+Veo attempts on the villa reference-reel work (see the entry above).
+Deliberately simple per Dev's explicit instruction ("don't over complicate
+omni prompt") -- no structured [SHOT]/[CAMERA]/[AUDIO] breakdown like the
+Veo prompts elsewhere in this repo use, just plain instructions:
+
+> Use the uploaded reference image as the final state only, not the
+> starting state. At 00:00 the room is completely empty -- no furniture, no
+> decor, no rugs. Keep the camera and the room itself (walls, floor,
+> windows, built-in lighting) completely static and unchanged. Over the
+> clip, all the furniture and decor from the reference image simply falls
+> into place naturally and settles, ending exactly on the reference image.
+
+`response_format={"type":"video","aspect_ratio":"9:16"}` on the same omni
+model that only accepts a bare `{"type":"video"}` for its video-to-video
+edit mode (see the entry above) -- confirmed again on this second, unrelated
+image (a living room, not a villa) that the aspect-ratio parameter is real
+for image-to-video mode specifically, not a fluke of the first test.
+
+**Real observed behavior, worth recording because it diverges from the
+villa reel's clean empty-to-full build**: the `dd01` clip opens on the
+*finished* room for about 1.5s (a cold-open hook), THEN drops to empty and
+shows the actual furniture-falling-in build, ending back on the finished
+room -- not a strict monotonic empty -> full progression despite the prompt
+explicitly saying "at 00:00 the room is completely empty." The model
+treated that as a strong suggestion, not a hard constraint, on a complex
+multi-item room (villa's site->after was one building, no individual
+furniture pieces). Dev accepted this structure ("love this video") --
+recorded as observed behavior to expect, not a bug to chase; a
+stricter-instruction-following model or a longer prompt might change this
+later.
+
+### Auto shop-listing prompt, verbatim (`decor_drop_reel/generate_hotspots.py`)
+
+The piece that makes this runnable with zero human in the loop: Gemini
+looks at the SAME room photo and returns room type, a style label, and 5-7
+shoppable hotspots as structured JSON, fed straight into
+`add_to_shop.add_entry()` (id prefix `"dd"`, auto-numbered) -- no human
+reviews these before they go live on the shop, unlike the original 57
+concepts:
+
+> Look at this interior design photograph (vertical 9:16). Identify:
+> 1. The room type (e.g. "Living Room", "Bedroom", "Kitchen", "Home
+>    Office", "Bathroom", "Dining Room").
+> 2. A short, punchy 2-4 word style label for this room's look (e.g.
+>    "Emerald & Brass", "Warm Minimalist", "Coastal Boho").
+> 3. Between 5 and 7 distinct, individually purchasable furniture or decor
+>    items visible in it (e.g. a sofa, a chair, a coffee table, a rug, a
+>    light fixture, a vase -- NOT built-in architecture like walls,
+>    windows, flooring or fixed cabinetry).
+>
+> For each item, give its position in the image as x/y PERCENTAGES (0-100,
+> where 0,0 is the top-left corner and 100,100 is the bottom-right corner,
+> landing ON the actual object), a short label, a descriptive product
+> name, and a concrete Amazon search phrase (material, color, shape --
+> specific enough to find a similar real product, not just the room/style
+> name).
+>
+> Return ONLY a JSON object, no other text, no markdown fencing, in this
+> exact shape:
+> { "room": "Living Room", "style": "Emerald & Brass", "items": [
+> {"x": 34.5, "y": 60.0, "label": "Sofa", "productName": "Curved Emerald
+> Velvet Sofa", "searchKeywords": "curved emerald green velvet sofa brass
+> base"} ] }
+
+Tested once against the real `dd01` photo before being wired into the daily
+pipeline: independently produced a hotspot set (sofa, armchair, coffee
+table, chandelier, side table, rug) that closely matched a human's manual
+pass on the same photo minutes earlier -- close enough in practice to trust
+unattended, though only validated on this one photo so far.
+
+### A real naming-collision bug, caught before it shipped
+
+`decor_drop_reel/run_daily.py` needs `architectural_assembly_reel/
+run_daily.py`'s `finalize()` (metadata strip + speech check, reused
+verbatim, same as every other format in this repo) -- but naming the NEW
+file `run_daily.py` too created a literal Python module-name collision: a
+plain `sys.path` + `from run_daily import finalize` resolves "run_daily" to
+whichever copy is first on `sys.path`, which (since decor_drop_reel's own
+directory gets added to satisfy ITS OWN sibling imports) was itself, not
+architectural_assembly_reel's version -- `ImportError: cannot import name
+'finalize'`. Fixed with `importlib.util.spec_from_file_location` +
+`exec_module` to load the other file by explicit path, sidestepping
+`sys.path` name resolution entirely. Two content types sharing the filename
+`run_daily.py` is itself fine (every format in this repo uses that name) --
+it only breaks when one needs to import a *function* from the other's
+same-named file via `sys.path`, which is specific to this pipeline's reuse
+of `finalize()`. A second, quieter trap in the same fix: `architectural_
+assembly_reel/run_daily.py`'s own module-level imports (`from
+generate_concept_frames import ...`) assume its own directory is already on
+`sys.path` -- true when Python runs it directly (auto-added), NOT true when
+it's loaded via `importlib` from a different top-level script. Needed an
+explicit extra `sys.path.insert` for `architectural_assembly_reel/` itself,
+separately from the file-path import.
+
+### Another real bug, caught on the very first shop-listing run
+
+`add_to_shop.py`'s filename-slugging stripped spaces from `style` but not
+`room`, and didn't handle `&` at all -- `"Living Room"` + `"Emerald &
+Brass"` produced a committed filename containing a literal space and
+ampersand (`dd01_living room_emerald&brass_app.webp`), which
+raw.githubusercontent.com 404'd on. Fixed with a proper `re.sub(r"[^a-z0-9]
++", "", s.lower())` slugify applied to both fields, then had to push a
+second commit renaming the already-live broken file and correcting
+`products.json`'s `image` URL to match. Lesson: test the ACTUAL committed
+URL (a `curl -sI`, not just "the push succeeded") before considering a
+shop-listing step done -- a successful `git push` says nothing about
+whether the resulting path is valid.
+
+### Schedule
+
+`.github/workflows/decor-drop-reel.yml`, cron `0 1 * * *` (01:00 UTC daily
+= 8:00 PM EST, same fixed-offset DST drift every other schedule in this
+repo has), plus `workflow_dispatch`. Same WIF auth block and
+META_*/BUFFER_* secrets as every other daily format -- copied from
+`architectural-assembly-reel.yml` verbatim rather than reconstructed from
+memory, after initially guessing at secret names (`WIF_PROVIDER`/
+`WIF_SERVICE_ACCOUNT`) that don't exist in this repo; the real pattern is
+hardcoded `project_id`/`workload_identity_provider`/`service_account`
+values in the `google-github-actions/auth@v2` step, not secrets. A `git
+config user.name`/`user.email` step is required before this run --
+`add_to_shop.py`'s `commit-tree` push needs it, same as every other format
+that commits back to the repo.
+
+No rotation counter for concepts (see above -- deliberate), but captions
+DO use the standard `captions.json` + `caption_index.txt` rotation, own
+files in `decor_drop_reel/`, never shared with another pipeline's counter,
+per this repo's standing convention.
