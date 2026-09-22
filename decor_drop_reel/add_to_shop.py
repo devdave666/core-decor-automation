@@ -107,6 +107,13 @@ def add_entry(image_path, room, style, hotspot_specs):
                        f"shop: add {entry_id} ({room}, {style})\n\n"
                        "Auto-generated via decor_drop_reel pipeline."])
         _run(["git", "push", "origin", f"{commit}:main"])
+        # Writing products.json straight into the working tree above (so the
+        # plumbing commit could read it back via `git add`) leaves the local
+        # checkout's HEAD/index/working-tree stale relative to what was just
+        # pushed -- the next git operation in the same run (e.g. a caller's
+        # own caption_index advance-and-push) sees "unstaged changes" and
+        # refuses to rebase. Sync local state to the commit we just made.
+        _run(["git", "reset", "--hard", commit])
     finally:
         if os.path.exists(tmpidx):
             os.remove(tmpidx)
