@@ -3234,5 +3234,90 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd03",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd03_livingroom_opulentjewelluxe_app.webp",
+    "room": "Living Room",
+    "style": "Opulent Jewel Luxe",
+    "hotspots": [
+      {
+        "id": "dd03-h1",
+        "x": 59.0,
+        "y": 26.0,
+        "label": "Chandelier",
+        "productName": "Sculptural Blown Glass Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=sculptural+hand+blown+glass+flame+chandelier+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=5a19053ef89b1e90599ef2ee532908c5&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "sculptural hand blown glass flame chandelier brass",
+        "auto": true
+      },
+      {
+        "id": "dd03-h2",
+        "x": 43.0,
+        "y": 75.0,
+        "label": "Curved Sofa",
+        "productName": "Curved Royal Blue Velvet Sectional",
+        "productUrl": "https://www.amazon.com/s?k=curved+royal+blue+velvet+sectional+sofa+brass+base&linkCode=ll2&tag=dev0f7d00-20&linkId=254056e94b898fe84bf34cb876530e70&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved royal blue velvet sectional sofa brass base",
+        "auto": true
+      },
+      {
+        "id": "dd03-h3",
+        "x": 60.0,
+        "y": 74.0,
+        "label": "Coffee Table",
+        "productName": "Round Brass and Glass Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=round+brass+glass+top+coffee+table+modern+glam&linkCode=ll2&tag=dev0f7d00-20&linkId=6aa00e9826bc0e7e2e1d9133fab46fa0&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "round brass glass top coffee table modern glam",
+        "auto": true
+      },
+      {
+        "id": "dd03-h4",
+        "x": 16.0,
+        "y": 86.0,
+        "label": "Console Table",
+        "productName": "Modern Burl Wood Waterfall Console",
+        "productUrl": "https://www.amazon.com/s?k=burl+wood+console+table+modern+waterfall+edge&linkCode=ll2&tag=dev0f7d00-20&linkId=3429aacc0e94044a9c890f477d3ab941&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "burl wood console table modern waterfall edge",
+        "auto": true
+      },
+      {
+        "id": "dd03-h5",
+        "x": 50.6,
+        "y": 60.0,
+        "label": "Floor Lamp",
+        "productName": "Brass Slim Floor Lamp with Drum Shade",
+        "productUrl": "https://www.amazon.com/s?k=modern+brass+tall+floor+lamp+white+drum+shade&linkCode=ll2&tag=dev0f7d00-20&linkId=b33412e72e4f6fe62fc2b7ea128327e7&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "modern brass tall floor lamp white drum shade",
+        "auto": true
+      },
+      {
+        "id": "dd03-h6",
+        "x": 92.0,
+        "y": 82.0,
+        "label": "Accent Chair",
+        "productName": "Teal Ikat Jacquard Accent Chair",
+        "productUrl": "https://www.amazon.com/s?k=teal+chevron+pattern+upholstered+accent+armchair&linkCode=ll2&tag=dev0f7d00-20&linkId=5a8bbdf8e9dbda018610a6147e5ca77d&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "teal chevron pattern upholstered accent armchair",
+        "auto": true
+      },
+      {
+        "id": "dd03-h7",
+        "x": 78.0,
+        "y": 91.0,
+        "label": "Area Rug",
+        "productName": "Traditional Distressed Silk Wool Rug",
+        "productUrl": "https://www.amazon.com/s?k=distressed+vintage+traditional+area+rug+gold+beige&linkCode=ll2&tag=dev0f7d00-20&linkId=1841facd951b5e991ce55921356f60a3&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "distressed vintage traditional area rug gold beige",
+        "auto": true
+      }
+    ]
   }
 ]
