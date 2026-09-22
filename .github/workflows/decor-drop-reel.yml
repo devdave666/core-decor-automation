@@ -1,0 +1,71 @@
+name: Decor Drop Reel
+
+# Seventh content type, fully automated end to end, DAILY at 8:00 PM EST.
+# Gemini generates one bold single-room interior (no fixed concept list --
+# room type and style are the model's own choice each run), Gemini omni
+# reveals it (furniture/decor falling into place, end-frame-only -- see
+# decor_drop_reel/generate_omni_reveal.py and llms.txt for why this beat
+# every multi-clip Veo attempt tried first), the reel publishes to
+# Instagram/Facebook/TikTok/YouTube, and the SAME room photo gets
+# auto-listed on the shop with Gemini-identified hotspots (no human review
+# step -- see decor_drop_reel/generate_hotspots.py).
+#
+# 8:00 PM EST = 01:00 UTC the following day (EST = UTC-5, fixed -- cron has
+# no DST awareness, so during EDT this lands at 9:00 PM local instead of
+# 8:00, same known limitation as every other schedule in this repo).
+
+on:
+  schedule:
+    - cron: "0 1 * * *"   # 01:00 UTC daily (8:00 PM EST)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  drop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "core-decor-657616"
+          workload_identity_provider: "projects/75129415228/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@core-decor-657616.iam.gserviceaccount.com"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai pillow requests
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Configure git
+        run: |
+          git config user.name "Core Decor Automation"
+          git config user.email "automation@coredecor.local"
+
+      - name: Run Decor Drop Reel
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_IG_BUSINESS_ACCOUNT_ID: ${{ secrets.META_IG_BUSINESS_ACCOUNT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
+          BUFFER_YOUTUBE_CHANNEL_ID: ${{ secrets.BUFFER_YOUTUBE_CHANNEL_ID }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python3 decor_drop_reel/run_daily.py
+
+      - name: Upload artifacts (survives a later failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: decor-drop-reel
+          path: decor_drop_reel/output/*
+          if-no-files-found: warn
