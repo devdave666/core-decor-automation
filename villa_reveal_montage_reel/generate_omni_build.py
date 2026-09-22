@@ -59,7 +59,7 @@ def image_to_video(image_path, out_path, prompt=PROMPT):
             Path(out_path).parent.mkdir(parents=True, exist_ok=True)
             Path(out_path).write_bytes(videos[0])
             print(f"  wrote {out_path} ({len(videos[0])} bytes) via {model} rf={rf}")
-            return
+            return out_path
     raise RuntimeError(f"omni image-to-video produced no video. last error: {last_err}")
 
 
