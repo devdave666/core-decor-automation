@@ -112,8 +112,15 @@ def add_entry(image_path, room, style, hotspot_specs):
         # checkout's HEAD/index/working-tree stale relative to what was just
         # pushed -- the next git operation in the same run (e.g. a caller's
         # own caption_index advance-and-push) sees "unstaged changes" and
-        # refuses to rebase. Sync local state to the commit we just made.
-        _run(["git", "reset", "--hard", commit])
+        # refuses to rebase. Fix ONLY that: move the local branch ref to the
+        # commit we just made, and stage the two files we touched on the
+        # MAIN index (working tree already has their correct content --
+        # both were written/added before the push above). Deliberately NOT
+        # `git reset --hard`, which would discard every other uncommitted
+        # change anywhere else in the working tree, not just these two files.
+        branch = _run(["git", "symbolic-ref", "--short", "HEAD"])
+        _run(["git", "update-ref", f"refs/heads/{branch}", commit])
+        _run(["git", "add", "shop/products.json", rel_webp])
     finally:
         if os.path.exists(tmpidx):
             os.remove(tmpidx)

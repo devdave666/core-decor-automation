@@ -26,6 +26,17 @@ PROMPT = (
 )
 
 
+BARE_PROMPT = (
+    "Show this exact same room -- identical camera angle, identical walls, "
+    "windows, flooring, ceiling and built-in lighting -- but COMPLETELY "
+    "REMOVE every piece of furniture, all decor, rugs, plants, art and "
+    "accessories. Leave only the bare, empty room: bare walls, bare floor, "
+    "empty space, nothing placed in it. No text, no people, no watermark. "
+    "Everything about the room itself (architecture, materials, windows, "
+    "light) stays exactly the same -- only remove what's freestanding in it."
+)
+
+
 def generate_room(out_path: Path):
     nb = NanoBanana()
     img = nb.gen(PROMPT)
@@ -35,9 +46,30 @@ def generate_room(out_path: Path):
     return out_path
 
 
+def generate_furnished_and_bare(out_dir: Path):
+    """Generates the furnished room, then edits FROM it to produce a bare
+    (no furniture/decor) version of the same room -- same technique as
+    architectural_assembly_reel's site/after pair. Returns
+    (furnished_path, bare_path)."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    nb = NanoBanana()
+
+    furnished_img = nb.gen(PROMPT)
+    furnished_path = out_dir / "furnished.png"
+    furnished_img.save(furnished_path)
+    print(f"Saved {furnished_path} ({furnished_img.width}x{furnished_img.height}) via {nb.model}")
+
+    bare_img = nb.gen([BARE_PROMPT, furnished_img])
+    bare_path = out_dir / "bare.png"
+    bare_img.save(bare_path)
+    print(f"Saved {bare_path} ({bare_img.width}x{bare_img.height})")
+
+    return furnished_path, bare_path
+
+
 def main():
-    out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("decor_drop_reel/output/room.png")
-    generate_room(out)
+    out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("decor_drop_reel/output")
+    generate_furnished_and_bare(out_dir)
 
 
 if __name__ == "__main__":

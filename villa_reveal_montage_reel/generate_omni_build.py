@@ -63,6 +63,48 @@ def image_to_video(image_path, out_path, prompt=PROMPT):
     raise RuntimeError(f"omni image-to-video produced no video. last error: {last_err}")
 
 
+def two_frame_to_video(start_image_path, end_image_path, out_path, prompt):
+    """Same omni machinery as image_to_video(), but with an explicit start
+    AND end frame (two image content parts) instead of end-frame-only --
+    the prompt is responsible for telling the model which is which, since
+    omni's content list has no distinct start/last_frame fields the way
+    Veo's config does."""
+    client = _client()
+    start_b64 = base64.b64encode(Path(start_image_path).read_bytes()).decode()
+    end_b64 = base64.b64encode(Path(end_image_path).read_bytes()).decode()
+    last_err = None
+    for model in MODEL_CANDIDATES:
+        for rf in RESPONSE_FORMAT_VARIANTS:
+            print(f"--- omni two-frame-to-video via {model} response_format={rf} ---")
+            try:
+                interaction, status = _create(
+                    client, model,
+                    input_=[
+                        {"type": "text", "text": prompt},
+                        {"type": "image", "data": start_b64, "mime_type": "image/png"},
+                        {"type": "image", "data": end_b64, "mime_type": "image/png"},
+                    ],
+                    response_format=rf,
+                    store=False,
+                )
+            except Exception as e:  # noqa: BLE001
+                print(f"  FAILED: {str(e)[:500]}")
+                last_err = e
+                continue
+            texts, videos = _collect(interaction)
+            if texts:
+                print(f"  model said: {' '.join(texts)[:500]}")
+            if not videos:
+                print(f"  status={status!r} but no video in output")
+                last_err = RuntimeError("no video part in model_output")
+                continue
+            Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+            Path(out_path).write_bytes(videos[0])
+            print(f"  wrote {out_path} ({len(videos[0])} bytes) via {model} rf={rf}")
+            return out_path
+    raise RuntimeError(f"omni two-frame-to-video produced no video. last error: {last_err}")
+
+
 def main():
     if len(sys.argv) != 3:
         print("Usage: generate_omni_build.py <end_frame.png> <out.mp4>")

@@ -2,30 +2,40 @@
 Decor Drop Reel -- fully automated daily pipeline, seventh content type.
 
 Per run:
-  1. generate_room.generate_room(): Nano Banana Pro generates ONE bold,
-     fully-furnished room. No fixed concept list -- room type and style are
-     left to the model's own judgment each run (see generate_room.py's
-     PROMPT), so this format doesn't need a concept_index rotation the way
-     every other content type in this repo does.
-  2. generate_omni_reveal.generate_reveal(): the room photo goes into
-     Gemini omni as the END FRAME ONLY (no start frame) -- the validated
-     technique from the villa_reveal_montage_reel work (see llms.txt),
-     reused verbatim via generate_omni_build.image_to_video(). Deliberately
-     simple prompt: furniture and decor just falls into place, no
-     structured shot breakdown.
-  3. finalize(): strip metadata; reuses architectural_assembly_reel's
+  1. generate_room.generate_furnished_and_bare(): Nano Banana Pro generates
+     ONE bold, fully-furnished room, then edits FROM it to produce a bare
+     (no furniture/decor) version of the same room -- same site/after
+     technique architectural_assembly_reel uses. No fixed concept list --
+     room type and style are left to the model's own judgment each run, so
+     this format doesn't need a concept_index rotation the way every other
+     content type in this repo does.
+  2. generate_omni_reveal.generate_reveal(): the bare room goes in as the
+     explicit START frame and the furnished room as the explicit END frame
+     via Gemini omni's two_frame_to_video(). v1 (end-frame-only, leaving
+     the starting state to the model's own judgment) worked but Gemini QA
+     caught a real issue -- a ~1.2s static shot of the FINISHED room before
+     it reset to empty and did the actual build (see llms.txt). Giving it
+     an explicit bare start frame instead fixed that outright (confirmed by
+     a second full-video Gemini QA pass). Prompt stays deliberately simple
+     either way, per Dev's standing instruction.
+  3. add_kenburns_start.add_kenburns(): even with the fix above, the clip
+     still opens on ~1.3s of static (now correctly EMPTY, not finished)
+     room before motion starts. Per Dev's explicit fallback instruction, a
+     simple Ken Burns zoom-out (1.10x -> 1.0x) is applied over just that
+     opening beat, unconditionally, to give it a hook from frame one.
+  4. finalize(): strip metadata; reuses architectural_assembly_reel's
      gemini-2.5-flash speech check + local de-voice repair verbatim --
      same project-wide Veo/omni risk, not specific to this format.
-  4. Host + publish to Instagram, Facebook, TikTok (via Buffer), YouTube
+  5. Host + publish to Instagram, Facebook, TikTok (via Buffer), YouTube
      (via Buffer).
-  5. generate_hotspots.identify(): Gemini vision looks at the SAME room
-     photo and proposes room/style/hotspots -- no human review step, unlike
-     the original 57 shop concepts' "AI-drafted first pass" (this format
-     has no human in the loop by design, so the auto-identification has to
-     be trusted, not just used as a draft).
-  6. add_to_shop.add_entry(): lists the room on the shop with those
+  6. generate_hotspots.identify(): Gemini vision looks at the SAME
+     furnished room photo and proposes room/style/hotspots -- no human
+     review step, unlike the original 57 shop concepts' "AI-drafted first
+     pass" (this format has no human in the loop by design, so the
+     auto-identification has to be trusted, not just used as a draft).
+  7. add_to_shop.add_entry(): lists the room on the shop with those
      hotspots, auto-numbered "dd" id.
-  7. Advance caption_index (own counter, own file, never shared with
+  8. Advance caption_index (own counter, own file, never shared with
      another pipeline's -- per this repo's standing convention).
 
 Runs daily via decor-drop-reel.yml, 8:00 PM EST (01:00 UTC, fixed offset --
@@ -46,8 +56,9 @@ sys.path.insert(0, str(REPO_ROOT_PATH))
 sys.path.insert(0, str(HERE))
 
 import core_decor_reel_pipeline as core  # noqa: E402
-from generate_room import generate_room  # noqa: E402
+from generate_room import generate_furnished_and_bare  # noqa: E402
 from generate_omni_reveal import generate_reveal  # noqa: E402
+from add_kenburns_start import add_kenburns  # noqa: E402
 from generate_hotspots import identify as identify_hotspots  # noqa: E402
 from add_to_shop import add_entry  # noqa: E402
 
@@ -97,11 +108,14 @@ def main():
     capi = _counter("caption_index") % len(captions)
     caption = captions[capi]
 
-    room_path = generate_room(out / "room.png")
-    raw = generate_reveal(room_path, out / "raw.mp4")
+    furnished_path, bare_path = generate_furnished_and_bare(out)
+    raw = generate_reveal(bare_path, furnished_path, out / "raw.mp4")
+
+    kb = out / "raw_kb.mp4"
+    add_kenburns(raw, kb)
 
     clean = out / "decor_drop_reel.mp4"
-    finalize(raw, clean)
+    finalize(kb, clean)
 
     duration = core.get_audio_duration_seconds(clean)
     core.validate_reel_for_meta(clean, duration)
@@ -116,8 +130,8 @@ def main():
                                 youtube_title=caption.split("\n")[0][:100])
     print(f"Done. IG={ig} FB={fb} TikTok={tk} YouTube={yt}")
 
-    room, style, hotspot_specs = identify_hotspots(room_path)
-    entry_id, shop_url = add_entry(room_path, room, style, hotspot_specs)
+    room, style, hotspot_specs = identify_hotspots(furnished_path)
+    entry_id, shop_url = add_entry(furnished_path, room, style, hotspot_specs)
     print(f"Shop: {entry_id} ({room}, {style}) -> {shop_url}")
 
     _advance("caption_index", (capi + 1) % len(captions), repo_root)
