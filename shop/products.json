@@ -3319,5 +3319,90 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd04",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd04_livingroom_jeweltoneartdeco_app.webp",
+    "room": "Living Room",
+    "style": "Jewel Tone Art Deco",
+    "hotspots": [
+      {
+        "id": "dd04-h1",
+        "x": 50.8,
+        "y": 22.0,
+        "label": "Chandelier",
+        "productName": "Vintage Style Glass Murano Droplet Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=art+deco+glass+drop+chandelier+brass&linkCode=ll2&tag=dev0f7d00-20&linkId=e2f731e687afda0327a61352f9b1f518&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "art deco glass drop chandelier brass",
+        "auto": true
+      },
+      {
+        "id": "dd04-h2",
+        "x": 30.5,
+        "y": 64.5,
+        "label": "Sofa",
+        "productName": "Curved Emerald Green Velvet Sofa",
+        "productUrl": "https://www.amazon.com/s?k=curved+velvet+sofa+emerald+green+mid+century&linkCode=ll2&tag=dev0f7d00-20&linkId=54194fe8c4181ef704975a177ccb01b8&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved velvet sofa emerald green mid century",
+        "auto": true
+      },
+      {
+        "id": "dd04-h3",
+        "x": 56.5,
+        "y": 73.0,
+        "label": "Coffee Table",
+        "productName": "Sculptural Brass Base Green Marble Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=brass+abstract+coffee+table+green+marble+top&linkCode=ll2&tag=dev0f7d00-20&linkId=b2fd910e7d0d38998e5f062220348f3c&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "brass abstract coffee table green marble top",
+        "auto": true
+      },
+      {
+        "id": "dd04-h4",
+        "x": 17.5,
+        "y": 79.0,
+        "label": "Armchair",
+        "productName": "Leopard Print Accent Club Chair",
+        "productUrl": "https://www.amazon.com/s?k=leopard+print+accent+chair+upholstered&linkCode=ll2&tag=dev0f7d00-20&linkId=dad44c94c2c1afc34996529f8b11b37e&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "leopard print accent chair upholstered",
+        "auto": true
+      },
+      {
+        "id": "dd04-h5",
+        "x": 34.5,
+        "y": 84.0,
+        "label": "Accent Table",
+        "productName": "Green Malachite and Brass Drink Table",
+        "productUrl": "https://www.amazon.com/s?k=small+brass+drink+table+green+marble+pedestal&linkCode=ll2&tag=dev0f7d00-20&linkId=072ed2a6392f5f0115128c8f636f4d00&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "small brass drink table green marble pedestal",
+        "auto": true
+      },
+      {
+        "id": "dd04-h6",
+        "x": 33.5,
+        "y": 53.0,
+        "label": "Table Lamp",
+        "productName": "Art Deco Fluted Brass Table Lamp",
+        "productUrl": "https://www.amazon.com/s?k=brass+textured+column+table+lamp+linen+shade&linkCode=ll2&tag=dev0f7d00-20&linkId=922039d1328ef484b48fb7af28f6bd2d&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "brass textured column table lamp linen shade",
+        "auto": true
+      },
+      {
+        "id": "dd04-h7",
+        "x": 49.0,
+        "y": 92.5,
+        "label": "Area Rug",
+        "productName": "Traditional Persian Rug with Navy Blue Border",
+        "productUrl": "https://www.amazon.com/s?k=traditional+oriental+area+rug+navy+blue+border&linkCode=ll2&tag=dev0f7d00-20&linkId=92021bbaaad50f15d7aed6a2e2c58018&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "traditional oriental area rug navy blue border",
+        "auto": true
+      }
+    ]
   }
 ]
