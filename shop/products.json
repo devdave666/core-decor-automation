@@ -3404,5 +3404,90 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd05",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd05_livingroom_emeraldrustluxe_app.webp",
+    "room": "Living Room",
+    "style": "Emerald & Rust Luxe",
+    "hotspots": [
+      {
+        "id": "dd05-h1",
+        "x": 23.0,
+        "y": 62.0,
+        "label": "Velvet Sofa",
+        "productName": "Rust Orange Velvet Three-Seater Sofa",
+        "productUrl": "https://www.amazon.com/s?k=rust+orange+velvet+sofa+contemporary+3+seater&linkCode=ll2&tag=dev0f7d00-20&linkId=f66224e91c49ca920d38b2ca624ff258&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "rust orange velvet sofa contemporary 3 seater",
+        "auto": true
+      },
+      {
+        "id": "dd05-h2",
+        "x": 48.0,
+        "y": 72.0,
+        "label": "Coffee Table",
+        "productName": "Organic Live Edge Coffee Table with Gold Legs",
+        "productUrl": "https://www.amazon.com/s?k=organic+live+edge+wood+coffee+table+brass+cylinder+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=7f0e3c8f3727143b21ffdbff10e2f188&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "organic live edge wood coffee table brass cylinder legs",
+        "auto": true
+      },
+      {
+        "id": "dd05-h3",
+        "x": 74.0,
+        "y": 61.0,
+        "label": "Accent Chair",
+        "productName": "Teal Velvet Barrel Armchair",
+        "productUrl": "https://www.amazon.com/s?k=teal+green+velvet+barrel+armchair+modern+accent+chair&linkCode=ll2&tag=dev0f7d00-20&linkId=62774eacfa3511cd4488c7462a7aaf7a&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "teal green velvet barrel armchair modern accent chair",
+        "auto": true
+      },
+      {
+        "id": "dd05-h4",
+        "x": 46.0,
+        "y": 15.0,
+        "label": "Chandelier",
+        "productName": "Modern Brass Ring Chandelier with Ceramic Shades",
+        "productUrl": "https://www.amazon.com/s?k=modern+brass+wheel+chandelier+with+white+sculpted+shades&linkCode=ll2&tag=dev0f7d00-20&linkId=6d0c824678a530ff7567655dc6ca95ae&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "modern brass wheel chandelier with white sculpted shades",
+        "auto": true
+      },
+      {
+        "id": "dd05-h5",
+        "x": 10.0,
+        "y": 38.0,
+        "label": "Wall Art",
+        "productName": "Mid-Century Modern Abstract Framed Canvas",
+        "productUrl": "https://www.amazon.com/s?k=abstract+geometric+framed+canvas+green+black+gold+modern+art&linkCode=ll2&tag=dev0f7d00-20&linkId=eb5e540a14dba34bd60e4c3008d7983e&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "abstract geometric framed canvas green black gold modern art",
+        "auto": true
+      },
+      {
+        "id": "dd05-h6",
+        "x": 51.0,
+        "y": 52.0,
+        "label": "Table Lamp",
+        "productName": "Marble Column Table Lamp with Drum Shade",
+        "productUrl": "https://www.amazon.com/s?k=white+marble+cylinder+table+lamp+drum+shade+brass+base&linkCode=ll2&tag=dev0f7d00-20&linkId=728d7fa9eeaf96afa940dc16744b36b6&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "white marble cylinder table lamp drum shade brass base",
+        "auto": true
+      },
+      {
+        "id": "dd05-h7",
+        "x": 7.0,
+        "y": 88.0,
+        "label": "Ottoman",
+        "productName": "Emerald Velvet Round Ottoman with Brass Base",
+        "productUrl": "https://www.amazon.com/s?k=emerald+green+velvet+round+footstool+ottoman+gold+base&linkCode=ll2&tag=dev0f7d00-20&linkId=d6010c4948d874a0cf7d992c5bfcb2f1&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "emerald green velvet round footstool ottoman gold base",
+        "auto": true
+      }
+    ]
   }
 ]
