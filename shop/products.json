@@ -3489,5 +3489,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd06",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd06_livingroom_gildedartdeco_app.webp",
+    "room": "Living Room",
+    "style": "Gilded Art Deco",
+    "hotspots": [
+      {
+        "id": "dd06-h1",
+        "x": 23.0,
+        "y": 68.0,
+        "label": "Curved Velvet Sofa",
+        "productName": "Emerald Green Velvet Curved Sectional Sofa",
+        "productUrl": "https://www.amazon.com/s?k=curved+emerald+green+velvet+sectional+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=aae69f575fe75382d519b0f5813b0504&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved emerald green velvet sectional sofa",
+        "auto": true
+      },
+      {
+        "id": "dd06-h2",
+        "x": 50.0,
+        "y": 68.0,
+        "label": "Brass Coffee Table",
+        "productName": "Brushed Brass Plinth Rectangular Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=brushed+brass+block+plinth+coffee+table+rectangular&linkCode=ll2&tag=dev0f7d00-20&linkId=210099c7912cce51e8762d5835b6b9d9&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "brushed brass block plinth coffee table rectangular",
+        "auto": true
+      },
+      {
+        "id": "dd06-h3",
+        "x": 71.0,
+        "y": 76.0,
+        "label": "Accent Chair",
+        "productName": "Cobalt Blue Velvet Sculptural Armchair",
+        "productUrl": "https://www.amazon.com/s?k=royal+blue+velvet+modern+sculptural+armchair&linkCode=ll2&tag=dev0f7d00-20&linkId=8a176e16bff42ff7ed73d8c6c3567a73&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "royal blue velvet modern sculptural armchair",
+        "auto": true
+      },
+      {
+        "id": "dd06-h4",
+        "x": 55.0,
+        "y": 88.0,
+        "label": "Area Rug",
+        "productName": "Geometric Deco Line Motif Wool Area Rug",
+        "productUrl": "https://www.amazon.com/s?k=art+deco+geometric+line+wool+area+rug+cream+green&linkCode=ll2&tag=dev0f7d00-20&linkId=3f61fb3b4185feb2f5c9e35f3f44709f&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "art deco geometric line wool area rug cream green",
+        "auto": true
+      },
+      {
+        "id": "dd06-h5",
+        "x": 16.0,
+        "y": 41.0,
+        "label": "Wall Art",
+        "productName": "Oversized Mid-Century Abstract Framed Canvas",
+        "productUrl": "https://www.amazon.com/s?k=large+abstract+mid+century+modern+framed+canvas+wall+art&linkCode=ll2&tag=dev0f7d00-20&linkId=8d23193ead967c0129409695f842d861&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "large abstract mid century modern framed canvas wall art",
+        "auto": true
+      },
+      {
+        "id": "dd06-h6",
+        "x": 88.0,
+        "y": 73.0,
+        "label": "Drink Table",
+        "productName": "Cast Brass Hourglass Pedestal Side Table",
+        "productUrl": "https://www.amazon.com/s?k=spun+brass+pedestal+accent+drink+table+small+round&linkCode=ll2&tag=dev0f7d00-20&linkId=224357d93764eece8135408d1b1c79e0&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "spun brass pedestal accent drink table small round",
+        "auto": true
+      }
+    ]
   }
 ]
