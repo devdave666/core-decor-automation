@@ -3563,5 +3563,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd07",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd07_livingroom_emeraldjeweltone_app.webp",
+    "room": "Living Room",
+    "style": "Emerald Jewel Tone",
+    "hotspots": [
+      {
+        "id": "dd07-h1",
+        "x": 34.0,
+        "y": 16.5,
+        "label": "Chandelier",
+        "productName": "Sculptural Alabaster Ribbon Chandelier",
+        "productUrl": "https://www.amazon.com/s?k=alabaster+ribbon+wave+tiered+modern+chandelier&linkCode=ll2&tag=dev0f7d00-20&linkId=894fda53e8dd3b7ff5f60f74f119fbd1&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "alabaster ribbon wave tiered modern chandelier",
+        "auto": true
+      },
+      {
+        "id": "dd07-h2",
+        "x": 75.0,
+        "y": 66.5,
+        "label": "Curved Sofa",
+        "productName": "Sapphire Blue Velvet Curved Sectional Sofa",
+        "productUrl": "https://www.amazon.com/s?k=curved+royal+blue+velvet+sectional+sofa&linkCode=ll2&tag=dev0f7d00-20&linkId=8f79b9c342b247b96125373c548dcb5b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "curved royal blue velvet sectional sofa",
+        "auto": true
+      },
+      {
+        "id": "dd07-h3",
+        "x": 29.5,
+        "y": 74.0,
+        "label": "Coffee Table",
+        "productName": "Brushed Brass Organic Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=sculptural+brushed+brass+organic+coffee+table&linkCode=ll2&tag=dev0f7d00-20&linkId=9f5984f25633149f1907e8dfd55b17db&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "sculptural brushed brass organic coffee table",
+        "auto": true
+      },
+      {
+        "id": "dd07-h4",
+        "x": 23.0,
+        "y": 50.0,
+        "label": "Bar Cabinet",
+        "productName": "Burl Wood Bar Cabinet with Brass Base",
+        "productUrl": "https://www.amazon.com/s?k=burl+wood+bar+cabinet+brass+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=7f39052873238515108f16e8caec5128&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "burl wood bar cabinet brass legs",
+        "auto": true
+      },
+      {
+        "id": "dd07-h5",
+        "x": 85.0,
+        "y": 49.0,
+        "label": "Table Lamp",
+        "productName": "Twisted Brass Column Table Lamp",
+        "productUrl": "https://www.amazon.com/s?k=sculptural+twisted+brass+column+table+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=37b73bb95b899d90431a6bb4b0524c3b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "sculptural twisted brass column table lamp",
+        "auto": true
+      },
+      {
+        "id": "dd07-h6",
+        "x": 8.5,
+        "y": 88.0,
+        "label": "Accent Chair",
+        "productName": "Emerald Green Velvet Club Chair",
+        "productUrl": "https://www.amazon.com/s?k=emerald+green+velvet+club+armchair&linkCode=ll2&tag=dev0f7d00-20&linkId=8038814332b056dbf7e4e0ce9e0a53bc&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "emerald green velvet club armchair",
+        "auto": true
+      }
+    ]
   }
 ]
