@@ -5,10 +5,13 @@ Per run:
   1. generate_room.generate_furnished_and_bare(): Nano Banana Pro generates
      ONE bold, fully-furnished room, then edits FROM it to produce a bare
      (no furniture/decor) version of the same room -- same site/after
-     technique architectural_assembly_reel uses. No fixed concept list --
-     room type and style are left to the model's own judgment each run, so
-     this format doesn't need a concept_index rotation the way every other
-     content type in this repo does.
+     technique architectural_assembly_reel uses. Room type AND style come
+     from an explicit concept_index rotation (concepts.json), same
+     convention every other content type in this repo already uses -- v1
+     left both fully to the model's own "your choice, go bold" judgment,
+     and real output (dd01-dd04) converged hard on the same jewel-tone/
+     brass glam look every single run regardless of that framing. Dev
+     flagged the lack of variety; an explicit list is the fix.
   2. generate_omni_reveal.generate_reveal(): the bare room goes in as the
      explicit START frame and the furnished room as the explicit END frame
      via Gemini omni's two_frame_to_video(). v1 (end-frame-only, leaving
@@ -35,8 +38,9 @@ Per run:
      auto-identification has to be trusted, not just used as a draft).
   7. add_to_shop.add_entry(): lists the room on the shop with those
      hotspots, auto-numbered "dd" id.
-  8. Advance caption_index (own counter, own file, never shared with
-     another pipeline's -- per this repo's standing convention).
+  8. Advance caption_index AND concept_index (own counters, own files,
+     never shared with another pipeline's -- per this repo's standing
+     convention).
 
 Runs daily via decor-drop-reel.yml, 8:00 PM EST (01:00 UTC, fixed offset --
 drifts to 9PM local during EDT, same known limitation as every other cron
@@ -108,7 +112,12 @@ def main():
     capi = _counter("caption_index") % len(captions)
     caption = captions[capi]
 
-    furnished_path, bare_path = generate_furnished_and_bare(out)
+    concepts = json.loads((HERE / "concepts.json").read_text())
+    coni = _counter("concept_index") % len(concepts)
+    concept = concepts[coni]
+    print(f"concept {coni + 1}/{len(concepts)}: {concept['room']} / {concept['style']}")
+
+    furnished_path, bare_path = generate_furnished_and_bare(out, concept)
     raw = generate_reveal(bare_path, furnished_path, out / "raw.mp4")
 
     kb = out / "raw_kb.mp4"
@@ -130,11 +139,14 @@ def main():
                                 youtube_title=caption.split("\n")[0][:100])
     print(f"Done. IG={ig} FB={fb} TikTok={tk} YouTube={yt}")
 
-    room, style, hotspot_specs = identify_hotspots(furnished_path)
-    entry_id, shop_url = add_entry(furnished_path, room, style, hotspot_specs)
-    print(f"Shop: {entry_id} ({room}, {style}) -> {shop_url}")
+    # room/style come from the concept (known, reliable) -- only the
+    # hotspot positions/labels/search terms need Gemini vision.
+    _, _, hotspot_specs = identify_hotspots(furnished_path)
+    entry_id, shop_url = add_entry(furnished_path, concept["room"], concept["style"], hotspot_specs)
+    print(f"Shop: {entry_id} ({concept['room']}, {concept['style']}) -> {shop_url}")
 
     _advance("caption_index", (capi + 1) % len(captions), repo_root)
+    _advance("concept_index", (coni + 1) % len(concepts), repo_root)
 
 
 if __name__ == "__main__":
