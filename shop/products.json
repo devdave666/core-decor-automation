@@ -3637,5 +3637,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd08",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd08_livingroom_warmscandinavianminimalist_app.webp",
+    "room": "Living Room",
+    "style": "Warm Scandinavian Minimalist",
+    "hotspots": [
+      {
+        "id": "dd08-h1",
+        "x": 35.0,
+        "y": 60.0,
+        "label": "Slipcovered Sofa",
+        "productName": "Cream Linen Slipcovered Sofa",
+        "productUrl": "https://www.amazon.com/s?k=cream+linen+slipcovered+sofa+deep+seat+low+profile&linkCode=ll2&tag=dev0f7d00-20&linkId=632913c4f7ebe8f5751383430e88e5e3&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "cream linen slipcovered sofa deep seat low profile",
+        "auto": true
+      },
+      {
+        "id": "dd08-h2",
+        "x": 82.0,
+        "y": 61.0,
+        "label": "Accent Armchair",
+        "productName": "Sage Green Upholstered Armchair",
+        "productUrl": "https://www.amazon.com/s?k=muted+sage+green+accent+armchair+wooden+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=9c1edda390ac00dce499b1a6ce1ff00b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "muted sage green accent armchair wooden legs",
+        "auto": true
+      },
+      {
+        "id": "dd08-h3",
+        "x": 28.0,
+        "y": 71.0,
+        "label": "Faux Fur Pelt",
+        "productName": "Natural Ivory Sheepskin Throw",
+        "productUrl": "https://www.amazon.com/s?k=ivory+genuine+sheepskin+pelt+throw+rug&linkCode=ll2&tag=dev0f7d00-20&linkId=7ea91212312714e21a4e09364d98ac56&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "ivory genuine sheepskin pelt throw rug",
+        "auto": true
+      },
+      {
+        "id": "dd08-h4",
+        "x": 75.0,
+        "y": 78.0,
+        "label": "Area Rug",
+        "productName": "Hand-Woven Chunky Wool Loop Rug",
+        "productUrl": "https://www.amazon.com/s?k=natural+chunky+wool+loop+textured+area+rug+beige&linkCode=ll2&tag=dev0f7d00-20&linkId=f17c5abd92fab485b0af959c5a6d55a2&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "natural chunky wool loop textured area rug beige",
+        "auto": true
+      },
+      {
+        "id": "dd08-h5",
+        "x": 94.0,
+        "y": 71.0,
+        "label": "Coffee Table",
+        "productName": "Natural Oak Low Minimalist Coffee Table",
+        "productUrl": "https://www.amazon.com/s?k=solid+white+oak+low+coffee+table+minimalist+slab&linkCode=ll2&tag=dev0f7d00-20&linkId=a8e3b6f62c53993800b6b7d4e3919826&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "solid white oak low coffee table minimalist slab",
+        "auto": true
+      },
+      {
+        "id": "dd08-h6",
+        "x": 8.0,
+        "y": 82.0,
+        "label": "Floor Urn",
+        "productName": "Aged Ceramic Rustic Floor Vase",
+        "productUrl": "https://www.amazon.com/s?k=wabi+sabi+weathered+ceramic+floor+vase+rustic+urn&linkCode=ll2&tag=dev0f7d00-20&linkId=199fbb71ba065aa9aa8d10ddce7c6476&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "wabi sabi weathered ceramic floor vase rustic urn",
+        "auto": true
+      }
+    ]
   }
 ]
