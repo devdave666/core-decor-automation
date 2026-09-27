@@ -3711,5 +3711,90 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd09",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd09_bedroom_darkmoodyindustrial_app.webp",
+    "room": "Bedroom",
+    "style": "Dark Moody Industrial",
+    "hotspots": [
+      {
+        "id": "dd09-h1",
+        "x": 48.0,
+        "y": 68.0,
+        "label": "Bed Frame",
+        "productName": "Walnut Wood Platform Bed Frame",
+        "productUrl": "https://www.amazon.com/s?k=walnut+wood+platform+bed+frame+with+headboard&linkCode=ll2&tag=dev0f7d00-20&linkId=24d31d1c34da5170ab3f75ddde34046b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "walnut wood platform bed frame with headboard",
+        "auto": true
+      },
+      {
+        "id": "dd09-h2",
+        "x": 54.0,
+        "y": 70.0,
+        "label": "Throw Blanket",
+        "productName": "Rust Orange Chunky Knit Throw",
+        "productUrl": "https://www.amazon.com/s?k=rust+orange+chunky+knit+throw+blanket+with+fringe&linkCode=ll2&tag=dev0f7d00-20&linkId=fdb2c245c05b7866e22c571e60565efd&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "rust orange chunky knit throw blanket with fringe",
+        "auto": true
+      },
+      {
+        "id": "dd09-h3",
+        "x": 61.0,
+        "y": 58.5,
+        "label": "Armchair",
+        "productName": "Vintage Cognac Leather Accent Chair",
+        "productUrl": "https://www.amazon.com/s?k=distressed+brown+leather+club+armchair&linkCode=ll2&tag=dev0f7d00-20&linkId=b637b66df9d44f47d1e6e34dabf7f5ad&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "distressed brown leather club armchair",
+        "auto": true
+      },
+      {
+        "id": "dd09-h4",
+        "x": 9.0,
+        "y": 72.0,
+        "label": "Nightstand",
+        "productName": "Mid-Century Walnut 1-Drawer Nightstand",
+        "productUrl": "https://www.amazon.com/s?k=walnut+nightstand+1+drawer+open+shelf+modern&linkCode=ll2&tag=dev0f7d00-20&linkId=429a7d3410c66157813027c5877cd05c&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "walnut nightstand 1 drawer open shelf modern",
+        "auto": true
+      },
+      {
+        "id": "dd09-h5",
+        "x": 6.0,
+        "y": 56.5,
+        "label": "Bedside Lamp",
+        "productName": "Industrial Matte Black Arched Desk Lamp",
+        "productUrl": "https://www.amazon.com/s?k=industrial+matte+black+dome+desk+lamp&linkCode=ll2&tag=dev0f7d00-20&linkId=7b94226c2504c3179cfe04e72f43a7b8&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "industrial matte black dome desk lamp",
+        "auto": true
+      },
+      {
+        "id": "dd09-h6",
+        "x": 94.0,
+        "y": 45.0,
+        "label": "Mirror",
+        "productName": "Large Round Black Metal Wall Mirror",
+        "productUrl": "https://www.amazon.com/s?k=large+round+black+metal+framed+wall+mirror&linkCode=ll2&tag=dev0f7d00-20&linkId=8c78a57604612f12485044ee44fac14b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "large round black metal framed wall mirror",
+        "auto": true
+      },
+      {
+        "id": "dd09-h7",
+        "x": 88.0,
+        "y": 60.0,
+        "label": "Dresser",
+        "productName": "Industrial Metal Drawer Chest",
+        "productUrl": "https://www.amazon.com/s?k=industrial+metal+and+wood+chest+of+drawers&linkCode=ll2&tag=dev0f7d00-20&linkId=35a210335f5305c319c256a2f01e733e&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "industrial metal and wood chest of drawers",
+        "auto": true
+      }
+    ]
   }
 ]
