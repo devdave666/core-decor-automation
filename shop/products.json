@@ -3796,5 +3796,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd10",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd10_kitchen_coastalbrightwhite_app.webp",
+    "room": "Kitchen",
+    "style": "Coastal Bright White",
+    "hotspots": [
+      {
+        "id": "dd10-h1",
+        "x": 65.5,
+        "y": 26.5,
+        "label": "Pendant Lights",
+        "productName": "Oversized Woven Rattan Dome Pendant Light",
+        "productUrl": "https://www.amazon.com/s?k=large+woven+rattan+dome+pendant+light+fixture&linkCode=ll2&tag=dev0f7d00-20&linkId=1981b25396c07f33cfd2e1c114da0fa0&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "large woven rattan dome pendant light fixture",
+        "auto": true
+      },
+      {
+        "id": "dd10-h2",
+        "x": 35.0,
+        "y": 83.0,
+        "label": "Dining Table",
+        "productName": "Rustic Reclaimed Wood Pedestal Dining Table",
+        "productUrl": "https://www.amazon.com/s?k=rustic+reclaimed+wood+dining+table+light+finish&linkCode=ll2&tag=dev0f7d00-20&linkId=ec92db73ce5cbdf0319053fa4f9b6d63&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "rustic reclaimed wood dining table light finish",
+        "auto": true
+      },
+      {
+        "id": "dd10-h3",
+        "x": 91.0,
+        "y": 75.0,
+        "label": "Counter Stool",
+        "productName": "Rustic Solid Wood Saddle Counter Stool",
+        "productUrl": "https://www.amazon.com/s?k=rustic+natural+wood+backless+counter+stool+24+inch&linkCode=ll2&tag=dev0f7d00-20&linkId=f4bc9ae3f42d2dec058be711068554f1&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "rustic natural wood backless counter stool 24 inch",
+        "auto": true
+      },
+      {
+        "id": "dd10-h4",
+        "x": 68.0,
+        "y": 60.5,
+        "label": "Dough Bowl",
+        "productName": "Carved Paulownia Wood Dough Bowl",
+        "productUrl": "https://www.amazon.com/s?k=carved+paulownia+wood+dough+bowl+centerpiece&linkCode=ll2&tag=dev0f7d00-20&linkId=bf389482625baebfc27d4edb228b98da&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "carved paulownia wood dough bowl centerpiece",
+        "auto": true
+      },
+      {
+        "id": "dd10-h5",
+        "x": 7.5,
+        "y": 50.8,
+        "label": "Pot Filler",
+        "productName": "Wall Mount Folding Brass Pot Filler",
+        "productUrl": "https://www.amazon.com/s?k=traditional+brass+wall+mount+folding+pot+filler+faucet&linkCode=ll2&tag=dev0f7d00-20&linkId=07c73577ee0ca4c1591188853f81d579&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "traditional brass wall mount folding pot filler faucet",
+        "auto": true
+      },
+      {
+        "id": "dd10-h6",
+        "x": 52.0,
+        "y": 53.0,
+        "label": "Cutting Board",
+        "productName": "Rustic Wood Charcuterie Bread Board",
+        "productUrl": "https://www.amazon.com/s?k=reclaimed+wood+bread+board+with+handle&linkCode=ll2&tag=dev0f7d00-20&linkId=a035474a82382493044c2b4394e8d89c&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "reclaimed wood bread board with handle",
+        "auto": true
+      }
+    ]
   }
 ]
