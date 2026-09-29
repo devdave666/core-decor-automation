@@ -3870,5 +3870,79 @@
         "auto": true
       }
     ]
+  },
+  {
+    "id": "dd11",
+    "image": "https://raw.githubusercontent.com/devdave666/core-decor-automation/main/assets/application_web/dd11_homeoffice_midcenturymodernwarmwood_app.webp",
+    "room": "Home Office",
+    "style": "Mid-Century Modern Warm Wood",
+    "hotspots": [
+      {
+        "id": "dd11-h1",
+        "x": 23.0,
+        "y": 74.0,
+        "label": "Armchair",
+        "productName": "Mustard Yellow Mid-Century Accent Chair",
+        "productUrl": "https://www.amazon.com/s?k=mustard+yellow+mid+century+modern+accent+chair+wood+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=6b6053a81363a1d2137224059c71d27d&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "mustard yellow mid century modern accent chair wood legs",
+        "auto": true
+      },
+      {
+        "id": "dd11-h2",
+        "x": 18.0,
+        "y": 55.0,
+        "label": "Floor Lamp",
+        "productName": "Brushed Brass Mid-Century Task Floor Lamp",
+        "productUrl": "https://www.amazon.com/s?k=brushed+brass+mid+century+standing+task+floor+lamp+cone+shade&linkCode=ll2&tag=dev0f7d00-20&linkId=7f6a954a0e7b38a74a4b35c164a5a1a2&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "brushed brass mid century standing task floor lamp cone shade",
+        "auto": true
+      },
+      {
+        "id": "dd11-h3",
+        "x": 63.0,
+        "y": 60.0,
+        "label": "Desk",
+        "productName": "Walnut Mid-Century Executive Desk",
+        "productUrl": "https://www.amazon.com/s?k=mid+century+walnut+executive+desk+double+pedestal+tapered+legs&linkCode=ll2&tag=dev0f7d00-20&linkId=3f8c6b66fca67e666d36543570c92235&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "mid century walnut executive desk double pedestal tapered legs",
+        "auto": true
+      },
+      {
+        "id": "dd11-h4",
+        "x": 67.0,
+        "y": 42.0,
+        "label": "Wall Clock",
+        "productName": "Retro Sunburst Wall Clock",
+        "productUrl": "https://www.amazon.com/s?k=mid+century+modern+sunburst+wall+clock+wood+brass+spokes&linkCode=ll2&tag=dev0f7d00-20&linkId=c49a2e982a0dff2f2060a08543f4b2e1&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "mid century modern sunburst wall clock wood brass spokes",
+        "auto": true
+      },
+      {
+        "id": "dd11-h5",
+        "x": 62.0,
+        "y": 81.0,
+        "label": "Area Rug",
+        "productName": "Retro Geometric Colorblock Area Rug",
+        "productUrl": "https://www.amazon.com/s?k=retro+mid+century+geometric+colorblock+area+rug+mustard+brown+green&linkCode=ll2&tag=dev0f7d00-20&linkId=ca229d12c7a18f7b4d35ecaa1e18fa65&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "retro mid century geometric colorblock area rug mustard brown green",
+        "auto": true
+      },
+      {
+        "id": "dd11-h6",
+        "x": 91.0,
+        "y": 73.0,
+        "label": "Lounge Chair",
+        "productName": "Molded Plywood and Leather Swivel Lounge Chair",
+        "productUrl": "https://www.amazon.com/s?k=mid+century+modern+lounge+chair+black+leather+walnut+plywood+base&linkCode=ll2&tag=dev0f7d00-20&linkId=f11b5624a5e35e615810ef289e8bd29b&language=en_US&ref_=as_li_ss_tl",
+        "marketplace": "us",
+        "searchKeywords": "mid century modern lounge chair black leather walnut plywood base",
+        "auto": true
+      }
+    ]
   }
 ]
