@@ -1,3 +1,4 @@
+
 """
 Core Decor Reel Pipeline
 ========================
@@ -15,7 +16,7 @@ The original spec for this stage called for a sub-semitone pitch shift decoupled
 tempo, plus noise injected specifically below the audible threshold, framed as altering
 the track's "acoustic fingerprint" while keeping it "pleasant to human ears." That
 combination — imperceptible-to-humans but fingerprint-altering — is the standard
-technique for slipping audio past content-matching systems (Meta's own Rights Manager
+technique for slipping audio past content-matching systems (Meta's own Rights Manager"""
 among them), not an audio-quality technique. It is not implemented here. What IS
 implemented is ordinary mastering: an EQ shelf for clarity and loudness normalization to
 -14 LUFS, which is simply Instagram/Spotify's own standard delivery target, nothing more.
@@ -952,7 +953,10 @@ def publish_to_facebook(video_public_url, caption, expected_duration_s=None):
     return video_id
 
 
-def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolerance_s=1.0):
+955
+975
+955
+(video_id, token, expected_duration_s, tolerance_s=1.0):
     """
     Not optional, not defensive-programming-for-its-own-sake: this is the one check
     that actually caught the truncation bug in the first place. A "success" response
@@ -960,11 +964,15 @@ def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolera
     is complete — confirmed repeatedly. Polls Meta's own reported `length` for the
     published video and raises if it doesn't match what was actually sent.
     """
-    for _ in range(10):
+    for attempt in range(30):
         r = requests.get(f"{GRAPH_API_BASE}/{video_id}",
                           params={"access_token": token, "fields": "length,status"})
         body = r.json()
-        status = body.get("status", {}).get("video_status")
+        
+                status = body.get("status", {}).get("video_status"); log.info("Facebook video %s status check %d/30: %s", video_id, attempt + 1, status)
+
+
+        
         if status == "ready":
             actual = body.get("length", 0)
             if abs(actual - expected_duration_s) > tolerance_s:
@@ -975,8 +983,8 @@ def _verify_facebook_video_duration(video_id, token, expected_duration_s, tolera
                 )
             log.info("Verified: Facebook video %s delivered length %.1fs matches expected", video_id, actual)
             return
-        time.sleep(10)
-    raise PipelineError(f"Facebook video {video_id} never reached 'ready' status for duration verification")
+        if status == "error": raise PipelineError(f"Facebook video {video_id} error: {body}"); time.sleep(15)
+    raise PipelineError(f"Facebook video {video_id} never reached 'ready' status for duration v
 
 
 # ---------------------------------------------------------------------------
