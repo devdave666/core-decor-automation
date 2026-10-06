@@ -43,15 +43,24 @@ def _generate(client, contents):
             resp = client.models.generate_content(
                 model=IMG_MODEL, contents=contents, config=_config())
             for cand in resp.candidates or []:
-                for part in cand.content.parts or []:
+                for part in (cand.content.parts if cand.content else None) or []:
                     inl = getattr(part, "inline_data", None)
                     if inl and getattr(inl, "data", None):
                         return Image.open(BytesIO(inl.data)).convert("RGB")
-            raise RuntimeError(f"no image in response: {resp!r}"[:500])
+            reasons = [str(getattr(c, "finish_reason", None)) for c in resp.candidates or []]
+            feedback = getattr(resp, "prompt_feedback", None)
+            raise RuntimeError(f"EMPTY no image returned; finish_reason={reasons} "
+                               f"prompt_feedback={feedback}")
         except Exception as e:  # noqa: BLE001
             msg = str(e)
-            if ("429" in msg or "RESOURCE_EXHAUSTED" in msg or "503" in msg) \
-                    and attempt < MAX_RETRIES - 1:
+            empty = msg.startswith("EMPTY")
+            if empty:
+                print(f"  attempt {attempt + 1}: {msg[:300]}")
+            if (("429" in msg or "RESOURCE_EXHAUSTED" in msg or "503" in msg or empty)
+                    and attempt < MAX_RETRIES - 1):
+                if empty:
+                    time.sleep(5)
+                    continue
                 d = RETRY_BASE_S * (2 ** attempt)
                 print(f"  retryable error, waiting {d}s: {msg[:120]}")
                 time.sleep(d)

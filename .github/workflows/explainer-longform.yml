@@ -47,6 +47,17 @@ jobs:
           pip install google-genai pillow requests numpy opencv-python-headless
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
+      - name: Restore generated images and voice (paid steps are not repeated)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            explainer_longform/output/ep01/images
+            explainer_longform/output/ep01/voice
+            explainer_longform/output/ep01/locate.json
+          key: explainer-ep01-${{ hashFiles('explainer_longform/episodes.py') }}-${{ github.run_id }}
+          restore-keys: |
+            explainer-ep01-${{ hashFiles('explainer_longform/episodes.py') }}-
+
       - name: Build episode
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
@@ -56,6 +67,16 @@ jobs:
           if [ "${{ inputs.mock }}" = "true" ]; then args="$args --mock"; fi
           if [ -n "${{ inputs.limit }}" ]; then args="$args --limit ${{ inputs.limit }}"; fi
           python explainer_longform/run.py $args
+
+      - name: Save generated images and voice (even if the build failed)
+        if: always() && inputs.mock != true
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            explainer_longform/output/ep01/images
+            explainer_longform/output/ep01/voice
+            explainer_longform/output/ep01/locate.json
+          key: explainer-ep01-${{ hashFiles('explainer_longform/episodes.py') }}-${{ github.run_id }}
 
       - name: Upload video and thumbnail
         if: always()
