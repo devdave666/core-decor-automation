@@ -16,7 +16,7 @@ import requests
 
 API = "https://api.elevenlabs.io/v1"
 MODEL_ID = "eleven_v4"
-DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"   # premade "Rachel"; override via ELEVENLABS_VOICE_ID
+DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX"   # premade "Matilda" (free-plan API safe); override via ELEVENLABS_VOICE_ID
 SR = 44100
 
 
