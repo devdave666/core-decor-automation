@@ -1,0 +1,79 @@
+name: Long-form Explainer
+
+# Faceless long-form (~4 min) YouTube explainer, built end to end:
+#   Nano Banana Pro (native 4K, chained edits of one room) -> ElevenLabs v4 narration
+#   -> fast-cut render (1080p, 30fps) -> MP4 + thumbnail uploaded as a run artifact.
+# Manual trigger only, and NO Veo. It does not publish anywhere yet: review the
+# artifact first. Needs the ELEVENLABS_API_KEY repo secret.
+#
+# Cost per run: ~17 Nano Banana Pro 4K images (a few dollars) + ElevenLabs credits.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mock:
+        description: "Mock mode (placeholder images, silent voice) - tests the render only, free"
+        type: boolean
+        default: false
+      limit:
+        description: "Render only the first N seconds (blank = full video)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  explainer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: "core-decor-657616"
+          workload_identity_provider: "projects/75129415228/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "vertex-ai-runner@core-decor-657616.iam.gserviceaccount.com"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install google-genai pillow requests numpy opencv-python-headless
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Build episode
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
+        run: |
+          args=""
+          if [ "${{ inputs.mock }}" = "true" ]; then args="$args --mock"; fi
+          if [ -n "${{ inputs.limit }}" ]; then args="$args --limit ${{ inputs.limit }}"; fi
+          python explainer_longform/run.py $args
+
+      - name: Upload video and thumbnail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explainer-video
+          path: |
+            explainer_longform/output/*/video.mp4
+            explainer_longform/output/*/thumbnail.jpg
+            explainer_longform/output/*/meta.json
+            explainer_longform/output/*/script.json
+          if-no-files-found: warn
+
+      - name: Upload source images (for review)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explainer-images
+          path: explainer_longform/output/*/images/*.png
+          retention-days: 7
+          if-no-files-found: warn

@@ -11,3 +11,6 @@ __pycache__/
 # ignored, which meant a single `git add -A` would have published a live token.
 .env
 env.template
+
+explainer_longform/output/
+__pycache__/
