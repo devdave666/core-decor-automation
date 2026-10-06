@@ -19,6 +19,10 @@ on:
         description: "Render only the first N seconds (blank = full video)"
         type: string
         default: ""
+      list_voices:
+        description: "Only list the ElevenLabs voices this account can use via the API, then stop"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -47,7 +51,14 @@ jobs:
           pip install google-genai pillow requests numpy opencv-python-headless
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
+      - name: List ElevenLabs voices
+        if: inputs.list_voices
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python explainer_longform/voice.py
+
       - name: Restore generated images and voice (paid steps are not repeated)
+        if: "!inputs.list_voices"
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -59,6 +70,7 @@ jobs:
             explainer-ep01-${{ hashFiles('explainer_longform/episodes.py') }}-
 
       - name: Build episode
+        if: "!inputs.list_voices"
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
@@ -69,7 +81,7 @@ jobs:
           python explainer_longform/run.py $args
 
       - name: Save generated images and voice (even if the build failed)
-        if: always() && inputs.mock != true
+        if: always() && inputs.mock != true && !inputs.list_voices
         uses: actions/cache/save@v4
         with:
           path: |

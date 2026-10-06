@@ -25,7 +25,7 @@ def list_voices():
     r.raise_for_status()
     for v in r.json()["voices"]:
         print(f"{v['voice_id']}  {v['name']}  [{v.get('category')}]  "
-              f"{(v.get('labels') or {})}")
+              f"{(v.get('labels') or {})}  {v.get('preview_url', '')}")
 
 
 def _words_from_alignment(al):
