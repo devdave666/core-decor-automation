@@ -68,6 +68,26 @@ def _generate(client, contents):
             raise
 
 
+FALLBACK_FOCUS = (0.5, 0.5, 0.4)
+
+
+def _find_box(x):
+    """First flat list of 4 numbers anywhere in a JSON structure (Gemini varies the shape)."""
+    if isinstance(x, (list, tuple)):
+        if len(x) == 4 and all(isinstance(v, (int, float)) for v in x):
+            return x
+        for item in x:
+            r = _find_box(item)
+            if r:
+                return r
+    elif isinstance(x, dict):
+        for v in x.values():
+            r = _find_box(v)
+            if r:
+                return r
+    return None
+
+
 def _reference(img):
     if img.width <= REF_WIDTH:
         return img
@@ -127,7 +147,7 @@ def locate_focuses(spec, paths, out_json, mock=False):
     client = None
     for image, focus in sorted(need):
         k = f"{image}|{focus}"
-        if k in cache:
+        if k in cache and cache[k] != list(FALLBACK_FOCUS):
             continue
         if mock:
             cache[k] = [0.3 + (len(focus) % 5) * 0.1, 0.45, 0.25]
@@ -142,12 +162,16 @@ def locate_focuses(spec, paths, out_json, mock=False):
                           "coordinates normalised to 0-1000, tightly bounding: " + focus],
                 config=types.GenerateContentConfig(response_mime_type="application/json"),
             )
-            box = json.loads(resp.text)["box_2d"]
+            box = _find_box(json.loads(resp.text))
+            if box is None:
+                raise ValueError(f"no box in {resp.text[:120]!r}")
             ymin, xmin, ymax, xmax = [v / 1000 for v in box]
+            if not (0 <= xmin < xmax <= 1 and 0 <= ymin < ymax <= 1):
+                raise ValueError(f"bad box {box}")
             cache[k] = [(xmin + xmax) / 2, (ymin + ymax) / 2,
                         max(xmax - xmin, ymax - ymin)]
         except Exception as e:  # noqa: BLE001
             print(f"  locate failed for {k!r} ({str(e)[:100]}); using centre")
-            cache[k] = [0.5, 0.5, 0.4]
+            cache[k] = list(FALLBACK_FOCUS)
     out_json.write_text(json.dumps(cache, indent=1))
     return cache

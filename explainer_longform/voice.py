@@ -108,7 +108,7 @@ def generate_voice(spec, out_dir, mock=False):
     index = out_dir / "voice.json"
     cache = json.loads(index.read_text()) if index.exists() else {}
     key = None if mock else os.environ["ELEVENLABS_API_KEY"]
-    voice_id = os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE_ID)
+    voice_id = os.environ.get("ELEVENLABS_VOICE_ID") or DEFAULT_VOICE_ID
     beats, ids = spec["beats"], []
     for i, b in enumerate(beats):
         wav = out_dir / f"{b['id']}.wav"
